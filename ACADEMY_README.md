@@ -13,6 +13,10 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.66 (2026-07-22)
+- **Module 16, Quiz 8 (thermography severity) fact-fix.** Resolved the item deferred from the v13.65 QA wave. The question asks about a 25 deg C delta-T measured *between two similar components under the same load* (a faulted MCC starter lug vs. the reference-phase lug). The prior explanation cited an outdated/incorrect "1-10 / 11-20 / >20 deg C" scale. Rewrote the explanation to cite NETA's **component-to-component** criteria (stricter than the delta-T-over-ambient table): a delta-T **>15 deg C** between similar components under similar load is a major discrepancy requiring immediate corrective action. Answer key unchanged (index 3, immediate action) - now correctly justified.
+- Re-audit 0 errors, ruff clean, py_compile clean. Rebuild: modules=22, glossary=131, flashcards(+gloss)=187, sims=11, ladderlabs=236.
+
 ### v13.65 (2026-07-22) - Deep fact-check + 5-pass grammar review (6 agents)
 
 Second, deeper QA wave over v13.64: six copyediting/fact-checking agents each ran FIVE passes (spelling, grammar, punctuation, word-choice, technical/factual + quiz answer-key sanity) across their assigned modules. Every numeric/factual finding was independently re-verified by the lead before applying; 25 corrections landed, one ambiguous item was deliberately deferred.
