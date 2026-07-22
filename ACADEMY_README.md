@@ -13,6 +13,26 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.65 (2026-07-22) - Deep fact-check + 5-pass grammar review (6 agents)
+
+Second, deeper QA wave over v13.64: six copyediting/fact-checking agents each ran FIVE passes (spelling, grammar, punctuation, word-choice, technical/factual + quiz answer-key sanity) across their assigned modules. Every numeric/factual finding was independently re-verified by the lead before applying; 25 corrections landed, one ambiguous item was deliberately deferred.
+
+Technical/factual fixes (independently recomputed):
+- **M1** voltage-drop worked example: numerator 1,679,850 was 10x too large; corrected to 167,571 (VD = 4.0 V / 0.84%, within the NEC 3% limit). **M1** NEC 430.32 overload rule had the SF thresholds reversed (125% is for SF >= 1.15); OL example corrected to 21 x 1.25 = 26.25 A.
+- **M3** array-subscript-out-of-range relabeled Minor -> Major fault (halts controller); PID .MAXO/.MINO described as limit parameters, not status bits.
+- **M6** compressed-air pressure-drop constant 0.1025 -> 0.001025 (100x) in all three occurrences so the worked example (256.25/127.4 ~= 2.0 psi) is self-consistent and physically correct.
+- **M7** ISA-18.2 alarm-rate target corrected from "<=10/hr" to "<=1 alarm per 10 min per operator (~6/hr)" in the section summary, quiz option, and explanation (aligns with the module's own SEC 8 / Quiz 7).
+- **M11** SIL band error: PFDavg 4.38e-3 achieves SIL 2 (not SIL 1); fixed in body + quiz explain. Fixed the SSM separation-distance quiz: answer key 2 -> 1 (360 mm) and removed leaked chain-of-thought ("Wait - ... Recalculating") from the explanation.
+- **M14** Purdue-model WCS placement contradiction with M12 resolved (WCS = Level 3, cross-referenced); BPFI sideband example made internally consistent (3 Hz mechanical defect -> 57/63 Hz).
+- **M15** three-phase imbalance math (44% is vs the other phases, not the average); wired HART citation IEC 62591 (that is WirelessHART) -> IEC 61158-2.
+- **M16** thermography reference IEEE Std 145-1983 (antenna definitions!) -> NETA MTS; L10 Weibull result 6150 x 0.1054^0.294 corrected 3,850 -> 3,170 h (both spots).
+- **M17** enclosure geometry made consistent: dimension 250 mm -> 175 mm to match the 1.14 m^2 area used in all three downstream calcs (answers preserved).
+
+Prose fixes: M5 "replicated"->"replaced" assets; M8 "THE"->"The" + "router's" apostrophe; M9 "colinear"->"collinear"; M19 "two"->"three easiest gotchas".
+
+Deferred (needs human judgment): M16 Quiz 8 NETA severity scale conflicts with the module's own MTS-2023 scale, but no answer option cleanly matches "Serious Deficiency / repair within days" - left for review rather than guess. Re-audit: 0 markup/entity/answer-index errors; ruff + py_compile clean. Rebuild verified modules=22 glossary=131 flashcards(+gloss)=187 sims=11 ladderlabs=236. Ship zip AET_Academy_v13.65_20260722.zip (5 members, testzip None).
+
+
 ### v13.64 (2026-07-22) - Full QA / proofreading pass (lint, markup, grammar, factual)
 
 Comprehensive quality pass across the doubled v13.63 curriculum (566 sections / 612 quiz across 22 modules). No content added; all changes are corrections and cleanup.

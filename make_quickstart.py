@@ -30,7 +30,7 @@ c.setFont("Helvetica", 11)
 c.drawString(M, H - 0.88*inch, "Automation Engineering Technology  |  Offline Training  |  Quick Start")
 c.setFillColor(ACC)
 c.setFont("Helvetica-Bold", 22)
-c.drawRightString(W - M, H - 0.66*inch, "v13.64")
+c.drawRightString(W - M, H - 0.66*inch, "v13.65")
 
 y = H - 1.55*inch
 
@@ -120,7 +120,7 @@ c.setLineWidth(0.7)
 c.line(M, M + 0.05*inch, W - M, M + 0.05*inch)
 c.setFillColor(GREY)
 c.setFont("Helvetica-Oblique", 8.5)
-c.drawString(M, M - 0.12*inch, "AET Academy v13.64  \u2014  ACY1 RME training bundle.  Print this page and keep it with your workstation.")
+c.drawString(M, M - 0.12*inch, "AET Academy v13.65  \u2014  ACY1 RME training bundle.  Print this page and keep it with your workstation.")
 c.drawRightString(W - M, M - 0.12*inch, "Double-click index.html to begin")
 
 c.showPage()
