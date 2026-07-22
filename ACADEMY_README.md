@@ -13,6 +13,10 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.59 (2026-07-22) - Foundation reinforcement: flashcards &amp; glossary
+
+Rounded out the just-deepened Foundations lecture/quiz work across the **spaced-repetition and reference channels** so the electrical &amp; PLC-fundamentals depth now spans all learning modes (matching the ST/Ladder treatment). Added **16 foundation flashcards** (40 &rarr; 56): let-go threshold, live-dead-live, RMS vs peak, the sqrt(3) three-phase rule, wye vs delta, power factor, the power triangle, the AWG gotcha, the 3%/5% voltage-drop rule, grounding vs bonding, transformer turns ratio, 3-wire control seal-in, overload-relay trip classes, the PLC scan cycle, sinking vs sourcing I/O, and the automation pyramid. Added **16 glossary terms** (115 &rarr; 131): ampacity, arc flash, kVA (apparent power), kVAR (reactive power), wye (star), delta, line vs phase voltage, contactor, overload relay, control transformer (CPT), two-wire control, equipment grounding conductor (EGC), GFCI, full-load amps (FLA), inrush current, and the HOA switch. Merged flashcards(+gloss) 187. No module-count change (still 22). Bump v13.58 &rarr; v13.59.
+
 ### v13.58 (2026-07-22) - Foundation depth 4/4: Module 0 Intro to AET
 
 - **Module 0 (Intro to AET)** deepened: 4 -> 12 lecture sections (+8): What Is AET Really (Engineering vs Engineering Technology, the AET stack, what AET is NOT), Automation Pyramid & ISA-95 in depth (5 levels with protocols and time-scales), Day in the Life of a Controls Tech (time breakdown, physical + mental tool belt, 3 core skills), 10 Core Domains Deep Dive (all 10 with vendors and specifics), Systems Thinking & Signal Flow (half-split troubleshooting, 5-whys), Standards & Codes You Must Know (NFPA 70/70E/79, OSHA 1910, ISO 13849, IEC 61508/61131-3, UL 508A, ISA-5.1/88/95), Documentation Culture (redline discipline, MOC), Career Pathways (levels 0-12+ yr, off-ramps, Amazon RME ladder).

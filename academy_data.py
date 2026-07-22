@@ -101,7 +101,23 @@ FLASHCARDS = [
   {"f": "IEC timer in ST", "b": "A function-block instance, not a box: declare (JamTmr : TON;), call each scan JamTmr(IN:=cond, PT:=T#3s), then read JamTmr.Q (done) and JamTmr.ET (elapsed)."},
   {"f": "IN_OUT parameter", "b": "AOI/function parameter passed BY REFERENCE (no copy) - the block edits your live tag directly. Best for large UDTs; INPUT is copied in, OUTPUT copied out."},
   {"f": "Hysteresis (deadband)", "b": "Two thresholds prevent output chatter: e.g. Fan ON at &gt;=80&deg;, OFF at &lt;=70&deg;; between the two it HOLDS its last state."},
-  {"f": "Safe divide (ST)", "b": "Always guard division: IF Divisor &lt;&gt; 0 THEN Result := Total / Divisor; ELSE handle; - dividing by zero faults the processor."}
+  {"f": "Safe divide (ST)", "b": "Always guard division: IF Divisor &lt;&gt; 0 THEN Result := Total / Divisor; ELSE handle; - dividing by zero faults the processor."},
+  {"f": "Let-go threshold", "b": "10-20 mA of 60 Hz current through the body makes muscles clamp so you CANNOT release the conductor. ~5 mA is the safe limit (GFCI trips here); 100-300 mA causes ventricular fibrillation."},
+  {"f": "Live-dead-live", "b": "LOTO verification: test your meter on a KNOWN live source, prove the circuit dead, then re-test the meter on the known source. Confirms the meter worked the whole time before you touch anything."},
+  {"f": "RMS vs peak", "b": "V_rms = V_peak / 1.414 (0.707 x peak). V_peak = V_rms x 1.414. A '480 V' rating is RMS -&gt; ~679 V peak. Nameplates and meters read RMS; insulation must survive the peak."},
+  {"f": "sqrt(3) rule (3-phase)", "b": "In a wye system V_line = V_phase x 1.732. So 480 V line gives 277 V to neutral; 208 V line gives 120 V to neutral. Power: P = 1.732 x V_line x I_line x PF."},
+  {"f": "Wye vs Delta", "b": "Wye (star): windings share a neutral, gives two voltages (line &amp; line-to-neutral). Delta: windings form a triangle, no neutral, line voltage = phase voltage."},
+  {"f": "Power factor", "b": "PF = real power (kW) / apparent power (kVA) = cos(theta), 0 to 1. Motors are inductive so current LAGS and PF &lt; 1 (0.8-0.9 typical). Low PF = utility penalty + bigger conductors; fixed with capacitor banks."},
+  {"f": "Power triangle", "b": "kW (real, does work) and kVAR (reactive, builds magnetic fields) are the two legs; kVA (apparent, what the utility supplies) is the hypotenuse: kVA = sqrt(kW&sup2; + kVAR&sup2;)."},
+  {"f": "AWG gotcha", "b": "Bigger AWG number = SMALLER wire. 14 AWG is small (lighting), 12/10 for receptacles/small motors; the number drops (4, 2, 1/0, 2/0) as wire gets fatter for feeders."},
+  {"f": "Voltage drop rule", "b": "Keep drop under 3% on a branch circuit, 5% feeder-plus-branch. An under-volted motor draws MORE current for the same torque, overheats, and trips overloads - fix by up-sizing the wire, not the overload."},
+  {"f": "Grounding vs bonding", "b": "Bonding ties metal parts together so they share one potential; grounding connects that system to earth. The equipment grounding conductor (EGC) gives fault current a low-impedance path back to trip the breaker."},
+  {"f": "Transformer turns ratio", "b": "Vp/Vs = Np/Ns. Voltage and turns scale together; current scales inversely (step-down voltage = step-up current). VA rating (Vp x Ip = Vs x Is) stays constant minus losses."},
+  {"f": "3-wire control", "b": "Momentary Start energizes the coil (M); an M auxiliary contact wired parallel to Start 'seals in' to hold it after you release. NC Stop breaks the seal. Loss of power drops out and it will NOT auto-restart - the safety feature vs 2-wire."},
+  {"f": "Overload relay class", "b": "Trip class = seconds to trip at 600% FLA. Class 10 (10 s, most common), Class 20, Class 30 (high-inertia loads). Protects the motor from sustained over-current; the NC OL contact opens the coil circuit."},
+  {"f": "PLC scan cycle", "b": "Every scan, in order: (1) read all inputs into the input image table, (2) solve the logic top-to-bottom left-to-right, (3) write the output image to the physical outputs. Then repeat. Inputs are sampled once per scan, not continuously."},
+  {"f": "Sinking vs sourcing I/O", "b": "Sourcing output supplies (+) current TO the load; sinking output provides the return path to (-). PNP sensor = sourcing, pairs with a sinking input; NPN sensor = sinking, pairs with a sourcing input. Mismatch = device never reads."},
+  {"f": "Automation pyramid", "b": "L0 field devices (motors/sensors) - L1 direct control (PLC/safety) - L2 supervisory (HMI/SCADA) - L3 operations (MES/historian) - L4 enterprise (ERP). Controls techs live at L0-L2."}
 ]
 
 # Simulator registry (metadata; the interactive JS lives in the app)
