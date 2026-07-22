@@ -13,6 +13,12 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.67 (2026-07-22)
+- **Curriculum deepening wave 1 (of a multi-part effort to double the content).** Began systematically expanding every module with brand-new teaching sections and quiz questions.
+- **Module 20 (Material Handling / MHE):** +9 sections, +11 quiz - MDR/ZPA zone-card diagnostics, photoeye alignment (through-beam/retroreflective/polarized), belt tracking correction, mechanical vs vulcanized splices, gapping/singulation, sortation-type comparison, scan-tunnel no-reads, print-and-apply labelers, VFD conveyor faults/ramps.
+- **Module 21 (Amazon Robotics / AMR):** +7 sections, +11 quiz - drive units & pods, fiducial navigation, traffic management/deadlock, opportunity charging & battery health, robotic-floor safety/access, pick/stow workstations, exception/stuck-robot handling.
+- Totals: sections 566 -> 582, quiz 612 -> 634. Re-audit 0 errors, ruff clean, py_compile clean. Rebuild modules=22 glossary=131 flashcards(+gloss)=187 sims=11 ladderlabs=236.
+
 ### v13.66 (2026-07-22)
 - **Module 16, Quiz 8 (thermography severity) fact-fix.** Resolved the item deferred from the v13.65 QA wave. The question asks about a 25 deg C delta-T measured *between two similar components under the same load* (a faulted MCC starter lug vs. the reference-phase lug). The prior explanation cited an outdated/incorrect "1-10 / 11-20 / >20 deg C" scale. Rewrote the explanation to cite NETA's **component-to-component** criteria (stricter than the delta-T-over-ambient table): a delta-T **>15 deg C** between similar components under similar load is a major discrepancy requiring immediate corrective action. Answer key unchanged (index 3, immediate action) - now correctly justified.
 - Re-audit 0 errors, ruff clean, py_compile clean. Rebuild: modules=22, glossary=131, flashcards(+gloss)=187, sims=11, ladderlabs=236.
