@@ -1,0 +1,505 @@
+/* ===== AET Academy engine ===== */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/[\x3c]/g,'&lt;').replace(/[\x3e]/g,'&gt;');
+function mdLite(raw){
+  var t=esc(raw||'');
+  var lines=t.split(/\r?\n/);var out=[];var inList=false;
+  function inline(x){
+    x=x.replace(/`([^`]+)`/g,'<code>$1</code>');
+    x=x.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    x=x.replace(/(^|[^\w*])\*([^*\n]+)\*(?=[^\w*]|$)/g,'$1<em>$2</em>');
+    x=x.replace(/(^|[^\w_])_([^_\n]+)_(?=[^\w_]|$)/g,'$1<em>$2</em>');
+    return x;
+  }
+  lines.forEach(function(ln){
+    var mh=ln.match(/^(#{1,3})\s+(.*)$/);
+    var mb=ln.match(/^\s*[-*]\s+(.*)$/);
+    if(mb){if(!inList){out.push('<ul style="margin:.3rem 0 .3rem 1.1rem">');inList=true;}out.push('<li>'+inline(mb[1])+'</li>');return;}
+    if(inList){out.push('</ul>');inList=false;}
+    if(mh){var lvl=mh[1].length;out.push('<div style="font-weight:700;font-size:'+(lvl===1?'1.05em':'1em')+';margin:.3rem 0">'+inline(mh[2])+'</div>');return;}
+    out.push(inline(ln));
+  });
+  if(inList)out.push('</ul>');
+  return out.join('<br>').replace(/<\/ul><br>/g,'</ul>').replace(/<br>(<ul)/g,'$1').replace(/<br>(<li)/g,'$1').replace(/(<\/li>)<br>/g,'$1');
+}
+const DEF={name:'',theme:'dark',xp:0,done:[],scores:{},aced:[],sims:[],flashSeen:0,flashBox:{},flashDue:{},notes:{},refPins:[],lastMod:null,qotd:null,exam:null,skillsExam:null,streak:0,bestStreak:0,lastDay:'',ach:[],visits:0,late:false,early:false,opened:false,seenAsg:[],missed:{},guessed:{},qBox:{},qDue:{},goalMin:20,dayMin:{},modExam:{},leaderOptOut:false,bookmarks:[],arcadeBest:{},glossQuizBest:0,glossQuizPlays:0,doneDate:{},examLog:[],fcStars:[],recentSearches:[]};
+let S=Object.assign({},DEF);
+function persist(){localStorage.setItem(acctKey(),JSON.stringify(S));}
+const DECK=FLASH.map(c=>({f:c.f,b:c.b,k:'c:'+c.f})).concat(GLOSS.map(g=>({f:g.term,b:g.def,k:'g:'+g.term})));
+
+function levelInfo(){let xp=S.xp,cur=RANKS[0],next=null;for(let i=0;i<RANKS.length;i++){if(xp>=RANKS[i].xp){cur=RANKS[i];next=RANKS[i+1]||null;}}const base=cur.xp,ceil=next?next.xp:cur.xp+1;const prog=next?Math.min(100,(xp-base)/(ceil-base)*100):100;return{cur,next,prog};}
+function awardXP(n){S.xp+=n;}
+/* ===== Quiz spaced-repetition schedule (v11.0) ===== */
+var SRS_INT=[0,1,3,7,16,30];
+function _dayStr(off){return new Date(Date.now()+(off||0)*864e5).toISOString().slice(0,10);}
+function qsrsGrade(mid,qi,correct){
+  if(!S.qBox)S.qBox={};if(!S.qDue)S.qDue={};
+  var k=mid+'_'+qi,b=S.qBox[k]||0;
+  b=correct?Math.min(5,b+1):0;
+  S.qBox[k]=b;S.qDue[k]=_dayStr(SRS_INT[b]);
+}
+function qsrsGuessPenalty(mid,qi){if(!S.qBox)S.qBox={};if(!S.qDue)S.qDue={};var k=mid+'_'+qi;S.qBox[k]=Math.min(S.qBox[k]||0,1);S.qDue[k]=_dayStr(1);}
+function isBookmarked(key){return (S.bookmarks||[]).indexOf(key)>=0;}
+function toggleBookmark(key,label){
+  if(!S.bookmarks)S.bookmarks=[];
+  var i=S.bookmarks.indexOf(key);
+  if(i>=0){S.bookmarks.splice(i,1);toast('Removed bookmark','ach');}
+  else{S.bookmarks.push(key);toast('&#11088; Bookmarked'+(label?': '+label:''),'xp');}
+  persist();if(typeof render==='function')render();
+  return false;
+}
+function renderBookmarks(){
+  var bm=(S.bookmarks||[]);if(!bm.length)return '';
+  var mods=[],terms=[];
+  bm.forEach(function(k){
+    if(k.indexOf('m:')===0){var id=+k.slice(2);var m=MODS.find(function(x){return x.id===id;});if(m)mods.push(m);}
+    else if(k.indexOf('g:')===0){var t=k.slice(2);var g=GLOSS.find(function(x){return x.term===t;});if(g)terms.push(g);}
+  });
+  if(!mods.length&&!terms.length)return '';
+  var h='<div class="card" style="margin-top:1rem"><div style="display:flex;justify-content:space-between;align-items:center"><b>&#11088; Bookmarks</b><span class="sub" style="font-size:.78rem">'+bm.length+' saved</span></div>';
+  if(mods.length){h+='<div style="margin-top:.6rem;display:flex;flex-wrap:wrap;gap:.4rem">'+mods.map(function(m){return '<button class="btn sec" style="font-size:.8rem" onclick="go(\u0027#module/'+m.id+'\u0027)">M'+m.id+': '+esc(m.title)+'</button>';}).join('')+'</div>';}
+  if(terms.length){h+='<div style="margin-top:.55rem;display:flex;flex-wrap:wrap;gap:.35rem">'+terms.map(function(g){return '<button class="btn sec" style="font-size:.76rem" onclick="go(\u0027#glossary\u0027)">&#128214; '+esc(g.term)+'</button>';}).join('')+'</div>';}
+  h+='</div>';return h;
+}
+function qDueList(){var out=[];if(!S.qDue)return out;var t=_dayStr(0);Object.keys(S.qDue).forEach(function(k){if(S.qDue[k]<=t)out.push(k);});return out;}
+function qDueCount(){return qDueList().length;}
+/* ===== Daily study-goal tracking (v11.0) ===== */
+function logStudy(m){if(!S.dayMin)S.dayMin={};var t=_dayStr(0);S.dayMin[t]=Math.round(((S.dayMin[t]||0)+m)*10)/10;}
+function todayMin(){return (S.dayMin&&S.dayMin[_dayStr(0)])||0;}
+function setGoal(){var cur=S.goalMin||20;var v=window.prompt('Daily study-time goal in minutes (5-240):',cur);if(v===null)return;var n=parseInt(v,10);if(isNaN(n)||n<5||n>240){toast('Enter a number from 5 to 240','warn');return;}S.goalMin=n;persist();if(typeof render==='function')render();toast('&#127919; Daily goal set to '+n+' min','xp');}
+/* ===== Confidence-weighted mastery (v11.0) ===== */
+function confStats(){var correct=0,guessed=0,attempted=0,mods=0;MODS.forEach(function(m){var sc=S.scores[m.id];if(sc===undefined)return;mods++;attempted+=m.quiz.length;correct+=sc;var g=(S.guessed&&S.guessed[m.id])?S.guessed[m.id].length:0;guessed+=Math.min(g,sc);});var confident=correct-guessed;return{correct:correct,guessed:guessed,confident:confident,attempted:attempted,mods:mods,pct:attempted?Math.round(correct/attempted*100):0,cpct:attempted?Math.round(confident/attempted*100):0};}
+function renderConfidence(){
+  var c=confStats();if(!c.attempted)return '';
+  var col=c.cpct>=80?'var(--ok)':c.cpct>=60?'var(--warn)':'var(--fail)';
+  var h='<div class="card" style="margin-top:1rem"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem"><div><b>&#129504; Confidence-weighted mastery</b><div class="sub" style="margin:.2rem 0 0;font-size:.8rem">Raw score counts every correct answer. Confident score removes the '+c.guessed+' answer'+(c.guessed===1?'':'s')+' you flagged as a guess &mdash; so you see what you truly know.</div></div></div>';
+  h+='<div class="grid g3" style="margin-top:.7rem">';
+  h+='<div class="card stat"><div class="big">'+c.pct+'%</div><div class="lbl">Raw score</div></div>';
+  h+='<div class="card stat"><div class="big" style="color:'+col+'">'+c.cpct+'%</div><div class="lbl">Confident score</div></div>';
+  h+='<div class="card stat"><div class="big">'+c.guessed+'</div><div class="lbl">Flagged guesses</div></div>';
+  h+='</div>';
+  if(c.guessed>0)h+='<div class="sub" style="margin-top:.55rem;font-size:.8rem">&#128161; Drill your flagged guesses in <a href="#" onclick="go(\u0027#review\u0027);return false">Weak Spots</a> until they feel automatic.</div>';
+  h+='</div>';
+  return h;
+}
+/* ===== Weekly progress digest (v11.2) ===== */
+function weekStats(){
+  var days=[],total=0,active=0,best=0;
+  for(var i=6;i>=0;i--){
+    var k=_dayStr(-i);var m=(S.dayMin&&S.dayMin[k])||0;m=Math.round(m);
+    days.push({k:k,m:m,dow:new Date(k+'T00:00:00').toLocaleDateString(undefined,{weekday:'short'})});
+    total+=m;if(m>0)active++;if(m>best)best=m;
+  }
+  return {days:days,total:total,active:active,best:best};
+}
+function lifetimeStudy(){var min=0,days=0;if(S.dayMin){for(var k in S.dayMin){var m=S.dayMin[k]||0;if(m>0){min+=m;days++;}}}return{min:Math.round(min),days:days};}
+function firstStudyDay(){var best=null;if(S.dayMin){for(var k in S.dayMin){if((S.dayMin[k]||0)>0&&(best===null||k<best))best=k;}}return best;}
+function daysSinceStudy(){if(!S.dayMin)return null;var last=null;for(var k in S.dayMin){if((S.dayMin[k]||0)>0&&(last===null||k>last))last=k;}if(!last)return null;var a=new Date(last+'T00:00:00'),b=new Date(_dayStr(0)+'T00:00:00');return Math.round((b-a)/864e5);}
+function examReadiness(){
+  var cov=MODS.length?S.done.length/MODS.length:0;
+  var cs=confStats();var conf=cs.attempted?cs.cpct/100:0;
+  var fc=(typeof fcCounts==='function')?fcCounts():{mastered:0};
+  var flash=(typeof DECK!=='undefined'&&DECK.length)?fc.mastered/DECK.length:0;
+  var pct=Math.round(100*(0.4*cov+0.4*conf+0.2*flash));
+  var label=pct>=80?'Exam-ready':pct>=55?'Getting there':pct>=25?'Building up':'Just starting';
+  return {pct:pct,label:label,cov:Math.round(cov*100),conf:cs.cpct||0,flash:Math.round(flash*100)};
+}
+function renderExamReadiness(){
+  if(!S.done.length&&!confStats().attempted)return '';
+  var r=examReadiness();
+  var col=r.pct>=80?'var(--ok)':r.pct>=55?'var(--warn)':'var(--fail)';
+  var h='<div class="card" style="margin-top:1rem"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem"><div><b>&#127919; Final-exam readiness</b><div class="sub" style="margin:.2rem 0 0;font-size:.8rem">Blends module coverage, quiz confidence, and flashcard mastery.</div></div><div style="font-size:1.6rem;font-weight:700;color:'+col+'">'+r.pct+'%</div></div>';
+  h+='<div class="tbar" style="margin:.6rem 0 .5rem"><div class="tfill" style="width:'+r.pct+'%;background:'+col+'"></div></div>';
+  h+='<div style="font-size:.78rem;color:var(--txt2)"><b style="color:'+col+'">'+r.label+'</b> &middot; coverage '+r.cov+'% &middot; quiz confidence '+r.conf+'% &middot; flashcards '+r.flash+'%</div>';if(r.pct<80){var _dims=[['coverage',r.cov,'&#128218; Finish more modules','#learn'],['quiz confidence',r.conf,'&#128221; Retake quizzes to boost confidence','#learn'],['flashcard mastery',r.flash,'&#128196; Review your flashcards','#flash']];_dims.sort(function(a,b){return a[1]-b[1];});var _lo=_dims[0];h+='<div class="sub" style="font-size:.78rem;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--line,#2a2f3a)">&#128161; Biggest lift: <b>'+_lo[0]+'</b> ('+_lo[1]+'%) &mdash; <a href="#" onclick="go(\u0027'+_lo[3]+'\u0027);return false">'+_lo[2]+' &rarr;</a></div>';}h+='</div>';
+  return h;
+}
+function renderStudyHeatmap(){
+  var dm=S.dayMin||{};var keys=Object.keys(dm);
+  if(!keys.length)return '';
+  var WEEKS=10,DAYS=WEEKS*7;
+  // align so the last column ends today; find start = today - (DAYS-1)
+  var cells=[];var maxm=0;var peakK=null;
+  for(var i=DAYS-1;i>=0;i--){var k=_dayStr(-i);var m=dm[k]||0;if(m>maxm){maxm=m;peakK=k;}cells.push({k:k,m:m});}
+  function lvl(m){if(m<=0)return 0;if(m<10)return 1;if(m<25)return 2;if(m<45)return 3;return 4;}
+  var COL=['var(--line,#2a2f3a)','#0e4429','#006d32','#26a641','#39d353'];
+  // build columns of 7 (weeks)
+  var h='<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;margin-bottom:.6rem">&#128197; Study activity <span style="font-size:.72rem;color:var(--txt2);font-weight:400">last '+WEEKS+' weeks</span></div>';
+  h+='<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:.3rem">';
+  for(var w=0;w<WEEKS;w++){
+    h+='<div style="display:flex;flex-direction:column;gap:3px">';
+    for(var d=0;d<7;d++){var c=cells[w*7+d];if(!c){h+='<div style="width:13px;height:13px"></div>';continue;}
+      var L=lvl(c.m);
+      h+='<div title="'+c.k+': '+c.m+' min" style="width:13px;height:13px;border-radius:2px;background:'+COL[L]+'"></div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  h+='<div style="display:flex;align-items:center;gap:5px;margin-top:.5rem;font-size:.7rem;color:var(--txt2)">Less'+COL.map(function(c){return '<span style="width:11px;height:11px;border-radius:2px;background:'+c+';display:inline-block"></span>';}).join('')+'More</div>';
+  if(peakK&&maxm>0)h+='<div style="margin-top:.5rem;font-size:.74rem;color:var(--txt2)">&#128293; Busiest day: <b>'+peakK+'</b> ('+maxm+' min)</div>';
+  h+='</div>';
+  return h;
+}
+function renderWeeklyDigest(){
+  var w=weekStats();if(w.total<=0)return '';
+  var goal=S.goalMin||20;
+  var bars=w.days.map(function(d){
+    var h=w.best?Math.max(4,Math.round(d.m/w.best*46)):4;
+    var met=d.m>=goal;
+    var col=met?'var(--ok)':d.m>0?'var(--acc)':'var(--line)';
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:.25rem;flex:1">'+
+      '<div style="font-size:.62rem;color:var(--txt2)">'+(d.m||'')+'</div>'+
+      '<div style="width:100%;max-width:26px;height:'+h+'px;background:'+col+';border-radius:3px" title="'+d.dow+': '+d.m+' min"></div>'+
+      '<div style="font-size:.6rem;color:var(--txt2)">'+d.dow.charAt(0)+'</div></div>';
+  }).join('');
+  var h='<div class="card" style="margin-top:1rem"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem"><b>&#128200; This week</b><span class="sub" style="font-size:.78rem">last 7 days</span></div>';
+  h+='<div style="display:flex;align-items:flex-end;gap:.35rem;height:70px;margin:.7rem 0 .5rem">'+bars+'</div>';
+  h+='<div class="grid g3">';
+  h+='<div class="card stat"><div class="big">'+fmtMin(w.total)+'</div><div class="lbl">Studied</div></div>';
+  h+='<div class="card stat"><div class="big">'+w.active+'<span style="font-size:.9rem;color:var(--txt2)">/7</span></div><div class="lbl">Active days</div></div>';
+  h+='<div class="card stat"><div class="big">'+(S.streak||0)+'</div><div class="lbl">Day streak</div></div>';
+  h+='</div>';
+  var _gm=w.days.filter(function(d){return d.m>=goal;}).length;
+  h+='<div class="sub" style="margin-top:.55rem;font-size:.78rem">&#127919; Daily goal (&#8805;'+goal+' min) met on <b'+(_gm>0?' style="color:var(--ok)"':'')+'>'+_gm+' of 7 days</b> this week.</div>';
+  var _lt=lifetimeStudy();if(_lt.days>0)h+='<div class="sub" style="margin-top:.3rem;font-size:.78rem">&#128200; Lifetime: <b>'+fmtMin(_lt.min)+'</b> studied across <b>'+_lt.days+'</b> day'+(_lt.days===1?'':'s')+'.</div>';
+  var _ds=daysSinceStudy();if(_ds!==null){var _dsl=_ds===0?'today':_ds===1?'yesterday':_ds+' days ago';h+='<div class="sub" style="margin-top:.3rem;font-size:.78rem'+(_ds>=2?';color:var(--warn)':'')+'">&#128197; Last studied: <b>'+_dsl+'</b>'+(_ds>=2?' &mdash; welcome back!':'')+'</div>';}
+  var _rem=(typeof estRemainingMin==='function')?estRemainingMin():0;if(_rem>0&&w.active>0){var _avg=w.total/w.active;var _pd=Math.max(1,Math.ceil(_rem/_avg));h+='<div class="sub" style="margin-top:.3rem;font-size:.78rem">&#128640; At your pace (~'+Math.round(_avg)+' min/active day), about <b>'+fmtMin(_rem)+'</b> of lessons left &mdash; roughly <b>'+_pd+'</b> more study day'+(_pd===1?'':'s')+' to finish.</div>';}
+  var _wkAgo=_dayStr(-6);var _cw=Object.keys(S.doneDate||{}).filter(function(k){return (S.doneDate[k]||'')>=_wkAgo;}).length;if(_cw>0){h+='<div class="sub" style="margin-top:.3rem;font-size:.78rem;color:var(--ok)">&#9989; <b>'+_cw+'</b> module'+(_cw===1?'':'s')+' completed this week</div>';}
+  h+='</div>';
+  return h;
+}
+/* ===== Daily goal card (v11.0) ===== */
+var FOCUS=null;
+function focusRunning(){return !!(FOCUS&&FOCUS.start);}
+function focusMin(){return focusRunning()?(Date.now()-FOCUS.start)/60000:0;}
+function toggleFocus(){
+  if(focusRunning()){
+    var mins=Math.round(focusMin()*10)/10;
+    FOCUS=null;
+    if(mins>=0.1&&typeof logStudy==='function'){logStudy(mins);if(typeof markDay==='function')markDay();persist();if(typeof toast==='function')toast('&#9201;&#65039; Logged '+mins+' min of focused study','xp');}
+    else if(typeof toast==='function')toast('Focus timer stopped','');
+  }else{
+    FOCUS={start:Date.now()};
+    if(typeof toast==='function')toast('&#9201;&#65039; Focus timer started — study away!','');
+  }
+  if(typeof renderDash==='function')renderDash();
+}
+function focusBtnHtml(){
+  return focusRunning()
+    ?'<button class="btn" style="background:var(--fail);border-color:var(--fail)" onclick="toggleFocus()">&#9209;&#65039; Stop focus timer (running…)</button>'
+    :'<button class="btn sec" onclick="toggleFocus()">&#9201;&#65039; Start focus timer</button>';
+}
+function renderStreakMilestone(){
+  var st=S.streak||0;
+  var marks=[3,7,14,30,60,100];
+  if(st<=0){
+    return '<div class="card" style="margin-top:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Study streak</div><div style="margin-top:.2rem;font-size:.9rem;color:var(--txt2)">&#128293; Study today to start a daily streak &mdash; your first milestone is <b>3 days</b>.</div></div>';
+  }
+  var next=null,prev=0;
+  for(var i=0;i<marks.length;i++){if(marks[i]>st){next=marks[i];prev=i>0?marks[i-1]:0;break;}}
+  var hit=marks.filter(function(m){return st>=m;});
+  var chips=marks.map(function(m){
+    var on=st>=m;
+    return '<span style="display:inline-block;padding:1px 7px;margin:2px;border-radius:10px;font-size:.72rem;'+(on?'background:var(--acc);color:#fff;font-weight:700':'background:var(--bg2);color:var(--txt2)')+'">'+(on?'&#10004; ':'')+m+'d</span>';
+  }).join('');
+  var body;
+  if(next===null){
+    body='<div style="font-weight:700;color:var(--ok);font-size:1.05rem;margin-top:.15rem">&#127942; '+st+'-day streak &mdash; legendary! You have passed every milestone.</div>';
+  }else{
+    var span=next-prev;var into=st-prev;var pct=Math.max(0,Math.min(100,Math.round(into/span*100)));
+    var left=next-st;
+    body='<div style="font-weight:700;font-size:1.05rem;margin-top:.15rem">&#128293; '+st+'-day streak</div>'+
+      '<div class="sub" style="font-size:.8rem;margin:.15rem 0 .4rem">'+left+' day'+(left===1?'':'s')+' to your <b>'+next+'-day</b> milestone.</div>'+
+      '<div style="height:8px;border-radius:5px;background:var(--bg2);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--acc)"></div></div>';
+  }
+  return '<div class="card" style="margin-top:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Streak milestones</div>'+body+'<div style="margin-top:.5rem">'+chips+'</div>'+((S.bestStreak||0)>st?'<div class=\u0022sub\u0022 style=\u0022font-size:.76rem;margin-top:.4rem\u0022>&#127942; Your best streak: <b>'+(S.bestStreak||0)+' days</b>.</div>':'')+'</div>';
+}
+function renderDailyGoal(){
+  var goal=S.goalMin||20,mins=todayMin();var pct=Math.min(100,Math.round(mins/goal*100));
+  var _due=(typeof fcCounts==='function')?fcCounts().dueNow:0;
+  var met=mins>=goal;var col=met?'var(--ok)':'var(--acc)';
+  var h='<div class="card" style="margin-top:1rem;display:flex;gap:1.4rem;align-items:center;flex-wrap:wrap">';
+  h+='<div class="ring" style="--p:'+pct+';min-width:110px"><div class="inner"><div class="pct" style="color:'+col+'">'+Math.round(mins)+'</div><div class="sm">of '+goal+' min</div></div></div>';
+  h+='<div style="flex:1;min-width:180px"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Today\u2019s study goal</div>';
+  if(met)h+='<div style="font-weight:700;color:var(--ok);font-size:1.05rem;margin-top:.15rem">&#127881; Goal reached &mdash; '+Math.round(mins)+' min today!</div><div class="sub" style="font-size:.8rem;margin-top:.2rem">Keep the '+(S.streak||0)+'-day streak alive.</div>';
+  else h+='<div style="font-weight:600;margin-top:.15rem">'+Math.max(0,Math.round(goal-mins))+' min to go</div><div class="sub" style="font-size:.8rem;margin-top:.2rem">A module, a quiz, and a few flashcards get you there.</div>'+(_due>0?'<div class="sub" style="font-size:.78rem;margin-top:.35rem"><a href="#" onclick="go(\u0027#flash\u0027);return false">&#128196; '+_due+' flashcard'+(_due===1?'':'s')+' due now &mdash; a quick review counts &rarr;</a></div>':'');
+  h+='<div class="btnrow" style="margin-top:.6rem">'+focusBtnHtml()+'<button class="btn sec" onclick="setGoal()">&#9881;&#65039; Change goal</button></div></div>';
+  h+='</div>';
+  return h;
+}
+function addXP(n,why){awardXP(n);persist();updateUserCard();toast('+'+n+' XP'+(why?' &middot; '+why:''),'xp');}
+function grantAch(id){if(S.ach.includes(id))return;S.ach.push(id);if(!S.achDate)S.achDate={};if(!S.achDate[id])S.achDate[id]=new Date().toISOString().slice(0,10);const a=ACH.find(x=>x.id===id);awardXP(50);persist();updateUserCard();toast((a?a.icon+' ':'')+'Achievement unlocked: <b>'+(a?a.name:id)+'</b> (+50 XP)','ach');}
+function trackDone(t){return t.mods.every(m=>S.done.includes(m));}
+function checkAch(){
+  if(S.opened)grantAch('first_step');
+  if(S.aced.length>=1)grantAch('quiz_ace');
+  if(S.aced.length>=5)grantAch('sharpshooter');
+  if(S.sims.length>=1)grantAch('tinkerer');
+  if(S.sims.length>=SIMS.length)grantAch('lab_rat');
+  if(S.flashSeen>=50)grantAch('flash_novice');
+  if(S.flashSeen>=250)grantAch('flash_master');
+  if(S.done.length>=10)grantAch('halfway');
+  if(S.done.length>=MODS.length)grantAch('graduate');
+  if(TRACKS.some(trackDone))grantAch('track_done');
+  if(S.exam&&S.exam.pct>=80)grantAch('exam_pass');
+  if(S.exam&&S.exam.pct>=95)grantAch('exam_ace');
+  if(S.skillsExam&&S.skillsExam.pct>=75)grantAch('field_diag');
+  if(S.streak>=3)grantAch('streak_3');
+  if(S.streak>=7)grantAch('streak_7');
+  if(S.streak>=30)grantAch('streak_30');
+  if(S.late)grantAch('night_owl');
+  if(S.early)grantAch('early_bird');
+  if(S.dayMin&&S.goalMin&&Object.keys(S.dayMin).some(function(k){return S.dayMin[k]>=S.goalMin;}))grantAch('goal_met');
+  if(S.modExam){var mep=Object.keys(S.modExam).filter(function(k){return S.modExam[k].pct>=80;}).length;if(mep>=1)grantAch('module_examiner');if(mep>=5)grantAch('module_scholar');}
+  if(S.bookmarks&&S.bookmarks.length>=5)grantAch('collector');
+  persist();
+}
+function markDay(){
+  const today=new Date().toISOString().slice(0,10),h=new Date().getHours();
+  if(h>=22&&!S.late)S.late=true;
+  if(h<6&&!S.early)S.early=true;
+  if(S.lastDay!==today){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    S.streak=(S.lastDay===y)?(S.streak||0)+1:1;
+    if(S.streak>(S.bestStreak||0))S.bestStreak=S.streak;
+    S.lastDay=today;S.visits=(S.visits||0)+1;awardXP(XP.daily_visit);
+  }
+  persist();
+}
+function toast(msg,cls){
+  const t=document.createElement('div');t.className='tst'+(cls?' '+cls:'');t.innerHTML=msg;$('toast').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},3400);
+}
+function setTheme(t){S.theme=t;document.documentElement.setAttribute('data-theme',t);$('themebtn').textContent=t==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';persist();}
+function toggleTheme(){setTheme(S.theme==='dark'?'light':'dark');}
+function applyA11y(){var de=document.documentElement;de.setAttribute('data-fs',String(S.fontScale||0));de.setAttribute('data-contrast',S.contrast?'1':'0');var fb=$('fontbtn');if(fb)fb.textContent=['A','A+','A++'][S.fontScale||0];var cb=$('contrastbtn');if(cb){if(S.contrast)cb.classList.add('on');else cb.classList.remove('on');}}
+function cycleFont(){S.fontScale=((S.fontScale||0)+1)%3;persist();applyA11y();if(typeof toast==='function')toast('Text size: '+['Normal','Large','Extra large'][S.fontScale],'');}
+function toggleContrast(){S.contrast=!S.contrast;persist();applyA11y();if(typeof toast==='function')toast(S.contrast?'High contrast on':'High contrast off','');}
+function overallPct(){return Math.round(S.done.length/MODS.length*100);}
+function trackPct(t){const d=t.mods.filter(m=>S.done.includes(m)).length;return Math.round(d/t.mods.length*100);}
+
+function updateUserCard(){
+  const li=levelInfo();
+  $('u-name').textContent=S.name||'Set your name';
+  $('u-rank').innerHTML='Lv '+li.cur.lvl+' &middot; '+li.cur.name;
+  $('xpfill').style.width=li.prog+'%';
+  $('u-xp').textContent=S.xp+' XP';
+  $('u-next').textContent=li.next?((li.next.xp-S.xp)+' to Lv'+li.next.lvl):'MAX';
+  $('streaktop').innerHTML=S.streak>0?('&#128293; '+S.streak+'-day streak'):'';
+}
+const NAV=[['dash','&#127968;','Dashboard'],['learn','&#128218;','Learn'],['search','&#128269;','Search'],['sims','&#128300;','Simulators'],['ladderlab','&#129520;','Ladder & ST Lab'],['flash','&#128196;','Flashcards'],['arcade','&#127918;','Quiz Arcade'],['review','&#127919;','Weak Spots'],['exam','&#127891;','Final Exam'],['achieve','&#127942;','Achievements'],['leaderboard','&#127941;','Leaderboard'],['glossary','&#128214;','Glossary'],['reference','&#128209;','Reference'],['notes','&#128221;','My Notes'],['plan','&#128197;','Training Plan'],['resources','&#128279;','Resources'],['cert','&#128220;','Certificate']];
+function buildNav(active){
+  $('navmenu').innerHTML=NAV.map(function(it){var id=it[0],ic=it[1],label=it[2];
+    var ct='';
+    if(id==='learn')ct='<span class="ct">'+S.done.length+'/'+MODS.length+'</span>';
+    if(id==='achieve')ct='<span class="ct">'+S.ach.length+'/'+ACH.length+'</span>';
+    if(id==='sims')ct='<span class="ct">'+S.sims.length+'/'+SIMS.length+'</span>';
+    return '<div class="nvi'+(id===active?' on':'')+'" onclick="go(\u0027#'+id+'\u0027)"><span class="ic">'+ic+'</span>'+label+ct+'</div>';
+  }).join('');
+  var cu=(typeof curUser==='function')?curUser():null;
+  if(cu&&cu.role==='Lead'){
+    $('navmenu').innerHTML+='<div class="nvi'+('roster'===active?' on':'')+'" onclick="go(\u0027#roster\u0027)"><span class="ic">&#128101;</span>Team Roster</div>';
+  }
+}
+function go(hash){if(typeof stopReadAloud==='function')stopReadAloud();if(typeof stopModExamTimer==='function')stopModExamTimer();if(location.hash===hash)render();else location.hash=hash;}
+function crumbSet(base){const m={dash:'Dashboard',learn:'Learn',module:'Learn / Module',sims:'Simulators',flash:'Flashcards',arcade:'Quiz Arcade',review:'Weak Spots',exam:'Final Exam',cert:'Certificate',glossary:'Glossary',resources:'Resources',achieve:'Achievements',leaderboard:'Leaderboard',profile:'Profile',roster:'Team Roster',reference:'Reference Library',search:'Search',notes:'My Notes',plan:'Training Plan',ladderlab:'Ladder & ST Lab',quiz:'Knowledge Check'};$('crumb').textContent='AET Academy \u203A '+(m[base]||'');}
+function render(){
+  const hash=location.hash||'#dash';
+  const parts=hash.replace('#','').split('/'),base=parts[0],arg=parts[1];
+  document.querySelectorAll('.view').forEach(v=>{v.classList.remove('on');v.classList.remove('printing');});
+  const map={dash:'v-dash',learn:'v-learn',module:'v-module',sims:'v-sims',flash:'v-flash',arcade:'v-arcade',review:'v-review',exam:'v-exam',cert:'v-cert',glossary:'v-glossary',resources:'v-resources',achieve:'v-achieve',leaderboard:'v-leaderboard',profile:'v-profile',roster:'v-roster',reference:'v-reference',search:'v-search',notes:'v-notes',plan:'v-plan',ladderlab:'v-ladderlab',quiz:'v-module'};
+  const v=$(map[base]||'v-dash');v.classList.add('on');
+  buildNav(base);crumbSet(base);
+  const R={dash:renderDash,learn:renderLearn,module:function(){renderModule(+arg);},sims:renderSims,flash:renderFlash,arcade:renderArcade,review:renderReview,exam:renderExam,cert:renderCert,glossary:renderGlossary,resources:renderResources,achieve:renderAchieve,leaderboard:renderLeaderboard,profile:renderProfile,roster:renderRoster,reference:renderReference,search:renderSearch,notes:renderNotes,plan:renderPlan,ladderlab:renderLadderLab,quiz:function(){renderModule(+arg);var _q=$('quizsec');if(_q&&_q.scrollIntoView)setTimeout(function(){_q.scrollIntoView({behavior:'smooth',block:'start'});},80);}};
+  (R[base]||renderDash)();
+  $('main').scrollTop=0;
+}
+window.addEventListener('hashchange',render);
+
+function estModMin(m){var secs=(m.sections&&m.sections.length)||0;var q=(m.quiz&&m.quiz.length)||0;var labs=(m.lab?1:0)+(m.lab2?1:0);return secs*4+q*1.5+labs*8;}
+function estRemainingMin(){var t=0;MODS.forEach(function(m){if(!S.done.includes(m.id))t+=estModMin(m);});return Math.round(t);}
+function fmtMin(n){if(n<60)return n+' min';var h=Math.floor(n/60),mm=n%60;return h+'h'+(mm?' '+mm+'m':'');}
+function _flatQuiz(){var out=[];MODS.forEach(function(m){(m.quiz||[]).forEach(function(q,qi){out.push({mid:m.id,qi:qi,q:q});});});return out;}
+function _todayKey(){return new Date().toISOString().slice(0,10);}
+function _qotdIndex(n){var s=_todayKey(),h=5381;for(var i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return n?h%n:0;}
+function qotdAns(mid,qi,sel){var m=MODS.find(function(x){return x.id===mid;});if(!m)return;var q=m.quiz[qi];var correct=(sel===q.answer);S.qotd={date:_todayKey(),answered:true,correct:correct,sel:sel};persist();if(correct&&typeof addXP==='function')addXP(2,'question of the day');if(typeof checkAch==='function')checkAch();renderDash();}
+function _flashReviewDue(){
+  if(typeof DECK==='undefined'||!S.flashDue)return 0;
+  var n=0;DECK.forEach(function(c){if(S.flashDue[c.k]&&(typeof fcIsDue!=='function'||fcIsDue(c.k)))n++;});return n;
+}
+function nextBestAction(){
+  var dueQ=(typeof qDueCount==='function')?qDueCount():0;
+  var dueF=_flashReviewDue();
+  if(dueQ>0||dueF>0){var n=dueQ+dueF;return {label:'Review '+n+' due item'+(n===1?'':'s'),hash:(dueF>0?'#flash':'#review'),why:'Spaced repetition is due — review now to lock it in.'};}
+  var inProg=MODS.find(function(m){return !S.done.includes(m.id)&&S.scores[m.id]!==undefined;});
+  if(inProg)return {label:'Continue Module '+inProg.id+': '+inProg.title,hash:'#module/'+inProg.id,why:'You started this module — finish it to earn the badge.'};
+  var next=MODS.find(function(m){return !S.done.includes(m.id);});
+  if(next)return {label:'Start Module '+next.id+': '+next.title,hash:'#module/'+next.id,why:'Next module in your learning path.'};
+  var cs=(typeof confStats==='function')?confStats():{guessed:0};
+  if(cs.guessed>0)return {label:'Drill '+cs.guessed+' flagged guess'+(cs.guessed===1?'':'es'),hash:'#review',why:'Turn your lucky guesses into solid knowledge.'};
+  if(!(S.exam&&S.exam.pct>=80))return {label:'Take the final exam',hash:'#exam',why:'You\u2019ve covered the material — go for certification.'};
+  return null;
+}
+function renderNextStep(){
+  var a=nextBestAction();if(!a)return '';
+  return '<div class="card" style="margin-bottom:1rem;border-left:4px solid var(--accent2);cursor:pointer" onclick="go(\u0027'+a.hash+'\u0027)"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#9193; Recommended next step</div><div style="font-weight:700;margin:.3rem 0 .25rem;font-size:1.02rem">'+esc(a.label)+'</div><div style="font-size:.82rem;color:var(--txt2)">'+esc(a.why)+'</div></div>';
+}
+function renderGettingStarted(){
+  var steps=[
+    {done:(S.opened||S.done.length>0),label:'Open your first module',hash:'#learn'},
+    {done:(Object.keys(S.scores||{}).length>0),label:'Take a module quiz',hash:'#learn'},
+    {done:((S.flashSeen||0)>0),label:'Review a flashcard',hash:'#flash'},
+    {done:((S.sims||[]).length>0),label:'Try a lab simulator',hash:'#sims'},
+    {done:((S.bookmarks||[]).length>0),label:'Bookmark something to revisit',hash:'#glossary'}
+  ];
+  var doneN=steps.filter(function(x){return x.done;}).length;
+  if(doneN>=steps.length)return '';
+  var h='<div class="card" style="margin-bottom:1rem;border-left:4px solid var(--accent)"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem"><b>&#128640; Getting started</b><span style="font-size:.75rem;color:var(--txt2)">'+doneN+' / '+steps.length+' done</span></div>';
+  h+='<div style="margin-top:.6rem;display:flex;flex-direction:column;gap:.35rem">';
+  steps.forEach(function(st){
+    var mark=st.done?'<span style="color:var(--ok)">&#10004;</span>':'<span style="color:var(--txt2)">&#9744;</span>';
+    var txt=st.done?'<span style="color:var(--txt2);text-decoration:line-through">'+st.label+'</span>':'<a href="#" onclick="go(\u0027'+st.hash+'\u0027);return false">'+st.label+'</a>';
+    h+='<div style="display:flex;gap:.5rem;align-items:center;font-size:.9rem">'+mark+txt+'</div>';
+  });
+  h+='</div></div>';
+  return h;
+}
+function _todIndex(n){var s=_todayKey(),h=7919;for(var i=0;i<s.length;i++){h=((h*31)^s.charCodeAt(i))>>>0;}return n?h%n:0;}
+function renderTermOfDay(){
+  if(typeof GLOSS==='undefined'||!GLOSS.length)return '';
+  var g=GLOSS[_todIndex(GLOSS.length)];if(!g)return '';
+  var _te=String(g.term).replace(/\u0027/g,"\\\u0027").replace(/"/g,"&quot;");
+  var _fav=(typeof isBookmarked==='function'&&isBookmarked('g:'+g.term));
+  var _star='<button class="btn sec" style="font-size:.74rem" onclick="toggleBookmark(\u0027g:'+_te+'\u0027,\u0027'+_te+'\u0027);return false">'+(_fav?'&#11088; Saved':'&#9734; Save to favorites')+'</button>';
+  var _spk=(typeof _ttsSupported==='function'&&_ttsSupported())?'<button class="btn sec" style="font-size:.74rem" onclick="speakGlossTerm(\u0027'+_te+'\u0027);return false">&#128266; Hear it</button>':'';
+  var _gm=(typeof glossModule==='function')?glossModule(g.term):-1;
+  var _gmm=(_gm>=0&&typeof MODS!=='undefined')?MODS.find(function(x){return x.id===_gm;}):null;
+  var _gmlink=_gmm?' &middot; <a href="#" onclick="go(\u0027#module/'+_gm+'\u0027);return false">&#128218; Module '+_gm+': '+esc(_gmm.title)+'</a>':'';
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#128218; Term of the day</div><div style="font-weight:700;margin:.3rem 0 .3rem;font-size:1.05rem">'+esc(g.term)+'</div><div style="font-size:.9rem;line-height:1.5;color:var(--txt)">'+esc(g.def)+'</div><div class="btnrow" style="margin-top:.5rem">'+_star+_spk+'</div><div class="sub" style="margin-top:.5rem;font-size:.78rem"><a href="#" onclick="go(\u0027#glossary\u0027);return false">Browse the full glossary &rarr;</a>'+_gmlink+'</div></div>';
+}
+function renderQOTD(){
+  var flat=_flatQuiz();if(!flat.length)return '';
+  var pick=flat[_qotdIndex(flat.length)];var q=pick.q;
+  var st=(S.qotd&&S.qotd.date===_todayKey())?S.qotd:null;
+  var opts=q.options.map(function(o,i){
+    var chk=(st&&st.sel===i)?' checked':'';var dis=st?' disabled':'';
+    var oc=st?'':' onchange="qotdAns('+pick.mid+','+pick.qi+','+i+')"';
+    return '<label><input type="radio" name="qotd"'+chk+dis+oc+'>'+esc(o)+'</label>';
+  }).join('');
+  var fb='';
+  if(st){
+    var _qm=(typeof MODS!=='undefined')?MODS.find(function(x){return x.id===pick.mid;}):null;
+    var _qlink=_qm?'<div class="sub" style="margin-top:.4rem;font-size:.78rem"><a href="#" onclick="go(\u0027#module/'+pick.mid+'\u0027);return false">&#128218; Review Module '+pick.mid+': '+esc(_qm.title)+' &rarr;</a></div>':'';
+    fb='<div class="qf '+(st.correct?'c':'w')+'">'+(st.correct?'\u2713 Correct! ':'\u2717 Not quite. ')+esc(q.explain)+'</div>'+_qlink;
+  }
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#128161; Question of the day</div><div style="font-weight:600;margin:.3rem 0 .55rem">'+esc(q.q)+'</div><div class="qo">'+opts+'</div>'+fb+'</div>';
+}
+var DOMAINS=[
+ {name:'Foundations & Career',icon:'&#127891;',mods:[0,12,18]},
+ {name:'Electrical Fundamentals',icon:'&#9889;',mods:[1,15]},
+ {name:'PLC & Controls Programming',icon:'&#129504;',mods:[2,3,13]},
+ {name:'Sensors & Instrumentation',icon:'&#128225;',mods:[4]},
+ {name:'Motors, VFDs & Drives',icon:'&#9881;&#65039;',mods:[5]},
+ {name:'Fluid Power',icon:'&#128168;',mods:[6]},
+ {name:'HMI/SCADA & Networks',icon:'&#128421;&#65039;',mods:[7,8,14]},
+ {name:'Robotics & Motion',icon:'&#129302;',mods:[9]},
+ {name:'Process Control & Safety',icon:'&#127899;&#65039;',mods:[10,11]},
+ {name:'Maintenance & Panel Build',icon:'&#128295;',mods:[16,17]}
+];
+function _modProg(id){
+  var m=MODS.find(function(x){return x.id===id;});if(!m)return 0;
+  if((S.done||[]).indexOf(id)>=0)return 100;
+  var sc=(S.scores||{})[id];var ql=(m.quiz||[]).length;
+  if(sc!=null&&ql)return Math.round(sc/ql*100);
+  return 0;
+}
+function domainStats(){
+  return DOMAINS.map(function(d){
+    var ps=d.mods.map(_modProg);
+    var avg=ps.length?Math.round(ps.reduce(function(a,b){return a+b;},0)/ps.length):0;
+    var done=d.mods.filter(function(id){return (S.done||[]).indexOf(id)>=0;}).length;
+    return {name:d.name,icon:d.icon,pct:avg,done:done,total:d.mods.length,mods:d.mods};
+  });
+}
+function renderDomains(){
+  var st=domainStats();
+  var overall=Math.round(st.reduce(function(a,d){return a+d.pct;},0)/(st.length||1));
+  var h='<div class="card" style="margin-top:1rem"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.5rem"><div style="font-size:.78rem;color:var(--accent2);font-weight:700">&#129513; COMPETENCY DOMAINS</div><div style="font-size:.76rem;color:var(--txt2)">Avg mastery '+overall+'%</div></div><div class="dgrid" style="margin-top:.6rem">';
+  st.forEach(function(d){
+    var col=d.pct>=80?'var(--ok,#3a3)':(d.pct>=40?'var(--accent2)':'var(--warn,#c90)');
+    h+='<div class="dcard" onclick="go(\u0027#module/'+d.mods[0]+'\u0027)"><div class="dtop"><span class="dico">'+d.icon+'</span><span class="dnm">'+d.name+'</span><span class="dpc">'+d.pct+'%</span></div><div class="tbar"><div class="tfill" style="width:'+d.pct+'%;background:'+col+'"></div></div><div class="dmeta">'+d.done+' / '+d.total+' module'+(d.total>1?'s':'')+' complete</div></div>';
+  });
+  h+='</div></div>';
+  return h;
+}
+var STUDY_TIPS=[{t:"Space it out",b:"Reviewing a topic across several short sessions beats one long cram. The flashcard scheduler already spaces your reviews \u2014 do a little every day."},{t:"Teach it back",b:"After a module, explain the concept out loud as if training a new tech. If you stumble, that is the exact spot to re-read."},{t:"Read the ladder, not the answer",b:"On PLC troubleshooting, trace rung logic left-to-right and predict the output before checking. Prediction builds real diagnostic skill."},{t:"Safety first, always",b:"Before any live work: lockout/tagout, verify zero energy, and know your arc-flash boundary. No shortcut is worth an injury."},{t:"Measure, do not guess",b:"A meter reading beats a hunch. Confirm voltage, continuity, or signal at the point of failure instead of swapping parts blindly."},{t:"Master the fundamentals",b:"Ohm\u0027s law, series vs parallel, and signal types (4-20mA, 0-10V) show up everywhere. Solid basics make advanced topics click."},{t:"One-line diagrams are your map",b:"Learn to read electrical prints and P&IDs. Half of fast troubleshooting is knowing where to look before you pick up a tool."},{t:"Retrieve, then re-read",b:"Try the quiz first, even if you guess. Struggling to recall an answer cements it far better than passively re-reading notes."},{t:"Log your faults",b:"Keep notes on real faults you have chased. Patterns emerge \u2014 the same sensor, drive fault, or loose terminal keeps coming back."},{t:"Understand the process",b:"Know what the machine is supposed to do before diagnosing why it stopped. Context turns a mystery fault into an obvious one."}];
+function renderStudyTip(){
+  if(!STUDY_TIPS||!STUDY_TIPS.length)return "";
+  var i=Math.floor(Date.now()/86400000)%STUDY_TIPS.length;var tp=STUDY_TIPS[i];
+  return '<div class="card" style="margin-top:1rem;border-left:4px solid var(--accent2)"><div style="font-size:.78rem;color:var(--accent2);font-weight:700">&#128161; STUDY TIP OF THE DAY</div><div style="font-weight:600;margin-top:.35rem">'+esc(tp.t)+'</div><div style="font-size:.82rem;color:var(--txt2);margin-top:.25rem;line-height:1.55">'+esc(tp.b)+'</div></div>';
+}
+function _dashTracksHtml(){var h='<div class="card" style="margin-top:1rem"><div style="font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2);margin-bottom:.5rem">&#128202; Track progress</div>';TRACKS.forEach(function(t){var p=trackPct(t);var _dn=t.mods.filter(function(mid){return S.done.includes(mid);}).length;var _nx=t.mods.filter(function(mid){return !S.done.includes(mid);})[0];var _nm=_nx?MODS.find(function(x){return x.id===_nx;}):null;h+='<div style="margin-bottom:.55rem;cursor:pointer" onclick="go(\u0027#learn\u0027)"><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.2rem"><span>'+t.icon+' '+esc(t.name)+'</span><span style="color:var(--txt2)">'+_dn+'/'+t.mods.length+' &middot; '+p+'%'+(p>=100?' <span style="color:var(--ok);font-weight:600">&#9989;</span>':'')+'</span></div><div class="tbar"><div class="tfill" style="width:'+p+'%;background:'+t.color+'"></div></div>'+((p<100&&_nm)?'<div style="font-size:.72rem;color:var(--txt2);margin-top:.2rem;cursor:pointer" onclick="event.stopPropagation();go(&#39;#module/'+_nx+'&#39;)">&#9654; Next: '+esc(_nm.title)+'</div>':'')+'</div>';});h+='</div>';return h;}
+function renderWeakTrack(){
+  if(typeof weakestTrack!=='function')return '';
+  var w=weakestTrack(S);if(!w||!w.tr)return '';
+  var pct=Math.round(w.pct*100);if(pct>=80)return '';
+  var tid=w.tr.id;
+  return '<div class="card" style="margin-top:1rem;border-left:3px solid var(--warn)"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem"><div><b>&#127919; Shore up your weakest track</b><div class="sub" style="margin:.2rem 0 0;font-size:.8rem">'+w.tr.icon+' <b>'+esc(w.tr.name)+'</b> is your lowest quiz average so far at <b style="color:var(--warn)">'+pct+'%</b>. A little review here lifts your overall readiness fast.</div></div><button class="btn sec" style="white-space:nowrap" onclick="go(\u0027#learn\u0027);setTimeout(function(){openTrack(\u0027'+tid+'\u0027);},30)">Review track &rarr;</button></div></div>';
+}
+function renderDash(){
+  const li=levelInfo(),pct=overallPct();
+  const nextMod=MODS.find(m=>!S.done.includes(m.id));
+  let h='<div class="vh"><h2>Welcome'+(S.name?', '+esc(S.name):'')+' &#128075;</h2><div class="sub">Your automation learning journey at a glance.</div></div>';
+  h+=renderGettingStarted();
+  h+=renderNextStep();
+  h+=renderQOTD();
+  h+=renderTermOfDay();
+  var _rem=(typeof estRemainingMin==='function')?estRemainingMin():0;var _remN=MODS.filter(function(m){return !S.done.includes(m.id);}).length;
+  if(_remN>0){h+='<div class="sub" style="margin:-.4rem 0 .8rem;font-size:.82rem">&#9201;&#65039; About <b>'+fmtMin(_rem)+'</b> of study left across '+_remN+' module'+(_remN>1?'s':'')+'.</div>';}
+  else{h+='<div class="sub" style="margin:-.4rem 0 .8rem;font-size:.82rem;color:var(--ok,#3a3)">&#9989; All modules complete &mdash; nice work!</div>';}
+  if(S.lastMod!=null){var _lm=MODS.find(function(x){return x.id===S.lastMod;});if(_lm){var _ld=S.done.includes(_lm.id);h+='<div class="card" style="border-left:4px solid var(--acc);margin-bottom:1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:180px"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">'+(_ld?'Review':'Continue where you left off')+'</div><div style="font-weight:600;margin-top:.15rem">Module '+_lm.id+': '+esc(_lm.title)+'</div></div><button class="btn" onclick="go(\u0027#module/'+_lm.id+'\u0027)">'+(_ld?'&#128260; Review module':'&#9654; Resume')+'</button></div>';}}
+  h+='<div class="grid g2" style="align-items:stretch">';
+  h+='<div class="card" style="display:flex;gap:1.4rem;align-items:center"><div class="ring" style="--p:'+pct+'"><div class="inner"><div class="pct">'+pct+'%</div><div class="sm">course</div></div></div><div><div style="font-size:.8rem;color:var(--txt2)">Rank</div><div style="font-size:1.25rem;font-weight:700;color:var(--accent2)">'+li.cur.name+'</div><div style="font-size:.78rem;color:var(--txt2);margin-top:.3rem">Level '+li.cur.lvl+' &middot; '+S.xp+' XP</div>'+(li.next?'<div style="font-size:.72rem;color:var(--txt2)">'+(li.next.xp-S.xp)+' XP to '+li.next.name+'</div>':'<div style="font-size:.72rem;color:var(--ok)">Max level!</div>')+'</div></div>';
+  h+='<div class="grid g3">';
+  h+='<div class="card stat"><div class="big">'+S.done.length+'</div><div class="lbl">Modules done</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.streak+'</div><div class="lbl">Day streak</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.ach.length+'</div><div class="lbl">Badges</div></div>';
+  h+='<div class="card stat"><div class="big">'+(S.exam?S.exam.pct+'%':'--')+'</div><div class="lbl">Exam best</div></div>';
+  h+='</div></div>';
+  h+=_dashTracksHtml();
+  var _fc=(typeof fcCounts==='function')?fcCounts():null;
+  if(_fc){
+    var _due=_fc.dueNow,_ready=_due>0;
+    h+='<div class="card" style="margin-top:1rem;border-color:'+(_ready?'var(--accent2)':'var(--ok)')+'"><div style="font-size:.78rem;color:var(--txt2)">&#128197; TODAY\u0027S REVIEW</div>';
+    if(_ready)h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.3rem"><div style="font-size:1.05rem;font-weight:600">'+_due+' flashcard'+(_due>1?'s':'')+' due for review</div><button class="btn" onclick="go(\u0027#flash\u0027)">Review now &rarr;</button>'+((typeof fcStarCount==='function'&&fcStarCount()>0)?'<button class="btn sec" style="border-color:#e5b800;color:#e5b800" onclick="studyStarred()">&#11088; '+fcStarCount()+' starred</button>':'')+'</div><div style="font-size:.74rem;color:var(--txt2);margin-top:.3rem">Spaced repetition keeps what you have learned from fading. '+_fc.mastered+'/'+(_fc.mastered+_fc.learning)+' cards mastered.</div>';
+    else h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.3rem"><div style="font-size:1.05rem;font-weight:600;color:var(--ok)">&#9989; All caught up on reviews</div><button class="btn sec" onclick="go(\u0027#flash\u0027)">Study ahead</button>'+((typeof fcStarCount==='function'&&fcStarCount()>0)?'<button class="btn sec" style="border-color:#e5b800;color:#e5b800" onclick="studyStarred()">&#11088; Review '+fcStarCount()+' starred</button>':'')+'</div><div style="font-size:.74rem;color:var(--txt2);margin-top:.3rem">Next review '+((typeof fcWhen==='function')?fcWhen(_fc.next):'soon')+'. '+_fc.mastered+'/'+(_fc.mastered+_fc.learning)+' cards mastered.</div>';
+    h+='</div>';
+  }
+  if(nextMod)h+='<div class="card hover" style="margin-top:1rem" onclick="go(\u0027#module/'+nextMod.id+'\u0027)"><div style="font-size:.78rem;color:var(--txt2)">CONTINUE LEARNING</div><div style="font-size:1.1rem;font-weight:600;margin-top:.2rem">Module '+nextMod.id+': '+esc(nextMod.title)+' &rarr;</div></div>';
+  else h+='<div class="card" style="margin-top:1rem;border-color:var(--ok)"><b style="color:var(--ok)">&#127942; All modules complete!</b> Head to the Final Exam and claim your Certificate.</div>';
+  var myAsg=(typeof assignedTo==='function')?assignedTo(ACCT&&ACCT.current):[];
+  if(myAsg&&myAsg.length){var _uid=ACCT&&ACCT.current;var _seen=S.seenAsg||[];var newAsg=myAsg.filter(function(m){return _seen.indexOf(m)<0;});
+    var items=myAsg.map(function(mid){var m=MODS.find(function(x){return x.id===mid;});var dn=S.done.includes(mid);return{mid:mid,m:m,dn:dn,nw:newAsg.indexOf(mid)>=0,ds:dueStatus(dueOf(_uid,mid),dn)};}).filter(function(x){return x.m;});
+    var openA=items.filter(function(x){return !x.dn;}),overN=items.filter(function(x){return x.ds.cls==='over';}).length;
+    var _rk={over:0,soon:1,ok:2,none:3,done:4};items.sort(function(a,b){return (_rk[a.ds.cls]||9)-(_rk[b.ds.cls]||9)||a.mid-b.mid;});
+    var hdr=overN?('<span style="color:var(--fail)">&#9888; '+overN+' overdue</span>'):(openA.length?openA.length+' to do':'all done! &#127881;');
+    if(newAsg.length)hdr+=' <span class="newpill">'+newAsg.length+' NEW</span>';
+    h+='<div class="card" style="margin-top:1rem;border-color:'+(overN?'var(--fail)':'var(--accent)')+'"><div style="font-size:.78rem;color:var(--accent2);font-weight:700">&#128203; ASSIGNED TO YOU \u00b7 '+hdr+'</div><div class="agrid" style="margin-top:.55rem">';
+    items.forEach(function(x){h+='<div class="achip'+(x.dn?' dn':'')+(x.nw?' nw':'')+'" onclick="go(\u0027#module/'+x.mid+'\u0027)">'+(x.nw?'<span class="newdot">NEW</span> ':'')+(x.dn?'&#9989; ':'&#9711; ')+esc(x.m.title)+((x.ds.label&&!x.dn)?'<span class="db due'+x.ds.cls+'">'+x.ds.label+'</span>':'')+'</div>';});
+    h+='</div></div>';
+    if(newAsg.length&&_uid){S.seenAsg=myAsg.slice();persist();(function(nn){setTimeout(function(){if(typeof toast==='function')toast(nn+' new module'+(nn===1?'':'s')+' assigned to you','xp');},400);})(newAsg.length);}}
+  (function(){var wk=(typeof weakMods==='function')?weakMods():[];if(wk.length){var top=wk.slice(0,3).map(function(w){return '<span class="wschip" onclick="go(&#39;#module/'+w.m.id+'&#39;)">'+w.m.id+'. '+esc(w.m.title)+' <b>'+w.sc+'/'+w.tot+'</b></span>';}).join('');h+='<div class="card" style="margin-top:1rem;border-color:var(--warn)"><div style="font-size:.78rem;color:var(--warn);font-weight:700">&#127919; WEAK SPOTS \u00b7 '+wk.length+' module'+(wk.length===1?'':'s')+' to sharpen</div><div class="wsrow" style="margin-top:.5rem">'+top+'</div><div class="btnrow" style="margin-top:.6rem"><button class="btn" onclick="go(&#39;#review&#39;)">&#127919; Focused review</button></div></div>';}})();
+  h+=renderBookmarks();
+  h+=renderWeeklyDigest();
+  h+=renderDailyGoal();
+  h+=renderStreakMilestone();
+  h+=renderStudyTip();
+  h+=renderConfidence();
+  h+=renderExamReadiness();
+  h+=renderWeakTrack();
+  h+=renderDomains();
+  h+='<div class="vh" style="margin-top:1.6rem"><h2 style="font-size:1.2rem">Your tracks</h2></div><div class="grid g2">';
+  TRACKS.forEach(t=>{const p=trackPct(t);h+='<div class="card track hover" style="border-left-color:'+t.color+'" onclick="go(\u0027#learn\u0027);setTimeout(function(){openTrack(\u0027'+t.id+'\u0027);},30)"><h3>'+t.icon+' '+t.name+'</h3><div class="tbar"><div class="tfill" style="width:'+p+'%;background:'+t.color+'"></div></div><div class="tmeta">'+t.mods.filter(m=>S.done.includes(m)).length+' / '+t.mods.length+' modules &middot; '+p+'%</div></div>';});
+  h+='</div>';
+  h+='<div class="btnrow"><button class="btn" onclick="go(\u0027#flash\u0027)">&#128196; Practice flashcards</button><button class="btn sec" onclick="go(\u0027#sims\u0027)">&#128300; Open simulators</button><button class="btn sec" onclick="go(\u0027#arcade\u0027)">&#127918; Quiz arcade</button></div>';
+  $('v-dash').innerHTML=h;updateUserCard();
+}

@@ -1,0 +1,890 @@
+/* ===== Learn / Modules ===== */
+function modStatus(mid){if(S.done.includes(mid))return'done';if(S.scores[mid]!==undefined||(S.opened&&S.opened.includes&&S.opened.includes(mid)))return'prog';return'new';}
+function setLearnFilt(f){window._learnFilt=f;renderLearn();}
+function surpriseModule(){
+  var pool=MODS.filter(function(m){return !S.done.includes(m.id);});
+  if(!pool.length)pool=MODS.slice();
+  if(!pool.length)return;
+  var m=pool[Math.floor(Math.random()*pool.length)];
+  toast('&#127922; '+m.title);
+  go('#module/'+m.id);
+}
+function renderLearn(){
+  const filt=window._learnFilt||'all';
+  const fbtn=(f,lbl)=>'<button class="chip'+(filt===f?' on':'')+'" onclick="setLearnFilt(\u0027'+f+'\u0027)">'+lbl+'</button>';
+  let h='<div class="vh"><h2>&#128218; Learn</h2><div class="sub">'+MODS.length+' modules across '+TRACKS.length+' tracks &middot; &#9201;&#65039; ~'+fmtMin(Math.round(MODS.reduce(function(a,m){return a+estModMin(m);},0)))+' total. Complete modules to earn XP, badges, and your certificate.</div></div>';
+  var _cd=S.done.length,_ct=MODS.length,_cp=_ct?Math.round(_cd/_ct*100):0;
+  var _remMin=MODS.reduce(function(a,m){return a+(S.done.includes(m.id)?0:estModMin(m));},0);
+  var _remLbl=(_cd>=_ct)?'&#127881; All modules complete':('&#9201;&#65039; ~'+fmtMin(Math.round(_remMin))+' of study remaining');
+  var _tcDone=TRACKS.filter(function(t){return trackPct(t)>=100;}).length;
+  if(_tcDone>0)_remLbl+=' &middot; &#127941; '+_tcDone+' of '+TRACKS.length+' tracks complete';
+  h+='<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem"><b>Course progress</b><span style="color:var(--txt2)">'+_cd+' of '+_ct+' modules &middot; '+_cp+'%</span></div><div class="tbar"><div class="tfill" style="width:'+_cp+'%"></div></div><div style="font-size:.74rem;color:var(--txt2);margin-top:.45rem">'+_remLbl+'</div></div>';
+  var _closest=null;TRACKS.forEach(function(t){var rem=t.mods.filter(function(mid){return !S.done.includes(mid);});var done=t.mods.length-rem.length;if(rem.length===0||done===0)return;if(!_closest||rem.length<_closest.rem.length)_closest={t:t,rem:rem};});
+  if(_closest&&_closest.rem.length<=3){var _n=_closest.rem.length;var _nm=MODS.find(function(x){return x.id===_closest.rem[0];});h+='<div class="card" style="border-left:3px solid var(--acc);margin-bottom:1rem;font-size:.84rem">&#127937; You are <b>'+_n+'</b> module'+(_n===1?'':'s')+' from finishing the <b>'+_closest.t.icon+' '+esc(_closest.t.name)+'</b> track &mdash; <a onclick="go(\u0027#module/'+_closest.rem[0]+'\u0027)" style="cursor:pointer;color:var(--accent2)">next: M'+_closest.rem[0]+(_nm?': '+esc(_nm.title):'')+'</a></div>';}
+  var _nextInc=MODS.find(function(m){return !S.done.includes(m.id);});
+  var _contBtn=_nextInc?'<button class="btn blue" onclick="go(\u0027#module/'+_nextInc.id+'\u0027)" title="Jump to your next unfinished module">&#9654; Continue: Module '+_nextInc.id+'</button> ':'';
+  h+='<div style="margin-bottom:.8rem">'+_contBtn+'<button class="btn ghost" onclick="surpriseModule()" title="Open a random module you have not finished">&#127922; Surprise me</button></div>';
+  h+='<div class="btnrow" style="margin-bottom:.8rem"><button class="btn sec" style="font-size:.78rem" onclick="printSyllabus()">&#128196; Print course syllabus</button><button class="btn sec" style="font-size:.78rem" onclick="downloadSyllabus()">&#11015; Download syllabus</button></div>';
+  var _cAll=MODS.length,_cNew=0,_cProg=0,_cDone=0,_cNote=0;
+  MODS.forEach(function(m){var st=modStatus(m.id);if(st==='new')_cNew++;else if(st==='prog')_cProg++;else if(st==='done')_cDone++;if(S.notes&&(S.notes[m.id]||'').trim())_cNote++;});
+  h+='<div class="lfbar" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem">'+fbtn('all','All ('+_cAll+')')+fbtn('new','Not started ('+_cNew+')')+fbtn('prog','In progress ('+_cProg+')')+fbtn('done','Done ('+_cDone+')')+fbtn('notes','&#128221; Noted ('+_cNote+')')+'</div>';
+  h+='<input class="field" id="learnq" placeholder="Search modules by title..." value="'+esc(window._learnQ||'')+'" oninput="learnSearch(this.value)" style="margin-bottom:1rem">';
+  h+='<!--LCOUNT-->';
+  let shown=0;
+  TRACKS.forEach(t=>{
+    const p=trackPct(t);
+    const _dTrk=t.mods.filter(function(mid){return S.done.includes(mid);}).length;
+    const _trkRem=t.mods.reduce((a,mid)=>a+(S.done.includes(mid)?0:estModMin(MODS.find(x=>x.id===mid)||{})),0);
+    const _q=(window._learnQ||'').toLowerCase();const rows=t.mods.filter(mid=>{const m=MODS.find(x=>x.id===mid);if(!m)return false;if(_q&&m.title.toLowerCase().indexOf(_q)<0)return false;if(filt==='notes')return !!(S.notes&&(S.notes[mid]||'').trim());return filt==='all'||modStatus(mid)===filt;});
+    if(!rows.length)return;
+    shown+=rows.length;
+    h+='<div id="trk-'+t.id+'" class="card track" style="border-left-color:'+t.color+';margin-bottom:1.1rem"><h3>'+t.icon+' '+t.name+' <span style="font-size:.72rem;color:var(--txt2);font-weight:400;margin-left:.4rem">'+_dTrk+'/'+t.mods.length+' modules &middot; '+p+'%</span>'+(p<100?' <span style="font-size:.7rem;color:var(--txt2);font-weight:400;margin-left:.3rem">&#9201;&#65039; ~'+fmtMin(Math.round(_trkRem))+' left</span>':' <span style="font-size:.7rem;color:var(--ok);font-weight:600;margin-left:.2rem">&#9989; Complete</span>')+'</h3><div class="td">'+t.desc+'</div><div class="tbar" style="margin-bottom:.8rem"><div class="tfill" style="width:'+p+'%;background:'+t.color+'"></div></div><div class="mlist">';
+    rows.forEach(mid=>{const m=MODS.find(x=>x.id===mid);const done=S.done.includes(mid);
+      h+='<div class="mrow" onclick="go(\u0027#module/'+mid+'\u0027)"><span class="num">'+mid+'</span><span class="ti">'+esc(m.title)+'</span>'+((S.aced&&S.aced.indexOf(mid)>=0)?' <span title="aced &mdash; perfect quiz score" style="color:#e5b800;font-size:.8rem">&#11088;</span>':'')+'<span class="mtime" style="font-size:.7rem;color:var(--txt2);white-space:nowrap" title="estimated study time">&#9201;&#65039; ~'+fmtMin(Math.round(estModMin(m)))+'</span>'+((S.notes&&(S.notes[mid]||'').trim())?' <span title="you have notes on this module" style="font-size:.7rem;color:var(--txt2)">&#128221;</span>':'')+((m.resources&&m.resources.length)?' <span title="'+m.resources.length+' free resource'+(m.resources.length===1?'':'s')+'" style="font-size:.7rem;color:var(--txt2);white-space:nowrap">&#128279;'+m.resources.length+'</span>':'')+(S.scores[mid]!==undefined?'<span style="font-size:.72rem;color:var(--txt2)">'+S.scores[mid]+'/'+m.quiz.length+'</span>':'')+'<span class="dot'+(done?' done':'')+'" title="'+(done?('complete'+((S.doneDate&&S.doneDate[mid])?' — '+S.doneDate[mid]:'')):'not done')+'"></span></div>';
+    });
+    h+='</div></div>';
+  });
+  var _lq=(window._learnQ||'').trim();var _active=_lq||filt!=='all';
+  var _lcount=_active?'<div class="sub" style="margin:-.4rem 0 1rem;font-size:.8rem">Showing '+shown+' of '+MODS.length+' modules'+(_lq?' matching \u201c'+esc(_lq)+'\u201d':'')+((_lq||filt!=='all')?' &middot; <a href="#" onclick="window._learnQ=\u0027\u0027;setLearnFilt(\u0027all\u0027);return false">clear</a>':'')+'</div>':'';
+  h=h.replace('<!--LCOUNT-->',_lcount);
+  if(!shown)h+='<div class="card" style="color:var(--txt2)">No modules match this filter.</div>';
+  $('v-learn').innerHTML=h;
+}
+function printSyllabus(){
+  var when=new Date().toLocaleDateString();
+  var totalMin=MODS.reduce(function(a,m){return a+estModMin(m);},0);
+  var body='';
+  TRACKS.forEach(function(t){
+    var mods=t.mods.map(function(id){return MODS.find(function(x){return x.id===id;});}).filter(Boolean);
+    if(!mods.length)return;
+    var tmin=mods.reduce(function(a,m){return a+estModMin(m);},0);
+    body+='<h2 style="border-bottom:1px solid #999;padding-bottom:4px;margin-top:22px">'+esc(t.name)+' &mdash; '+mods.length+' modules &middot; ~'+fmtMin(Math.round(tmin))+'</h2>';
+    if(t.desc)body+='<div style="font-size:12px;color:#555;margin-bottom:8px">'+esc(t.desc)+'</div>';
+    mods.forEach(function(m){
+      body+='<div style="margin:14px 0 4px"><b>Module '+m.id+': '+esc(m.title)+'</b> <span style="font-size:11px;color:#666">(~'+fmtMin(Math.round(estModMin(m)))+' &middot; '+((m.quiz&&m.quiz.length)||0)+' quiz Q)</span></div>';
+      if(m.objectives&&m.objectives.length){body+='<div style="font-size:12px;color:#333">Objectives:<ul style="margin:2px 0 2px 20px;padding:0">'+m.objectives.map(function(o){return '<li>'+esc(o)+'</li>';}).join('')+'</ul></div>';}
+    });
+  });
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - Course Syllabus</title><style>body{font-family:Georgia,serif;max-width:760px;margin:24px auto;padding:0 22px;line-height:1.45;color:#111}h1{border-bottom:2px solid #b8962e;font-size:22px;margin-bottom:4px}h2{font-size:16px;color:#333}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; Course Syllabus</h1><div style="font-size:12px;color:#555">'+(S.name?esc(S.name)+' &middot; ':'')+when+' &middot; '+MODS.length+' modules across '+TRACKS.length+' tracks &middot; ~'+fmtMin(Math.round(totalMin))+' total</div>'+body+'<div style="margin-top:26px;font-size:11px;color:#888">Generated by AET Academy \u2014 offline industrial automation training.</div><button onclick="window.print()" style="margin-top:14px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:14px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){if(typeof toast==='function')toast('Allow pop-ups to print syllabus','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+  if(typeof toast==='function')toast('Course syllabus opened','xp');
+}
+function downloadSyllabus(){
+  var when=new Date().toISOString().slice(0,10);
+  var lines=['AET ACADEMY - COURSE SYLLABUS'];
+  if(S.name)lines.push('Learner: '+S.name);
+  lines.push('Generated: '+when);
+  var totalMin=MODS.reduce(function(a,m){return a+estModMin(m);},0);
+  lines.push('Scope: '+MODS.length+' modules across '+TRACKS.length+' tracks - approx '+fmtMin(Math.round(totalMin))+' total');
+  lines.push('==========================================================');
+  TRACKS.forEach(function(t){
+    var mods=t.mods.map(function(id){return MODS.find(function(x){return x.id===id;});}).filter(Boolean);
+    if(!mods.length)return;
+    var tmin=mods.reduce(function(a,m){return a+estModMin(m);},0);
+    lines.push('');
+    lines.push(t.name+' - '+mods.length+' modules, ~'+fmtMin(Math.round(tmin)));
+    if(t.desc)lines.push('  '+_stripTags(t.desc));
+    lines.push('-'.repeat(Math.min(60,t.name.length+30)));
+    mods.forEach(function(m){
+      lines.push('  Module '+m.id+': '+_stripTags(m.title)+'  (~'+fmtMin(Math.round(estModMin(m)))+' - '+((m.quiz&&m.quiz.length)||0)+' Q)');
+      (m.objectives||[]).forEach(function(o){lines.push('    - '+_stripTags(o));});
+    });
+  });
+  var text=lines.join('\n');
+  var blob=new Blob([text],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-course-syllabus-'+when+'.txt';a.click();
+  if(typeof toast==='function')toast('Syllabus downloaded','xp');
+}
+function learnSearch(v){window._learnQ=v;var el=document.getElementById('learnq');var sel=el&&typeof el.selectionStart==='number'?el.selectionStart:null;renderLearn();var e2=document.getElementById('learnq');if(e2){e2.focus&&e2.focus();if(sel!=null&&e2.setSelectionRange){try{e2.setSelectionRange(sel,sel);}catch(_){}}}}
+function openTrack(id){const el=$('trk-'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.style.boxShadow='0 0 0 2px var(--accent2)';setTimeout(function(){el.style.boxShadow='';},1200);}}
+
+function _moduleKeyTerms(id){var out=[];for(var i=0;i<GLOSS.length&&out.length<12;i++){if(glossModule(GLOSS[i].term)===id)out.push(GLOSS[i].term);}return out;}
+function saveModuleTerms(id){
+  var kt=_moduleKeyTerms(id);if(!S.bookmarks)S.bookmarks=[];var n=0;
+  kt.forEach(function(tm){var k='g:'+tm;if(S.bookmarks.indexOf(k)<0){S.bookmarks.push(k);n++;}});
+  if(typeof persist==='function')persist();
+  if(typeof toast==='function')toast(n?('&#11088; Saved '+n+' term'+(n===1?'':'s')):'All terms already saved',n?'xp':'ach');
+  if(typeof render==='function')render();
+  return false;
+}
+function moduleTermQuiz(id){go('#glossary');setTimeout(function(){if(typeof glossQuizStart==='function')glossQuizStart(false,id);},50);}
+function copyModuleTerms(id){
+  var kt=_moduleKeyTerms(id);if(!kt.length){if(typeof toast==='function')toast('No key terms for this module','');return false;}
+  var m=MODS.find(function(x){return x.id===id;});
+  var strip=function(x){return (x||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&[a-z]+;/g,' ').replace(/[ \t]+/g,' ').trim();};
+  var lines=kt.map(function(tm){var g=GLOSS.filter(function(x){return x.term===tm;})[0];return tm+(g?' \u2014 '+strip(g.def):'');});
+  var head=(m?'Module '+id+': '+m.title+' \u2014 Key Terms ('+kt.length+')\n\n':'');
+  var txt=head+lines.join('\n\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('&#128203; '+kt.length+' key term'+(kt.length===1?'':'s')+' copied','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}
+  else if(typeof toast==='function')toast('Clipboard not available','');
+  return false;
+}
+function showGlossTerm(t){window._glossQ=t;window._glossFavOnly=false;go('#glossary');var el=document.getElementById('gfilter');if(el)el.value=t;if(typeof filterGloss==='function')filterGloss(t);}
+function jumpToQuiz(){var el=document.getElementById('quizsec');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function _trackCrumb(id){
+  var t=TRACKS.find(function(x){return x.mods.indexOf(id)>=0;});
+  if(!t)return '';
+  var pos=t.mods.indexOf(id)+1;
+  var _tp=trackPct(t);
+  return ' <span style="color:var(--txt2)">&middot; '+t.icon+' '+esc(t.name)+' &middot; '+pos+' of '+t.mods.length+(_tp>0?' &middot; '+_tp+'% done'+(_tp>=100?' &#9989;':''):'')+'</span>';
+}
+function _trackSiblingsHtml(id){
+  var t=TRACKS.find(function(x){return x.mods.indexOf(id)>=0;});
+  if(!t)return '';
+  var sibs=t.mods.filter(function(mid){return mid!==id&&MODS.find(function(x){return x.id===mid;});});
+  if(!sibs.length)return '';
+  var rows=sibs.map(function(mid){var mm=MODS.find(function(x){return x.id===mid;});var dn=S.done.includes(mid);return '<div style="display:flex;align-items:center;gap:.5rem;padding:.3rem 0;border-top:1px solid var(--bd);cursor:pointer" onclick="go(\u0027#module/'+mid+'\u0027)"><span style="flex:0 0 auto">'+(dn?'&#9989;':'&#9711;')+'</span><span style="flex:1;font-size:.82rem">Module '+mid+': '+esc(mm.title)+'</span><span style="flex:0 0 auto;color:var(--txt2);font-size:.9rem">&rarr;</span></div>';}).join('');
+  return '<div class="phase"><span class="phnum">7</span> '+t.icon+' More in '+esc(t.name)+'</div><div class="card"><div class="sub" style="margin-bottom:.15rem">Other modules in this track. Complete them all to finish '+esc(t.name)+'.</div>'+rows+'</div>';
+}
+function renderModule(id){
+  const m=MODS.find(x=>x.id===id);if(!m){go('#learn');return;}
+  if(!S.opened){S.opened=true;}
+  addXP(XP.module_open,'opened module '+id);checkAch();
+  const done=S.done.includes(id);
+  if(S.lastMod!==id){S.lastMod=id;if(typeof logStudy==='function'){logStudy(4);}persist();}
+  let h='<div class="vh"><div style="font-size:.78rem;color:var(--txt2)"><span style="cursor:pointer" onclick="go(\u0027#learn\u0027)">&larr; All modules</span>'+_trackCrumb(id)+'</div><h2>Module '+id+': '+esc(m.title)+' <button class="btn sec qzlink" onclick="toggleBookmark(\u0027m:'+id+'\u0027,\u0027Module '+id+'\u0027)">'+(isBookmarked('m:'+id)?'&#11088; Bookmarked':'&#9734; Bookmark')+'</button> <button class="btn sec qzlink" onclick="jumpToQuiz()">&#128221; Jump to quiz</button></h2></div>';
+  h+='<div class="sub" style="margin:-.3rem 0 .9rem;font-size:.8rem;color:var(--txt2)">&#128218; Module '+(MODS.findIndex(function(x){return x.id===id;})+1)+' of '+MODS.length+' &middot; &#9201;&#65039; ~'+fmtMin(Math.round(estModMin(m)))+' &middot; '+(m.sections?m.sections.length:0)+' section'+((m.sections&&m.sections.length===1)?'':'s')+' &middot; '+(m.quiz?m.quiz.length:0)+' quiz question'+((m.quiz&&m.quiz.length===1)?'':'s')+((m.lab?1:0)+(m.lab2?1:0)>0?' &middot; '+((m.lab?1:0)+(m.lab2?1:0))+' hands-on lab'+(((m.lab?1:0)+(m.lab2?1:0))===1?'':'s'):'')+((m.resources&&m.resources.length)?' &middot; '+m.resources.length+' free resource'+(m.resources.length===1?'':'s'):'')+((done&&S.doneDate&&S.doneDate[id])?' &middot; <span style="color:var(--ok)">&#9989; Completed '+S.doneDate[id]+'</span>':'')+'</div>';
+  if(!done){var _mtk=TRACKS.find(function(t){return t.mods.indexOf(id)>=0;});
+    if(_mtk){var _pos=_mtk.mods.indexOf(id);var _pre=_mtk.mods.slice(0,_pos).filter(function(mid){return !S.done.includes(mid);});
+      if(_pre.length){h+='<div class="card" style="border-left:3px solid var(--warn);margin-bottom:.9rem;font-size:.83rem"><b>&#128203; Recommended first</b><div class="sub" style="margin:.25rem 0 .4rem;font-size:.8rem">This module builds on earlier ones in the '+_mtk.icon+' '+esc(_mtk.name)+' track you have not finished yet:</div><div style="display:flex;flex-wrap:wrap;gap:.35rem">'+_pre.map(function(mid){var pm=MODS.find(function(x){return x.id===mid;});return '<button class="btn sec" style="font-size:.78rem" onclick="go(\u0027#module/'+mid+'\u0027)">M'+mid+(pm?': '+esc(pm.title):'')+'</button>';}).join('')+'</div></div>';}
+    }
+  }
+  h+='<div class="obj"><h3>&#127919; Learning Objectives</h3><ol>'+m.objectives.map(o=>'<li>'+o+'</li>').join('')+'</ol></div>';
+  var _kt=_moduleKeyTerms(id);var _ktN=GLOSS.filter(function(g){return glossModule(g.term)===id;}).length;if(_kt.length)h+='<div class="card" style="margin-bottom:1rem"><div style="font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2);margin-bottom:.45rem">&#128278; Key terms in this module <span style="font-weight:400;text-transform:none;letter-spacing:0">('+(_ktN>_kt.length?_kt.length+' of '+_ktN:_kt.length)+')</span></div><div style="display:flex;flex-wrap:wrap;gap:.4rem">'+_kt.map(function(tm){var _gd=GLOSS.find(function(g){return g.term===tm;});var _gdt=_gd?esc(_gd.def.replace(/<[^>]+>/g,"")).replace(/"/g,"&quot;"):"";return '<span class="chip" title="'+_gdt+'" style="cursor:pointer" onclick="showGlossTerm(\u0027'+tm.replace(/\u0027/g,"\\\u0027").replace(/"/g,"&quot;")+'\u0027)">'+esc(tm)+'</span>';}).join('')+'</div>'+(_kt.filter(function(tm){return !isBookmarked('g:'+tm);}).length?'<button class="btn sec" style="font-size:.74rem;margin-top:.5rem" onclick="saveModuleTerms('+id+')">&#11088; Save all to favorites</button>':'')+'<button class="btn sec" style="font-size:.74rem;margin-top:.5rem" onclick="copyModuleTerms('+id+')">&#128203; Copy terms</button>'+(_ktN>=4?'<button class="btn sec" style="font-size:.74rem;margin-top:.5rem" onclick="moduleTermQuiz('+id+')">&#129504; Quiz these terms</button>':'')+'</div>';
+  h+='<div class="phase"><span class="phnum">1</span> &#128214; Lecture <button class="btn sec qzlink" id="ttsbtn" onclick="toggleReadAloud('+id+')">&#128266; Read aloud</button></div>';
+  m.sections.forEach(s=>{h+='<div class="sec"><h3>'+s.h+'</h3><div class="bd">'+s.body+'</div></div>';});
+  h+='<div class="phase"><span class="phnum">2</span> &#128295; Hands-On Exercise</div>';
+  h+='<div class="lab"><h3>&#128295; Hands-On Lab: '+m.lab.title+'</h3><div class="tool">Tool: '+m.lab.tool+'</div><ol>'+m.lab.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol></div>';
+  if(m.lab2){h+='<div class="lab lab2"><h3>&#127919; Field Challenge: '+m.lab2.title+'</h3><div class="tool">Tool: '+m.lab2.tool+'</div><ol>'+m.lab2.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol></div>';}
+  if(typeof PANELLINK!=='undefined'&&PANELLINK[id]){var pl=PANELLINK[id];var _base='ElectronWrangler_dist.html#lib='+encodeURIComponent(pl.panel);h+='<div class="lab pnl"><h3>&#9889; Live Panel Trainer</h3><div class="tool">'+esc(pl.label)+'</div><p style="margin:.4rem 0 .7rem;color:var(--txt2)">Open the interactive Electron Wrangler panel in a new tab &mdash; meter it, trip breakers, and trace faults on a real ACY1 schematic. Runs fully offline.</p><a class="btn blue" href="'+_base+'&aet='+id+'" target="_blank" rel="noopener">Open live panel &#9654;</a>';if(pl.challenge){h+=' <a class="btn amber" href="'+_base+'&s='+encodeURIComponent(pl.challenge.states)+'&aet='+id+'" target="_blank" rel="noopener">&#128295; Try a fault challenge &#9654;</a><div class="chal"><b>&#128680; Fault challenge:</b> '+esc(pl.challenge.prompt)+'</div>';}h+='</div>';}
+  if(typeof LADDERLINK!=='undefined'&&LADDERLINK[id]){var ll=LADDERLINK[id];h+='<div class="lab pnl"><h3>&#129520; PLC Ladder Logic \u2014 Live Simulator</h3><p style="margin:.4rem 0 .7rem;color:var(--txt2)">Run this module\u2019s control logic on a live PLC scan engine \u2014 toggle inputs and watch the rungs solve rung-by-rung, right inside the Academy. Try the guided walkthrough on any program.</p>';var _ln={seal:'Seal-in starter',delay:'TON timer',count:'CTU counter',lock:'Safety interlock',latch:'Latch / Unlatch',tof:'Off-delay (TOF)',data:'Data & Compare',scale:'Analog scaling',seq:'Sequencer',shift:'Shift Register',pid:'PID Control',firstout:'First-Out Annunciator',mcr:'MCR Zone Control'};(ll.progs||[]).forEach(function(pg){h+='<a class="btn blue" href="#sims/ladder-'+pg+'">&#9654; '+( _ln[pg]||pg )+'</a> ';});if(ll.sandbox){h+='<a class="btn blue" href="#sims/ladder-build">&#129521; Build your own rung</a> ';}if(ll.challenge){var _fk=ll.fault||'fault';var _fx={fault:'A conveyor stays dead in the RUN state \u2014 set the inputs to run, trace the green power to the open contact, and name the faulted device.',fault2:'A motor restarts by itself and will not stay off \u2014 find the welded/stuck contact that keeps the rung sealed in.',fault3:'Pressing E-Stop does nothing \u2014 find why the safety input never reaches the program.',fault4:'The on-delay timer never finishes and the motor never starts \u2014 find the broken series contact holding the TON input open.',fault5:'The box counter never fills \u2014 find the reset condition that clears the CTU every scan.',fault6:'A latched alarm will not clear when Reset is pressed \u2014 find why the OTU (Unlatch) does nothing.',fault7:'A running total climbs past 20 but the Full lamp never lights \u2014 find the GEQ compare reading the wrong register.',fault8:'The tank is full but the High alarm never trips \u2014 find the wrong DIV scaling constant that keeps the scaled value ten times too small.',fault9:'The traffic sequencer is frozen on one step and never advances \u2014 find why the Hold condition is always true.',fault10:'Packages ride past the sorter and the divert never fires \u2014 track down why the shift register never loads a package.',fault11:'The temperature loop is in AUTO but the heater stays at 0% and never reaches setpoint \u2014 find why the control action is backwards.',fault12:'The first-out annunciator blames Low Air every time \u2014 even when air is fine \u2014 track down the stuck input masking the real root cause.',fault13:'Two of three lamps are dead but the third works \u2014 find the dropped MCR zone killing half the panel.'};h+='<a class="btn amber" href="#sims/ladder-'+_fk+'">&#128295; Fault challenge</a><div class="chal"><b>&#128680; Ladder challenge:</b> '+(_fx[_fk]||_fx.fault)+' (Thirteen fault scenarios available in the sim dropdown.)</div>';}h+='</div>';}
+  h+='<div class="phase"><span class="phnum">3</span> &#128736; In the Field — Cement It</div>';
+  if(m.apps&&m.apps.length){h+='<div class="apps"><div class="appsub">See this module\u2019s core concept applied in real settings, then restated so it sticks.</div>'+m.apps.map(function(a){return '<div class="appc"><div class="appctx">'+a.ctx+'</div><div class="bd">'+a.body+'</div></div>';}).join('')+'</div>';}
+  h+='<div class="phase" id="quizsec"><span class="phnum">4</span> &#128221; Check Your Understanding <button class="btn sec qzlink" onclick="copyQuizLink('+id+')">&#128279; Copy quiz link</button> <button class="btn sec qzlink" onclick="showQuizQR('+id+')">&#128252; QR code</button> <button class="btn sec qzlink" onclick="startModuleExam('+id+')">&#128221; Module exam</button></div>';
+  var _fc=(typeof flagCount==='function')?flagCount(id):0;if(_fc>0)h+='<div class="sub" style="margin:-.3rem 0 .7rem;font-size:.8rem;color:var(--warn)">&#127919; You have <b>'+_fc+'</b> question'+(_fc===1?'':'s')+' from a past attempt flagged for review in this module &mdash; retry the quiz below to clear them.</div>';
+  h+='<div class="qz">';
+  m.quiz.forEach((q,qi)=>{const qid='q'+id+'_'+qi;var gd=((S.guessed&&S.guessed[id])||[]).indexOf(qi)>=0;h+='<div class="qb"><div class="qt">'+(qi+1)+'. '+q.q+'</div><div class="qo" id="'+qid+'">'+q.options.map((o,oi)=>'<label><input type="radio" name="'+qid+'" value="'+oi+'" onchange="chkQuiz('+id+','+qi+','+oi+')">'+o+'</label>').join('')+'</div><div class="qf" id="'+qid+'_f"></div><div class="qg"><button class="gbtn'+(gd?' on':'')+'" id="'+qid+'_g" onclick="toggleGuess('+id+','+qi+')">&#129300; '+(gd?'Flagged: I guessed':'I guessed this')+'</button></div></div>';});
+  h+='</div>';
+  const sc=S.scores[id];if(sc!==undefined)h+='<div class="card" style="border-color:var(--ok)">Module score: <b style="color:var(--ok)">'+sc+'/'+m.quiz.length+'</b>'+(sc===m.quiz.length?' &#127942; Perfect!':' <span style="color:var(--txt2);font-size:.82rem">&mdash; ace all '+m.quiz.length+' for the &#11088; star</span>')+'</div>';
+  var _mex=(S.modExam||{})[id];if(_mex){var _mp=_mex.pct>=80;h+='<div class="card" style="border-color:'+(_mp?'var(--ok)':'var(--warn)')+';font-size:.86rem">&#128221; Module exam best: <b style="color:'+(_mp?'var(--ok)':'var(--warn)')+'">'+_mex.pct+'%</b> ('+_mex.score+'/'+_mex.total+') &middot; '+(_mp?'&#9989; passed':'keep going &mdash; 80% to pass')+(_mex.ts?' <span style="color:var(--txt2);font-size:.76rem">&middot; best set '+new Date(_mex.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</span>':'')+'</div>';}
+  var _mtrk=(typeof TRACKS!=='undefined')?(TRACKS.find(function(t){return t.mods.indexOf(id)>=0;})||{}).id:null;var _relSims=(_mtrk&&typeof SIMS!=='undefined')?SIMS.filter(function(sm){return sm.track===_mtrk;}):[];if(_relSims.length){h+='<div class="card" style="border-left:3px solid var(--accent2);margin-top:.6rem"><div style="font-weight:600;font-size:.86rem;margin-bottom:.35rem">&#128300; Related lab simulators</div><div class="sub" style="font-size:.76rem;margin-bottom:.5rem">Practice this module\u0027s concepts hands-on.</div><div style="display:flex;flex-wrap:wrap;gap:.4rem">'+_relSims.map(function(sm){return '<button class="btn sec" style="font-size:.8rem" onclick="go(\u0027#sims\u0027);setTimeout(function(){var e=document.getElementById(\u0027sim-'+sm.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});},60)">'+sm.icon+' '+sm.name+'</button>';}).join('')+'</div></div>';}
+  if(m.takeaways&&m.takeaways.length){h+='<div class="phase"><span class="phnum">5</span> &#128273; Recap — Lock It In</div><div class="recap"><ul>'+m.takeaways.map(t=>'<li>'+t+'</li>').join('')+'</ul></div>';}
+  h+='<div class="sec" style="margin-top:1.4rem"><h3>&#128218; Free Resources</h3><div class="res">'+m.resources.map(r=>'<a href="'+r.url+'" target="_blank" rel="noopener">'+r.name+' &#8599;</a>').join('')+'</div></div>';
+  h+='<div class="phase"><span class="phnum">6</span> &#128221; My Notes</div>';
+  h+='<div class="card"><div style="font-size:.8rem;color:var(--txt2);margin-bottom:.5rem">Jot your own notes for this module &mdash; troubleshooting tips, questions, part numbers. Saved on this device and included in your printed study guide.</div><textarea class="field" id="mnote'+id+'" rows="4" placeholder="Type your notes here..." oninput="updateNoteCount('+id+')" style="width:100%;resize:vertical;font-family:inherit;line-height:1.4">'+esc((S.notes&&S.notes[id])||'')+'</textarea><div class="btnrow" style="margin-top:.5rem"><button class="btn sec" onclick="saveNote('+id+')">&#128190; Save notes</button><button class="btn sec" onclick="copyModuleNote('+id+')">&#128203; Copy</button><span id="ncnt'+id+'" style="font-size:.72rem;color:var(--txt2);align-self:center">'+_noteCountText((S.notes&&S.notes[id])||'')+'</span><span id="nsv'+id+'" style="font-size:.78rem;color:var(--ok);align-self:center"></span></div></div>';
+  h+=_trackSiblingsHtml(id);
+  h+='<div class="btnrow"><button class="btn'+(done?' sec':'')+'" onclick="markDone('+id+')">'+(done?'&#10003; Completed':'&#10003; Mark Complete')+'</button>';
+  var _pi=MODS.findIndex(x=>x.id===id);if(_pi>0){const pv=MODS[_pi-1];if(pv)h+='<button class="btn sec" onclick="go(\u0027#module/'+pv.id+'\u0027)">&larr; Previous module</button>';}
+  if(id<MODS.length-1){const nx=MODS[MODS.findIndex(x=>x.id===id)+1];if(nx)h+='<button class="btn blue" onclick="go(\u0027#module/'+nx.id+'\u0027)">Next module &rarr;</button>';}
+  if(m.quiz&&m.quiz.length)h+='<button class="btn sec" onclick="studyModuleFlash('+id+')">&#128196; Study as flashcards</button>';
+  h+='<button class="btn sec" onclick="printModule()">&#128424; Print study guide</button></div>';
+  $('v-module').innerHTML=h;
+}
+function saveNote(id){var t=$('mnote'+id);if(!t)return;if(!S.notes)S.notes={};var v=(t.value||'').trim();if(v)S.notes[id]=v;else delete S.notes[id];persist();var sv=$('nsv'+id);if(sv){sv.textContent='\u2713 Saved';setTimeout(function(){var e=$('nsv'+id);if(e)e.textContent='';},1800);}}
+function _noteCountText(t){var w=(t||'').trim().split(/\s+/).filter(Boolean).length;var c=(t||'').length;return w+' word'+(w===1?'':'s')+' \u00b7 '+c+' char'+(c===1?'':'s');}
+function copyModuleNote(id){var t=$('mnote'+id);var v=t?(t.value||'').trim():((S.notes&&S.notes[id])||'').trim();if(!v){if(typeof toast==='function')toast('No notes to copy yet','');return;}var m=MODS.find(function(x){return x.id===id;});var head=(m?'Module '+id+': '+m.title+'\n\n':'');var txt=head+v;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('Notes copied to clipboard','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}else if(typeof toast==='function')toast('Clipboard not available','');}
+function updateNoteCount(id){var t=$('mnote'+id),el=$('ncnt'+id);if(t&&el)el.textContent=_noteCountText(t.value||'');}
+function noteSearch(v){window._noteQ=v;var host=$('notes-list');if(host)host.innerHTML=_notesListHtml();}
+function _noteWordCount(t){var w=(t||'').trim().split(/\s+/).filter(Boolean).length;return '<span style="font-size:.72rem;color:var(--txt2);white-space:nowrap">'+w+' word'+(w===1?'':'s')+'</span>';}
+function _notesListHtml(){
+  var q=(window._noteQ||'').trim().toLowerCase();
+  var ids=Object.keys(S.notes||{}).map(Number).filter(function(id){return (S.notes[id]||'').trim();}).sort(function(a,b){return a-b;});
+  var _total=ids.length;
+  ids=ids.filter(function(id){if(!q)return true;var m=MODS.find(function(x){return x.id===id;});var hay=((m?m.title:'')+' '+(S.notes[id]||'')).toLowerCase();return hay.indexOf(q)>=0;});
+  if(!ids.length)return '<div class="card" style="color:var(--txt2)">No notes match \u201c'+esc(window._noteQ||'')+'\u201d.</div>';
+  var h='';
+  if(q)h+='<div class="sub" style="margin:-.2rem 0 .6rem;font-size:.76rem">Showing '+ids.length+' of '+_total+' note'+(_total===1?'':'s')+' for \u201c'+esc(window._noteQ||'')+'\u201d</div>';
+  ids.forEach(function(id){var m=MODS.find(function(x){return x.id===id;});if(!m)return;
+    h+='<div class="card" style="margin-bottom:.8rem"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap"><div style="font-weight:600">Module '+id+': '+esc(m.title)+'</div><span style="display:flex;gap:.7rem;align-items:baseline">'+_noteWordCount(S.notes[id])+'<span style="cursor:pointer;color:var(--accent2);font-size:.8rem" onclick="go(\u0027#module/'+id+'\u0027)">Open module &rarr;</span></span></div><div style="margin-top:.5rem;font-size:.9rem;line-height:1.5">'+mdLite(S.notes[id])+'</div></div>';
+  });
+  return h;
+}
+function renderNotes(){
+  var ids=Object.keys(S.notes||{}).map(Number).filter(function(id){return (S.notes[id]||'').trim();}).sort(function(a,b){return a-b;});
+  var h='<div class="vh"><h2>&#128221; My Notes</h2><div class="sub">'+ids.length+' module note'+(ids.length===1?'':'s')+' &mdash; everything you have jotted, in one place.</div></div>';
+  if(!ids.length){h+='<div class="card">You have not written any notes yet. Open any module and use the <b>My Notes</b> box at the bottom to capture troubleshooting tips, part numbers, or questions &mdash; they will collect here.</div>';$('v-notes').innerHTML=h;return;}
+  var _tw=ids.reduce(function(a,id){return a+((S.notes[id]||'').trim().split(/\s+/).filter(Boolean).length);},0);
+  h+='<div class="sub" style="margin:-.3rem 0 .6rem;font-size:.78rem">'+_tw+' word'+(_tw===1?'':'s')+' across '+ids.length+' note'+(ids.length===1?'':'s')+'</div>';
+  var _unNoted=(S.done||[]).filter(function(mid){return !((S.notes&&S.notes[mid]||'').trim());}).sort(function(a,b){return a-b;});
+  if(_unNoted.length){var _links=_unNoted.slice(0,4).map(function(mid){var mm=MODS.find(function(x){return x.id===mid;});return '<a onclick="go(\u0027#module/'+mid+'\u0027)" style="cursor:pointer;color:var(--accent2);white-space:nowrap">M'+mid+(mm?': '+esc(mm.title):'')+'</a>';}).join(' &middot; ');h+='<div class="card" style="border-left:3px solid var(--warn);margin-bottom:.7rem;font-size:.82rem">&#128221; You have completed <b>'+_unNoted.length+'</b> module'+(_unNoted.length===1?'':'s')+' without notes &mdash; capture a field tip before it fades: '+_links+(_unNoted.length>4?' &hellip;':'')+'</div>';}
+  h+='<div class="btnrow" style="margin-bottom:.7rem"><button class="btn sec" onclick="printNotes()">&#128424; Print all notes</button><button class="btn sec" onclick="downloadNotes(\u0027md\u0027)">&#11015; Download .md</button><button class="btn sec" onclick="downloadNotes(\u0027txt\u0027)">&#11015; Download .txt</button><button class="btn sec" onclick="copyAllNotes()">&#128203; Copy all</button></div>';
+  if(ids.length>2)h+='<input class="field" style="margin-bottom:.7rem" placeholder="&#128269; Search notes\u2026" value="'+esc(window._noteQ||'')+'" oninput="noteSearch(this.value)">';
+  h+='<div id="notes-list">'+_notesListHtml()+'</div>';
+  $('v-notes').innerHTML=h;
+}
+function printNotes(){
+  var ids=Object.keys(S.notes||{}).map(Number).filter(function(id){return (S.notes[id]||'').trim();}).sort(function(a,b){return a-b;});
+  if(!ids.length){toast('No notes to print','');return;}
+  var body=ids.map(function(id){var m=MODS.find(function(x){return x.id===id;});return '<h3>Module '+id+': '+(m?esc(m.title):'')+'</h3><div style="white-space:pre-wrap">'+esc(S.notes[id])+'</div>';}).join('');
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - My Notes</title><style>body{font-family:Georgia,serif;max-width:720px;margin:24px auto;padding:0 20px;line-height:1.5}h1{border-bottom:2px solid #b8962e;font-size:20px}h3{margin:16px 0 4px;color:#333;font-size:14px}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; My Notes</h1><div style="font-size:12px;color:#555">'+(S.name?esc(S.name)+' &middot; ':'')+new Date().toLocaleDateString()+'</div>'+body+'<button onclick="window.print()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print notes','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+function downloadNotes(fmt){
+  var ids=Object.keys(S.notes||{}).map(Number).filter(function(id){return (S.notes[id]||'').trim();}).sort(function(a,b){return a-b;});
+  if(!ids.length){toast('No notes to export yet','');return;}
+  var md=(fmt==='md');
+  var when=new Date().toISOString().slice(0,10);
+  var lines=[];
+  if(md){lines.push('# AET Academy \u2014 My Notes');lines.push('');lines.push('_Learner: '+(S.name||'(unnamed)')+' \u00b7 Exported: '+when+'_');}
+  else{lines.push('AET ACADEMY - MY NOTES');lines.push('Learner: '+(S.name||'(unnamed)')+'   Exported: '+when);lines.push('========================================');}
+  lines.push('');
+  ids.forEach(function(id){var m=MODS.find(function(x){return x.id===id;});if(!m)return;
+    var title='Module '+id+': '+_stripTags(m.title);
+    if(md){lines.push('## '+title);lines.push('');lines.push(S.notes[id]);lines.push('');}
+    else{lines.push(title);lines.push('-'.repeat(Math.min(title.length,60)));lines.push(S.notes[id]);lines.push('');}
+  });
+  var text=lines.join('\n');
+  var blob=new Blob([text],{type:md?'text/markdown':'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='aet-my-notes-'+when+(md?'.md':'.txt');a.click();
+  toast('Notes exported ('+(md?'.md':'.txt')+')','xp');
+}
+
+
+function copyAllNotes(){
+  var ids=Object.keys(S.notes||{}).map(Number).filter(function(id){return (S.notes[id]||'').trim();}).sort(function(a,b){return a-b;});
+  if(!ids.length){if(typeof toast==='function')toast('No notes to copy yet','');return false;}
+  var when=new Date().toISOString().slice(0,10);
+  var lines=['AET ACADEMY - MY NOTES','Learner: '+(S.name||'(unnamed)')+'   Exported: '+when,'========================================',''];
+  ids.forEach(function(id){var m=MODS.find(function(x){return x.id===id;});if(!m)return;
+    var title='Module '+id+': '+_stripTags(m.title);
+    lines.push(title);lines.push('-'.repeat(Math.min(title.length,60)));lines.push(S.notes[id]);lines.push('');
+  });
+  var text=lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){if(typeof toast==='function')toast(ids.length+' note'+(ids.length===1?'':'s')+' copied to clipboard','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}
+  else if(typeof toast==='function')toast('Clipboard not available','');
+  return false;
+}
+function planPace(){return S.planPace||30;}
+function setPlanPace(v){S.planPace=Math.max(10,Math.min(240,parseInt(v,10)||30));persist();renderPlan();}
+function _planDate(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+function planItems(){
+  var pace=planPace();var cum=0;var items=[];
+  MODS.filter(function(m){return !(S.done||[]).includes(m.id);}).sort(function(a,b){return a.id-b.id;}).forEach(function(m){
+    var mins=Math.round(estModMin(m));cum+=mins;
+    var day=Math.max(1,Math.ceil(cum/pace));
+    var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+day-1);
+    items.push({m:m,mins:mins,cum:cum,day:day,date:d});
+  });
+  return items;
+}
+function renderPlan(){
+  var items=planItems();var pace=planPace();
+  var h='<div class="vh"><h2>&#128197; Your Training Plan</h2><div class="sub">A suggested path through the remaining modules, paced to your schedule.</div></div>';
+  if(!items.length){h+='<div class="card" style="border-color:var(--ok)"><b style="color:var(--ok)">&#127942; All modules complete!</b> You have finished the whole curriculum. Head to the Final Exam and claim your certificate.</div>';$('v-plan').innerHTML=h;return;}
+  var totalMin=items[items.length-1].cum;var finish=items[items.length-1].date;
+  var paces=[15,30,45,60,90,120];
+  var opts=paces.map(function(p){return '<option value="'+p+'"'+(p===pace?' selected':'')+'>'+fmtMin(p)+' / day</option>';}).join('');
+  h+='<div class="card" style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem"><div><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Study pace</div><select class="inp" style="margin-top:.25rem" onchange="setPlanPace(this.value)">'+opts+'</select></div><div><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Or finish by</div><input type="date" class="inp" style="margin-top:.25rem" min="'+_isoDate(new Date())+'" onchange="setPlanTarget(this.value)"></div><div style="flex:1;min-width:160px"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Total time left</div><div style="font-size:1.15rem;font-weight:700">'+fmtMin(totalMin)+'</div></div><div style="flex:1;min-width:130px"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Modules left</div><div style="font-size:1.15rem;font-weight:700">'+items.length+' <span style="font-size:.72rem;color:var(--txt2);font-weight:400">of '+MODS.length+' &middot; '+(MODS.length-items.length)+' done</span></div></div><div style="flex:1;min-width:160px"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">Projected finish</div><div style="font-size:1.15rem;font-weight:700;color:var(--accent2)">'+_planDate(finish)+'</div></div><button class="btn sec" onclick="printPlan()">&#128424; Print plan</button> <button class="btn sec" onclick="downloadPlanICS()">&#128197; Add to calendar (.ics)</button> <button class="btn sec" onclick="copyPlan()">&#128203; Copy plan</button> <button class="btn sec" onclick="downloadPlanCSV()">&#128202; Download .csv</button></div>';
+  var _today=items.filter(function(it){return it.day===1;});
+  if(_today.length){var _tmin=_today[_today.length-1].cum;var _first=_today[0];
+    h+='<div class="card" style="border-left:3px solid var(--accent2);margin-bottom:1rem"><div style="font-weight:600;margin-bottom:.35rem">&#127919; Today\u0027s session <span style="font-size:.75rem;color:var(--txt2);font-weight:400">&middot; ~'+fmtMin(_tmin)+'</span></div><div class="sub" style="font-size:.82rem;margin-bottom:.55rem">'+(_today.length===1?'Complete this module today to stay on pace:':'Complete these '+_today.length+' modules today to stay on pace:')+'</div><div style="display:flex;flex-direction:column;gap:.3rem;margin-bottom:.6rem">'+_today.map(function(it){return '<div style="font-size:.85rem">&#8226; <b>Module '+it.m.id+'</b>: '+esc(it.m.title)+' <span style="color:var(--txt2);font-size:.78rem">('+fmtMin(it.mins)+')</span></div>';}).join('')+'</div><button class="btn" onclick="go(\u0027#module/'+_first.m.id+'\u0027)">Start Module '+_first.m.id+' &#8594;</button></div>';
+  }
+  h+='<div class="card" style="padding:0;overflow:hidden"><table class="ptbl" style="width:100%;border-collapse:collapse"><thead><tr><th>#</th><th>Module</th><th>Est. time</th><th>Complete by</th></tr></thead><tbody>';
+  items.forEach(function(it,i){
+    h+='<tr onclick="go(\u0027#module/'+it.m.id+'\u0027)" style="cursor:pointer"><td>'+(i+1)+'</td><td><b>Module '+it.m.id+'</b>: '+esc(it.m.title)+'</td><td>'+fmtMin(it.mins)+'</td><td>'+_planDate(it.date)+'</td></tr>';
+  });
+  h+='</tbody></table></div><div class="sub" style="margin-top:.6rem;font-size:.78rem">Order follows the recommended curriculum sequence; dates assume '+fmtMin(pace)+' of study each day starting today. Completed modules are skipped.</div>';
+  var _trackFin=TRACKS.map(function(t){var mine=items.filter(function(it){return t.mods.indexOf(it.m.id)>=0;});if(!mine.length)return null;return {t:t,date:mine[mine.length-1].date,n:mine.length};}).filter(function(x){return x;});
+  if(_trackFin.length){h+='<div class="card" style="margin-top:1rem"><div style="font-weight:600;margin-bottom:.5rem">&#127937; Projected track finish dates</div>'+_trackFin.map(function(f){return '<div style="display:flex;justify-content:space-between;font-size:.84rem;padding:.28rem 0;border-top:1px solid var(--bd)"><span>'+f.t.icon+' '+esc(f.t.name)+' <span style="color:var(--txt2);font-size:.76rem">('+f.n+' left)</span></span><b style="color:var(--accent2)">'+_planDate(f.date)+'</b></div>';}).join('')+'</div>';}
+  $('v-plan').innerHTML=h;
+}
+function printPlan(){
+  var items=planItems();if(!items.length){toast('Nothing left to plan &mdash; all done!','');return;}
+  var pace=planPace();var finish=items[items.length-1].date;var totalMin=items[items.length-1].cum;
+  var rows=items.map(function(it,i){return '<tr><td>'+(i+1)+'</td><td>Module '+it.m.id+': '+_stripTags(it.m.title)+'</td><td>'+fmtMin(it.mins)+'</td><td>'+_planDate(it.date)+'</td></tr>';}).join('');
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AET Training Plan</title><style>body{font-family:Arial,Helvetica,sans-serif;margin:2rem;color:#111}h1{margin:0 0 .2rem}.meta{color:#555;font-size:.9rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{border:1px solid #ccc;padding:.4rem .5rem;text-align:left}th{background:#f0f0f0}.btns{margin-top:1.2rem}@media print{.btns{display:none}}</style></head><body><h1>AET Academy \u2014 Training Plan</h1><div class="meta">Learner: '+(_stripTags(S.name||'(unnamed)'))+' &middot; Pace: '+fmtMin(pace)+'/day &middot; Total: '+fmtMin(totalMin)+' &middot; Finish by: '+_planDate(finish)+'</div><table><thead><tr><th>#</th><th>Module</th><th>Est. time</th><th>Complete by</th></tr></thead><tbody>'+rows+'</tbody></table><div class="btns"><button onclick="window.print()">Print</button> <button onclick="window.close()">Close</button></div></body></html>';
+  var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print plan','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+
+
+function _icsDate(d){var y=d.getFullYear();var m=('0'+(d.getMonth()+1)).slice(-2);var da=('0'+d.getDate()).slice(-2);return ''+y+m+da;}
+function _icsEsc(v){return String(v).replace(/<[^>]+>/g,'').replace(/[\\;,]/g,function(c){return '\\'+c;}).replace(/\n/g,'\\n');}
+function downloadPlanICS(){
+  var items=planItems();if(!items.length){if(typeof toast==='function')toast('Nothing left to plan &mdash; all done!','');return false;}
+  var pace=planPace();
+  var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AET Academy//Training Plan//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  var stamp=_icsDate(new Date())+'T000000Z';
+  items.forEach(function(it,i){
+    var end=new Date(it.date);end.setDate(end.getDate()+1);
+    L.push('BEGIN:VEVENT');
+    L.push('UID:aet-plan-'+it.m.id+'-'+i+'@aetacademy');
+    L.push('DTSTAMP:'+stamp);
+    L.push('DTSTART;VALUE=DATE:'+_icsDate(it.date));
+    L.push('DTEND;VALUE=DATE:'+_icsDate(end));
+    L.push('SUMMARY:'+_icsEsc('AET: Module '+it.m.id+' \u2014 '+it.m.title));
+    L.push('DESCRIPTION:'+_icsEsc('Estimated '+fmtMin(it.mins)+' of study. AET Academy training plan (Day '+it.day+', pace '+fmtMin(pace)+'/day).'));
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  var txt=L.join('\r\n');
+  var blob=new Blob([txt],{type:'text/calendar'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-training-plan.ics';a.click();
+  if(typeof toast==='function')toast('Calendar (.ics) downloaded','xp');
+  return false;
+}
+
+function downloadPlanCSV(){
+  var items=planItems();if(!items.length){if(typeof toast==='function')toast('Nothing left to plan \u2014 all done!','');return false;}
+  var q=function(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"';};
+  var rows=[['Order','Module ID','Title','Est minutes','Day','Complete by'].map(q).join(',')];
+  items.forEach(function(it,i){rows.push([i+1,it.m.id,it.m.title,it.mins,it.day,_isoDate(it.date)].map(q).join(','));});
+  var txt=rows.join('\r\n')+'\r\n';
+  var blob=new Blob([txt],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-training-plan.csv';a.click();
+  if(typeof toast==='function')toast('Plan CSV downloaded','xp');
+  return false;
+}
+
+function copyPlan(){
+  var items=planItems();if(!items.length){if(typeof toast==='function')toast('Nothing left to plan &mdash; all done!','');return false;}
+  var pace=planPace();var finish=items[items.length-1].date;var totalMin=items[items.length-1].cum;
+  var head='AET Academy \u2014 Training Plan\nLearner: '+_stripTags(S.name||'(unnamed)')+' \u00b7 Pace: '+fmtMin(pace)+'/day \u00b7 Total: '+fmtMin(totalMin)+' \u00b7 Finish by: '+_planDate(finish)+'\n\n';
+  var body=items.map(function(it,i){return (i+1)+'. Module '+it.m.id+': '+_stripTags(it.m.title)+' \u2014 '+fmtMin(it.mins)+' \u2014 complete by '+_planDate(it.date);}).join('\n');
+  var txt=head+body;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('Training plan copied to clipboard','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}
+  else if(typeof toast==='function')toast('Clipboard not available','');
+  return false;
+}
+
+function _isoDate(d){var y=d.getFullYear();var m=('0'+(d.getMonth()+1)).slice(-2);var da=('0'+d.getDate()).slice(-2);return y+'-'+m+'-'+da;}
+function setPlanTarget(v){
+  if(!v){return;}
+  var parts=v.split('-');var t=new Date(+parts[0],(+parts[1])-1,+parts[2]);t.setHours(0,0,0,0);
+  var today=new Date();today.setHours(0,0,0,0);
+  var days=Math.round((t-today)/86400000)+1;
+  if(days<1){if(typeof toast==='function')toast('Pick a future date','warn');return;}
+  var items=planItems();if(!items.length){if(typeof toast==='function')toast('All modules complete!','');return;}
+  var totalMin=items[items.length-1].cum;
+  var pace=Math.max(10,Math.min(240,Math.ceil(totalMin/days)));
+  S.planPace=pace;persist();
+  if(typeof toast==='function')toast('Pace set to '+fmtMin(pace)+'/day to finish by '+_planDate(t),'xp');
+  renderPlan();
+}
+function printRefBook(){
+  var pins=S.refPins||[];
+  var cn={};REFCATS.forEach(function(c){cn[c[0]]=c[1];});
+  var ordered=REF.slice().sort(function(a,b){
+    var pa=pins.indexOf(refKey(a))>=0?0:1,pb=pins.indexOf(refKey(b))>=0?0:1;
+    if(pa!==pb)return pa-pb;
+    return (cn[a.cat]||'').localeCompare(cn[b.cat]||'');
+  });
+  var body=ordered.map(function(r){
+    var star=(pins.indexOf(refKey(r))>=0)?' &#9733;':'';
+    return '<div class="rc"><div class="rcat">'+(cn[r.cat]||'')+'</div><h3>'+r.title+star+'</h3><div class="rb">'+r.body+'</div></div>';
+  }).join('');
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - Field Reference Booklet</title><style>body{font-family:Georgia,serif;max-width:760px;margin:24px auto;padding:0 20px;line-height:1.45}h1{border-bottom:2px solid #b8962e;font-size:22px}h3{margin:10px 0 4px;font-size:15px;color:#222}.rc{border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:10px 0;page-break-inside:avoid}.rcat{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#b8962e;font-weight:700}.rb{font-size:13px;color:#333}table{border-collapse:collapse;font-size:12px}td,th{border:1px solid #bbb;padding:3px 6px}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; Field Reference Booklet</h1><div style="font-size:12px;color:#555">'+(S.name?esc(S.name)+' &middot; ':'')+REF.length+' cheat sheets &middot; '+new Date().toLocaleDateString()+(pins.length?' &middot; '+pins.length+' pinned first':'')+'</div>'+body+'<button onclick="window.print()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print booklet','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+function chkQuiz(mid,qi,sel){
+  const m=MODS.find(x=>x.id===mid),q=m.quiz[qi],fb=$('q'+mid+'_'+qi+'_f');
+  const correct=sel===q.answer;
+  if(correct){var _gd=((S.guessed&&S.guessed[mid])||[]).indexOf(qi)>=0;fb.className='qf c';fb.innerHTML='\u2713 Correct! '+q.explain+' <span class="confnudge" id="q'+mid+'_'+qi+'_cn">'+(_gd?'&#129300; Flagged as a guess &mdash; added to Weak Spots.':'Confident? <a href="#" onclick="return markGuess('+mid+','+qi+')">No, I guessed</a>')+'</span>';}
+  else{fb.className='qf w';fb.innerHTML='\u2717 Incorrect. '+q.explain;}
+  let cnt=0;document.querySelectorAll('[id^="q'+mid+'_"][id$="_f"]').forEach(f=>{if(f.classList.contains('c'))cnt++;});
+  const prev=S.scores[mid]||0;S.scores[mid]=cnt;
+  if(!S.missed)S.missed={};var mm=(S.missed[mid]||[]).slice();
+  if(correct){mm=mm.filter(function(x){return x!==qi;});}else if(mm.indexOf(qi)<0){mm.push(qi);}
+  if(mm.length)S.missed[mid]=mm;else delete S.missed[mid];
+  if(typeof qsrsGrade==='function')qsrsGrade(mid,qi,correct);
+  if(typeof logStudy==='function')logStudy(1);
+  if(correct&&cnt>prev)addXP(XP.quiz_correct,'correct answer');
+  if(cnt===m.quiz.length&&!S.aced.includes(mid)){S.aced.push(mid);addXP(XP.quiz_perfect,'perfect quiz!');}
+  persist();checkAch();
+}
+function toggleGuess(mid,qi){if(!S.guessed)S.guessed={};var g=(S.guessed[mid]||[]).slice();var k=g.indexOf(qi);if(k>=0)g.splice(k,1);else g.push(qi);if(g.length)S.guessed[mid]=g;else delete S.guessed[mid];persist();var b=$('q'+mid+'_'+qi+'_g');if(b){var on=g.indexOf(qi)>=0;b.className='gbtn'+(on?' on':'');b.innerHTML='&#129300; '+(on?'Flagged: I guessed':'I guessed this');}}
+function markGuess(mid,qi){
+  if(!S.guessed)S.guessed={};var g=(S.guessed[mid]||[]).slice();
+  if(g.indexOf(qi)<0)g.push(qi);S.guessed[mid]=g;if(typeof qsrsGuessPenalty==='function')qsrsGuessPenalty(mid,qi);persist();
+  var cn=$('q'+mid+'_'+qi+'_cn');if(cn)cn.innerHTML='&#129300; Flagged as a guess &mdash; added to Weak Spots.';
+  var b=$('q'+mid+'_'+qi+'_g');if(b){b.className='gbtn on';b.innerHTML='&#129300; Flagged: I guessed this';}
+  return false;
+}
+function copyQuizLink(id){
+  var base=location.href.split('#')[0];var url=base+'#quiz/'+id;
+  function done(){if(typeof toast==='function')toast('&#128279; Quiz link copied &mdash; paste it to send a tech straight to this check','xp');}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done,function(){window.prompt('Copy this quiz link:',url);});return;}}catch(e){}
+  window.prompt('Copy this quiz link:',url);
+}
+/* ===== QR code for quiz deep-links (v11.0) ===== */
+function showQuizQR(id){
+  var m=MODS.find(function(x){return x.id===id;});
+  var base=location.href.split('#')[0];var url=base+'#quiz/'+id;
+  var body=$('qrbody');if(!body)return;
+  if(typeof qrcode==='undefined'){window.prompt('Quiz link:',url);return;}
+  try{
+    var qr=qrcode(0,'M');qr.addData(url);qr.make();
+    var img=qr.createDataURL(5,8);
+    body.innerHTML='<div style="font-weight:700;font-size:.98rem;margin-bottom:.2rem">&#128252; Scan to open this quiz</div>'+
+      '<div class="sub" style="font-size:.8rem;margin-bottom:.8rem">Module '+id+(m?': '+esc(m.title):'')+'</div>'+
+      '<img src="'+img+'" alt="QR code for module '+id+' quiz">'+
+      '<div class="sub" style="font-size:.72rem;margin-top:.7rem;word-break:break-all">'+esc(url)+'</div>'+
+      '<div class="btnrow" style="justify-content:center;margin-top:.6rem"><button class="btn sec" onclick="copyQuizLink('+id+')">&#128279; Copy link</button></div>';
+    $('qrmodal').classList.add('on');
+  }catch(e){window.prompt('Quiz link (QR failed):',url);}
+}
+function hideQR(){var el=$('qrmodal');if(el)el.classList.remove('on');}
+/* ===== Text-to-speech read-aloud of lessons (v11.0) ===== */
+var _ttsOn=false,_ttsId=null;
+function _ttsSupported(){return typeof window!=='undefined'&&'speechSynthesis'in window&&typeof SpeechSynthesisUtterance!=='undefined';}
+function _ttsText(m){
+  var parts=[m.title+'.'];
+  (m.objectives||[]).forEach(function(o){parts.push(o);});
+  (m.sections||[]).forEach(function(sec){parts.push(sec.h+'.');parts.push(_stripTags(sec.body));});
+  (m.takeaways||[]).forEach(function(t){parts.push(t);});
+  return parts.join(' ').replace(/\s+/g,' ').trim();
+}
+function toggleReadAloud(id){
+  if(!_ttsSupported()){toast('Read-aloud is not supported in this browser','warn');return;}
+  if(_ttsOn){stopReadAloud();return;}
+  var m=MODS.find(function(x){return x.id===id;});if(!m)return;
+  try{
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(_ttsText(m));
+    u.rate=0.95;u.onend=function(){stopReadAloud();};u.onerror=function(){stopReadAloud();};
+    _ttsOn=true;_ttsId=id;
+    var b=$('ttsbtn');if(b)b.innerHTML='&#9209;&#65039; Stop reading';
+    window.speechSynthesis.speak(u);
+  }catch(e){toast('Could not start read-aloud','warn');stopReadAloud();}
+}
+function stopReadAloud(){
+  try{if(_ttsSupported())window.speechSynthesis.cancel();}catch(e){}
+  _ttsOn=false;_ttsId=null;
+  var b=$('ttsbtn');if(b)b.innerHTML='&#128266; Read aloud';
+}
+
+function markDone(id){
+  if(!S.done.includes(id)){S.done.push(id);if(!S.doneDate)S.doneDate={};S.doneDate[id]=new Date().toISOString().slice(0,10);addXP(XP.module_done,'module '+id+' complete');
+    if(typeof logActivity==='function')logActivity('complete',ACCT&&ACCT.current,id,ACCT&&ACCT.current);
+    TRACKS.forEach(t=>{if(trackDone(t)&&!(S['t_'+t.id])){S['t_'+t.id]=true;addXP(XP.track_done,t.name+' track complete!');}});
+    persist();checkAch();}
+  renderModule(id);
+}
+function printModule(){const v=$('v-module');v.classList.add('printing');window.print();setTimeout(function(){v.classList.remove('printing');},600);}
+
+/* Glossary */
+function printGloss(){
+  var sorted=GLOSS.slice().sort(function(a,b){return a.term.toLowerCase().localeCompare(b.term.toLowerCase());});
+  var body=sorted.map(function(g){return '<div class="gi"><b>'+g.term+'</b> &mdash; '+g.def+'</div>';}).join('');
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - Glossary</title><style>body{font-family:Georgia,serif;max-width:760px;margin:24px auto;padding:0 20px;line-height:1.4}h1{border-bottom:2px solid #b8962e;font-size:22px}.gi{padding:5px 0;border-bottom:1px solid #eee;font-size:13px;page-break-inside:avoid}.gi b{color:#222}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; Glossary</h1><div style="font-size:12px;color:#555">'+GLOSS.length+' terms (A&ndash;Z) &middot; '+new Date().toLocaleDateString()+'</div>'+body+'<button onclick="window.print()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print glossary','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+function printFlashcards(){
+  if(typeof DECK==='undefined'||!DECK.length){if(typeof toast==='function')toast('No flashcards','warn');return;}
+  var body=DECK.map(function(c,i){return '<div class="fc"><div class="q"><b>'+(i+1)+'.</b> '+c.f+'</div><div class="a">'+c.b+'</div></div>';}).join('');
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - Flashcards</title><style>body{font-family:Georgia,serif;max-width:760px;margin:24px auto;padding:0 20px;line-height:1.4}h1{border-bottom:2px solid #b8962e;font-size:22px}.fc{padding:8px 0;border-bottom:1px solid #eee;page-break-inside:avoid}.fc .q{font-size:13px;color:#222}.fc .a{font-size:12px;color:#555;margin-top:3px;padding-left:16px}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; Flashcards</h1><div style="font-size:12px;color:#555">'+DECK.length+' cards &middot; '+new Date().toLocaleDateString()+'</div>'+body+'<button onclick="window.print()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){if(typeof toast==='function')toast('Allow pop-ups to print flashcards','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+function printResources(){
+  var total=MODS.reduce(function(a,m){return a+((m.resources||[]).length);},0);
+  var body='';MODS.forEach(function(m){if(!m.resources||!m.resources.length)return;body+='<div class="mg"><h2>Module '+m.id+': '+m.title+'</h2>'+m.resources.map(function(r){return '<div class="ri"><b>'+r.name+'</b><br><span class="u">'+r.url+'</span></div>';}).join('')+'</div>';});
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>AET Academy - Resource Library</title><style>body{font-family:Georgia,serif;max-width:760px;margin:24px auto;padding:0 20px;line-height:1.4}h1{border-bottom:2px solid #b8962e;font-size:22px}h2{font-size:15px;margin:16px 0 6px;color:#333}.ri{padding:5px 0;border-bottom:1px solid #eee;font-size:13px;page-break-inside:avoid}.ri .u{font-size:11px;color:#777;word-break:break-all}.mg{page-break-inside:avoid}@media print{button{display:none}}</style></head><body><h1>AET Academy &mdash; Free Resource Library</h1><div style="font-size:12px;color:#555">'+total+' free resources &middot; '+new Date().toLocaleDateString()+'</div>'+body+'<button onclick="window.print()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Print / Save as PDF</button> <button onclick="window.close()" style="margin-top:18px;padding:8px 16px;cursor:pointer">Close</button></body></html>';
+  var w=window.open('','_blank');if(!w){if(typeof toast==='function')toast('Allow pop-ups to print resources','');return;}
+  w.document.open();w.document.write(doc);w.document.close();
+}
+var _modTextCache=null;
+function _modText(id){
+  if(!_modTextCache){_modTextCache={};MODS.forEach(function(m){var parts=[m.title||''];
+    (m.objectives||[]).forEach(function(o){parts.push(o);});
+    (m.sections||[]).forEach(function(sec){parts.push(sec.h||'');parts.push(sec.body||'');});
+    (m.takeaways||[]).forEach(function(t){parts.push(t);});
+    _modTextCache[m.id]=parts.join(' ').toLowerCase();});}
+  return _modTextCache[id]||'';
+}
+function glossModule(term){
+  var key=String(term||'').replace(/\(.*?\)/g,'').trim().toLowerCase();
+  if(key.length<2)return -1;
+  var esc=key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  var re;try{re=new RegExp('\\b'+esc+'\\b','i');}catch(e){re=null;}
+  var ids=MODS.map(function(m){return m.id;}).sort(function(a,b){return a-b;});
+  if(re){for(var i=0;i<ids.length;i++){if(re.test(_modText(ids[i])))return ids[i];}}
+  for(var j=0;j<ids.length;j++){if(_modText(ids[j]).indexOf(key)>=0)return ids[j];}
+  return -1;
+}
+function glossRandom(){
+  if(!GLOSS.length)return;
+  var g=GLOSS[Math.floor(Math.random()*GLOSS.length)];
+  window._glossFavOnly=false;window._glossAlpha='';window._glossQ=g.term;
+  renderGlossary();
+  var el=document.getElementById('gfilter');if(el)el.value=g.term;
+  if(typeof toast==='function')toast('&#128214; '+g.term,'xp');
+}
+function downloadGlossary(){
+  var list=GLOSS.slice().sort(function(a,b){return a.term.toLowerCase()<b.term.toLowerCase()?-1:1;});
+  var lines=list.map(function(g){return g.term+'\n  '+g.def.replace(/<[^>]+>/g,'')+'\n';});
+  var txt='AET Academy \u2014 Glossary ('+list.length+' terms)\n\n'+lines.join('\n');
+  var blob=new Blob([txt],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-glossary.txt';a.click();
+  if(typeof toast==='function')toast('Glossary downloaded','xp');
+}
+function _glossItem(g){
+  var mod=glossModule(g.term);
+  var link=mod>=0?' <a class="glink" onclick="go(\u0027#module/'+mod+'\u0027)">Learn in Module '+mod+' &rarr;</a>':'';
+  var bk='<a class="glink" style="cursor:pointer" onclick="return toggleBookmark(\u0027g:'+g.term.replace(/\u0027/g,"\\\u0027")+'\u0027)">'+(isBookmarked('g:'+g.term)?'&#11088;':'&#9734;')+'</a>';
+  var cp=' <a class="glink" style="cursor:pointer" onclick="return copyGlossDef(\u0027'+g.term.replace(/\u0027/g,"\\\u0027")+'\u0027)" title="Copy definition">&#128203;</a>';
+  var sp=_ttsSupported()?' <a class="glink" style="cursor:pointer" onclick="return speakGlossTerm(\u0027'+g.term.replace(/\u0027/g,"\\\u0027")+'\u0027)" title="Hear it">&#128266;</a>':'';
+  return '<div class="gi"><b>'+g.term+'</b> '+bk+cp+sp+' &mdash; '+g.def+link+'</div>';
+}
+function speakGlossTerm(term){var g=GLOSS.filter(function(x){return x.term===term;})[0];if(!g)return false;try{if(_ttsSupported()){window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(g.term+'. '+g.def.replace(/<[^>]+>/g,' '));u.rate=.95;window.speechSynthesis.speak(u);if(typeof toast==='function')toast('Speaking: '+g.term,'');}}catch(e){}return false;}
+function copyGlossDef(term){
+  var g=GLOSS.filter(function(x){return x.term===term;})[0];if(!g)return false;
+  var txt=g.term+' \u2014 '+g.def.replace(/<[^>]+>/g,'');
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt);}}catch(e){}
+  if(typeof toast==='function')toast('Copied: '+g.term);
+  return false;
+}
+function _glossTermOfDay(){
+  if(!GLOSS.length)return '';
+  var day=Math.floor(Date.now()/86400000);
+  var g=GLOSS[day%GLOSS.length];
+  var saved=isBookmarked('g:'+g.term);
+  return '<div class="card" style="margin-bottom:.7rem;border-left:3px solid var(--acc)"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2);margin-bottom:.3rem">&#127891; Term of the day</div><b>'+g.term+'</b> &mdash; '+g.def+'<div style="margin-top:.5rem"><button class="btn sec" style="font-size:.74rem" onclick="showGlossTerm(\u0027'+g.term.replace(/\u0027/g,"\\\u0027").replace(/"/g,"&quot;")+'\u0027)">&#128269; Focus this term</button> <button class="btn sec" style="font-size:.74rem" onclick="return toggleBookmark(\u0027g:'+g.term.replace(/\u0027/g,"\\\u0027")+'\u0027,\u0027'+g.term.replace(/\u0027/g,"\\\u0027")+'\u0027)">'+(saved?'&#11088; Saved':'&#9734; Save')+'</button>'+((typeof _ttsSupported==='function'&&_ttsSupported())?' <button class="btn sec" style="font-size:.74rem" onclick="return speakGlossTerm(\u0027'+g.term.replace(/\u0027/g,"\\\u0027").replace(/"/g,"&quot;")+'\u0027)">&#128266; Hear it</button>':'')+'</div></div>';
+}
+function copyGlossFavorites(){var favs=GLOSS.filter(function(g){return isBookmarked('g:'+g.term);});if(!favs.length){if(typeof toast==='function')toast('No favorite terms yet \u2014 tap the star beside a term to save it','');return;}var txt='AET Academy \u2014 My Favorite Glossary Terms ('+favs.length+')\n\n'+favs.map(function(g){return g.term+' \u2014 '+g.def;}).join('\n\n');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast(favs.length+' favorite term'+(favs.length===1?'':'s')+' copied','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}else if(typeof toast==='function')toast('Clipboard not available','');}
+function downloadGlossFavorites(){
+  var favs=GLOSS.filter(function(g){return isBookmarked('g:'+g.term);});
+  if(!favs.length){if(typeof toast==='function')toast('No favorite terms yet \u2014 tap the star beside a term to save it','');return false;}
+  var txt='AET Academy \u2014 My Favorite Glossary Terms ('+favs.length+')\n\n'+favs.map(function(g){return g.term+'\n  '+g.def.replace(/<[^>]+>/g,'')+'\n';}).join('\n');
+  var blob=new Blob([txt],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-favorite-terms.txt';a.click();
+  if(typeof toast==='function')toast(favs.length+' favorite term'+(favs.length===1?'':'s')+' downloaded','xp');
+  return false;
+}
+function renderGlossary(){
+  var _favN=GLOSS.filter(function(g){return isBookmarked('g:'+g.term);}).length;
+  let h='<div class="vh"><h2>&#128214; Glossary</h2><div class="sub">'+GLOSS.length+' key automation terms. Type to filter.</div></div>';
+  h+='<input class="field" id="gfilter" placeholder="Filter terms..." oninput="filterGloss(this.value)">';
+  if(!window._glossQ&&!window._glossAlpha&&!window._glossFavOnly&&!window._glossMod)h+=_glossTermOfDay();
+  var _wq='';try{if(typeof weakMods==='function'){var _wm=weakMods();for(var _i=0;_i<_wm.length;_i++){var _wmid=_wm[_i].m.id;var _wtc=GLOSS.filter(function(g){return glossModule(g.term)===_wmid;}).length;if(_wtc>=4){_wq='<button class="btn sec" onclick="glossQuizStart(false,\u0027'+_wmid+'\u0027)" title="Quiz terms from your weakest module">&#127919; Quiz my weak spot</button>';break;}}}}catch(e){}
+  h+='<div class="btnrow" style="margin:.2rem 0 .6rem">'+((window._glossQ||window._glossAlpha||window._glossFavOnly||window._glossMod)?'<button class="btn sec" onclick="clearGlossFilters()">&#10006; Clear filters</button>':'')+'<button class="btn sec'+(window._glossFavOnly?' on':'')+'" onclick="toggleGlossFavOnly()">&#11088; Favorites only'+(_favN?' ('+_favN+')':'')+'</button><button class="btn sec" onclick="glossQuizStart()">&#129504; Term match quiz'+((S.glossQuizBest||0)>0?' &middot; best '+(S.glossQuizBest||0)+'%':'')+'</button>'+_wq+'<button class="btn sec" onclick="glossQuizStart(true)">&#11088; Quiz favorites'+(_favN?' ('+_favN+')':'')+'</button>'+(window._glossMod?'<button class="btn sec" onclick="glossQuizStart(false,\u0027'+window._glossMod+'\u0027)">&#128218; Quiz this module</button>':'')+'<button class="btn sec" onclick="printGloss()">&#128196; Print glossary (A&ndash;Z)</button><button class="btn sec" onclick="downloadGlossary()">&#11015; Download .txt</button><button class="btn sec" onclick="copyGlossFavorites()">&#128203; Copy favorites</button><button class="btn sec" onclick="downloadGlossFavorites()">&#11015;&#65039; Download favorites</button><button class="btn sec" onclick="glossRandom()">&#127922; Random term</button></div>';
+  h+=_glossAlphaBar();
+  h+='<div style="margin:.2rem 0 .6rem"><select class="field" onchange="glossMod(this.value)" style="max-width:340px"><option value="">&#128218; All modules</option>'+MODS.filter(function(m){return GLOSS.some(function(g){return glossModule(g.term)===m.id;});}).map(function(m){var _tc=GLOSS.filter(function(g){return glossModule(g.term)===m.id;}).length;return '<option value="'+m.id+'"'+(String(window._glossMod||'')===String(m.id)?' selected':'')+'>Module '+m.id+': '+esc(m.title)+' ('+_tc+' term'+(_tc===1?'':'s')+')</option>';}).join('')+'</select></div>';
+  h+='<div id="glist">'+_glossListHtml()+'</div>';
+  $('v-glossary').innerHTML=h;
+}
+function _glossAlphaBar(){
+  var have={};GLOSS.forEach(function(g){have[g.term.charAt(0).toUpperCase()]=1;});
+  var cur=window._glossAlpha||'';
+  var b='<div class="btnrow" style="flex-wrap:wrap;gap:.25rem;margin:.2rem 0 .6rem">';
+  b+='<button class="chip'+(cur?'':' on')+'" onclick="glossAlpha(\u0027\u0027)">All</button>';
+  for(var i=65;i<=90;i++){var L=String.fromCharCode(i);if(!have[L])continue;b+='<button class="chip'+(cur===L?' on':'')+'" onclick="glossAlpha(\u0027'+L+'\u0027)">'+L+'</button>';}
+  return b+'</div>';
+}
+function glossAlpha(L){window._glossAlpha=L;renderGlossary();}
+function glossMod(v){window._glossMod=v;renderGlossary();}
+function clearGlossFilters(){window._glossQ='';window._glossAlpha='';window._glossFavOnly=false;window._glossMod='';renderGlossary();}
+function filterGloss(v){window._glossQ=v;var el=$('glist');if(el)el.innerHTML=_glossListHtml();}
+function toggleGlossFavOnly(){window._glossFavOnly=!window._glossFavOnly;renderGlossary();}
+function _glossListHtml(){var f=(window._glossQ||'').toLowerCase();var favOnly=!!window._glossFavOnly;var alpha=window._glossAlpha||'';var mod=window._glossMod||'';var list=GLOSS.filter(function(g){if(favOnly&&!isBookmarked('g:'+g.term))return false;if(alpha&&g.term.charAt(0).toUpperCase()!==alpha)return false;if(mod!==''&&glossModule(g.term)!==+mod)return false;return g.term.toLowerCase().includes(f)||g.def.toLowerCase().includes(f);});if(!list.length)return '<div class="card" style="color:var(--txt2)">'+(favOnly?'No favorite terms yet &mdash; tap the &#9734; beside a term to save it.':'No terms match.')+'</div>';var _mn=mod!==''?MODS.find(function(x){return x.id===+mod;}):null;var count=(f||favOnly||mod!==''||alpha)?'<div class="sub" style="margin:.1rem 0 .6rem;font-size:.78rem">Showing '+list.length+' of '+GLOSS.length+' terms'+(_mn?' &middot; Module '+_mn.id+': '+esc(_mn.title):'')+(alpha?' &middot; starting with '+alpha:'')+'</div>':'';return count+list.map(_glossItem).join('');}
+
+/* Resources */
+function _resourceText(){
+  var lines=[];
+  MODS.forEach(function(m){if(!m.resources||!m.resources.length)return;lines.push('Module '+m.id+': '+m.title);m.resources.forEach(function(r){lines.push('  - '+r.name+'\n    '+r.url);});lines.push('');});
+  var total=MODS.reduce(function(a,m){return a+((m.resources||[]).length);},0);
+  return 'AET Academy \u2014 Free Resource Library ('+total+' resources)\n\n'+lines.join('\n');
+}
+function downloadResources(){
+  var blob=new Blob([_resourceText()],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-resources.txt';a.click();
+  if(typeof toast==='function')toast('Resource list downloaded','xp');
+}
+function copyResources(){
+  var txt=_resourceText();
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('Resource list copied','xp');},function(){if(typeof toast==='function')toast('Copy failed','warn');});}
+  else if(typeof toast==='function')toast('Clipboard not available','warn');
+}
+function renderResources(){
+  var total=MODS.reduce(function(a,m){return a+((m.resources||[]).length);},0);
+  var _modsWithRes=MODS.filter(function(m){return m.resources&&m.resources.length;}).length;
+  var q=(window._resQ||'').toLowerCase();
+  let h='<div class="vh"><h2>&#128279; Resource Library</h2><div class="sub">'+total+' free resources spanning '+_modsWithRes+' of '+MODS.length+' modules, grouped by module. All genuinely free - no trials required.</div></div>';
+  h+='<input class="field" id="resq" placeholder="&#128269; Search resources\u2026" value="'+esc(window._resQ||'')+'" oninput="resourceSearch(this.value)" style="margin-bottom:1rem">';
+  h+='<div class="btnrow" style="margin-bottom:.8rem"><button class="btn sec" onclick="downloadResources()">&#11015; Download list (.txt)</button> <button class="btn sec" onclick="printResources()">&#128196; Print</button> <button class="btn sec" onclick="copyResources()">&#128203; Copy list</button></div>';
+  if(!q&&_modsWithRes>4){h+='<div class="refchips" style="margin-bottom:.8rem">'+MODS.filter(function(m){return m.resources&&m.resources.length;}).map(function(m){return '<span class="refchip" style="cursor:pointer" onclick="var e=$(\u0027res-mod-'+m.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});">M'+m.id+'</span>';}).join('')+'</div>';}
+  var _nextR=null;if(!q){var _nm=MODS.find(function(m){return S.done.indexOf(m.id)<0&&m.resources&&m.resources.length;});if(_nm)_nextR=_nm;}
+  if(_nextR){h+='<div class="card" style="margin-bottom:.9rem;border-left:3px solid var(--accent2)"><div style="font-size:.85rem;font-weight:600;margin-bottom:.35rem">&#128204; Resources for your next module</div><div class="sub" style="font-size:.78rem;margin-bottom:.5rem">Module '+_nextR.id+': '+esc(_nextR.title)+' &mdash; the next one on your path.</div><div class="res">'+_nextR.resources.slice(0,4).map(function(r){return '<a href="'+r.url+'" target="_blank" rel="noopener">'+r.name+' &#8599;</a>';}).join('')+'</div></div>';}
+  h+='<!--RESCOUNT-->';
+  var shown=0;
+  MODS.forEach(m=>{if(!m.resources||!m.resources.length)return;var rs=m.resources.filter(function(r){return !q||r.name.toLowerCase().indexOf(q)>=0||m.title.toLowerCase().indexOf(q)>=0;});if(!rs.length)return;shown+=rs.length;h+='<div class="card" id="res-mod-'+m.id+'" style="margin-bottom:.8rem"><div style="font-size:.9rem;font-weight:600;margin-bottom:.4rem">Module '+m.id+': '+esc(m.title)+' <span style="font-weight:400;color:var(--txt2);font-size:.78rem">('+rs.length+' resource'+(rs.length===1?'':'s')+')</span></div><div class="res">'+rs.map(r=>'<a href="'+r.url+'" target="_blank" rel="noopener">'+r.name+' &#8599;</a>').join('')+'</div></div>';});
+  if(!shown)h+='<div class="card" style="color:var(--txt2)">No resources match &ldquo;'+esc(window._resQ||'')+'&rdquo;.</div>';
+  var _rcnt=(q&&shown)?'<div class="sub" style="margin:-.4rem 0 .7rem;font-size:.78rem">Showing '+shown+' of '+total+' resources for &ldquo;'+esc(window._resQ||'')+'&rdquo;</div>':'';
+  h=h.replace('<!--RESCOUNT-->',_rcnt);
+  $('v-resources').innerHTML=h;
+}
+function resourceSearch(v){window._resQ=v;var el=document.getElementById('resq');var sel=el&&typeof el.selectionStart==='number'?el.selectionStart:null;renderResources();var e2=document.getElementById('resq');if(e2){e2.focus&&e2.focus();if(sel!=null&&e2.setSelectionRange){try{e2.setSelectionRange(sel,sel);}catch(_){}}}}
+
+function downloadStudyPack(){
+  var strip=function(t){return String(t).replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&mdash;/g,'\u2014').replace(/&times;/g,'x').replace(/[ \t]+/g,' ');};
+  var out='AET Academy \u2014 Complete Study Pack\n'+(S.name?('Prepared for: '+S.name+'\n'):'')+'Generated '+new Date().toLocaleDateString()+'\n';
+  out+='\n============================================================\nGLOSSARY ('+GLOSS.length+' terms)\n============================================================\n\n';
+  GLOSS.slice().sort(function(a,b){return a.term.toLowerCase()<b.term.toLowerCase()?-1:1;}).forEach(function(g){out+=g.term+'\n  '+strip(g.def)+'\n\n';});
+  if(typeof DECK!=='undefined'&&DECK.length){out+='\n============================================================\nFLASHCARDS ('+DECK.length+' cards)\n============================================================\n\n';DECK.forEach(function(c,i){out+=(i+1)+'. '+strip(c.f)+'\n   -> '+strip(c.b)+'\n\n';});}
+  if(typeof REF!=='undefined'&&REF.length){out+='\n============================================================\nREFERENCE CARDS ('+REF.length+')\n============================================================\n\n';REF.forEach(function(r){out+=strip(r.title)+'\n'+strip(r.body)+'\n\n';});}
+  if(typeof _resourceText==='function'){out+='\n============================================================\n'+_resourceText()+'\n';}
+  var blob=new Blob([out],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-study-pack.txt';a.click();
+  if(typeof toast==='function')toast('Study pack downloaded','xp');
+}
+
+/* Profile */
+function _libraryStatsHtml(){
+  var favs=(S.bookmarks||[]).filter(function(b){return typeof b==='string'&&b.indexOf('g:')===0;}).length;
+  var notes=Object.keys(S.notes||{}).filter(function(k){return (S.notes[k]||'').trim().length>0;}).length;
+  var seen=S.flashSeen||0;
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;margin-bottom:.5rem">&#128218; Study library</div>'
+    +'<div style="display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.85rem">'
+    +'<div><b style="font-size:1.3rem">'+favs+'</b><div style="color:var(--txt2)">Favorite terms</div></div>'
+    +'<div><b style="font-size:1.3rem">'+notes+'</b><div style="color:var(--txt2)">Module notes</div></div>'
+    +'<div><b style="font-size:1.3rem">'+seen+'</b><div style="color:var(--txt2)">Cards reviewed</div></div>'
+    +'</div></div>';
+}
+function renderProfile(){
+  const li=levelInfo();
+  let h='<div class="vh"><h2>&#128100; Profile</h2><div class="sub">Your identity, stats, and progress data.</div></div>';
+  h+='<div class="card" style="margin-bottom:1rem"><label style="font-size:.82rem;color:var(--txt2)">Your name (appears on your certificate)</label><input class="field" id="pname" value="'+esc(S.name)+'" placeholder="e.g. Jordan Rivera" oninput="setName(this.value)"></div>';
+  var _cu=(typeof curUser==='function')?curUser():null;
+  if(_cu){
+    h+='<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;margin-bottom:.6rem">&#128273; Account</div>';
+    h+='<div style="display:flex;align-items:center;gap:.9rem;flex-wrap:wrap"><div style="font-size:2.2rem">'+_cu.avatar+'</div><div><div style="font-weight:600">'+esc(_cu.name)+'</div><div style="font-size:.75rem;color:var(--txt2)">'+esc(_cu.role||"Technician")+' &middot; joined '+esc(_cu.created||"")+'</div></div></div>';
+    h+='<label class="gl" style="color:var(--txt2)">Avatar</label><div class="gavpick">'+AVATARS.map(function(a){return '<span class="gavo'+(a===_cu.avatar?" on":"")+'" onclick="pfAvatar(&#39;'+a+'&#39;)">'+a+'</span>';}).join('')+'</div>';
+    h+='<label class="gl" style="color:var(--txt2)">Role</label><div class="grolepick">'+ROLES.map(function(r){return '<span class="grolo'+(r===(_cu.role||"Technician")?" on":"")+'" onclick="pfRole(&#39;'+r+'&#39;)">'+r+'</span>';}).join('')+'</div>';
+    h+='<label class="gl" style="color:var(--txt2)">'+(_cu.pin?"Change":"Set")+' PIN <span class="gopt">(4 digits, blank removes it)</span></label><div style="display:flex;gap:.5rem"><input class="field" id="pf-pin" type="password" inputmode="numeric" maxlength="4" placeholder="&bull;&bull;&bull;&bull;" style="max-width:140px"><button class="btn sec" onclick="pfSetPin()">Save PIN</button></div>';
+    h+='<div class="btnrow" style="margin-top:.9rem"><button class="btn sec" style="border-color:var(--accent2)" onclick="switchUser()">&#128100; Switch learner</button><button class="btn sec" onclick="signOut()">&#128682; Sign out</button></div>';
+    h+='</div>';
+  }
+  h+='<div class="grid g4" style="margin-bottom:1rem">';
+  h+='<div class="card stat"><div class="big">'+li.cur.lvl+'</div><div class="lbl">'+li.cur.name+'</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.xp+'</div><div class="lbl">Total XP</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.done.length+'/'+MODS.length+'</div><div class="lbl">Modules</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.ach.length+'/'+ACH.length+'</div><div class="lbl">Badges</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.flashSeen+'</div><div class="lbl">Cards reviewed</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.sims.length+'/'+SIMS.length+'</div><div class="lbl">Sims tried</div></div>';
+  h+='<div class="card stat"><div class="big">'+S.streak+'</div><div class="lbl">Day streak'+((S.bestStreak||0)>0?' &middot; best '+(S.bestStreak||0):'')+'</div></div>';
+  h+='<div class="card stat"><div class="big">'+(S.exam?S.exam.pct+'%':'--')+'</div><div class="lbl">Exam best</div></div>';
+  var _lt=(typeof lifetimeStudy==='function')?lifetimeStudy():{min:0,days:0};
+  h+='<div class="card stat"><div class="big">'+fmtMin(_lt.min)+'</div><div class="lbl">Total study time</div></div>';
+  h+='<div class="card stat"><div class="big">'+_lt.days+'</div><div class="lbl">Days studied</div></div>';
+  h+='<div class="card stat"><div class="big">'+((S.aced&&S.aced.length)||0)+'</div><div class="lbl">Perfect quizzes</div></div>';
+  var _fsd=(typeof firstStudyDay==='function')?firstStudyDay():null;h+='<div class="card stat"><div class="big" style="font-size:1.1rem">'+(_fsd||'&mdash;')+'</div><div class="lbl">Learning since</div></div>';
+  var _qe=0,_qp=0,_qn=0;MODS.forEach(function(m){if(!m.quiz||!m.quiz.length||S.scores[m.id]===undefined)return;_qn++;_qe+=S.scores[m.id];_qp+=m.quiz.length;});
+  var _qa=_qp>0?Math.round(_qe/_qp*100):null;
+  h+='<div class="card stat"><div class="big">'+(_qa===null?'--':_qa+'%')+'</div><div class="lbl">Quiz accuracy'+(_qn?' &middot; '+_qn+' quizzed':'')+'</div></div>';
+  var _mex=S.modExam||{};var _mexP=0;Object.keys(_mex).forEach(function(k){if(_mex[k]&&_mex[k].pct>=80)_mexP++;});
+  h+='<div class="card stat"><div class="big">'+_mexP+'/'+MODS.length+'</div><div class="lbl">Module exams passed</div></div>';
+  h+='</div>';
+  h+=_libraryStatsHtml();
+  h+=trackBreakdownHtml();
+  h+=renderStudyHeatmap();
+  h+='<div class="card"><div style="font-weight:600;margin-bottom:.5rem">Appearance</div><button class="btn sec" onclick="toggleTheme()">Toggle light / dark theme</button></div>';
+  h+='<div class="card" style="margin-top:1rem"><div style="font-weight:600;margin-bottom:.5rem">Your data</div><div style="font-size:.8rem;color:var(--txt2);margin-bottom:.7rem">Progress is saved in this browser. Export it to move to another PC, or import a saved file.</div><div class="btnrow" style="margin-top:0"><button class="btn" onclick="printTranscript()">&#128196; Print transcript</button><button class="btn sec" onclick="exportProgress()">&#11015; Export progress</button><button class="btn sec" onclick="exportProgressCSV()">&#128202; Export CSV (supervisor)</button><button class="btn sec" onclick="copyStudyStats()">&#128203; Copy stats</button><button class="btn sec" onclick="downloadStudyPack()">&#11015; Download study pack</button><button class="btn sec" onclick="document.getElementById(\u0027impfile\u0027).click()">&#11014; Import progress</button><input type="file" id="impfile" accept="application/json" style="display:none" onchange="importProgress(event)"><button class="btn sec" style="border-color:var(--fail);color:var(--fail)" onclick="resetProgress()">&#9888; Reset all</button></div></div>';
+  $('v-profile').innerHTML=h;
+}
+function trackBreakdownHtml(){
+  var rows=TRACKS.map(function(t){
+    var pct=trackPct(t);
+    var scored=0,earned=0,poss=0;
+    t.mods.forEach(function(mid){var m=MODS.find(function(x){return x.id===mid;});if(!m||!m.quiz||S.scores[mid]===undefined)return;scored++;earned+=S.scores[mid];poss+=m.quiz.length;});
+    var acc=poss>0?Math.round(earned/poss*100):null;
+    return {t:t,pct:pct,acc:acc,scored:scored,total:t.mods.length};
+  });
+  var h='<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;margin-bottom:.6rem">&#128200; Track breakdown</div>';
+  var _quizzed=rows.filter(function(r){return r.acc!==null;});
+  if(_quizzed.length>=2){
+    var _best=_quizzed.reduce(function(a,b){return b.acc>a.acc?b:a;});
+    var _worst=_quizzed.reduce(function(a,b){return b.acc<a.acc?b:a;});
+    if(_best.t!==_worst.t){
+      h+='<div style="font-size:.78rem;color:var(--txt2);margin-bottom:.7rem;padding:.45rem .6rem;background:var(--bg2);border-radius:8px;line-height:1.6">&#127942; Strongest: <b>'+esc(_best.t.name)+'</b> ('+_best.acc+'%) &middot; &#128201; Focus on: <b>'+esc(_worst.t.name)+'</b> ('+_worst.acc+'%)</div>';
+    }
+  }
+  rows.forEach(function(r){
+    var accCol=r.acc===null?'var(--txt2)':r.acc>=80?'var(--ok)':r.acc>=60?'var(--warn)':'var(--fail)';
+    var accTxt=r.acc===null?'no quizzes yet':r.acc+'% quiz accuracy ('+r.scored+'/'+r.total+' quizzed)';
+    h+='<div style="margin-bottom:.7rem"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap"><span style="font-weight:600;font-size:.86rem">'+r.t.icon+' '+esc(r.t.name)+'</span><span style="font-size:.74rem;color:'+accCol+'">'+accTxt+'</span></div>';
+    h+='<div class="tbar" style="margin-top:.35rem"><div class="tfill" style="width:'+r.pct+'%;background:'+r.t.color+'"></div></div>';
+    h+='<div style="font-size:.72rem;color:var(--txt2);margin-top:.2rem">'+r.pct+'% complete</div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+function copyStudyStats(){var li=(typeof levelInfo==='function')?levelInfo():null;var rank=(li&&li.cur&&li.cur.name)?li.cur.name:'';var lines=['AET Academy \u2014 My Study Stats'];if(S.name)lines.push('Learner: '+S.name);lines.push('Generated: '+new Date().toISOString().slice(0,10));if(rank)lines.push('Rank: '+rank+(li&&li.cur?(' (Level '+li.cur.lvl+')'):''));lines.push('XP: '+(S.xp||0));lines.push('Modules complete: '+((S.done||[]).length)+' / '+MODS.length+' ('+(typeof overallPct==='function'?overallPct():0)+'%)');lines.push('Day streak: '+(S.streak||0));lines.push('Badges earned: '+((S.ach||[]).length)+' / '+ACH.length);lines.push('Cards reviewed: '+(S.flashSeen||0));lines.push('Knowledge exam: '+(S.exam?(S.exam.pct+'% '+(S.exam.pct>=80?'PASS':'not passed')):'not attempted'));lines.push('Skills exam: '+(S.skillsExam?(S.skillsExam.pct+'% '+(S.skillsExam.pct>=75?'PASS':'not passed')):'not attempted'));var txt=lines.join('\n');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('Study stats copied to clipboard','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}else if(typeof toast==='function')toast('Clipboard not available','');return false;}
+function setName(v){S.name=v;persist();updateUserCard();}
+function exportProgress(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-progress-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Progress exported','xp');}
+function _csvCell(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function exportProgressCSV(){
+  var li=(typeof levelInfo==='function')?levelInfo():null;
+  var rank=(li&&li.cur&&li.cur.name)?li.cur.name:'';
+  var rows=[];
+  rows.push(['AET Academy - Progress Report']);
+  rows.push(['Learner',S.name||'(unnamed)']);
+  rows.push(['Generated',new Date().toISOString().slice(0,10)]);
+  rows.push(['Rank',rank]);
+  rows.push(['Total XP',S.xp||0]);
+  rows.push(['Modules complete',(S.done||[]).length+' / '+MODS.length]);
+  rows.push(['Knowledge exam',S.exam?(S.exam.pct+'% '+(S.exam.pct>=80?'PASS':'not passed')):'not attempted']);
+  rows.push(['Skills exam',S.skillsExam?(S.skillsExam.pct+'% '+(S.skillsExam.pct>=75?'PASS':'not passed')):'not attempted']);
+  rows.push([]);
+  rows.push(['Module ID','Module','Completed','Quiz correct','Quiz total','Quiz %','Aced']);
+  MODS.forEach(function(m){
+    var done=(S.done||[]).indexOf(m.id)>=0;
+    var qtot=(m.quiz&&m.quiz.length)?m.quiz.length:0;
+    var sc=(S.scores&&S.scores[m.id]!=null)?S.scores[m.id]:'';
+    var pct=(sc!==''&&qtot)?Math.round(sc/qtot*100):'';
+    var aced=(S.aced||[]).indexOf(m.id)>=0;
+    rows.push([m.id,_stripTags(m.title),done?'yes':'no',sc,qtot,pct===''?'':pct+'%',aced?'yes':'no']);
+  });
+  var csv=rows.map(function(r){return r.map(_csvCell).join(',');}).join('\r\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='aet-progress-report-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  toast('CSV report exported','xp');
+}
+function importProgress(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(){try{const d=JSON.parse(r.result);S=Object.assign({},DEF,d);persist();setTheme(S.theme||'dark');updateUserCard();render();toast('Progress imported','ach');}catch(e){toast('Import failed - invalid file','');}};r.readAsText(f);}
+function resetProgress(){if(confirm('Erase ALL progress, XP, and badges? This cannot be undone.')){S=Object.assign({},DEF);persist();setTheme('dark');updateUserCard();render();toast('Progress reset','');}}
+
+/* ===== Reference Library ===== */
+let REFCAT='all';
+function renderReference(){
+  let h='<div class="vh"><h2>&#128209; Reference Library</h2><div class="sub">'+REF.length+' quick-reference cheat sheets &mdash; formulas, tables &amp; standards for the floor.</div></div>';
+  h+='<input class="field" id="reffilter" placeholder="Search formulas, tables, terms..." oninput="drawRef()">';
+  h+='<div class="btnrow" style="margin:.2rem 0 .6rem"><button class="btn sec" onclick="printRefBook()">&#128196; Print reference booklet</button><button class="btn sec" onclick="downloadRefBook()">&#11015;&#65039; Download .txt</button><button class="btn sec" onclick="copyRefBook()">&#128203; Copy booklet</button></div>';
+  h+='<div class="refchips"><span class="refchip on" data-rc="all" onclick="setRefCat(\u0027all\u0027)">All ('+REF.length+')</span>';
+  h+=REFCATS.map(function(c){var n=REF.filter(function(r){return r.cat===c[0];}).length;return '<span class="refchip" data-rc="'+c[0]+'" onclick="setRefCat(\u0027'+c[0]+'\u0027)">'+c[1]+' ('+n+')</span>';}).join('');
+  h+='</div><div id="reflist"></div>';
+  $('v-reference').innerHTML=h;REFCAT='all';drawRef();
+}
+function setRefCat(c){REFCAT=c;[].forEach.call(document.querySelectorAll('.refchip'),function(el){el.classList.toggle('on',el.getAttribute('data-rc')===c);});drawRef();}
+function downloadRefBook(){
+  if(typeof REF==='undefined'||!REF.length){if(typeof toast==='function')toast('No reference cards','warn');return false;}
+  var pins=S.refPins||[];
+  var cn={};REFCATS.forEach(function(c){cn[c[0]]=c[1];});
+  var ordered=REF.slice().sort(function(a,b){
+    var pa=pins.indexOf(refKey(a))>=0?0:1,pb=pins.indexOf(refKey(b))>=0?0:1;
+    if(pa!==pb)return pa-pb;
+    return (cn[a.cat]||'').localeCompare(cn[b.cat]||'');
+  });
+  var lines=ordered.map(function(r){
+    var star=(pins.indexOf(refKey(r))>=0)?' *':'';
+    return '['+(cn[r.cat]||'')+'] '+_stripTags(r.title)+star+'\n'+_stripTags(r.body).replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim()+'\n';
+  });
+  var txt='AET Academy \u2014 Field Reference Booklet ('+ordered.length+' cards)\n\n'+lines.join('\n');
+  var blob=new Blob([txt],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aet-reference-booklet.txt';a.click();
+  if(typeof toast==='function')toast('Reference booklet downloaded','xp');
+  return false;
+}
+function copyRefBook(){
+  if(typeof REF==='undefined'||!REF.length){if(typeof toast==='function')toast('No reference cards','warn');return false;}
+  var pins=S.refPins||[];
+  var cn={};REFCATS.forEach(function(c){cn[c[0]]=c[1];});
+  var ordered=REF.slice().sort(function(a,b){
+    var pa=pins.indexOf(refKey(a))>=0?0:1,pb=pins.indexOf(refKey(b))>=0?0:1;
+    if(pa!==pb)return pa-pb;
+    return (cn[a.cat]||'').localeCompare(cn[b.cat]||'');
+  });
+  var lines=ordered.map(function(r){
+    var star=(pins.indexOf(refKey(r))>=0)?' *':'';
+    return '['+(cn[r.cat]||'')+'] '+_stripTags(r.title)+star+'\n'+_stripTags(r.body).replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim()+'\n';
+  });
+  var txt='AET Academy \u2014 Field Reference Booklet ('+ordered.length+' cards)\n\n'+lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('&#128203; Reference booklet copied ('+ordered.length+' cards)','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}
+  else if(typeof toast==='function')toast('Clipboard not available','');
+  return false;
+}
+function refKey(r){return _stripTags(r.title).toLowerCase().trim();}
+function toggleRefPin(gi){var r=REF[gi];if(!r)return;if(!S.refPins)S.refPins=[];var k=refKey(r);var i=S.refPins.indexOf(k);if(i>=0)S.refPins.splice(i,1);else S.refPins.push(k);persist();drawRef();}
+function copyRefCard(gi){var r=REF[gi];if(!r)return false;var strip=function(x){return (x||'').replace(/<br\s*\/?>(\s*)/gi,'\n').replace(/<\/(p|div|tr|li|h3)>/gi,'\n').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&[a-z]+;/g,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();};var txt=strip(r.title)+'\n\n'+strip(r.body);if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){if(typeof toast==='function')toast('Reference card copied','ach');},function(){if(typeof toast==='function')toast('Copy failed','');});}else if(typeof toast==='function')toast('Clipboard not available','');return false;}
+function speakRefCard(gi){try{if(typeof _ttsSupported!=='function'||!_ttsSupported())return false;var r=REF[gi];if(!r)return false;var strip=function(x){return (x||'').replace(/<[^>]+>/g,' ').replace(/&[a-z]+;/g,' ').replace(/\s+/g,' ').trim();};var txt=strip(r.title)+'. '+strip(r.body);window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.rate=.95;window.speechSynthesis.speak(u);if(typeof toast==='function')toast('Speaking reference card','');}catch(e){}return false;}
+function drawRef(){
+  var fe=$('reffilter');var q=(fe&&fe.value?fe.value:'').toLowerCase();
+  var cn={};REFCATS.forEach(function(c){cn[c[0]]=c[1];});
+  var pins=S.refPins||[];
+  var _refTts=(typeof _ttsSupported==='function'&&_ttsSupported());
+  var items=REF.filter(function(r){var okc=REFCAT==='all'||r.cat===REFCAT;var okq=!q||r.title.toLowerCase().indexOf(q)>=0||r.body.toLowerCase().indexOf(q)>=0;return okc&&okq;});
+  items.sort(function(a,b){var pa=pins.indexOf(refKey(a))>=0?0:1,pb=pins.indexOf(refKey(b))>=0?0:1;return pa-pb;});
+  var np=items.filter(function(r){return pins.indexOf(refKey(r))>=0;}).length;
+  $('reflist').innerHTML=items.length?(((q||REFCAT!=='all')?'<div class="sub" style="margin:.1rem 0 .6rem;font-size:.78rem">Showing '+items.length+' of '+REF.length+' cheat sheets</div>':'')+(np?'<div class="sub" style="margin:.2rem 0 .6rem">&#11088; '+np+' pinned to top</div>':'')+items.map(function(r){var gi=REF.indexOf(r);var pinned=pins.indexOf(refKey(r))>=0;return '<div class="refcard'+(pinned?' pinned':'')+'"><div class="refcat">'+(cn[r.cat]||'')+'<span class="refpin" title="'+(pinned?'Unpin':'Pin to top')+'" onclick="toggleRefPin('+gi+')" style="cursor:pointer;float:right;font-size:1.05rem">'+(pinned?'&#11088;':'&#9734;')+'</span>'+(_refTts?'<span class="refpin" title="Hear it" onclick="speakRefCard('+gi+')" style="cursor:pointer;float:right;font-size:1.05rem;margin-right:.4rem">&#128266;</span>':'')+'<span class="refpin" title="Copy card" onclick="copyRefCard('+gi+')" style="cursor:pointer;float:right;font-size:1.05rem;margin-right:.4rem">&#128203;</span></div><h3>'+r.title+'</h3><div class="refbody">'+r.body+'</div></div>';}).join('')):'<div class="card">No matches. Try another term or category.</div>';
+}
+
+
+/* ===== Global content search ===== */
+function _stripTags(h){return String(h).replace(/[\x3c][^\x3e]+[\x3e]/g,' ').replace(/&#?[a-z0-9]+;/gi,' ').replace(/\s+/g,' ').trim();}
+function _escRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function _hl(text,q){var re=new RegExp('('+_escRe(q)+')','ig');return esc(text).replace(re,'<mark>$1</mark>');}
+function _snippet(text,q,win){text=_stripTags(text);var i=text.toLowerCase().indexOf(q.toLowerCase());if(i<0)return _hl(text.slice(0,win||160),q);var start=Math.max(0,i-Math.floor((win||160)/3));var seg=(start>0?'\u2026':'')+text.slice(start,start+(win||160))+(start+(win||160)<text.length?'\u2026':'');return _hl(seg,q);}
+function renderSearch(){
+  var q=(window._searchQ||'');
+  var h='<div class="vh"><h2>&#128269; Search</h2></div>';
+  h+='<div class="searchbox"><input id="searchInput" type="text" placeholder="Search lectures, glossary, reference, quizzes, your notes\u2026" value="'+esc(q).replace(/"/g,'&quot;')+'" oninput="runSearch(this.value)" autocomplete="off"></div>';
+  h+='<div id="searchResults"></div>';
+  $('v-search').innerHTML=h;
+  setTimeout(function(){var el=$('searchInput');if(el){el.focus();var v=el.value;el.value='';el.value=v;}},30);
+  if(q&&q.length>=2)_doSearch(q);
+  else $('searchResults').innerHTML='<div class="muted" style="padding:1rem 0">Type at least 2 characters. Searches every module lecture, hands-on exercise, glossary term, reference card, quiz question, and your own notes.</div>'+_recentSearchHtml();
+}
+function runSearch(v){if(v!==window._searchQ)window._searchCat='all';window._searchQ=v;var box=$('searchResults');if(!box)return;if(!v||v.trim().length<2){box.innerHTML='<div class="muted" style="padding:1rem 0">Type at least 2 characters\u2026</div>';return;}_doSearch(v.trim());}
+function _recordSearch(q){q=(q||'').trim();if(q.length<2)return;if(!S.recentSearches)S.recentSearches=[];var a=S.recentSearches.filter(function(x){return x!==q&&q.toLowerCase().indexOf(x.toLowerCase())!==0;});a.unshift(q);if(a.length>6)a=a.slice(0,6);S.recentSearches=a;save();}
+function clearRecentSearches(){S.recentSearches=[];save();if((window._searchQ||'').trim().length<2)renderSearch();}
+function _recentSearchHtml(){if(!S.recentSearches||!S.recentSearches.length)return '';return '<div style="margin-top:1rem"><div style="font-size:.78rem;color:var(--txt2);margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:center"><span>&#128340; Recent searches</span><button class="btn sec" style="font-size:.68rem;padding:.1rem .5rem" onclick="clearRecentSearches()">Clear</button></div><div class="lfbar" style="display:flex;gap:.4rem;flex-wrap:wrap">'+S.recentSearches.map(function(q){return '<button class="chip" onclick="runSearch(\u0027'+esc(q).replace(/\u0027/g,'').replace(/"/g,'')+'\u0027)">&#128269; '+esc(q)+'</button>';}).join('')+'</div></div>';}
+function searchCat(c){window._searchCat=c;if(window._searchQ&&window._searchQ.trim().length>=2)_doSearch(window._searchQ.trim());}
+function _searchSuggest(q){q=(q||'').toLowerCase().trim();if(q.length<3)return [];function grams(x){x=x.toLowerCase();var g={};for(var i=0;i<x.length-2;i++)g[x.substr(i,3)]=1;return g;}var qg=grams(q);var qk=Object.keys(qg);if(!qk.length)return [];var cand=[];GLOSS.forEach(function(t){var tg=grams(t.term);var sh=0;qk.forEach(function(k){if(tg[k])sh++;});if(sh>0)cand.push({label:t.term,q:t.term,score:sh});});MODS.forEach(function(m){var tg=grams(m.title);var sh=0;qk.forEach(function(k){if(tg[k])sh++;});if(sh>0)cand.push({label:'M'+m.id+': '+m.title,q:m.title,score:sh});});cand.sort(function(a,b){return b.score-a.score;});return cand.slice(0,4);}
+function searchFor(i){var s=(window._searchSug||[])[i];if(!s)return false;var el=document.getElementById('searchInput');if(el)el.value=s.q;runSearch(s.q);return false;}
+function _doSearch(q){
+  var ql=q.toLowerCase();
+  var mods=[],gl=[],rf=[];
+  MODS.forEach(function(m){
+    var fields=[];
+    fields.push(['Title',m.title]);
+    (m.objectives||[]).forEach(function(o){fields.push(['Objective',o]);});
+    (m.sections||[]).forEach(function(s){fields.push([s.h,s.body]);});
+    if(m.lab){fields.push(['Hands-On: '+m.lab.title,(m.lab.steps||[]).join(' ')]);}
+    if(m.lab2){fields.push(['Field Challenge: '+m.lab2.title,(m.lab2.steps||[]).join(' ')]);}
+    (m.apps||[]).forEach(function(a){fields.push(['In the Field',a.ctx+' '+a.body]);});
+    (m.takeaways||[]).forEach(function(t){fields.push(['Recap',t]);});
+    (m.quiz||[]).forEach(function(qz){fields.push(['Quiz',qz.q+' '+(qz.explain||'')]);});
+    var hits=0,best=null;
+    fields.forEach(function(f){if((_stripTags(f[1])+' '+f[0]).toLowerCase().indexOf(ql)>-1){hits++;if(!best)best=f;}});
+    if(hits)mods.push({m:m,hits:hits,field:best[0],body:best[1]});
+  });
+  GLOSS.forEach(function(g){if((g.term+' '+g.def).toLowerCase().indexOf(ql)>-1)gl.push(g);});
+  if(typeof REF!=='undefined')REF.forEach(function(r){if((_stripTags(r.title)+' '+_stripTags(r.body)).toLowerCase().indexOf(ql)>-1)rf.push(r);});
+  var nt=[];Object.keys(S.notes||{}).forEach(function(id){var v=S.notes[id];if(v&&v.toLowerCase().indexOf(ql)>-1){var mm=MODS.find(function(x){return x.id===+id;});nt.push({id:+id,title:mm?mm.title:'',body:v});}});
+  mods.sort(function(a,b){return b.hits-a.hits;});
+  var total=mods.length+gl.length+rf.length+nt.length;
+  var _bd=[];if(mods.length)_bd.push(mods.length+' lecture'+(mods.length===1?'':'s'));if(gl.length)_bd.push(gl.length+' term'+(gl.length===1?'':'s'));if(rf.length)_bd.push(rf.length+' cheat sheet'+(rf.length===1?'':'s'));if(nt.length)_bd.push(nt.length+' note'+(nt.length===1?'':'s'));var h='<div class="srcount">'+total+' result'+(total===1?'':'s')+' for \u201c'+esc(q)+'\u201d'+(_bd.length>1?' &middot; <span style="color:var(--txt2);font-weight:400">'+_bd.join(' &middot; ')+'</span>':'')+'</div>';
+  if(!total){var _sug=_searchSuggest(q);window._searchSug=_sug;h+='<div class="muted" style="padding:1rem 0">No matches. Try a different term.</div>';if(_sug.length){h+='<div class="sub" style="margin-top:-.4rem;padding-bottom:.6rem;font-size:.84rem">&#128161; Did you mean: '+_sug.map(function(x,i){return '<a href="#" onclick="return searchFor('+i+')" style="color:var(--accent2)">'+esc(x.label)+'</a>';}).join(' &middot; ')+'</div>';}$('searchResults').innerHTML=h;return;}
+  _recordSearch(q);
+  var _cat=window._searchCat||'all';
+  var _has={mod:mods.length,gl:gl.length,rf:rf.length,nt:nt.length};
+  if(_cat!=='all'&&!_has[_cat])_cat='all';
+  var _cats2=[['all','All',total],['mod','Lectures',mods.length],['gl','Glossary',gl.length],['rf','Reference',rf.length],['nt','Notes',nt.length]];
+  var _nonEmpty=_cats2.filter(function(c){return c[0]==='all'||c[2]>0;});
+  if(_nonEmpty.length>2){h+='<div class="lfbar" style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem">'+_nonEmpty.map(function(c){return '<button class="chip'+(_cat===c[0]?' on':'')+'" onclick="searchCat(\u0027'+c[0]+'\u0027)">'+c[1]+(c[0]==='all'?'':' ('+c[2]+')')+'</button>';}).join('')+'</div>';}
+  if(mods.length&&(_cat==='all'||_cat==='mod')){
+    h+='<div class="srgroup"><h3>&#128218; Modules ('+mods.length+')</h3>';
+    mods.forEach(function(r){h+='<div class="srcard" onclick="go(\u0027#module/'+r.m.id+'\u0027)"><div class="srtitle">Module '+r.m.id+': '+_hl(r.m.title,q)+'</div><div class="srmeta">'+esc(_stripTags(r.field))+(r.hits>1?' &middot; '+r.hits+' matches':'')+'</div><div class="srsnip">'+_snippet(r.body,q)+'</div></div>';});
+    h+='</div>';
+  }
+  if(gl.length&&(_cat==='all'||_cat==='gl')){
+    h+='<div class="srgroup"><h3>&#128214; Glossary ('+gl.length+')</h3>';
+    gl.forEach(function(g){h+='<div class="srcard" onclick="go(\u0027#glossary\u0027)"><div class="srtitle">'+_hl(g.term,q)+'</div><div class="srsnip">'+_hl(g.def,q)+'</div></div>';});
+    h+='</div>';
+  }
+  if(rf.length&&(_cat==='all'||_cat==='rf')){
+    h+='<div class="srgroup"><h3>&#128209; Reference ('+rf.length+')</h3>';
+    rf.forEach(function(r){h+='<div class="srcard" onclick="go(\u0027#reference\u0027)"><div class="srtitle">'+_hl(_stripTags(r.title),q)+'</div><div class="srsnip">'+_snippet(r.body,q)+'</div></div>';});
+    h+='</div>';
+  }
+  if(nt.length&&(_cat==='all'||_cat==='nt')){
+    h+='<div class="srgroup"><h3>&#128221; My Notes ('+nt.length+')</h3>';
+    nt.forEach(function(n){h+='<div class="srcard" onclick="go(\u0027#module/'+n.id+'\u0027)"><div class="srtitle">Module '+n.id+': '+_hl(n.title,q)+'</div><div class="srsnip">'+_snippet(n.body,q)+'</div></div>';});
+    h+='</div>';
+  }
+  $('searchResults').innerHTML=h;
+}

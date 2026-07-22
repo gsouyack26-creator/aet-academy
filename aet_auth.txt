@@ -1,0 +1,282 @@
+/* ===== Accounts / login gate ===== */
+const AVATARS=['\uD83D\uDD27','\u2699\uFE0F','\uD83D\uDD0C','\uD83E\uDD16','\u26A1','\uD83D\uDEE0\uFE0F','\uD83D\uDD29','\uD83C\uDFED','\uD83D\uDCDF','\uD83E\uDDF0','\uD83D\uDE82','\uD83E\uDDBE'];
+const ROLES=['Trainee','Technician','Lead'];
+let ACCT=Object.assign({users:[],current:null},JSON.parse(localStorage.getItem('aet_accounts')||'{}'));
+function saveAcct(){localStorage.setItem('aet_accounts',JSON.stringify(ACCT));}
+function hashPin(p){let h=5381;const s='aet.kiosk.salt::'+p;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return h.toString(16);}
+function newId(){return 'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function acctKey(){return 'aet_academy_'+(ACCT.current||'guest');}
+function loadUserState(){S=Object.assign({},DEF,JSON.parse(localStorage.getItem(acctKey())||'{}'));}
+function curUser(){return ACCT.users.find(u=>u.id===ACCT.current)||null;}
+function userProgress(u){try{var st=JSON.parse(localStorage.getItem('aet_academy_'+u.id)||'{}');return{done:(st.done||[]).length,xp:st.xp||0,ach:(st.ach||[]).length,streak:st.streak||0,exam:st.exam?st.exam.pct:null,last:st.lastDay||''};}catch(e){return{done:0,xp:0,ach:0,streak:0,exam:null,last:''};}}
+
+let GATE={mode:'pick',sel:null,pin:'',cname:'',avatar:AVATARS[0],role:'Technician',err:''};
+function showGate(){GATE.mode=ACCT.users.length?'pick':'create';GATE.sel=null;GATE.pin='';GATE.err='';$('gate').style.display='flex';renderGate();}
+function hideGate(){$('gate').style.display='none';}
+function renderGate(){
+  var h='<div class="gatebox">';
+  h+='<div class="gbrand">\u26A1 AET Academy</div><div class="gsub">Automation Engineering Technology \u2022 training kiosk</div>';
+  if(GATE.mode==='pick'){
+    h+='<div class="gh">Who is learning?</div><div class="gusers">';
+    ACCT.users.forEach(function(u){var pr=userProgress(u);
+      h+='<div class="guser" data-ga="pick" data-gv="'+u.id+'"><div class="gav">'+u.avatar+'</div><div class="gnm">'+esc(u.name)+'</div><div class="grole">'+esc(u.role||'Technician')+'</div><div class="gprog">'+pr.done+'/'+MODS.length+' \u00b7 Lv'+lvlOf(pr.xp)+'</div>'+(u.pin?'<div class="glock">\uD83D\uDD12</div>':'')+'</div>';
+    });
+    h+='<div class="guser gnew" data-ga="new"><div class="gav">\u2795</div><div class="gnm">New learner</div></div>';
+    h+='</div>';
+  } else if(GATE.mode==='pin'){
+    var u=ACCT.users.find(function(x){return x.id===GATE.sel;});
+    h+='<div class="gh">'+ (u?u.avatar+' '+esc(u.name):'Enter PIN') +'</div>';
+    h+='<div class="gdots">';for(var i=0;i<4;i++)h+='<span class="gdot'+(i<GATE.pin.length?' on':'')+'"></span>';h+='</div>';
+    if(GATE.err)h+='<div class="gerr">'+esc(GATE.err)+'</div>';
+    h+='<div class="gpad">';['1','2','3','4','5','6','7','8','9','back','0','ok'].forEach(function(d){
+      if(d==='back')h+='<button class="gkey gkx" data-ga="pad" data-gv="back">\u232B</button>';
+      else if(d==='ok')h+='<button class="gkey gko" data-ga="pad" data-gv="ok">\u2713</button>';
+      else h+='<button class="gkey" data-ga="pad" data-gv="'+d+'">'+d+'</button>';
+    });h+='</div>';
+    h+='<div class="glink" data-ga="back2pick">\u2190 Back</div>';
+  } else if(GATE.mode==='create'){
+    h+='<div class="gh">Create your account</div>';
+    h+='<label class="gl">Name</label><input class="gin" id="gc-name" value="'+esc(GATE.cname||'')+'" placeholder="e.g. Jordan T." maxlength="24" oninput="GATE.cname=this.value">';
+    h+='<label class="gl">Avatar</label><div class="gavpick">'+AVATARS.map(function(a){return '<span class="gavo'+(a===GATE.avatar?' on':'')+'" data-ga="av" data-gv="'+a+'">'+a+'</span>';}).join('')+'</div>';
+    h+='<label class="gl">Role</label><div class="grolepick">'+ROLES.map(function(r){return '<span class="grolo'+(r===GATE.role?' on':'')+'" data-ga="role" data-gv="'+r+'">'+r+'</span>';}).join('')+'</div>';
+    h+='<label class="gl">4-digit PIN <span class="gopt">(optional \u2014 protects your progress)</span></label>';
+    h+='<input class="gin" id="gc-pin" type="password" inputmode="numeric" maxlength="4" placeholder="\u2022\u2022\u2022\u2022" value="'+(GATE.cpin||'')+'" oninput="GATE.cpin=this.value.replace(/[^0-9]/g,\u0027\u0027)">';
+    if(GATE.err)h+='<div class="gerr">'+esc(GATE.err)+'</div>';
+    h+='<button class="gbtn" data-ga="create">Create account \u2192</button>';
+    if(ACCT.users.length)h+='<div class="glink" data-ga="back2pick">\u2190 Back to sign in</div>';
+  }
+  h+='<div class="gfoot">Offline &middot; progress saved on this device only</div></div>';
+  $('gate').innerHTML=h;
+  if(GATE.mode==='create'){var n=$('gc-name');if(n&&!GATE._focused){n.focus();GATE._focused=true;}}
+  else GATE._focused=false;
+}
+function lvlOf(xp){var lv=1;for(var i=0;i<RANKS.length;i++){if(xp>=RANKS[i].xp)lv=RANKS[i].lvl;}return lv;}
+function gateClick(e){
+  var el=e.target.closest('[data-ga]');if(!el)return;
+  var a=el.getAttribute('data-ga'),v=el.getAttribute('data-gv');
+  if(a==='pick')gatePick(v);
+  else if(a==='new'){GATE.mode='create';GATE.err='';GATE.cname='';GATE.cpin='';GATE.avatar=AVATARS[0];GATE.role='Technician';renderGate();}
+  else if(a==='back2pick'){GATE.mode='pick';GATE.err='';GATE.pin='';renderGate();}
+  else if(a==='pad')padPress(v);
+  else if(a==='av'){GATE.avatar=v;renderGate();}
+  else if(a==='role'){GATE.role=v;renderGate();}
+  else if(a==='create')submitCreate();
+}
+function gatePick(id){var u=ACCT.users.find(function(x){return x.id===id;});if(!u)return;GATE.sel=id;if(u.pin){GATE.mode='pin';GATE.pin='';GATE.err='';renderGate();}else doLogin(id);}
+function padPress(d){
+  if(d==='back'){GATE.pin=GATE.pin.slice(0,-1);GATE.err='';renderGate();return;}
+  if(d==='ok'){checkPin();return;}
+  if(GATE.pin.length>=4)return;GATE.pin+=d;GATE.err='';renderGate();
+  if(GATE.pin.length===4)setTimeout(checkPin,120);
+}
+function checkPin(){var u=ACCT.users.find(function(x){return x.id===GATE.sel;});if(!u)return;if(hashPin(GATE.pin)===u.pin){doLogin(u.id);}else{GATE.err='Incorrect PIN';GATE.pin='';renderGate();}}
+function submitCreate(){
+  var name=(GATE.cname||'').trim();if(!name){GATE.err='Please enter a name';renderGate();return;}
+  var pin=(GATE.cpin||'').trim();if(pin&&pin.length!==4){GATE.err='PIN must be exactly 4 digits';renderGate();return;}
+  var u={id:newId(),name:name,avatar:GATE.avatar,role:GATE.role,pin:pin?hashPin(pin):'',created:new Date().toISOString().slice(0,10)};
+  ACCT.users.push(u);saveAcct();doLogin(u.id);
+}
+function doLogin(id){ACCT.current=id;saveAcct();loadUserState();var u=curUser();if(u&&!S.name)S.name=u.name;persist();hideGate();enterApp();setTimeout(function(){toast('Welcome, '+esc((curUser()||{}).name||'')+'! \uD83D\uDC4B','xp');},300);}
+function signOut(){persist();ACCT.current=null;saveAcct();S=Object.assign({},DEF);if(location.hash!=='#dash')location.hash='#dash';showGate();}
+function switchUser(){signOut();}
+
+/* ===== Team roster (Lead view) ===== */
+function loadAssign(){try{return JSON.parse(localStorage.getItem('aet_assignments')||'{}');}catch(e){return {};}}
+function saveAssign(o){localStorage.setItem('aet_assignments',JSON.stringify(o));}
+function assignedTo(uid){if(!uid)return [];var a=loadAssign();return (a[uid]||[]).slice();}
+function toggleAssign(uid,mid){var a=loadAssign();var arr=a[uid]||[];var i=arr.indexOf(mid);if(i>=0){arr.splice(i,1);var dd=loadDue();if(dd[uid]){delete dd[uid][mid];saveDue(dd);}logActivity('unassign',uid,mid,ACCT.current);}else{arr.push(mid);logActivity('assign',uid,mid,ACCT.current);}arr.sort(function(x,y){return x-y;});a[uid]=arr;saveAssign(a);}
+function assignMod(uid,mid){toggleAssign(uid,mid);closeLearner();openLearner(uid);}
+function loadDue(){try{return JSON.parse(localStorage.getItem('aet_assign_due')||'{}');}catch(e){return {};}}
+function saveDue(o){localStorage.setItem('aet_assign_due',JSON.stringify(o));}
+function dueOf(uid,mid){var d=loadDue();return (d[uid]&&d[uid][mid])||'';}
+function setDue(uid,mid,iso){var d=loadDue();if(!d[uid])d[uid]={};if(iso)d[uid][mid]=iso;else delete d[uid][mid];saveDue(d);}
+function dueStatus(iso,done){if(done)return {cls:'done',label:'done'};if(!iso)return {cls:'none',label:''};var t=new Date();t.setHours(0,0,0,0);var dt=new Date(iso+'T00:00:00');var days=Math.round((dt-t)/86400000);if(days<0)return {cls:'over',label:(-days)+'d overdue',days:days};if(days===0)return {cls:'soon',label:'due today',days:0};if(days<=3)return {cls:'soon',label:'due in '+days+'d',days:days};return {cls:'ok',label:'due '+iso,days:days};}
+function setDueFor(uid,mid,val){setDue(uid,mid,val);closeLearner();openLearner(uid);}
+function loadActivity(){try{return JSON.parse(localStorage.getItem('aet_activity')||'[]');}catch(e){return [];}}
+function logActivity(type,uid,mid,actor){if(!uid)return;var l=loadActivity();l.push({ts:Date.now(),type:type,uid:uid,mid:mid,actor:actor||uid});if(l.length>200)l=l.slice(l.length-200);localStorage.setItem('aet_activity',JSON.stringify(l));}
+function nameOf(uid){var u=ACCT.users.find(function(x){return x.id===uid;});return u?u.name:'Someone';}
+function relTime(ts){var s=Math.round((Date.now()-ts)/1000);if(s<60)return 'just now';var m=Math.round(s/60);if(m<60)return m+'m ago';var h=Math.round(m/60);if(h<24)return h+'h ago';var dy=Math.round(h/24);if(dy<7)return dy+'d ago';return new Date(ts).toISOString().slice(0,10);}
+function renderActivityFeed(){var l=loadActivity().slice().reverse().slice(0,25);if(!l.length)return '<div class="vh" style="margin-top:1.4rem"><h2 style="font-size:1.15rem">&#128220; Team Activity</h2></div><div class="card" style="color:var(--txt2)">No activity logged yet. Assignments and completions will appear here.</div>';var h='<div class="vh" style="margin-top:1.4rem"><h2 style="font-size:1.15rem">&#128220; Team Activity</h2><div class="sub">Recent assignments and completions.</div></div><div class="card afeed">';l.forEach(function(e){var m=MODS.find(function(x){return x.id===e.mid;});var mt=m?('Module '+m.id+': '+esc(m.title)):('Module '+e.mid);var txt,ic;if(e.type==='complete'){ic='&#9989;';txt='<b>'+esc(nameOf(e.uid))+'</b> completed '+mt;}else if(e.type==='assign'){ic='&#128203;';txt='<b>'+esc(nameOf(e.actor))+'</b> assigned '+mt+' to <b>'+esc(nameOf(e.uid))+'</b>';}else{ic='&#10060;';txt='<b>'+esc(nameOf(e.actor))+'</b> unassigned '+mt+' from <b>'+esc(nameOf(e.uid))+'</b>';}h+='<div class="afrow"><span class="afic">'+ic+'</span><span class="aftxt">'+txt+'</span><span class="aftime">'+relTime(e.ts)+'</span></div>';});h+='</div>';return h;}
+function renderRoster(){
+  var cu=curUser();
+  if(!cu||cu.role!=='Lead'){$('v-roster').innerHTML='<div class="vh"><h2>Team Roster</h2></div><div class="card">This view is available to Leads only.</div>';return;}
+  var rows=ACCT.users.map(function(u){var pr=userProgress(u);var asg=assignedTo(u.id),ust=userFull(u.id);var adone=asg.filter(function(m){return (ust.done||[]).indexOf(m)>=0;}).length;var over=asg.filter(function(m){return (ust.done||[]).indexOf(m)<0&&dueStatus(dueOf(u.id,m),false).cls==='over';}).length;return{u:u,pr:pr,pct:Math.round(pr.done/MODS.length*100),asg:asg,adone:adone,over:over,wt:(typeof weakestTrack==='function'?weakestTrack(ust):null)};});
+  var _teamOver=rows.reduce(function(a,r){return a+r.over;},0),_learnersOver=rows.filter(function(r){return r.over>0;}).length;
+  rows.sort(function(a,b){return b.pct-a.pct||b.pr.xp-a.pr.xp;});
+  var team=rows.length,avg=team?Math.round(rows.reduce(function(a,r){return a+r.pct;},0)/team):0,cert=rows.filter(function(r){return r.pr.exam!=null&&r.pr.exam>=80;}).length,active=rows.filter(function(r){return r.pr.last===new Date().toISOString().slice(0,10);}).length;
+  var h='<div class="vh"><h2>&#128101; Team Roster</h2><div class="sub">Training progress for everyone on this kiosk.</div></div>';
+  h+='<div class="grid g4"><div class="card stat"><div class="big">'+team+'</div><div class="lbl">Learners</div></div><div class="card stat"><div class="big">'+avg+'%</div><div class="lbl">Avg completion</div></div><div class="card stat"><div class="big">'+cert+'</div><div class="lbl">Exam-certified</div></div><div class="card stat"><div class="big">'+active+'</div><div class="lbl">Active today</div></div></div>';
+  if(_teamOver){h+='<div class="ralert">&#9888; '+_learnersOver+' learner'+(_learnersOver===1?'':'s')+' with '+_teamOver+' overdue assignment'+(_teamOver===1?'':'s')+'.</div>';}
+  h+='<div class="card" style="margin-top:1rem;padding:0;overflow:hidden"><table class="rtab"><thead><tr><th></th><th>Learner</th><th>Role</th><th>Progress</th><th>Level</th><th>Badges</th><th>Streak</th><th>Exam</th><th>Assigned</th><th>Coach on</th><th>Last seen</th><th></th></tr></thead><tbody>';
+  rows.forEach(function(r){var u=r.u,pr=r.pr;
+    var _acell=r.asg.length?(r.adone+'/'+r.asg.length+(r.over?' <span class="rlo">'+r.over+' overdue</span>':(r.adone<r.asg.length?' <span class="rsoon">due</span>':' <span class="rok">done</span>'))):'\u2014';
+    h+='<tr class="rrow" onclick="openLearner(&#39;'+u.id+'&#39;)"><td class="ra">'+u.avatar+'</td><td class="rn">'+esc(u.name)+(u.id===ACCT.current?' <span class="rme">you</span>':'')+'</td><td>'+esc(u.role||'')+'</td>';
+    h+='<td><div class="rbar"><div class="rfill" style="width:'+r.pct+'%"></div></div><span class="rpct">'+pr.done+'/'+MODS.length+'</span></td>';
+    h+='<td>Lv'+lvlOf(pr.xp)+'</td><td>'+pr.ach+'</td><td>'+(pr.streak||0)+'</td><td>'+(pr.exam!=null?('<span class="'+(pr.exam>=80?'rok':'rlo')+'">'+pr.exam+'%</span>'):'\u2014')+'</td><td>'+_acell+'</td><td>'+(r.wt?('<span class="coachp">'+r.wt.tr.icon+' '+esc(r.wt.tr.name)+' <b>'+Math.round(r.wt.pct*100)+'%</b></span>'):'\u2014')+'</td><td class="rls">'+(pr.last||'\u2014')+'</td><td class="rchev">\u203A</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div class="card cohort" style="margin-top:1rem"><b>&#128101; Assign a module to a whole role</b><div class="cohrow"><select id="cohMod">'+MODS.map(function(m){return '<option value="'+m.id+'">'+m.id+'. '+esc(m.title)+'</option>';}).join('')+'</select><select id="cohRole">'+ROLES.map(function(r){return '<option value="'+esc(r)+'">All '+esc(r)+'s</option>';}).join('')+'</select><button class="btn" onclick="cohortAssign()">Assign to all</button> <button class="btn sec" onclick="printCohortSheets()">&#128424; Print all sheets</button></div></div>';
+  h+='<div class="btnrow"><button class="btn sec" onclick="exportRoster()">&#128229; Export team CSV</button><button class="btn sec" onclick="copyRoster()">&#128203; Copy roster summary</button></div>';
+  h+=renderActivityFeed();
+  $('v-roster').innerHTML=h;
+}
+function buildAssignSheet(uid){
+  var u=ACCT.users.find(function(x){return x.id===uid;});if(!u)return '';
+  var st=userFull(uid),asg=assignedTo(uid);var today=new Date().toISOString().slice(0,10);
+  var rows=asg.map(function(mid){var m=MODS.find(function(x){return x.id===mid;});var dn=(st.done||[]).indexOf(mid)>=0;var iso=dueOf(uid,mid),ds=dueStatus(iso,dn);
+    return '<tr><td>'+mid+'</td><td>'+esc(m?m.title:('Module '+mid))+'</td><td>'+(iso||'\u2014')+'</td><td>'+(dn?'Complete':(ds.cls==='over'?'OVERDUE':'In progress'))+'</td><td style="width:90px"></td></tr>';}).join('');
+  if(!rows)rows='<tr><td colspan="5" style="text-align:center;color:#888">No modules assigned.</td></tr>';
+  var css='body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:32px}h1{font-size:20px;margin:0 0 2px}.sub{color:#555;font-size:13px;margin-bottom:16px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #bbb;padding:6px 8px;text-align:left}th{background:#eee}.sig{margin-top:36px;font-size:13px}.sig div{margin-top:26px}';
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Assignment Sheet - '+esc(u.name)+'</title><style>'+css+'</style></head><body>'
+    +'<h1>&#9889; AET Academy - Training Assignment Sheet</h1>'
+    +'<div class="sub">Learner: <b>'+esc(u.name)+'</b> ('+esc(u.role||'Technician')+') &nbsp;&middot;&nbsp; Issued: '+today+' &nbsp;&middot;&nbsp; Overall progress: '+Math.round((st.done||[]).length/MODS.length*100)+'%</div>'
+    +'<table><thead><tr><th>#</th><th>Module</th><th>Due</th><th>Status</th><th>Initials</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<div class="sig"><div>Learner signature: ______________________________  Date: ____________</div><div>Supervisor signature: __________________________  Date: ____________</div></div>'
+    +'</body></html>';}
+function printAssignSheet(uid){var html=buildAssignSheet(uid);if(!html)return;var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print','warn');return;}w.document.write(html);w.document.close();setTimeout(function(){try{w.print();}catch(e){}},300);}
+function buildCohortSheets(role){var us=ACCT.users.filter(function(u){return (u.role||'')===role;});if(!us.length)return '';
+  var today=new Date().toISOString().slice(0,10);
+  var css='body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:32px}h1{font-size:20px;margin:0 0 2px}h2{font-size:16px;margin:0 0 2px}.sub{color:#555;font-size:13px;margin-bottom:16px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #bbb;padding:6px 8px;text-align:left}th{background:#eee}.sig{margin-top:30px;font-size:13px}.sig div{margin-top:24px}.sheet{page-break-after:always;margin-bottom:28px}';
+  var body=us.map(function(u){var st=userFull(u.id),asg=assignedTo(u.id);
+    var rows=asg.map(function(mid){var m=MODS.find(function(x){return x.id===mid;});var dn=(st.done||[]).indexOf(mid)>=0;var iso=dueOf(u.id,mid),ds=dueStatus(iso,dn);return '<tr><td>'+mid+'</td><td>'+esc(m?m.title:('Module '+mid))+'</td><td>'+(iso||'\u2014')+'</td><td>'+(dn?'Complete':(ds.cls==='over'?'OVERDUE':'In progress'))+'</td><td style="width:90px"></td></tr>';}).join('');
+    if(!rows)rows='<tr><td colspan="5" style="text-align:center;color:#888">No modules assigned.</td></tr>';
+    return '<div class="sheet"><h2>'+esc(u.name)+' <span style="font-weight:400;color:#555">('+esc(u.role||'')+')</span></h2><div class="sub">Overall progress: '+Math.round((st.done||[]).length/MODS.length*100)+'%</div><table><thead><tr><th>#</th><th>Module</th><th>Due</th><th>Status</th><th>Initials</th></tr></thead><tbody>'+rows+'</tbody></table><div class="sig"><div>Learner signature: ______________________________  Date: ____________</div><div>Supervisor signature: __________________________  Date: ____________</div></div>';}).join('');
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Assignment Sheets - '+esc(role)+'s</title><style>'+css+'</style></head><body><h1>&#9889; AET Academy - '+esc(role)+' Assignment Sheets</h1><div class="sub">Issued '+today+' &middot; '+us.length+' learner'+(us.length===1?'':'s')+'</div>'+body+'</body></html>';}
+function printCohortSheets(){var rl=document.getElementById('cohRole');var role=rl?rl.value:'';var html=buildCohortSheets(role);if(!html){toast('No '+role+'s on the roster','ach');return;}var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print','warn');return;}w.document.write(html);w.document.close();setTimeout(function(){try{w.print();}catch(e){}},300);}
+function cohortAssign(){
+  var el=document.getElementById('cohMod'),rl=document.getElementById('cohRole');if(!el||!rl)return;
+  var mid=+el.value,role=rl.value,n=0;
+  ACCT.users.forEach(function(u){if((u.role||'')===role&&assignedTo(u.id).indexOf(mid)<0){toggleAssign(u.id,mid);n++;}});
+  var m=MODS.find(function(x){return x.id===mid;});var mt=m?m.title:('Module '+mid);
+  toast(n?('Assigned \u201c'+mt+'\u201d to '+n+' '+role+(n===1?'':'s')):('All '+role+'s already have that module'),'xp');
+  renderRoster();
+}
+function _planFinish(st,pace){
+  pace=pace||30;
+  var rem=MODS.filter(function(m){return (st.done||[]).indexOf(m.id)<0;});
+  if(!rem.length)return {done:true,date:'',days:0,min:0};
+  var total=0;rem.forEach(function(m){total+=(typeof estModMin==='function'?estModMin(m):20);});
+  var days=Math.max(1,Math.ceil(total/pace));
+  var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+days-1);
+  return {done:false,date:d.toISOString().slice(0,10),days:days,min:Math.round(total)};
+}
+/* ===== Team leaderboard (v11.1) ===== */
+var _lbMetric='xp';
+function lbSetMetric(m){_lbMetric=m;renderLeaderboard();}
+function lbOptOut(){S.leaderOptOut=!S.leaderOptOut;persist();renderLeaderboard();toast(S.leaderOptOut?'You are hidden from the leaderboard':'You are back on the leaderboard','xp');}
+function renderLeaderboard(){
+  var cu=(typeof curUser==='function')?curUser():null;
+  var users=(typeof ACCT!=='undefined'&&ACCT.users)?ACCT.users:[];
+  var rows=users.map(function(u){var ust=userFull(u.id);var pr=userProgress(u);return {u:u,pr:pr,opt:!!ust.leaderOptOut,me:cu&&cu.id===u.id};})
+    .filter(function(r){return !r.opt||r.me;});
+  var metrics={xp:{lbl:'XP',get:function(r){return r.pr.xp;},fmt:function(v){return v+' XP';}},
+    done:{lbl:'Modules',get:function(r){return r.pr.done;},fmt:function(v){return v+'/'+MODS.length;}},
+    streak:{lbl:'Streak',get:function(r){return r.pr.streak||0;},fmt:function(v){return v+'-day';}}};
+  var mt=metrics[_lbMetric]||metrics.xp;
+  rows.sort(function(a,b){return mt.get(b)-mt.get(a)||b.pr.xp-a.pr.xp;});
+  var h='<div class="vh"><h2>&#127941; Leaderboard</h2><div class="sub">Friendly ranking of everyone learning on this kiosk. Keep climbing!</div></div>';
+  var tabs=[['xp','XP'],['done','Modules'],['streak','Streak']];
+  h+='<div class="btnrow" style="margin-bottom:1rem">'+tabs.map(function(t){return '<button class="btn '+(_lbMetric===t[0]?'':'sec')+'" onclick="lbSetMetric(\u0027'+t[0]+'\u0027)">'+t[1]+'</button>';}).join('')+'</div>';
+  var visible=rows.filter(function(r){return !r.opt;});
+  if(visible.length<=1){h+='<div class="card"><b>&#128075; It\u2019s just you so far.</b><br>When teammates create accounts on this kiosk, you\u2019ll see how everyone stacks up here. Rack up XP, modules, and a daily streak to lead the board.</div>';}
+  var myIdx=visible.map(function(r){return r.me;}).indexOf(true);
+  if(visible.length>1&&myIdx>=0){var ord=['','1st','2nd','3rd'];var pos=(myIdx+1);var posLbl=ord[pos]||(pos+'th');
+    var lead='';
+    if(myIdx===0){lead=' &middot; leading the board! &#127942;';}
+    else{var gap=mt.get(visible[myIdx-1])-mt.get(visible[myIdx]);lead=' &middot; '+gap+' '+mt.lbl.toLowerCase()+' behind #'+myIdx;}
+    h+='<div class="card" style="border-color:var(--acc);text-align:center;margin-bottom:1rem"><b>You&#39;re '+posLbl+' of '+visible.length+'</b> on '+mt.lbl+' &middot; '+mt.fmt(mt.get(visible[myIdx]))+lead+'</div>';}
+  var medals=['&#129351;','&#129352;','&#129353;'];var rank=0;
+  visible.forEach(function(r,i){
+    rank=i;var v=mt.get(r);
+    var badge=(i<3)?medals[i]:('<span style="display:inline-block;width:1.4rem;text-align:center;color:var(--txt2)">'+(i+1)+'</span>');
+    h+='<div class="card" style="display:flex;align-items:center;gap:.9rem;margin-bottom:.5rem;'+(r.me?'border-color:var(--acc);border-width:2px':'')+'">'+
+      '<div style="font-size:1.3rem;min-width:1.6rem;text-align:center">'+badge+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(r.u.name)+(r.me?' <span style="font-size:.72rem;color:var(--acc)">(you)</span>':'')+'</div>'+
+      '<div class="sub" style="font-size:.75rem">Level '+lvlOf(r.pr.xp)+' &middot; '+r.pr.done+'/'+MODS.length+' modules &middot; '+(r.pr.streak||0)+'-day streak</div></div>'+
+      '<div style="font-weight:700;color:var(--accent2);white-space:nowrap">'+mt.fmt(v)+'</div></div>';
+  });
+  var iAmOut=cu&&rows.some(function(r){return r.me&&r.opt;});
+  h+='<div class="btnrow" style="margin-top:1rem"><button class="btn sec" onclick="lbOptOut()">'+(iAmOut?'&#128065;&#65039; Show me on the board':'&#128584; Hide me from the board')+'</button></div>';
+  $('v-leaderboard').innerHTML=h;
+}
+function exportRoster(){
+  var lines=['Name,Role,ModulesDone,TotalModules,PercentComplete,Level,XP,Badges,Streak,ExamBest,LastSeen,Assigned,AssignedDone,Overdue,ProjFinish,OnTrack'];
+  ACCT.users.forEach(function(u){var pr=userProgress(u);var pct=Math.round(pr.done/MODS.length*100);
+    var asg=assignedTo(u.id),ust=userFull(u.id);var ad=asg.filter(function(m){return (ust.done||[]).indexOf(m)>=0;}).length;
+    var ov=asg.filter(function(m){return (ust.done||[]).indexOf(m)<0&&dueStatus(dueOf(u.id,m),false).cls==='over';}).length;
+    var pf=_planFinish(ust,ust.planPace||30);var track=(ov>0)?'Behind':(pf.done?'Complete':'On track');
+    lines.push([q(u.name),q(u.role||''),pr.done,MODS.length,pct,lvlOf(pr.xp),pr.xp,pr.ach,pr.streak||0,(pr.exam!=null?pr.exam:''),pr.last||'',asg.length,ad,ov,(pf.done?'Complete':pf.date),track].join(','));
+  });
+  function q(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+  var blob=new Blob([lines.join('\n')],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AET_team_roster.csv';a.click();
+  toast('Team roster exported','xp');
+}
+function copyRoster(){
+  var rows=ACCT.users.map(function(u){var pr=userProgress(u);return {u:u,pr:pr,pct:Math.round(pr.done/MODS.length*100)};});
+  rows.sort(function(a,b){return b.pct-a.pct||b.pr.xp-a.pr.xp;});
+  var team=rows.length,avg=team?Math.round(rows.reduce(function(a,r){return a+r.pct;},0)/team):0;
+  var cert=rows.filter(function(r){return r.pr.exam!=null&&r.pr.exam>=80;}).length;
+  var active=rows.filter(function(r){return r.pr.last===new Date().toISOString().slice(0,10);}).length;
+  var lines=['AET Academy \u2014 Team Roster Summary'];
+  lines.push('Generated: '+new Date().toISOString().slice(0,10));
+  lines.push(team+' learners \u00b7 '+avg+'% avg completion \u00b7 '+cert+' exam-certified \u00b7 '+active+' active today');
+  lines.push('');
+  rows.forEach(function(r,i){var u=r.u,pr=r.pr;
+    lines.push((i+1)+'. '+u.name+' ('+(u.role||'')+') \u2014 '+pr.done+'/'+MODS.length+' modules ('+r.pct+'%), Lv'+lvlOf(pr.xp)+', '+pr.ach+' badges, '+(pr.streak||0)+'-day streak, exam '+(pr.exam!=null?pr.exam+'%':'\u2014'));
+  });
+  var txt=lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('Roster summary copied','ach');},function(){toast('Copy failed','warn');});}
+  else toast('Clipboard not available','warn');
+  return false;
+}
+
+/* ===== Profile account edits ===== */
+function pfAvatar(a){var u=curUser();if(!u)return;u.avatar=a;saveAcct();updateUserCard();renderProfile();toast('Avatar updated','xp');}
+function pfRole(r){var u=curUser();if(!u)return;u.role=r;saveAcct();buildNav('profile');renderProfile();toast('Role set to '+esc(r),'xp');}
+function pfSetPin(){var u=curUser();if(!u)return;var el=$('pf-pin');var v=(el?el.value:'').replace(/[^0-9]/g,'');if(v&&v.length!==4){toast('PIN must be 4 digits','ach');return;}u.pin=v?hashPin(v):'';saveAcct();renderProfile();toast(v?'PIN saved':'PIN removed','xp');}
+
+/* ===== Learner drill-down (Lead view) ===== */
+function userFull(id){try{return Object.assign({},DEF,JSON.parse(localStorage.getItem('aet_academy_'+id)||'{}'));}catch(e){return Object.assign({},DEF);}}
+function closeLearner(){var m=document.getElementById('lmodal');if(m)m.remove();}
+function openLearner(id){
+  var u=ACCT.users.find(function(x){return x.id===id;});if(!u)return;
+  var st=userFull(id);
+  var pct=Math.round((st.done||[]).length/MODS.length*100);
+  var h='<div class="lmbox"><button class="lmx" onclick="closeLearner()">\u2715</button>';
+  h+='<div class="lmhead"><div class="lmav">'+u.avatar+'</div><div><div class="lmname">'+esc(u.name)+'</div><div class="lmsub">'+esc(u.role||'Technician')+' \u00b7 Lv'+lvlOf(st.xp||0)+' \u00b7 '+(st.xp||0)+' XP \u00b7 joined '+esc(u.created||'')+'</div></div></div>';
+  h+='<div class="lmstats"><div><b>'+pct+'%</b><span>complete</span></div><div><b>'+(st.aced||[]).length+'</b><span>quizzes aced</span></div><div><b>'+(st.sims||[]).length+'/'+SIMS.length+'</b><span>sims</span></div><div><b>'+(st.ach||[]).length+'/'+ACH.length+'</b><span>badges</span></div><div><b>'+(st.streak||0)+'</b><span>streak</span></div><div><b>'+(st.exam?st.exam.pct+'%':'\u2014')+'</b><span>exam</span></div></div>';
+  h+='<div class="lmtracks">';
+  TRACKS.forEach(function(t){
+    var td=t.mods.filter(function(m){return (st.done||[]).indexOf(m)>=0;}).length;
+    var tp=Math.round(td/t.mods.length*100);
+    h+='<div class="lmtrk"><div class="lmtrkh"><span>'+t.icon+' '+esc(t.name)+'</span><span>'+td+'/'+t.mods.length+'</span></div><div class="lmtbar"><div style="width:'+tp+'%;background:'+t.color+'"></div></div>';
+    h+='<div class="lmmods">';
+    t.mods.forEach(function(mid){
+      var m=MODS.find(function(x){return x.id===mid;});if(!m)return;
+      var done=(st.done||[]).indexOf(mid)>=0;
+      var sc=st.scores&&st.scores[mid]!=null?st.scores[mid]:null;
+      var ql=m.quiz?m.quiz.length:0;
+      var qtxt=sc!=null?(' <span class="lmq'+(sc===ql?' ace':'')+'">'+sc+'/'+ql+'</span>'):'';
+      h+='<div class="lmmod"><span class="lmck'+(done?' d':'')+'">'+(done?'\u2713':'\u25cb')+'</span>'+esc(m.title)+qtxt+'</div>';
+    });
+    h+='</div></div>';
+  });
+  h+='</div>';
+  var asg=assignedTo(id);
+  h+='<div class="lmassign"><b>&#128203; Assign modules ('+asg.length+')</b><div class="lmasub">Click a module to assign / unassign it to this learner.</div><div class="lmagrid">';
+  MODS.forEach(function(m){var on=asg.indexOf(m.id)>=0,dn=(st.done||[]).indexOf(m.id)>=0;
+    h+='<button class="lmachip'+(on?' on':'')+(dn?' dn':'')+'" onclick="assignMod(\u0027'+id+'\u0027,'+m.id+')">'+(on?'\u2713 ':'')+m.id+'. '+esc(m.title)+(dn&&on?' \u2713':'')+'</button>';});
+  h+='</div></div>';
+  if(asg.length){h+='<div class="lmdue"><b>&#128197; Due dates</b><div class="lmdgrid">';
+    asg.forEach(function(mid){var m=MODS.find(function(x){return x.id===mid;});if(!m)return;var iso=dueOf(id,mid),dn=(st.done||[]).indexOf(mid)>=0,ds=dueStatus(iso,dn);
+      h+='<div class="lmdrow"><span class="lmdname">'+m.id+'. '+esc(m.title)+'</span><input type="date" class="lmdinput" value="'+iso+'" onchange="setDueFor(\u0027'+id+'\u0027,'+mid+',this.value)"><span class="due'+ds.cls+'">'+ds.label+'</span></div>';});
+    h+='</div></div>';}
+  h+='<div class="btnrow"><button class="btn sec" onclick="printAssignSheet(\u0027'+id+'\u0027)">&#128424; Print assignment sheet</button></div>';
+  var earned=(st.ach||[]).map(function(aid){var a=ACH.find(function(x){return x.id===aid;});return a?(a.icon+' '+a.name):aid;});
+  h+='<div class="lmbadges"><b>Badges earned</b><div>'+(earned.length?earned.map(function(e){return '<span class="lmbadge">'+e+'</span>';}).join(''):'<span class="lmnone">None yet</span>')+'</div></div>';
+  h+='<div class="lmfoot">Flashcards reviewed: '+(st.flashSeen||0)+' \u00b7 Last active: '+(st.lastDay||'never')+'</div>';
+  h+='</div>';
+  var m=document.createElement('div');m.id='lmodal';m.className='lmodal';m.innerHTML=h;
+  m.addEventListener('click',function(e){if(e.target===m)closeLearner();});
+  document.body.appendChild(m);
+}

@@ -1,0 +1,120 @@
+/* ===== Command palette ===== */
+let PAL=[],PALSEL=0;
+function buildPalette(){
+  PAL=[];
+  NAV.forEach(it=>PAL.push({t:it[2],ic:it[1],h:'#'+it[0]}));
+  PAL.push({t:'Profile & settings',ic:'&#128100;',h:'#profile'});
+  PAL.push({t:'Toggle light / dark theme',ic:'&#127762;',fn:toggleTheme});
+  MODS.forEach(m=>PAL.push({t:'Module '+m.id+': '+m.title,ic:'&#128216;',h:'#module/'+m.id}));
+  SIMS.forEach(s=>PAL.push({t:'Simulator: '+s.name,ic:s.icon,h:'#sims'}));
+  PAL.push({t:'Play: Glossary Term Match quiz',ic:'&#129504;',fn:function(){go('#glossary');if(typeof glossQuizStart==='function')setTimeout(glossQuizStart,60);}});
+  PAL.push({t:'Focus timer: start / stop',ic:'&#9201;',fn:function(){if(typeof toggleFocus==='function')toggleFocus();}});
+  if(S.lastMod!=null){var _lm=MODS.find(function(x){return x.id===S.lastMod;});if(_lm)PAL.push({t:'Resume: Module '+_lm.id+' \u2014 '+_lm.title,ic:'&#9654;',h:'#module/'+_lm.id});}
+  PAL.push({t:'Quiz Arcade: Mixed \u2014 all tracks',ic:'&#127918;',fn:function(){go('#arcade');if(typeof startArcade==='function')setTimeout(function(){startArcade('all');},60);}});
+  if(typeof weakMods==='function'){var _wmP=weakMods();if(_wmP.length&&_wmP[0].m)PAL.push({t:'Flashcards: study your weakest module (M'+_wmP[0].m.id+')',ic:'&#128201;',fn:(function(_id){return function(){if(typeof studyModuleFlash==='function')studyModuleFlash(_id);};})(_wmP[0].m.id)});}
+  if(typeof weakestTrack==='function'){var _wtP=weakestTrack(S);if(_wtP&&_wtP.tr&&Math.round(_wtP.pct*100)<80)PAL.push({t:'Quiz Arcade: challenge your weakest track ('+_wtP.tr.name+')',ic:'&#127919;',fn:(function(_tid){return function(){go('#arcade');if(typeof startArcade==='function')setTimeout(function(){startArcade(_tid);},60);};})(_wtP.tr.id)});}
+  PAL.push({t:'Glossary: random term',ic:'&#127922;',fn:function(){go('#glossary');if(typeof glossRandom==='function')setTimeout(glossRandom,60);}});
+  if(typeof fcStarCount==='function'&&fcStarCount()>0)PAL.push({t:'Flashcards: study starred cards ('+fcStarCount()+')',ic:'&#11088;',fn:function(){go('#flash');if(typeof setFcMode==='function')setTimeout(function(){setFcMode('star');},60);}});
+  PAL.push({t:'Learn: surprise me \u2014 open a random module',ic:'&#127922;',fn:function(){if(typeof surpriseModule==='function')surpriseModule();}});
+  PAL.push({t:'Glossary: copy my favorite terms',ic:'&#128203;',fn:function(){if(typeof copyGlossFavorites==='function')copyGlossFavorites();}});
+  PAL.push({t:'Glossary: download as .txt',ic:'&#11015;',fn:function(){if(typeof downloadGlossary==='function')downloadGlossary();}});
+  PAL.push({t:'Glossary: download favorite terms',ic:'&#11015;',fn:function(){if(typeof downloadGlossFavorites==='function')downloadGlossFavorites();}});
+  PAL.push({t:'Flashcards: download study sheet',ic:'&#11015;',fn:function(){if(typeof downloadFlashcards==='function')downloadFlashcards();}});
+  PAL.push({t:'Reference: download booklet .txt',ic:'&#11015;',fn:function(){if(typeof downloadRefBook==='function')downloadRefBook();}});
+  PAL.push({t:'Reference: copy booklet',ic:'&#128203;',fn:function(){go('#reference');if(typeof copyRefBook==='function')setTimeout(copyRefBook,60);}});
+  PAL.push({t:'Glossary: print / save as PDF',ic:'&#128196;',fn:function(){if(typeof printGloss==='function')printGloss();}});
+  PAL.push({t:'Flashcards: print study sheet',ic:'&#128196;',fn:function(){if(typeof printFlashcards==='function')printFlashcards();}});
+  PAL.push({t:'Reference: print booklet',ic:'&#128196;',fn:function(){if(typeof printRefBook==='function')printRefBook();}});
+  PAL.push({t:'Learn: print course syllabus',ic:'&#128196;',fn:function(){if(typeof printSyllabus==='function')printSyllabus();}});
+  PAL.push({t:'Achievements: copy my progress',ic:'&#128203;',fn:function(){if(typeof shareAchievements==='function')shareAchievements();}});
+  if(typeof weakMods==='function'&&weakMods().length>0)PAL.push({t:'Weak Spots: start focused drill',ic:'&#127918;',fn:function(){go('#review');if(typeof startReviewDrill==='function')setTimeout(startReviewDrill,60);}});
+  if(typeof curUser==='function'&&curUser()&&curUser().role==='Lead')PAL.push({t:'Roster: copy team summary',ic:'&#128101;',fn:function(){go('#roster');if(typeof copyRoster==='function')setTimeout(copyRoster,60);}});
+  if(S.exam&&S.exam.pct>=80&&S.done.length>=MODS.length)PAL.push({t:'Certificate: copy credential',ic:'&#128203;',fn:function(){go('#cert');if(typeof copyCert==='function')setTimeout(copyCert,60);}});
+  PAL.push({t:'Download complete study pack (.txt)',ic:'&#128218;',fn:function(){if(typeof downloadStudyPack==='function')downloadStudyPack();}});
+  PAL.push({t:'Profile: copy my stats',ic:'&#128203;',fn:function(){if(typeof copyStudyStats==='function')copyStudyStats();}});
+  PAL.push({t:'Profile: print transcript',ic:'&#128196;',fn:function(){if(typeof printTranscript==='function')printTranscript();}});
+  PAL.push({t:'Resources: download list .txt',ic:'&#11015;',fn:function(){go('#resources');if(typeof downloadResources==='function')setTimeout(downloadResources,60);}});
+  PAL.push({t:'Resources: copy list',ic:'&#128203;',fn:function(){go('#resources');if(typeof copyResources==='function')setTimeout(copyResources,60);}});
+  PAL.push({t:'Resources: print / save as PDF',ic:'&#128196;',fn:function(){go('#resources');if(typeof printResources==='function')setTimeout(printResources,60);}});
+  if(typeof REF!=='undefined')REF.forEach(r=>PAL.push({t:'Reference: '+r.title.replace(/&[a-z]+;/g,' '),ic:'&#128209;',h:'#reference'}));
+}
+var SHORTCUTS=[
+  ['Ctrl</kbd> + <kbd>K','Open command palette'],
+  ['/','Jump to search'],
+  ['?','Show this help'],
+  ['Space</kbd> / <kbd>Enter','Flip flashcard (in flashcards)'],
+  ['1','Flashcard: got it'],
+  ['2','Flashcard: hard'],
+  ['3','Flashcard: again'],
+  ['S','Flashcard: star / unstar'],
+  ['G','Jump to glossary'],
+  ['H','Jump to dashboard (home)'],
+  ['L','Jump to Learn (modules)'],
+  ['Esc','Close overlay / palette']
+];
+function showShortcuts(){
+  var b=$('scbody');if(b){b.innerHTML=SHORTCUTS.map(function(r){return '<div class="sc-row"><span>'+r[1]+'</span><span><kbd>'+r[0]+'</kbd></span></div>';}).join('');}
+  $('shortcuts').classList.add('on');
+}
+function hideShortcuts(){$('shortcuts').classList.remove('on');}
+function palOpen(){$('palette').classList.add('on');$('palinput').value='';PALSEL=0;palFilter('');setTimeout(()=>$('palinput').focus(),30);}
+function palClose(){$('palette').classList.remove('on');}
+function palFilter(q){
+  const f=(q||'').toLowerCase();
+  const list=PAL.filter(c=>c.t.toLowerCase().includes(f)).slice(0,40);
+  window._palList=list;PALSEL=0;
+  $('palresults').innerHTML=list.map((c,i)=>'<div class="palitem'+(i===0?' sel':'')+'" onmouseover="palHover('+i+')" onclick="palRun('+i+')"><span>'+c.ic+'</span>'+c.t+(c.h?'<span class="k">'+c.h+'</span>':'')+'</div>').join('')||'<div class="palitem">No matches</div>';
+}
+function palHover(i){PALSEL=i;[].forEach.call(document.querySelectorAll('.palitem'),(el,j)=>el.classList.toggle('sel',j===i));}
+function palRun(i){const c=(window._palList||[])[i];if(!c)return;palClose();if(c.fn)c.fn();else if(c.h)go(c.h);}
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();palOpen();return;}
+  if(e.key==='?'&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'){e.preventDefault();showShortcuts();return;}
+  if(e.key==='Escape'&&$('qrmodal')&&$('qrmodal').classList.contains('on')){e.preventDefault();hideQR();return;}
+  if(e.key==='Escape'&&$('shortcuts').classList.contains('on')){e.preventDefault();hideShortcuts();return;}
+  if(e.key==='/'&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'&&!$('palette').classList.contains('on')){e.preventDefault();window._searchQ='';go('#search');return;}
+  if((e.key==='g'||e.key==='G')&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'&&!$('palette').classList.contains('on')&&!$('shortcuts').classList.contains('on')){e.preventDefault();go('#glossary');return;}
+  if((e.key==='h'||e.key==='H')&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'&&!$('palette').classList.contains('on')&&!$('shortcuts').classList.contains('on')){e.preventDefault();go('#dash');return;}
+  if((e.key==='l'||e.key==='L')&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'&&!$('palette').classList.contains('on')&&!$('shortcuts').classList.contains('on')){e.preventDefault();go('#learn');return;}
+  if((location.hash||'').indexOf('#flash')===0&&!$('palette').classList.contains('on')&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')&&document.getElementById('gate').style.display==='none'&&typeof FC!=='undefined'&&FC.order&&FC.order.length){
+    if((e.key===' '||e.key==='Enter')&&!FC.flip){e.preventDefault();flipCard();return;}
+    if(FC.flip&&(e.key==='1'||e.key==='2'||e.key==='3')){e.preventDefault();gradeCard(parseInt(e.key,10)-1);return;}
+    if((e.key==='s'||e.key==='S')&&FC.mode!=='mod'&&typeof toggleFcStar==='function'){e.preventDefault();toggleFcStar();return;}
+  }
+  if($('palette').classList.contains('on')){
+    if(e.key==='Escape')palClose();
+    else if(e.key==='ArrowDown'){e.preventDefault();PALSEL=Math.min((window._palList||[]).length-1,PALSEL+1);palHover(PALSEL);}
+    else if(e.key==='ArrowUp'){e.preventDefault();PALSEL=Math.max(0,PALSEL-1);palHover(PALSEL);}
+    else if(e.key==='Enter'){e.preventDefault();palRun(PALSEL);}
+  }
+});
+
+/* ===== App init (after login) ===== */
+function enterApp(){
+  setTheme(S.theme||'dark');
+  applyA11y();
+  markDay();
+  buildPalette();
+  updateUserCard();
+  var u=curUser();var sf=document.getElementById('sbfoot');
+  if(u&&sf&&!document.getElementById('signout-btn')){
+    var b=document.createElement('button');b.className='mini';b.id='signout-btn';b.title='Sign out / switch learner';b.innerHTML='\uD83D\uDEAA Sign out';b.onclick=signOut;sf.appendChild(b);
+  }
+  if(!location.hash)location.hash='#dash';
+  render();
+  checkAch();
+}
+/* ===== Boot ===== */
+(function boot(){
+  setTheme('dark');
+  document.getElementById('gate').addEventListener('click',gateClick);
+  document.addEventListener('keydown',function(e){
+    if(document.getElementById('gate').style.display!=='none'&&GATE.mode==='pin'){
+      if(e.key>='0'&&e.key<='9')padPress(e.key);
+      else if(e.key==='Backspace')padPress('back');
+      else if(e.key==='Enter')padPress('ok');
+    }
+  });
+  if(ACCT.current&&curUser()){loadUserState();hideGate();enterApp();}
+  else showGate();
+})();

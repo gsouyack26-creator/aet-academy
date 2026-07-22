@@ -1,0 +1,1267 @@
+/* ===== Simulators ===== */
+function vv(id){const e=$(id);return e?e.value:'';}
+var _SIM_SESS={};
+function markSim(id){var isNew=!S.sims.includes(id);if(isNew){S.sims.push(id);addXP(XP.sim_use,'tried a simulator');}if(typeof logStudy==='function')logStudy(3);if(!S.simStats)S.simStats={};if(!_SIM_SESS[id]){_SIM_SESS[id]=1;var today=new Date().toISOString().slice(0,10);var st=S.simStats[id]||{attempts:0,first:today,last:today};st.attempts=(st.attempts||0)+1;st.last=today;if(!st.first)st.first=today;S.simStats[id]=st;persist();}if(isNew)checkAch();}
+
+function simChecklist(){
+  var stats=S.simStats||{};
+  var done=SIMS.filter(function(s){return stats[s.id]||(S.sims||[]).indexOf(s.id)>=0;}).length;
+  var cells=SIMS.map(function(s){
+    var tried=stats[s.id]||(S.sims||[]).indexOf(s.id)>=0;
+    var mark=tried?'&#10004;':'&#9675;';
+    var col=tried?'var(--accent2)':'var(--txt2)';
+    return '<div class="simchk" title="'+esc(s.name)+'" onclick="var e=$(\u0027sim-'+s.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});" style="display:flex;align-items:center;gap:.35rem;padding:.3rem .5rem;border-radius:8px;cursor:pointer;background:var(--bg2);font-size:.8rem">'+
+      '<span style="color:'+col+';font-weight:700">'+mark+'</span><span style="opacity:.85">'+s.icon+'</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(s.name)+'</span></div>';
+  }).join('');
+  var pct=Math.round(done/SIMS.length*100);
+  var _firstUntried=SIMS.find(function(s){return !(stats[s.id]||(S.sims||[]).indexOf(s.id)>=0);});
+  var _nextLine=_firstUntried?' &middot; <a href="#" onclick="var e=$(\u0027sim-'+_firstUntried.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});return false" style="color:var(--acc)">&#9654; Try next: '+esc(_firstUntried.name)+'</a>':' &middot; <span style="color:var(--ok)">&#127881; All tools explored!</span>';
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--accent2);font-weight:700">&#9989; SIMULATOR CHECKLIST</div>'+
+    '<div class="sub" style="font-size:.76rem;margin:.15rem 0 .5rem">'+done+' of '+SIMS.length+' tools tried ('+pct+'%) &middot; tap any to jump to it'+_nextLine+'</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.4rem">'+cells+'</div></div>';
+}
+function simActivityPanel(){
+  var stats=S.simStats||{};var tried=SIMS.filter(function(s){return stats[s.id];});
+  if(!tried.length)return '';
+  tried.sort(function(a,b){return (stats[b.id].last||'').localeCompare(stats[a.id].last||'');});
+  var rows=tried.map(function(s){var st=stats[s.id];
+    var best=(s.id==='pid'&&st.bestOver!=null)?'<span class="sa-best">&#127942; best overshoot '+st.bestOver+'%</span>':'';
+    var last=st.last?_planDate(new Date(st.last)):'';
+    return '<div class="simact" onclick="var e=$(\u0027sim-'+s.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});"><span class="sa-ico">'+s.icon+'</span><span class="sa-nm">'+s.name+'</span>'+best+'<span class="sa-att">'+st.attempts+'&times;</span><span class="sa-last">'+last+'</span></div>';
+  }).join('');
+  var _totRuns=tried.reduce(function(a,s){return a+((stats[s.id]&&stats[s.id].attempts)||0);},0);
+  var _fave=null;tried.forEach(function(s){var at=(stats[s.id]&&stats[s.id].attempts)||0;if(!_fave||at>_fave.at)_fave={s:s,at:at};});
+  var _faveLine=(_fave&&_fave.at>=2&&tried.length>1)?'<div class="sub" style="font-size:.76rem;margin:-.25rem 0 .5rem;color:var(--txt2)">&#128295; Most practiced: <b>'+_fave.s.icon+' '+esc(_fave.s.name)+'</b> ('+_fave.at+' runs)</div>':'';
+  var _untried=SIMS.filter(function(s){return !stats[s.id];});var _tryLine=_untried.length?'<div class="sub" style="font-size:.76rem;margin:-.15rem 0 .5rem;color:var(--txt2)">&#129514; Not tried yet: '+_untried.slice(0,3).map(function(s){return '<b onclick="var e=$(\u0027sim-'+s.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});" style="cursor:pointer">'+s.icon+' '+esc(s.name)+'</b>';}).join(', ')+(_untried.length>3?' +'+(_untried.length-3)+' more':'')+'</div>':'';
+  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.78rem;color:var(--accent2);font-weight:700">&#128200; YOUR SIMULATOR ACTIVITY</div><div class="sub" style="font-size:.76rem;margin:.15rem 0 .5rem">'+tried.length+' of '+SIMS.length+' tools used &middot; <b>'+_totRuns+'</b> total run'+(_totRuns===1?'':'s')+' &middot; attempts = sessions you opened each tool</div>'+_faveLine+_tryLine+'<div class="salist">'+rows+'</div></div>';
+}
+function simRecHtml(){
+  if(typeof weakestTrack!=='function'||typeof SIMS==='undefined')return '';
+  var w=weakestTrack(S);if(!w||!w.tr||Math.round(w.pct*100)>=80)return '';
+  var cands=SIMS.filter(function(s){return s.track===w.tr.id;});if(!cands.length)return '';
+  var stats=S.simStats||{};var pick=cands.filter(function(s){return !stats[s.id];})[0]||cands[0];
+  return '<div class="card" style="border-left:3px solid var(--warn);margin-bottom:1rem;font-size:.84rem"><b>&#127919; Reinforce your weakest track</b><div class="sub" style="margin:.25rem 0 .45rem;font-size:.8rem">'+w.tr.icon+' '+esc(w.tr.name)+' is your lowest quiz average. Hands-on practice sticks &mdash; try this simulator:</div><button class="btn sec" onclick="var e=$(\u0027sim-'+pick.id+'\u0027);if(e&&e.scrollIntoView)e.scrollIntoView({behavior:\u0027smooth\u0027,block:\u0027start\u0027});">'+pick.icon+' '+esc(pick.name)+' &rarr;</button></div>';
+}
+function renderSims(){
+  let h='<div class="vh"><h2>&#128300; Lab Simulators</h2><div class="sub">'+SIMS.length+' interactive tools - change any value for live results. Everything runs offline, right here.</div></div>';
+  h+=simChecklist();
+  h+=simRecHtml();
+  h+=simActivityPanel();
+  h+=SIM_SCALE+SIM_OHM+SIM_RESISTOR+SIM_PHASE3+SIM_VHZ+SIM_SEAL+SIM_REL+SIM_PULLEY+SIM_RNET+SIM_PID+SIM_LADDER;
+  $('v-sims').innerHTML=h;
+  var _da=(location.hash||'').split('/')[1]||'';
+  if(_da.indexOf('ladder-')===0){var _pg=_da.slice(7);var _sel=$('lad_prog');if(_sel&&typeof LADPROG!=='undefined'&&LADPROG[_pg]){_sel.value=_pg;}}
+  scale420();ohmCalc();resistorCalc();phase3Calc();calcVHz();sealDraw();calcRel();calcPulley();calcRnet();calcPID();ladderInit();
+  if(_da.indexOf('ladder')===0){var _t=$('sim-ladder');if(_t&&_t.scrollIntoView)setTimeout(function(){_t.scrollIntoView({behavior:'smooth',block:'start'});},60);}
+}
+
+const SIM_SCALE='<div class="sim" id="sim-scale"><h3>&#128225; 4-20 mA / Analog Scaling</h3><div class="desc">Convert a raw analog signal into engineering units. Live-zero: 4 mA = 0%, 20 mA = 100%. Below 4 mA usually means a broken wire.</div><div class="row"><div><label>Signal type</label><select id="sc_type" onchange="scale420()"><option value="ma">4-20 mA</option><option value="cnt">Raw counts (0-32767)</option></select></div><div><label>Input value</label><input id="sc_in" type="number" value="12" oninput="scale420()"></div></div><div class="row"><div><label>EU at min (0% / 4 mA)</label><input id="sc_lo" type="number" value="0" oninput="scale420()"></div><div><label>EU at max (100% / 20 mA)</label><input id="sc_hi" type="number" value="150" oninput="scale420()"></div></div><div class="out" id="sc_out"></div></div>';
+function scale420(){markSim('scale');const t=vv('sc_type');const val=parseFloat(vv('sc_in'))||0,lo=parseFloat(vv('sc_lo'))||0,hi=parseFloat(vv('sc_hi'))||0;let pct=(t==='ma')?(val-4)/16*100:val/32767*100;const eu=lo+(pct/100)*(hi-lo);const mm=(t==='ma')?val:(4+val/32767*16);$('sc_out').innerHTML='Percent of span: <b>'+pct.toFixed(1)+'%</b><br>Engineering value: <span class="big">'+eu.toFixed(2)+'</span><br>Equivalent current: <b>'+mm.toFixed(2)+' mA</b>'+((pct<0||pct>100)?'<br><span style="color:var(--warn)">&#9888; Out of 4-20 mA range - possible sensor fault / broken wire</span>':'');}
+
+const SIM_OHM='<div class="sim" id="sim-ohm"><h3>&#9889; Ohm&#39;s Law &amp; Power Wheel</h3><div class="desc">Enter ANY two values; the rest are calculated. V=IR, P=VI. Fill the two you know, leave the others blank.</div><div class="row"><div><label>Voltage V (volts)</label><input id="oh_v" type="number" placeholder="?" oninput="ohmCalc()"></div><div><label>Current I (amps)</label><input id="oh_i" type="number" placeholder="?" oninput="ohmCalc()"></div></div><div class="row"><div><label>Resistance R (ohms)</label><input id="oh_r" type="number" placeholder="?" oninput="ohmCalc()"></div><div><label>Power P (watts)</label><input id="oh_p" type="number" placeholder="?" oninput="ohmCalc()"></div></div><div class="out" id="oh_out">Enter any two values.</div></div>';
+function ohmCalc(){markSim('ohm');let V=parseFloat(vv('oh_v')),I=parseFloat(vv('oh_i')),R=parseFloat(vv('oh_r')),P=parseFloat(vv('oh_p'));const has=x=>!isNaN(x);const n=[V,I,R,P].filter(has).length;const out=$('oh_out');if(n<2){out.innerHTML='Enter any two values.';return;}
+  if(has(V)&&has(I)){R=V/I;P=V*I;}
+  else if(has(V)&&has(R)){I=V/R;P=V*I;}
+  else if(has(V)&&has(P)){I=P/V;R=V/I;}
+  else if(has(I)&&has(R)){V=I*R;P=V*I;}
+  else if(has(I)&&has(P)){V=P/I;R=V/I;}
+  else if(has(R)&&has(P)){V=Math.sqrt(P*R);I=V/R;}
+  out.innerHTML='V = <b>'+(isFinite(V)?V.toFixed(2):'-')+' V</b> &nbsp; I = <b>'+(isFinite(I)?I.toFixed(3):'-')+' A</b><br>R = <b>'+(isFinite(R)?R.toFixed(2):'-')+' &#937;</b> &nbsp; P = <span class="big">'+(isFinite(P)?P.toFixed(2):'-')+' W</span>';}
+
+const RC=['#000','#7b3f00','#e00','#f80','#fd0','#0a0','#00f','#80f','#888','#fff'];
+const RCN=['black','brown','red','orange','yellow','green','blue','violet','grey','white'];
+const SIM_RESISTOR='<div class="sim" id="sim-resistor"><h3>&#127937; Resistor Color Code (4-band)</h3><div class="desc">Pick the band colors; read resistance and tolerance. Bands 1-2 = digits, band 3 = multiplier, band 4 = tolerance.</div><div class="row"><div><label>Band 1 (1st digit)</label><select id="rb1" onchange="resistorCalc()"></select></div><div><label>Band 2 (2nd digit)</label><select id="rb2" onchange="resistorCalc()"></select></div></div><div class="row"><div><label>Band 3 (multiplier)</label><select id="rb3" onchange="resistorCalc()"></select></div><div><label>Band 4 (tolerance)</label><select id="rb4" onchange="resistorCalc()"><option value="1">Brown +/-1%</option><option value="2">Red +/-2%</option><option value="5" selected>Gold +/-5%</option><option value="10">Silver +/-10%</option></select></div></div><div class="resistor" id="rvis"></div><div class="out" id="rb_out"></div></div>';
+function fillRes(){['rb1','rb2','rb3'].forEach(id=>{const s=$(id);if(!s||s.options.length)return;let o='';RCN.forEach((nm,i)=>{o+='<option value="'+i+'">'+nm+' ('+(id==='rb3'?('x10^'+i):i)+')</option>';});s.innerHTML=o;});if($('rb1')&&!$('rb1').dataset.set){$('rb1').value=1;$('rb2').value=0;$('rb3').value=2;$('rb1').dataset.set=1;}}
+function resistorCalc(){markSim('resistor');fillRes();const d1=+vv('rb1'),d2=+vv('rb2'),mu=+vv('rb3'),tol=vv('rb4');const val=(d1*10+d2)*Math.pow(10,mu);const disp=val>=1e6?(val/1e6)+' M':val>=1e3?(val/1e3)+' k':val+' ';const tolC={'1':'brown','2':'red','5':'gold','10':'silver'}[tol];const b4=tol==='5'?'#d4af37':tol==='10'?'#bbb':RC[+tol];$('rvis').innerHTML='<span class="rband" style="background:'+RC[d1]+'"></span><span class="rband" style="background:'+RC[d2]+'"></span><span class="rband" style="background:'+RC[mu]+'"></span><span class="rband" style="background:'+b4+'"></span>';$('rb_out').innerHTML='Resistance: <span class="big">'+disp+'&#937;</span> &plusmn;'+tol+'%<br><span style="font-size:.8rem;color:var(--txt2)">Range: '+(val*(1-tol/100)).toFixed(0)+' to '+(val*(1+tol/100)).toFixed(0)+' &#937; ('+tolC+' band)</span>';}
+
+const SIM_PHASE3='<div class="sim" id="sim-phase3"><h3>&#128268; Three-Phase Power</h3><div class="desc">P = sqrt3 x V(line) x I(line) x PF. Also shows apparent (kVA), reactive (kVAR), and wye phase voltage.</div><div class="row"><div><label>Line voltage VL (V)</label><input id="p3_v" type="number" value="480" oninput="phase3Calc()"></div><div><label>Line current IL (A)</label><input id="p3_i" type="number" value="25" oninput="phase3Calc()"></div><div><label>Power factor</label><input id="p3_pf" type="number" value="0.85" step="0.01" oninput="phase3Calc()"></div></div><div class="out" id="p3_out"></div></div>';
+function phase3Calc(){markSim('phase3');const V=parseFloat(vv('p3_v'))||0,I=parseFloat(vv('p3_i'))||0,pf=Math.min(1,Math.max(0,parseFloat(vv('p3_pf'))||0));const r3=Math.sqrt(3);const kva=r3*V*I/1000,kw=kva*pf,q=Math.sqrt(Math.max(0,kva*kva-kw*kw)),vph=V/r3;$('p3_out').innerHTML='Real power: <span class="big">'+kw.toFixed(2)+' kW</span><br>Apparent: <b>'+kva.toFixed(2)+' kVA</b> &nbsp; Reactive: <b>'+q.toFixed(2)+' kVAR</b><br>Wye phase voltage: <b>'+vph.toFixed(1)+' V</b> <span style="font-size:.8rem;color:var(--txt2)">(480V line = 277V phase)</span>';}
+
+const SIM_VHZ='<div class="sim" id="sim-vhz"><h3>&#9881; VFD Motor Speed / V-Hz</h3><div class="desc">Synchronous RPM = 120 x f / poles. Slip = (Ns - Nfl)/Ns. Constant V/Hz keeps motor flux steady below base speed.</div><div class="row"><div><label>Line frequency (Hz)</label><input id="m_f" type="number" value="60" oninput="calcVHz()"></div><div><label>Motor poles</label><select id="m_p" onchange="calcVHz()"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></div></div><div class="row"><div><label>Nameplate voltage (V)</label><input id="m_v" type="number" value="460" oninput="calcVHz()"></div><div><label>Full-load RPM</label><input id="m_fl" type="number" value="1750" oninput="calcVHz()"></div></div><div class="out" id="m_out"></div></div>';
+function calcVHz(){markSim('vhz');const f=parseFloat(vv('m_f'))||0,p=parseFloat(vv('m_p'))||4,vt=parseFloat(vv('m_v'))||0,fl=parseFloat(vv('m_fl'))||0;const ns=p>0?120*f/p:0,slip=ns>0?(ns-fl)/ns*100:0,vhz=f>0?vt/f:0;$('m_out').innerHTML='Synchronous speed: <b>'+ns.toFixed(0)+' RPM</b><br>Slip: <b>'+slip.toFixed(1)+'%</b><br>V/Hz ratio: <span class="big">'+vhz.toFixed(2)+' V/Hz</span> <span style="font-size:.8rem;color:var(--txt2)">(460V / 60Hz = 7.67)</span>';}
+
+const SIM_SEAL='<div class="sim" id="sim-seal"><h3>&#128268; Start / Stop Seal-In Logic</h3><div class="desc">Classic 3-wire motor control. Start is momentary; the run relay aux contact seals in around it. Stop (NC) or an overload trip drops the coil.</div><div class="row"><div><button class="sbtn" onmousedown="sealStart(1)" onmouseup="sealStart(0)" onmouseleave="sealStart(0)" ontouchstart="sealStart(1)" ontouchend="sealStart(0)">HOLD Start PB</button></div><div><button class="sbtn" style="background:var(--fail);color:#fff" onclick="sealStop()">Press Stop PB</button></div><div><button class="sbtn" style="background:var(--warn);color:#000" id="seal_ol" onclick="sealOL()">Trip Overload</button></div></div><div class="out" id="seal_out"></div></div>';
+let sealRun=false,sealOK=true;
+function sealStart(d){markSim('seal');if(d&&sealOK)sealRun=true;sealDraw();}
+function sealStop(){sealRun=false;sealDraw();}
+function sealOL(){sealOK=!sealOK;if(!sealOK)sealRun=false;const b=$('seal_ol');if(b)b.textContent=sealOK?'Trip Overload':'Reset Overload';sealDraw();}
+function sealDraw(){const el=$('seal_out');if(!el)return;el.innerHTML='Motor coil M: <span class="lamp '+(sealRun?'on':'')+'"></span> <b>'+(sealRun?'RUNNING':'stopped')+'</b><br>Seal-in aux contact: <b>'+(sealRun?'closed (holding)':'open')+'</b> &nbsp; Overload: <b>'+(sealOK?'OK':'TRIPPED')+'</b><br><span style="font-size:.8rem;color:var(--txt2)">Tip: hold Start to energize, then release - the seal-in keeps the motor running until Stop or an overload trip.</span>';}
+
+const SIM_REL='<div class="sim" id="sim-rel"><h3>&#128202; Reliability &amp; OEE</h3><div class="desc">MTBF = uptime / failures. MTTR = downtime / repairs. Availability = MTBF/(MTBF+MTTR). OEE = A x Performance x Quality.</div><div class="row"><div><label>Operating hours</label><input id="r_up" type="number" value="720" oninput="calcRel()"></div><div><label>Failures</label><input id="r_f" type="number" value="4" oninput="calcRel()"></div><div><label>Downtime (hrs)</label><input id="r_dn" type="number" value="8" oninput="calcRel()"></div></div><div class="row"><div><label>Performance %</label><input id="r_perf" type="number" value="95" oninput="calcRel()"></div><div><label>Quality %</label><input id="r_q" type="number" value="99" oninput="calcRel()"></div></div><div class="out" id="r_out"></div></div>';
+function calcRel(){markSim('rel');const up=parseFloat(vv('r_up'))||0,f=parseFloat(vv('r_f'))||0,dn=parseFloat(vv('r_dn'))||0,perf=(parseFloat(vv('r_perf'))||0)/100,ql=(parseFloat(vv('r_q'))||0)/100;const mtbf=f>0?up/f:up,mttr=f>0?dn/f:0,avail=(mtbf+mttr)>0?mtbf/(mtbf+mttr):1,oee=avail*perf*ql;$('r_out').innerHTML='MTBF: <b>'+mtbf.toFixed(1)+' h</b> &nbsp; MTTR: <b>'+mttr.toFixed(2)+' h</b><br>Availability: <b>'+(avail*100).toFixed(2)+'%</b><br>OEE: <span class="big">'+(oee*100).toFixed(1)+'%</span> <span style="font-size:.8rem;color:var(--txt2)">(world-class &ge; 85%)</span>';}
+
+const SIM_PULLEY='<div class="sim" id="sim-pulley"><h3>&#9881; Pulley &amp; Belt Speed</h3><div class="desc">A smaller driven pulley spins faster. Driven RPM = Drive RPM &times; (Drive dia / Driven dia). Belt speed (FPM) = &pi; &times; dia(in) &times; RPM / 12.</div><div class="row"><div><label>Drive (motor) RPM</label><input id="pl_rpm" type="number" value="1750" oninput="calcPulley()"></div><div><label>Drive pulley dia (in)</label><input id="pl_d1" type="number" value="4" oninput="calcPulley()"></div><div><label>Driven pulley dia (in)</label><input id="pl_d2" type="number" value="10" oninput="calcPulley()"></div></div><div class="out" id="pl_out"></div></div>';
+function calcPulley(){markSim('pulley');var rpm=parseFloat(vv('pl_rpm'))||0,d1=parseFloat(vv('pl_d1'))||0,d2=parseFloat(vv('pl_d2'))||0;var out=$('pl_out');if(d2<=0){out.innerHTML='Enter a driven diameter.';return;}var drpm=rpm*d1/d2,ratio=d2/d1,bfpm=Math.PI*d1*rpm/12;out.innerHTML='Driven RPM: <b>'+drpm.toFixed(0)+' RPM</b> &nbsp; Ratio: <b>'+ratio.toFixed(2)+':1</b><br>Belt speed: <span class="big">'+bfpm.toFixed(0)+' FPM</span> <span style="font-size:.8rem;color:var(--txt2)">('+(bfpm/60).toFixed(1)+' ft/s)</span>';}
+
+const SIM_RNET='<div class="sim" id="sim-rnet"><h3>&#128268; Series / Parallel Resistance</h3><div class="desc">Series adds up (R1+R2). Parallel is smaller than either: 1/Rt = 1/R1 + 1/R2. Supply voltage gives total current I = V / Rt.</div><div class="row"><div><label>Configuration</label><select id="rn_mode" onchange="calcRnet()"><option value="ser">Series</option><option value="par">Parallel</option></select></div><div><label>R1 (&#937;)</label><input id="rn_r1" type="number" value="100" oninput="calcRnet()"></div><div><label>R2 (&#937;)</label><input id="rn_r2" type="number" value="220" oninput="calcRnet()"></div></div><div class="row"><div><label>Supply voltage (V)</label><input id="rn_v" type="number" value="24" oninput="calcRnet()"></div></div><div class="out" id="rn_out"></div></div>';
+function calcRnet(){markSim('rnet');var mode=vv('rn_mode'),r1=parseFloat(vv('rn_r1'))||0,r2=parseFloat(vv('rn_r2'))||0,v=parseFloat(vv('rn_v'))||0;var out=$('rn_out');var rt;if(mode==='par'){if(r1<=0||r2<=0){out.innerHTML='Both resistors must be &gt; 0 for parallel.';return;}rt=1/(1/r1+1/r2);}else{rt=r1+r2;}var i=rt>0?v/rt:0,p=v*i;out.innerHTML='Total R: <span class="big">'+rt.toFixed(1)+' &#937;</span><br>Current: <b>'+(i*1000).toFixed(1)+' mA</b> &nbsp; Power: <b>'+p.toFixed(2)+' W</b>';}
+
+const SIM_PID='<div class="sim" id="sim-pid"><h3>&#127919; PID Control Loop</h3><div class="desc">Watch how a controller drives a process to setpoint. <b>Kp</b> reacts to current error, <b>Ki</b> removes steady-state offset, <b>Kd</b> damps overshoot. Too much gain = oscillation.</div><div class="row"><div><label>Setpoint</label><input id="pid_sp" type="number" value="100" oninput="calcPID()"></div><div><label>Kp (proportional)</label><input id="pid_kp" type="number" step="0.1" value="1.2" oninput="calcPID()"></div></div><div class="row"><div><label>Ki (integral)</label><input id="pid_ki" type="number" step="0.05" value="0.4" oninput="calcPID()"></div><div><label>Kd (derivative)</label><input id="pid_kd" type="number" step="0.05" value="0.15" oninput="calcPID()"></div></div><div class="row"><div><label>Process lag (tau, s)</label><input id="pid_tau" type="number" step="0.1" value="2" oninput="calcPID()"></div></div><div class="out" id="pid_out"></div><div style="margin-top:1rem;border-top:1px solid var(--line);padding-top:.8rem"><div class="row" style="justify-content:space-between;align-items:center"><b>&#127919; Tuning Challenge</b><div><button class="btn sec" onclick="pidNewGoal()">New challenge</button> <button class="btn" onclick="pidGrade()">Check my tuning</button></div></div><div class="out" id="pid_goal">Click <b>New challenge</b> for a target spec, tune Kp/Ki/Kd, then Check my tuning.</div><div id="pid_result"></div></div></div>';
+var PIDGOAL=null;
+function pidSim(SP,Kp,Ki,Kd,tau){if(tau<=0)tau=0.1;var dt=0.1,N=160,PV=0,integ=0,prevErr=SP,peak=0,series=[];
+  for(var k=0;k<N;k++){var err=SP-PV;integ+=err*dt;var deriv=(err-prevErr)/dt;prevErr=err;var u=Kp*err+Ki*integ+Kd*deriv;PV+=dt*(u-PV)/tau;if(PV>peak)peak=PV;series.push(PV);}
+  var finalPV=PV,sse=SP-finalPV,over=SP>0?Math.max(0,(peak-SP)/SP*100):0;
+  var last40=series.slice(series.length-40),mn=Math.min.apply(null,last40),mx=Math.max.apply(null,last40),osc=(mx-mn)>Math.abs(SP)*0.02?'oscillating':'settled';
+  var blk=['\u2581','\u2582','\u2583','\u2584','\u2585','\u2586','\u2587','\u2588'],hi=Math.max(peak,SP)||1,spark='';
+  var step=Math.max(1,Math.floor(N/48));for(var i=0;i<N;i+=step){var idx=Math.min(7,Math.max(0,Math.round(series[i]/hi*7)));spark+=blk[idx];}
+  return {finalPV:finalPV,sse:sse,over:over,osc:osc,spark:spark};}
+function calcPID(){markSim('pid');var SP=parseFloat(vv('pid_sp'))||0;var r=pidSim(SP,parseFloat(vv('pid_kp'))||0,parseFloat(vv('pid_ki'))||0,parseFloat(vv('pid_kd'))||0,parseFloat(vv('pid_tau'))||0.1);
+  var verdict=r.osc==='oscillating'?'<span style="color:var(--warn)">Oscillating - reduce Kp or add Kd.</span>':(Math.abs(r.sse)>Math.abs(SP)*0.02?'<span style="color:var(--warn)">Steady-state offset - add Ki.</span>':'<span style="color:var(--ok)">Stable and on setpoint.</span>');
+  $('pid_out').innerHTML='<div style="font-family:monospace;font-size:1.05rem;letter-spacing:1px;color:var(--accent2);word-break:break-all">'+r.spark+'</div>Overshoot: <b>'+r.over.toFixed(1)+'%</b> &nbsp; Steady-state error: <b>'+r.sse.toFixed(2)+'</b> &nbsp; Final PV: <b>'+r.finalPV.toFixed(1)+'</b><br>Response: <span class="big">'+r.osc+'</span><br>'+verdict;}
+function pidNewGoal(){var tiers=[{o:15,e:2,t:2,n:'Bronze',x:20},{o:8,e:1,t:3,n:'Silver',x:35},{o:4,e:0.5,t:4,n:'Gold',x:60}];
+  var g=tiers[Math.floor(Math.random()*tiers.length)];PIDGOAL={over:g.o,sse:g.e,tau:g.t,name:g.n,xp:g.x};
+  var el=$('pid_tau');if(el)el.value=g.t;
+  var go=$('pid_goal');if(go)go.innerHTML='<b>'+g.n+' target</b> &middot; process lag locked at tau='+g.t+'s.<br>Tune Kp/Ki/Kd so overshoot &le; <b>'+g.o+'%</b>, |steady-state error| &le; <b>'+g.e+'</b>, and the response settles (not oscillating).';
+  var rs=$('pid_result');if(rs)rs.innerHTML='';calcPID();}
+function pidGrade(){if(!PIDGOAL){toast('Click New challenge first','ach');return;}
+  var SP=parseFloat(vv('pid_sp'))||0;var r=pidSim(SP,parseFloat(vv('pid_kp'))||0,parseFloat(vv('pid_ki'))||0,parseFloat(vv('pid_kd'))||0,PIDGOAL.tau);
+  var passO=r.over<=PIDGOAL.over,passE=Math.abs(r.sse)<=PIDGOAL.sse,passS=r.osc==='settled';var win=passO&&passE&&passS;
+  function chip(ok,t){return '<span style="color:var(--'+(ok?'ok':'warn')+')">'+(ok?'\u2713':'\u2717')+' '+t+'</span>';}
+  var msg='<div class="out">'+chip(passO,'overshoot '+r.over.toFixed(1)+'% (&le;'+PIDGOAL.over+'%)')+' &nbsp; '+chip(passE,'error '+Math.abs(r.sse).toFixed(2)+' (&le;'+PIDGOAL.sse+')')+' &nbsp; '+chip(passS,'settled')+'</div>';
+  if(win){if(!S.simStats)S.simStats={};var _ps=S.simStats.pid||{};if(_ps.bestOver==null||r.over<_ps.bestOver){_ps.bestOver=Math.round(r.over*10)/10;_ps.bestName=PIDGOAL.name;S.simStats.pid=_ps;persist();}var key='pid_'+PIDGOAL.name;if(!S.sims.includes(key)){S.sims.push(key);addXP(PIDGOAL.xp,PIDGOAL.name+' PID challenge');persist();}
+    msg+='<div style="color:var(--ok);font-weight:700;margin-top:.4rem">&#127942; '+PIDGOAL.name+' challenge passed!</div>';}
+  else msg+='<div style="color:var(--warn);margin-top:.4rem">Not there yet - adjust and try again.</div>';
+  var rs=$('pid_result');if(rs)rs.innerHTML=msg;}
+
+const SIM_LADDER='<div class="sim" id="sim-ladder"><h3>&#129520; PLC Ladder Logic &mdash; Live Simulator</h3><div class="desc">Pick a real control program, toggle the inputs, and watch the rungs solve <b>scan-by-scan</b>. Green = power flows through that contact. Includes seal-in, latch/unlatch (OTL/OTU), on-delay (TON), off-delay (TOF), counter (CTU), one-shot (ONS), data/compare (ADD/MOV/GEQ), analog scaling (MUL/DIV), sequencers (SQO step logic), shift registers (BSL conveyor tracking), closed-loop PID control, first-out fault annunciator, MCR zone control, thirteen fault-diagnosis challenges, force-I/O, and a build-your-own sandbox \u2014 exactly like troubleshooting a real PLC. Bonus XP for hitting each program\u2019s goal.</div><div class="row"><div style="flex:1"><label>Program</label><select id="lad_prog" onchange="ladSetProg(this.value)"><option value="seal">1 &mdash; Start/Stop Seal-In Motor Starter</option><option value="delay">2 &mdash; TON Start-Delay (warning horn)</option><option value="count">3 &mdash; CTU Batch Counter</option><option value="lock">4 &mdash; Safety Interlock (AND / OR)</option><option value="latch">5 &mdash; Latch / Unlatch (OTL / OTU)</option><option value="tof">6 &mdash; TOF Off-Delay (fan run-on)</option><option value="data">7 &mdash; Data &amp; Compare (ADD / MOV / GEQ)</option><option value="scale">8 &mdash; Analog Scaling &amp; Alarms (MUL / DIV)</option><option value="seq">9 &mdash; Sequencer: Traffic Light (SQO)</option><option value="shift">10 &mdash; Shift Register: Conveyor Package Tracking (BSL)</option><option value="pid">11 &mdash; PID: Closed-Loop Heated-Tank Control</option><option value="firstout">12 &mdash; First-Out Fault Annunciator</option><option value="mcr">13 &mdash; MCR: Master Control Reset Zone Control</option><option value="fault">14 &mdash; FAULT: Motor won’t start (tripped overload)</option><option value="fault2">15 &mdash; FAULT: Motor runs with Start released (welded contact)</option><option value="fault3">16 &mdash; FAULT: E-stop won’t stop (wrong address)</option><option value="fault4">17 &mdash; FAULT: Timer permissive broken</option><option value="fault5">18 &mdash; FAULT: Counter reset stuck</option><option value="fault6">19 &mdash; FAULT: Alarm latch won’t clear</option><option value="fault7">20 &mdash; FAULT: Full lamp never lights</option><option value="fault8">21 &mdash; FAULT: High alarm never trips</option><option value="fault9">22 &mdash; FAULT: Sequence stuck on one step (Hold wired wrong)</option><option value="fault10">23 &mdash; FAULT: Divert never fires (shift-in on wrong address)</option><option value="fault11">24 &mdash; FAULT: PID loop runs away (control action reversed)</option><option value="fault12">25 &mdash; FAULT: Annunciator always blames Low Air (stuck NC input)</option><option value="fault13">26 &mdash; FAULT: Half the panel is dead (MCR zone de-energized)</option><option value="build">27 &mdash; Sandbox: Build Your Own Rung</option></select></div></div><div id="lad_desc" class="ladnote"></div><div id="lad_tourbar" class="ladtourbar"></div><div id="lad_tour" class="ladtour"></div><div id="lad_io" class="lad-io"></div><div id="lad_forcebar" class="ladtourbar"></div><div id="lad_force" class="ladforce"></div><div id="lad_build" class="ladnote"></div><div id="lad_rungs" class="lad-rungs"></div><div id="lad_tools" class="ladtourbar"></div><div class="out" id="lad_status"></div><div id="lad_trendbar" class="ladtourbar"></div><div id="lad_trend" class="ladtrend"></div><div id="lad_diag" class="ladnote"></div></div>';
+/* ===== PLC Ladder Logic Live Simulator ===== */
+var LADPROG={
+ seal:{title:'Start / Stop Seal-In Motor Starter',
+   note:'Classic 3-wire control. Start (NO) is momentary; the Motor aux contact seals in around it. Stop (NC) or an Overload trip drops the coil.',
+   io:[{a:'Start',k:'mom',l:'Start PB (NO)'},{a:'Stop',k:'tog',l:'Stop PB (NC)'},{a:'OL',k:'tog',l:'Overload'}],
+   outs:['Motor'],
+   rungs:[{out:'Motor',cells:[{par:[[{a:'Start'}],[{a:'Motor'}]]},{t:{a:'Stop',nc:true}},{t:{a:'OL',nc:true}}]}]},
+ delay:{title:'TON Start-Delay with Warning Horn',
+   note:'When Run is requested a TON times 3 s while a horn sounds; the motor only starts after the timer is Done. Turning Run off resets the timer.',
+   io:[{a:'Run',k:'tog',l:'Run request'}],
+   outs:['Horn','Motor'],
+   timers:{T0:{preset:3000}},
+   rungs:[{timer:'T0',cells:[{t:{a:'Run'}}]},
+          {out:'Horn',cells:[{t:{a:'Run'}},{t:{a:'T0.dn',nc:true}}]},
+          {out:'Motor',cells:[{t:{a:'T0.dn'}}]}]},
+ count:{title:'CTU Batch Counter (fill a box of 5)',
+   note:'Each pulse of the Part sensor increments a CTU. At 5 counts the Box Full bit sets. Reset clears the counter.',
+   io:[{a:'Part',k:'mom',l:'Part sensor (pulse)'},{a:'Reset',k:'mom',l:'Reset'}],
+   outs:['BoxFull'],
+   counters:{C0:{preset:5}},
+   rungs:[{creset:'C0',cells:[{t:{a:'Reset'}}]},
+          {counter:'C0',cells:[{t:{a:'Part'}}]},
+          {out:'BoxFull',cells:[{t:{a:'C0.dn'}}]}]},
+ lock:{title:'Safety Interlock (series AND + parallel OR)',
+   note:'The conveyor runs only when the guard gate is closed AND E-Stop is OK AND (Auto is selected OR you hold Manual Jog). Series = AND, parallel = OR.',
+   io:[{a:'Gate',k:'tog',l:'Guard gate closed'},{a:'EStop',k:'tog',l:'E-Stop pressed'},{a:'Auto',k:'tog',l:'Auto start'},{a:'Jog',k:'mom',l:'Manual jog'}],
+   outs:['Conveyor'],
+   rungs:[{out:'Conveyor',cells:[{t:{a:'Gate'}},{t:{a:'EStop',nc:true}},{par:[[{a:'Auto'}],[{a:'Jog'}]]}]}]},
+ latch:{title:'Latch / Unlatch (OTL / OTU) Motor',
+   note:'OTL (Latch) SETS the coil and it stays set even after the input drops \u2014 it is retentive. OTU (Unlatch) is the only thing that resets it. Perfect for alarms/faults that must be acknowledged. A seal-in drops on power loss; a latch survives it.',
+   io:[{a:'Start',k:'mom',l:'Start PB'},{a:'Stop',k:'mom',l:'Stop / Reset PB'}],
+   outs:['Motor'],
+   rungs:[{latch:'Motor',cells:[{t:{a:'Start'}}]},
+          {unlatch:'Motor',cells:[{t:{a:'Stop'}}]}]},
+ tof:{title:'TOF Off-Delay (fan run-on / cool-down)',
+   note:'A TOF keeps its Done bit ON while the input is true AND for a set time AFTER the input drops. Here the cooling fan keeps running 3 s after Run is switched off \u2014 classic VFD/motor cool-down. Toggle Run off and watch the fan run on, then drop.',
+   io:[{a:'Run',k:'tog',l:'Run request'}],
+   outs:['Fan'],
+   timers:{T1:{preset:3000,tof:true}},
+   rungs:[{timer:'T1',cells:[{t:{a:'Run'}}]},
+          {out:'Fan',cells:[{t:{a:'T1.dn'}}]}]},
+ data:{title:'Data & Compare (ADD / MOV / GEQ)',
+   note:'Real PLCs work with NUMBERS, not just on/off bits. Each press of Add-batch runs an ADD that adds 4 to register N7:0 (a one-shot, so one press = one add). A GEQ compare lights the Full lamp when N7:0 reaches 20 \u2014 five batches. Reset MOVes 0 back into the register. Watch the register value climb on the rungs.',
+   io:[{a:'Add',k:'mom',l:'Add batch (+4)'},{a:'Reset',k:'mom',l:'Reset total'}],
+   outs:['Full'],
+   regs:{'N7:0':0},
+   rungs:[{math:{op:'ADD',dst:'N7:0',a:'N7:0',b:4},cells:[{t:{a:'Add',ons:true}}]},
+          {mov:{dst:'N7:0',src:0},cells:[{t:{a:'Reset'}}]},
+          {out:'Full',cells:[{t:{cmp:'GEQ',a:'N7:0',b:20}}]}]},
+ scale:{title:'Analog Scaling & Alarms (MUL / DIV)',
+   note:'Analog inputs arrive as raw counts, not engineering units. This 0\u20134000-count level sensor is scaled to 0\u2013100 %% with the classic formula percent = raw \u00d7 100 \u00f7 4000 (a MUL into N7:2 then a DIV into N7:1). A GEQ lights the High alarm at 90 %%, a LEQ lights the Low alarm at 10 %%, and the fill Pump runs whenever the level is low. Tap Raise / Lower to move the raw counts (\u00b1400) and watch the scaled value and alarms.',
+   io:[{a:'Up',k:'mom',l:'Raise level (+400 raw)'},{a:'Down',k:'mom',l:'Lower level (-400 raw)'}],
+   outs:['HighAlarm','LowAlarm','Pump'],
+   regs:{'N7:0':0,'N7:2':0,'N7:1':0},
+   rungs:[{math:{op:'ADD',dst:'N7:0',a:'N7:0',b:400},cells:[{t:{a:'Up',ons:true}}]},
+          {math:{op:'SUB',dst:'N7:0',a:'N7:0',b:400},cells:[{t:{a:'Down',ons:true}}]},
+          {math:{op:'MUL',dst:'N7:2',a:'N7:0',b:100},cells:[]},
+          {math:{op:'DIV',dst:'N7:1',a:'N7:2',b:4000},cells:[]},
+          {out:'HighAlarm',cells:[{t:{cmp:'GEQ',a:'N7:1',b:90}}]},
+          {out:'LowAlarm',cells:[{t:{cmp:'LEQ',a:'N7:1',b:10}}]},
+          {out:'Pump',cells:[{t:{a:'LowAlarm'}}]}]},
+ seq:{title:'Sequencer \u2014 Traffic Light (SQO step logic)',
+   note:'A sequencer steps through a fixed cycle, driving a different output pattern at each step. This 4-step intersection runs NS-green (3 s) \u2192 NS-yellow (1 s) \u2192 EW-green (3 s) \u2192 EW-yellow (1 s), then repeats forever. Toggle Hold to freeze the cycle on the current step. Car washes, palletizers, bottling lines and traffic lights all run on sequencers.',
+   io:[{a:'Hold',k:'tog',l:'Hold (pause cycle)'}],
+   outs:['NS_Grn','NS_Yel','NS_Red','EW_Grn','EW_Yel','EW_Red'],
+   rungs:[{seqo:'S0',hold:{a:'Hold'},disp:['NS_Red','NS_Yel','NS_Grn','EW_Red','EW_Yel','EW_Grn'],
+     steps:[{ms:3000,on:['NS_Grn','EW_Red']},{ms:1000,on:['NS_Yel','EW_Red']},{ms:3000,on:['NS_Red','EW_Grn']},{ms:1000,on:['NS_Red','EW_Yel']}],cells:[]}]},
+ shift:{title:'Conveyor Package Tracking \u2014 Bit Shift Register (BSL)',
+   note:'A bit shift register tracks products moving down a conveyor. A photo-eye at the infeed loads a 1 into zone 1 when a package is present; every conveyor index pulse shifts the whole pattern one zone toward the discharge. When a package reaches zone 8 (the divert point) the Divert output fires to push it onto a spur. This is exactly how MHE sortation lines track totes to a divert. Turn the photo-eye ON, then click Index repeatedly and watch the bit march down the belt.',
+   io:[{a:'PhotoEye',k:'tog',l:'Package at infeed photo-eye'},{a:'Index',k:'mom',l:'Conveyor index pulse'}],
+   outs:['Divert'],
+   rungs:[{shift:'SR0',clk:{a:'Index'},src:{a:'PhotoEye'},len:8,dout:'Divert',cells:[]}]},
+ pid:{title:'Closed-Loop PID Control \u2014 Heated Tank',
+   note:'A PID controller holds a process at a setpoint by continuously adjusting a control output. This heated tank starts at 70\u00b0F ambient; the setpoint is 150\u00b0F. Put the loop in AUTO and the PID drives the heater (CV, 0\u2013100%) to close the gap: proportional acts on the current error, integral trims out the last few degrees of offset, and the loop settles at setpoint. Then toggle the Load disturbance (a cold inflow) and watch the controller ramp the heater up to reject it. This is exactly how tank temperature, VFD speed and flow loops are held in a plant. Settle within \u00b12\u00b0F for a few seconds to earn the badge.',
+   io:[{a:'Auto',k:'tog',l:'Loop in AUTO'},{a:'Load',k:'tog',l:'Load disturbance (cold inflow)'}],
+   outs:[],
+   rungs:[{pid:'TIC101',auto:{a:'Auto'},dist:{a:'Load'},sp:150,amb:70,span:120,lag:0.08,kp:2.5,ki:0.8,kd:0,imax:200,distMag:40,cells:[]}]},
+ firstout:{title:'First-Out Fault Annunciator',
+   note:'When a machine faults, a cascade of alarms often trips at once \u2014 an E-stop pops, which drops a contactor, which trips an overload, which opens a guard interlock. The alarm panel lights up like a Christmas tree and you cannot tell what actually failed. A first-out annunciator captures and flashes whichever fault tripped FIRST \u2014 the root cause \u2014 and holds it while the cascade alarms just glow steady. Trip a fault and watch the panel flag it 1ST OUT; trip more and they stay secondary. Clear all faults, then press Reset to re-arm. Finding the first-out is the single most useful troubleshooting move on a complex line.',
+   io:[{a:'EStop',k:'tog',l:'E-Stop'},{a:'Overload',k:'tog',l:'Motor Overload'},{a:'LowAir',k:'tog',l:'Low Air Pressure'},{a:'GuardOpen',k:'tog',l:'Guard Open'},{a:'Reset',k:'mom',l:'Reset (re-arm)'}],
+   outs:['Healthy'],
+   rungs:[{fout:'ANN',reset:{a:'Reset'},healthy:'Healthy',inputs:[{a:'EStop',l:'E-Stop'},{a:'Overload',l:'Motor Overload'},{a:'LowAir',l:'Low Air Pressure'},{a:'GuardOpen',l:'Guard Open'}],cells:[]}]},
+ mcr:{title:'Master Control Reset \u2014 Zone Control (MCR)',
+   note:'An MCR (Master Control Reset) instruction fences off a block of rungs. When the MCR condition is TRUE the zone runs normally; when it goes FALSE every non-retentive output in the zone is forced OFF, no matter what its own rung says. It is how a whole section of a machine is enabled or killed from one permissive. Toggle Zone Enable off and watch Lamp 1 and Lamp 2 drop even with their switches on \u2014 while the lamp OUTSIDE the zone keeps following its switch. A dropped MCR is the classic cause of "half the panel is dead".',
+   io:[{a:'ZoneEn',k:'tog',l:'Zone Enable (MCR permissive)'},{a:'SW1',k:'tog',l:'Switch 1'},{a:'SW2',k:'tog',l:'Switch 2'}],
+   outs:['Lamp1','Lamp2','LampExt'],
+   rungs:[{mcr:'Z1',cells:[{t:{a:'ZoneEn'}}]},
+     {out:'Lamp1',cells:[{t:{a:'SW1'}}]},
+     {out:'Lamp2',cells:[{t:{a:'SW2'}}]},
+     {mcre:true,cells:[]},
+     {out:'LampExt',cells:[{t:{a:'SW1'}}]}]},
+ fault:{title:'FAULT \u2014 Dead Conveyor (diagnose)',challenge:true,key:'lad_fault',fix:'its normally-closed contact is held OPEN by a tripped overload, so power never reaches the coil. The OL is a field device \u2014 no HMI input can bypass it; physically reset the overload to restore the conveyor.',
+   note:'Field report: \u201cThe conveyor won\u2019t start even with the guard closed, E-Stop released and Auto selected.\u201d Set the three inputs to their RUN state and watch the rung \u2014 the green power flow stops at the faulted contact. There is one contact with no button: that field device is stuck. Then name the culprit below.',
+   scenario:'Everything the operator can reach is set to RUN, but the coil stays de-energized. Which device is holding the conveyor off?',
+   io:[{a:'Gate',k:'tog',l:'Guard gate closed'},{a:'EStop',k:'tog',l:'E-Stop pressed'},{a:'Auto',k:'tog',l:'Auto start'}],
+   outs:['Conveyor'],
+   preset:{OL:true},
+   diag:[{t:'Guard gate',ok:false},{t:'E-Stop',ok:false},{t:'Overload relay (tripped)',ok:true},{t:'Auto selector',ok:false}],
+   rungs:[{out:'Conveyor',cells:[{t:{a:'Gate'}},{t:{a:'EStop',nc:true}},{t:{a:'OL',nc:true}},{t:{a:'Auto'}}]}]},
+ fault2:{title:'FAULT \u2014 Runaway start (welded Start contact)',challenge:true,key:'lad_fault2',
+   note:'Field report: the motor is already running and restarts by itself \u2014 nobody pressed Start. Press Stop and the coil drops, but release Stop and it energizes again. One contact is welded closed so the rung is permanently sealed in. Find it.',
+   scenario:'The motor runs with no Start command and will not stay off. Which device is welded / stuck closed?',
+   fix:'the Start pushbutton contact is welded closed, so the OR branch is always made and the seal is never needed. Replace the pushbutton / contact block.',
+   io:[{a:'Stop',k:'tog',l:'Stop PB (NC)'},{a:'OL',k:'tog',l:'Overload'}],
+   outs:['Motor'],preset:{Start:true},
+   diag:[{t:'Start PB (welded closed)',ok:true},{t:'Stop PB',ok:false},{t:'Overload relay',ok:false},{t:'Motor aux (seal) contact',ok:false}],
+   rungs:[{out:'Motor',cells:[{par:[[{a:'Start'}],[{a:'Motor'}]]},{t:{a:'Stop',nc:true}},{t:{a:'OL',nc:true}}]}]},
+ fault3:{title:'FAULT \u2014 E-stop does nothing (wrong input address)',challenge:true,key:'lad_fault3',
+   note:'DANGER report: pressing E-Stop does NOT stop the conveyor. Toggle the E-Stop button and watch the rung \u2014 nothing changes. The E-Stop was landed on the wrong PLC input, so the program reads an unused address that never goes true. Name the fault.',
+   scenario:'The conveyor keeps running even with E-Stop pressed. What is wrong?',
+   fix:'the E-Stop was landed on the wrong PLC input, so the program reads an unused address that is always \u201cOK.\u201d Re-land E-Stop on the correct input and fix the rung address.',
+   io:[{a:'Gate',k:'tog',l:'Guard gate closed'},{a:'EStop',k:'tog',l:'E-Stop button (real)'},{a:'Auto',k:'tog',l:'Auto start'}],
+   outs:['Conveyor'],
+   diag:[{t:'Guard gate',ok:false},{t:'E-Stop wired to the wrong input address',ok:true},{t:'Auto selector',ok:false},{t:'Overload relay',ok:false}],
+   rungs:[{out:'Conveyor',cells:[{t:{a:'Gate'}},{t:{a:'EStopX',nc:true}},{t:{a:'Auto'}}]}]},
+ fault4:{title:'FAULT \u2014 Timer never finishes (broken TON input)',challenge:true,key:'lad_fault4',
+   note:'Field report: turn Run on and the warning horn sounds forever, but the 3 s timer never finishes and the motor never starts. Watch the TON accumulator \u2014 it sits at 0.0 s. Something in series with the timer input is never made, so it can never start counting. There is a contact with no button \u2014 a leftover permissive that is always open. Name it.',
+   scenario:'The TON accumulator stays at 0.0 s even with Run on, so the Done bit never sets. What is breaking the timer input?',
+   fix:'a leftover series permissive contact (an unused address that is never energized) sits in the timer rung, so the timer input is broken every scan. Remove the stray contact or land the correct signal.',
+   io:[{a:'Run',k:'tog',l:'Run request'}],
+   outs:['Horn','Motor'],
+   timers:{T0:{preset:3000}},
+   diag:[{t:'Run request PB',ok:false},{t:'Leftover series permissive (unused address, always open)',ok:true},{t:'TON preset value',ok:false},{t:'Motor overload relay',ok:false}],
+   rungs:[{timer:'T0',cells:[{t:{a:'Run'}},{t:{a:'Perm'}}]},
+          {out:'Horn',cells:[{t:{a:'Run'}},{t:{a:'T0.dn',nc:true}}]},
+          {out:'Motor',cells:[{t:{a:'T0.dn'}}]}]},
+ fault5:{title:'FAULT \u2014 Counter never fills (reset stuck on)',challenge:true,key:'lad_fault5',
+   note:'Field report: parts keep going by but the Box-Full light never comes on. Pulse the Part sensor and watch the CTU \u2014 the accumulator never climbs. A reset condition is stuck ON, clearing the counter every scan. The reset rung uses an NC contact on an unused address, so its input is always true. Name the fault.',
+   scenario:'The CTU accumulator is cleared to 0 every scan, so it never reaches its preset. What is holding the counter in reset?',
+   fix:'the reset rung is driven by a normally-closed contact on an unused address, so the reset input is always true and clears the count each scan. Fix the reset logic / address.',
+   io:[{a:'Part',k:'mom',l:'Part sensor (pulse)'}],
+   outs:['BoxFull'],
+   counters:{C0:{preset:5}},
+   diag:[{t:'Part sensor',ok:false},{t:'Reset rung stuck ON (NC on unused address = always true)',ok:true},{t:'CTU preset value',ok:false},{t:'Box-Full output lamp',ok:false}],
+   rungs:[{creset:'C0',cells:[{t:{a:'RstBad',nc:true}}]},
+          {counter:'C0',cells:[{t:{a:'Part'}}]},
+          {out:'BoxFull',cells:[{t:{a:'C0.dn'}}]}]},
+ fault6:{title:'FAULT \u2014 Alarm latch will not clear',challenge:true,key:'lad_fault6',
+   note:'Field report: a fault latched the Alarm ON and the Reset button does nothing \u2014 the alarm stays latched forever. The OTU (Unlatch) rung is landed on the WRONG bit, so Reset unlatches an unused address instead of the Alarm. Press Trip then Reset and watch: Reset never clears it. Name the fault.',
+   scenario:'The Alarm is latched (OTL) and Reset never clears it. Why does the Unlatch do nothing?',
+   fix:'the OTU (Unlatch) instruction is addressed to the wrong bit, so it clears an unused address instead of the Alarm. Re-address the OTU to the Alarm bit.',
+   io:[{a:'Trip',k:'mom',l:'Trip (latch alarm)'},{a:'Reset',k:'mom',l:'Reset PB'}],
+   outs:['Alarm'],preset:{Alarm:true},
+   diag:[{t:'Trip pushbutton',ok:false},{t:'OTU (Unlatch) addressed to the wrong bit \u2014 not Alarm',ok:true},{t:'Reset pushbutton',ok:false},{t:'Alarm output lamp',ok:false}],
+   rungs:[{latch:'Alarm',cells:[{t:{a:'Trip'}}]},
+          {unlatch:'AlarmX',cells:[{t:{a:'Reset'}}]}]},
+ fault7:{title:'FAULT \u2014 Full lamp never lights (compare on wrong register)',challenge:true,key:'lad_fault7',
+   note:'Field report: operators keep pressing Add-batch and register N7:0 climbs past 20, but the Full lamp never comes on. Watch the compare rung \u2014 the GEQ is reading the WRONG register (N7:1, which nothing ever writes, so it stays 0) and is never satisfied. Name the fault.',
+   scenario:'N7:0 climbs well past 20 but the Full lamp stays off. Why is the GEQ compare never true?',
+   fix:'the GEQ compare is addressed to N7:1 \u2014 a register nothing ever writes \u2014 instead of N7:0. Re-address the compare source to N7:0.',
+   io:[{a:'Add',k:'mom',l:'Add batch (+4)'},{a:'Reset',k:'mom',l:'Reset total'}],
+   outs:['Full'],
+   regs:{'N7:0':0,'N7:1':0},
+   diag:[{t:'Add-batch pushbutton',ok:false},{t:'GEQ compare reads the wrong register (N7:1, never written)',ok:true},{t:'ADD instruction',ok:false},{t:'Full output lamp',ok:false}],
+   rungs:[{math:{op:'ADD',dst:'N7:0',a:'N7:0',b:4},cells:[{t:{a:'Add',ons:true}}]},
+          {mov:{dst:'N7:0',src:0},cells:[{t:{a:'Reset'}}]},
+          {out:'Full',cells:[{t:{cmp:'GEQ',a:'N7:1',b:20}}]}]},
+ fault8:{title:'FAULT \u2014 High alarm never trips (wrong scaling constant)',challenge:true,key:'lad_fault8',
+   note:'Field report: the tank is clearly full but the High-level alarm never comes on. Tap Raise to drive the raw counts all the way up and watch the scaled value N7:1 \u2014 it tops out around 10 %% no matter how high the raw counts go. The DIV scaling constant is wrong (\u00f740000 instead of \u00f74000), so the engineering value is ten times too small and never reaches 90 %%. Name the fault.',
+   scenario:'Raw counts climb to full scale but the scaled value N7:1 never passes ~10 %%, so the 90 %% High alarm never trips. What is wrong?',
+   fix:'the DIV scaling constant is \u00f740000 instead of \u00f74000, so the scaled engineering value is 10\u00d7 too small. Correct the scaling divisor to 4000.',
+   io:[{a:'Up',k:'mom',l:'Raise level (+400 raw)'}],
+   outs:['HighAlarm','LowAlarm'],
+   regs:{'N7:0':0,'N7:2':0,'N7:1':0},
+   diag:[{t:'Raise pushbutton',ok:false},{t:'DIV scaling constant is wrong (\u00f740000 instead of \u00f74000)',ok:true},{t:'MUL gain (\u00d7100)',ok:false},{t:'High-alarm output lamp',ok:false}],
+   rungs:[{math:{op:'ADD',dst:'N7:0',a:'N7:0',b:400},cells:[{t:{a:'Up',ons:true}}]},
+          {math:{op:'MUL',dst:'N7:2',a:'N7:0',b:100},cells:[]},
+          {math:{op:'DIV',dst:'N7:1',a:'N7:2',b:40000},cells:[]},
+          {out:'HighAlarm',cells:[{t:{cmp:'GEQ',a:'N7:1',b:90}}]},
+          {out:'LowAlarm',cells:[{t:{cmp:'LEQ',a:'N7:1',b:10}}]}]},
+ fault9:{title:'FAULT \u2014 Sequence stuck on one step (Hold wired wrong)',challenge:true,key:'lad_fault9',
+   note:'Field report: the intersection is frozen \u2014 NS stays green and the cycle never advances. The Hold input is meant to pause the sequencer only when pressed, but it was landed as a normally-closed contact on an unused address, so the hold condition reads TRUE every scan and permanently freezes the sequencer on step 1. Watch the phase timer sit at 0.0 s. Name the fault.',
+   scenario:'The sequencer never leaves step 1 and the phase timer never counts up. What is freezing the cycle?',
+   fix:'the Hold condition is a normally-closed contact on an unused address, so it is always true and permanently pauses the sequencer. Re-land Hold on the correct input and fix the contact type.',
+   io:[],
+   outs:['NS_Grn','NS_Yel','NS_Red','EW_Grn','EW_Yel','EW_Red'],
+   diag:[{t:'Step-1 output pattern',ok:false},{t:'Hold is an NC contact on an unused address (always true)',ok:true},{t:'Step dwell-timer presets',ok:false},{t:'Green output lamp',ok:false}],
+   rungs:[{seqo:'S0',hold:{a:'HoldX',nc:true},disp:['NS_Red','NS_Yel','NS_Grn','EW_Red','EW_Yel','EW_Grn'],
+     steps:[{ms:3000,on:['NS_Grn','EW_Red']},{ms:1000,on:['NS_Yel','EW_Red']},{ms:3000,on:['NS_Red','EW_Grn']},{ms:1000,on:['NS_Red','EW_Yel']}],cells:[]}]},
+ fault10:{title:'FAULT \u2014 Divert never fires (shift-in on wrong address)',challenge:true,key:'lad_fault10',
+   note:'Field report: packages ride straight past the sorter divert and nothing gets pushed to the spur, even though the photo-eye clearly sees them at the infeed. The bit shift register indexes on every conveyor pulse, but the register stays all zeros. The shift-in (data) bit was landed on an unused address instead of the photo-eye, so a package is never loaded into zone 1.',
+   scenario:'The conveyor indexes and the register shifts, but Divert never fires and every zone stays dark. What is wrong?',
+   fix:'the shift-in (data) bit is landed on an unused address instead of the infeed photo-eye, so a 1 is never loaded into zone 1 of the register. Re-map the shift-in to the photo-eye input.',
+   io:[{a:'PhotoEye',k:'tog',l:'Package at infeed photo-eye'},{a:'Index',k:'mom',l:'Conveyor index pulse'}],
+   outs:['Divert'],
+   diag:[{t:'Conveyor index / shift clock',ok:false},{t:'Shift-in is landed on an unused address, not the photo-eye',ok:true},{t:'Divert output coil',ok:false},{t:'Register length (8 zones)',ok:false}],
+   rungs:[{shift:'SR0',clk:{a:'Index'},src:{a:'PhotoEyeX'},len:8,dout:'Divert',cells:[]}]},
+ fault11:{title:'FAULT \u2014 PID loop runs away (control action reversed)',challenge:true,key:'lad_fault11',
+   note:'Field report: the operator put the temperature loop in AUTO but the tank never heats up \u2014 the heater output sits at 0% and the temperature parks at ambient, miles below the 150\u00b0F setpoint. The loop was configured reverse-acting: it computes error as PV minus SP instead of SP minus PV, so when the tank is cold (below setpoint) the controller drives the heater the wrong way \u2014 to 0% \u2014 and the process can never reach setpoint. Watch CV stuck at 0% while the error stays huge.',
+   scenario:'The loop is in AUTO but the heater output stays at 0% and temperature never climbs toward setpoint. What is misconfigured?',
+   fix:'the control action is reversed \u2014 the controller uses error = PV - SP instead of SP - PV, so a cold tank drives the heater to 0% instead of 100%. Set the loop to direct-acting (error = SP - PV) for a heating process.',
+   io:[{a:'Auto',k:'tog',l:'Loop in AUTO'},{a:'Load',k:'tog',l:'Load disturbance (cold inflow)'}],
+   outs:[],
+   diag:[{t:'Setpoint and process-variable scaling',ok:false},{t:'Control action is reversed (error = PV - SP, should be SP - PV)',ok:true},{t:'Proportional and integral gains',ok:false},{t:'Heater output wiring',ok:false}],
+   rungs:[{pid:'TIC101',auto:{a:'Auto'},dist:{a:'Load'},sp:150,amb:70,span:120,lag:0.08,kp:2.5,ki:0.8,kd:0,imax:200,distMag:40,reverse:true,cells:[]}]},
+ fault12:{title:'FAULT \u2014 Annunciator always blames Low Air (stuck NC input)',challenge:true,key:'lad_fault12',
+   note:'Field report: no matter what actually fails on the machine, the first-out annunciator always flashes LOW AIR PRESSURE as the root cause \u2014 even right after a reset with the air system clearly fine. The Low Air fault input was wired as a normally-closed contact on an unused address, so it reads active on every single scan. The annunciator captures it as first-out the instant it arms, masking whatever really tripped. A first-out panel is only as trustworthy as its inputs.',
+   scenario:'The annunciator flags Low Air as first-out every time, even when air pressure is fine and nothing else has tripped. Why?',
+   fix:'the Low Air input is a normally-closed contact landed on an unused address, so it reads active on every scan and captures first-out before any real fault. Re-land it on the actual low-air pressure switch with the correct contact type.',
+   io:[{a:'EStop',k:'tog',l:'E-Stop'},{a:'Overload',k:'tog',l:'Motor Overload'},{a:'GuardOpen',k:'tog',l:'Guard Open'},{a:'Reset',k:'mom',l:'Reset (re-arm)'}],
+   outs:['Healthy'],
+   diag:[{t:'E-stop and overload input wiring',ok:false},{t:'Low Air is an NC contact on an unused address, always active',ok:true},{t:'Reset pushbutton',ok:false},{t:'Annunciator lamp test',ok:false}],
+   rungs:[{fout:'ANN',reset:{a:'Reset'},healthy:'Healthy',inputs:[{a:'EStop',l:'E-Stop'},{a:'Overload',l:'Motor Overload'},{a:'LowAirX',nc:true,l:'Low Air Pressure'},{a:'GuardOpen',l:'Guard Open'}],cells:[]}]},
+ fault13:{title:'FAULT \u2014 Half the panel is dead (MCR zone de-energized)',challenge:true,key:'lad_fault13',
+   note:'Field report: two of the three indicator lamps are dead \u2014 their switches do nothing \u2014 but the third lamp works fine. The two dead lamps are inside an MCR zone whose enable permissive was landed on an unused address, so the whole zone is force-de-energized every scan. The outputs can never come on regardless of their own rung logic. The lamp outside the zone is unaffected, which is the tell.',
+   scenario:'Lamp 1 and Lamp 2 are dead no matter what their switches do, but Lamp Ext works. Why is half the panel dead?',
+   fix:'the MCR zone-enable permissive is landed on an unused address, so the entire zone is de-energized every scan and no output inside it can turn on. Re-land the MCR permissive on the real zone-enable signal.',
+   io:[{a:'ZoneEn',k:'tog',l:'Zone Enable (MCR permissive)'},{a:'SW1',k:'tog',l:'Switch 1'},{a:'SW2',k:'tog',l:'Switch 2'}],
+   outs:['Lamp1','Lamp2','LampExt'],
+   diag:[{t:'Lamp1 and Lamp2 output wiring',ok:false},{t:'The MCR zone-enable is on an unused address, so the whole zone is de-energized',ok:true},{t:'SW1 / SW2 input contacts',ok:false},{t:'Bulb / lamp test',ok:false}],
+   rungs:[{mcr:'Z1',cells:[{t:{a:'ZoneEnX'}}]},
+     {out:'Lamp1',cells:[{t:{a:'SW1'}}]},
+     {out:'Lamp2',cells:[{t:{a:'SW2'}}]},
+     {mcre:true,cells:[]},
+     {out:'LampExt',cells:[{t:{a:'SW1'}}]}]},
+ build:{title:'SANDBOX \u2014 Build your own rung',sandbox:true,
+   note:'Author your own logic: pick a contact (NO or NC) on inputs X1 / X2 / X3 or on the coil Y1 (for seal-in), add series contacts and OR branches, then watch YOUR rung solve live. Energize Y1 with real logic (2+ contacts or an OR branch) to earn the sandbox badge.',
+   io:[{a:'X1',k:'tog',l:'Input X1'},{a:'X2',k:'tog',l:'Input X2'},{a:'X3',k:'tog',l:'Input X3'}],
+   outs:['Y1'],
+   rungs:[{out:'Y1',cells:[]}]}
+};
+var LADNAMES={seal:'Seal-in starter',delay:'TON timer',count:'CTU counter',lock:'Safety interlock',latch:'Latch / Unlatch',tof:'Off-delay (TOF)',data:'Data & Compare',scale:'Analog scaling',seq:'Sequencer (traffic light)',shift:'Shift register (conveyor)',pid:'PID closed-loop control',firstout:'First-out annunciator',mcr:'MCR zone control'};
+var __LADPROG_END=1;
+var LAD={prog:'seal',dt:100,B:{},T:{},C:{},OS:{},F:{},N:{},SEQ:{},SR:{},PID:{},FO:{},trend:[],trendOn:false};
+function ladSetProg(p){LAD.prog=p;LAD.B={};LAD.T={};LAD.C={};var P=LADPROG[p];
+  P.io.forEach(function(io){LAD.B[io.a]=false;});
+  (P.outs||[]).forEach(function(o){LAD.B[o]=false;});
+  if(P.preset)for(var pk in P.preset){LAD.B[pk]=P.preset[pk];}
+  LAD._diag=null;
+  if(P.timers)for(var tk in P.timers){LAD.T[tk]={acc:0,dn:false,preset:P.timers[tk].preset,tof:!!P.timers[tk].tof};}
+  if(P.counters)for(var ck in P.counters){LAD.C[ck]={acc:0,dn:false,last:false,preset:P.counters[ck].preset};}
+  LAD.N={};if(P.regs)for(var rk in P.regs){LAD.N[rk]=P.regs[rk];}
+  LAD.SEQ={};if(P.rungs)P.rungs.forEach(function(r){if(r.seqo)LAD.SEQ[r.seqo]={pos:0,t:0};});
+  LAD.SR={};if(P.rungs)P.rungs.forEach(function(r){if(r.shift)LAD.SR[r.shift]={bits:new Array(r.len).fill(0),last:false};});
+  LAD.PID={};if(P.rungs)P.rungs.forEach(function(r){if(r.pid)LAD.PID[r.pid]={pv:r.amb||70,cv:0,integ:0,lastErr:0,sp:r.sp||150,settled:0};});
+  LAD.FO={};if(P.rungs)P.rungs.forEach(function(r){if(r.fout)LAD.FO[r.fout]={first:null};});
+  if(typeof markSim==='function')markSim('ladder');
+  LAD.OS={};LAD.F={};if(p==='build'){LADPROG.build.rungs.length=1;LADPROG.build.rungs[0].cells.length=0;delete LADPROG.build.timers;delete LADPROG.build.counters;delete LADPROG.build.regs;LAD.T={};LAD.C={};LAD.N={};}
+  if(typeof LADT!=='undefined')LADT.on=false;
+  LAD.trend=[];
+  ladBuildIO();ladDraw();}
+function ladEvalTerm(t){if(t.cmp){var _cr=ladCmp(t.cmp,ladNum(t.a),ladNum(t.b));return t.nc?!_cr:_cr;}var raw;if(t.ons){var os=LAD.OS&&LAD.OS[t._id];raw=os?!!os.pulse:false;}else if(LAD.F&&(t.a in LAD.F)){raw=!!LAD.F[t.a];}else if(/\.dn$/.test(t.a)){var k=t.a.slice(0,-3);raw=(LAD.T[k]&&LAD.T[k].dn)||(LAD.C[k]&&LAD.C[k].dn)||false;}else{raw=!!LAD.B[t.a];}return t.nc?!raw:raw;}
+function ladEvalCells(cells){for(var i=0;i<cells.length;i++){var c=cells[i],v;if(c.par){v=false;c.par.forEach(function(br){var b=true;br.forEach(function(t){if(!ladEvalTerm(t))b=false;});if(b)v=true;});}else{v=ladEvalTerm(c.t);}if(!v)return false;}return true;}
+function ladScan(){var P=LADPROG[LAD.prog];if(!P)return;ladOnsScan(P);
+  var _mcrOff=false;
+  P.rungs.forEach(function(r){var en=ladEvalCells(r.cells);
+    if(r.out!==undefined){var _v=r.cells.length?en:false;if(_mcrOff)_v=false;if(!ladLatched(P,r.out))LAD.B[r.out]=_v;}
+    else if(r.latch){if(en)LAD.B[r.latch]=true;}
+    else if(r.unlatch){if(en)LAD.B[r.unlatch]=false;}
+    else if(r.timer){var tm=LAD.T[r.timer];if(tm.tof){if(en){tm.acc=0;tm.dn=true;}else{tm.acc+=LAD.dt;if(tm.acc>=tm.preset){tm.acc=tm.preset;tm.dn=false;}}}else{if(en){tm.acc+=LAD.dt;if(tm.acc>=tm.preset){tm.acc=tm.preset;tm.dn=true;}}else{tm.acc=0;tm.dn=false;}}}
+    else if(r.counter){var c=LAD.C[r.counter];var rising=en&&!c.last;c.last=en;if(rising){c.acc++;if(c.acc>=c.preset)c.dn=true;}}
+    else if(r.creset){if(en){var c2=LAD.C[r.creset];c2.acc=0;c2.dn=false;c2.last=false;}}
+    else if(r.mov){if(en)LAD.N[r.mov.dst]=ladNum(r.mov.src);}
+    else if(r.math){if(en){var _ma=ladNum(r.math.a),_mb=ladNum(r.math.b),_mo=r.math.op;LAD.N[r.math.dst]=_mo==='SUB'?(_ma-_mb):_mo==='MUL'?(_ma*_mb):_mo==='DIV'?(_mb===0?0:Math.trunc(_ma/_mb)):(_ma+_mb);}}
+    else if(r.seqo){var sq=LAD.SEQ[r.seqo]||(LAD.SEQ[r.seqo]={pos:0,t:0});var stps=r.steps,ns=stps.length;var held=r.hold?ladEvalTerm(r.hold):false;if(!held){sq.t+=LAD.dt;if(sq.t>=stps[sq.pos].ms){sq.t=0;var pv=sq.pos;sq.pos=(pv+1)%ns;if(pv===ns-1&&sq.pos===0)sq.wrapped=true;}}var allo={};stps.forEach(function(st){(st.on||[]).forEach(function(o){allo[o]=true;});});for(var oo in allo)LAD.B[oo]=false;(stps[sq.pos].on||[]).forEach(function(o){LAD.B[o]=true;});}
+    else if(r.shift){var sr=LAD.SR[r.shift]||(LAD.SR[r.shift]={bits:new Array(r.len).fill(0),last:false});var clk=r.clk?ladEvalTerm(r.clk):false;var rising=clk&&!sr.last;sr.last=clk;if(rising){for(var _k=r.len-1;_k>0;_k--)sr.bits[_k]=sr.bits[_k-1];sr.bits[0]=(r.src&&ladEvalTerm(r.src))?1:0;if(sr.bits[r.len-1])sr.diverted=true;}if(r.dout!==undefined)LAD.B[r.dout]=!!sr.bits[r.len-1];}
+    else if(r.pid){var pd=LAD.PID[r.pid]||(LAD.PID[r.pid]={pv:r.amb||70,cv:0,integ:0,lastErr:0,sp:r.sp||150,settled:0});var _auto=r.auto?ladEvalTerm(r.auto):true;var _dts=LAD.dt/1000;var _amb=r.amb||70,_span=r.span||120;var _dist=(r.dist&&ladEvalTerm(r.dist))?(r.distMag||40):0;var _tgt=_amb+(pd.cv/100)*_span-_dist;pd.pv+=(_tgt-pd.pv)*(r.lag||0.08);if(_auto){var _err=r.reverse?(pd.pv-pd.sp):(pd.sp-pd.pv);pd.integ+=_err*_dts;var _im=r.imax||200;if(pd.integ>_im)pd.integ=_im;if(pd.integ<-_im)pd.integ=-_im;var _dv=(_err-pd.lastErr)/_dts;pd.lastErr=_err;var _cv=(r.kp||2.5)*_err+(r.ki||0.8)*pd.integ+(r.kd||0)*_dv;if(_cv<0)_cv=0;if(_cv>100)_cv=100;pd.cv=_cv;if(Math.abs(pd.sp-pd.pv)<2)pd.settled++;else pd.settled=0;if(pd.settled>=20)pd.done=true;}}
+    else if(r.fout){var fo=LAD.FO[r.fout]||(LAD.FO[r.fout]={first:null});var _any=false,_cand=null;r.inputs.forEach(function(inp){if(ladEvalTerm(inp)){_any=true;if(_cand===null)_cand=inp.a;}});if(fo.first===null&&_any)fo.first=_cand;var _rst=r.reset?ladEvalTerm(r.reset):false;if(_rst&&!_any)fo.first=null;if(fo.first!==null)fo.captured=true;if(r.healthy!==undefined)LAD.B[r.healthy]=!_any;}
+    else if(r.mcr){_mcrOff=!en;}
+    else if(r.mcre){_mcrOff=false;}
+  });
+  if(LAD.trendOn)ladTrendPush(P);
+  ladCheckGoals(P);
+}
+function ladCheckGoals(P){if(LAD._grading)return;
+  if(LAD.prog==='delay'&&LAD.T.T0&&LAD.T.T0.dn)ladAward('lad_ton',15,'TON start-delay mastered');
+  if(LAD.prog==='count'&&LAD.C.C0&&LAD.C.C0.dn)ladAward('lad_box',15,'Batch of 5 counted');
+  if(LAD.prog==='lock'&&LAD.B.Conveyor){if(LAD.B.Auto)LAD._auto=1;if(LAD.B.Jog)LAD._jog=1;if(LAD._auto&&LAD._jog)ladAward('lad_lock',15,'Interlock run in Auto and Jog');}
+  if(LAD.prog==='seal'){if(LAD.B.Motor)LAD._ran=1;if(LAD._ran&&(LAD.B.OL||LAD.B.Stop)&&!LAD.B.Motor)ladAward('lad_seal',15,'Seal-in dropped by Stop/OL');}
+  if(LAD.prog==='data'&&LAD.B.Full)ladAward('lad_data',15,'Data & compare: register reached the GEQ threshold');
+  if(LAD.prog==='scale'&&LAD.B.HighAlarm)ladAward('lad_scale',15,'Analog scaling: drove the scaled value to the High alarm');
+  if(LAD.prog==='seq'&&LAD.SEQ.S0&&LAD.SEQ.S0.wrapped)ladAward('lad_seq',15,'Sequencer: ran a full step cycle');
+  if(LAD.prog==='shift'&&LAD.SR.SR0&&LAD.SR.SR0.diverted)ladAward('lad_shift',15,'Shift-register conveyor tracking mastered');
+  if(LAD.prog==='pid'&&LAD.PID.TIC101&&LAD.PID.TIC101.done)ladAward('lad_pid',15,'Closed-loop PID control mastered');
+  if(LAD.prog==='firstout'&&LAD.FO.ANN&&LAD.FO.ANN.captured)ladAward('lad_fout',15,'First-out fault annunciator mastered');
+  if(LAD.prog==='mcr'&&LAD.B.Lamp1)ladAward('lad_mcr',15,'MCR zone control mastered');
+  if(LAD.prog==='build'&&LAD.B.Y1){var _cs=LADPROG.build.rungs[0].cells;var _cx=_cs.length>=2||_cs.some(function(c){return c.par;});if(_cx)ladAward('lad_build',25,'Sandbox rung energized Y1 with real logic');}
+}
+function ladAward(key,xp,msg){if(typeof S==='undefined')return;if(!S.ladDone)S.ladDone=[];if(S.ladDone.indexOf(key)<0){S.ladDone.push(key);if(typeof addXP==='function')addXP(xp,msg);if(typeof persist==='function')persist();if(typeof updateUserCard==='function')updateUserCard();if(typeof toast==='function')toast('&#127942; '+msg+' (+'+xp+' XP)','ach');}}
+function ladDiag(i){var P=LADPROG[LAD.prog];if(!P||!P.diag)return;var d=P.diag[i];if(d.ok){ladAward(P.key||'lad_fault',15,'Fault found: '+d.t);LAD._diag='right';}else{LAD._diag='wrong:'+i;if(typeof toast==='function')toast('Not the fault \u2014 set the inputs to RUN and trace where the green power stops.','warn');}ladDraw();}
+function ladBtn(io){var pressed=LAD.B[io.a];var cls='ladbtn'+(pressed?' on':'');
+  if(io.k==='mom')return '<button class="'+cls+'" onmousedown="ladSet(\''+io.a+'\',1)" onmouseup="ladSet(\''+io.a+'\',0)" onmouseleave="ladSet(\''+io.a+'\',0)" ontouchstart="ladSet(\''+io.a+'\',1)" ontouchend="ladSet(\''+io.a+'\',0)">'+io.l+'</button>';
+  return '<button class="'+cls+'" onclick="ladTog(\''+io.a+'\')">'+io.l+'<span class="ladst">'+(pressed?'ON':'OFF')+'</span></button>';}
+function ladBuildIO(){var P=LADPROG[LAD.prog];var box=$('lad_io');if(!box)return;
+  $('lad_desc').innerHTML=P.note;
+  box.innerHTML='<div class="ladlbl">Inputs &mdash; click to toggle, hold momentary:</div>'+P.io.map(ladBtn).join('');
+  var tb=$('lad_tourbar');if(tb){tb.innerHTML=(typeof LADTOUR!=='undefined'&&LADTOUR[LAD.prog])?'<button class="ladbtn" onclick="ladTourStart()">&#127891; Guided walkthrough</button>':'';}
+  var trb=$('lad_trendbar');if(trb){trb.innerHTML='<button class="ladbtn'+(LAD.trendOn?' on':'')+'" onclick="ladTrendToggle()">&#128200; '+(LAD.trendOn?'Hide':'Show')+' timing chart</button>';}
+  var fb=$('lad_forcebar');if(fb){var nf=Object.keys(LAD.F||{}).length;fb.innerHTML='<button class="ladbtn'+(LADFORCE.on?' on':'')+'" onclick="ladForceToggle()">&#128268; '+(LADFORCE.on?'Hide':'Show')+' Force I/O</button>'+(nf?' <span class="ladforcewarn">&#9888; '+nf+' force'+(nf>1?'s':'')+' active</span>':'');}
+  if(typeof ladForceRender==='function')ladForceRender();
+  var tl=$('lad_tools');if(tl){tl.innerHTML='<button class="ladbtn" onclick="ladListing()">&#128196; Export program listing (.txt)</button>';}
+  if(typeof ladBuildRender==='function')ladBuildRender();
+  if(typeof ladTourRender==='function')ladTourRender();}
+function ladSet(a,v){LAD.B[a]=!!v;if(typeof markSim==='function')markSim('ladder');ladRefreshIO();}
+function ladTog(a){LAD.B[a]=!LAD.B[a];if(typeof markSim==='function')markSim('ladder');ladRefreshIO();}
+function ladRefreshIO(){var P=LADPROG[LAD.prog];var box=$('lad_io');if(box)box.innerHTML='<div class="ladlbl">Inputs &mdash; click to toggle, hold momentary:</div>'+P.io.map(ladBtn).join('');}
+function ladTermTxt(t){if(t.cmp){var _op={EQU:'=',NEQ:'\u2260',GRT:'>',LES:'<',GEQ:'\u2265',LEQ:'\u2264'}[t.cmp]||t.cmp;return '<span class="ladtn ladcmp">'+t.a+' '+_op+' '+t.b+'</span>';}var nm=t.a.replace('.dn','\u2009DN');return '<span class="ladtn">'+nm+'</span>';}
+function ladCell(c,live){ // live=power reaching this cell from the left
+  if(c.par){var branches=c.par.map(function(br){var blive=live;var seg=br.map(function(t){var pass=ladEvalTerm(t);var hot=blive&&pass;var el='<span class="ladc '+(hot?'hot':'')+'">'+ladSym(t)+' '+ladTermTxt(t)+'</span>';blive=blive&&pass;return el;}).join('<span class="ladw"></span>');return '<div class="ladbr">'+seg+'</div>';}).join('');
+    return '<div class="ladpar">'+branches+'</div>';}
+  var pass=ladEvalTerm(c.t);var hot=live&&pass;
+  return '<span class="ladc '+(hot?'hot':'')+'">'+ladSym(c.t)+' '+ladTermTxt(c.t)+'</span>';}
+function ladCellPass(c){if(c.par){var v=false;c.par.forEach(function(br){var b=true;br.forEach(function(t){if(!ladEvalTerm(t))b=false;});if(b)v=true;});return v;}return ladEvalTerm(c.t);}
+function ladRungHtml(r){var live=true;var cellsHtml='';
+  r.cells.forEach(function(c){cellsHtml+=ladCell(c,live)+'<span class="ladw"></span>';live=live&&ladCellPass(c);});
+  var out='';
+  if(r.out!==undefined){var on=ladBit(r.out);out='<span class="ladcoil '+(on?'on':'')+'">( '+r.out+' )</span>';}
+  else if(r.latch){var onl=ladBit(r.latch);out='<span class="ladcoil ltch '+(onl?'on':'')+'">( L '+r.latch+' )</span>';}
+  else if(r.unlatch){var onu=ladBit(r.unlatch);out='<span class="ladcoil ltch '+(onu?'on':'')+'">( U '+r.unlatch+' )</span>';}
+  else if(r.timer){var tm=LAD.T[r.timer];var _tl=tm.tof?'TOF':'TON';out='<span class="ladcoil tmr '+(tm.dn?'on':'')+'">'+_tl+' '+r.timer+' '+(tm.acc/1000).toFixed(1)+'/'+(tm.preset/1000)+'s'+(tm.dn?' DN':'')+'</span>';}
+  else if(r.counter){var c=LAD.C[r.counter];out='<span class="ladcoil cnt '+(c.dn?'on':'')+'">CTU '+r.counter+' '+c.acc+'/'+c.preset+(c.dn?' DN':'')+'</span>';}
+  else if(r.creset){out='<span class="ladcoil">RES '+r.creset+'</span>';}
+  else if(r.mov){out='<span class="ladcoil data '+(ladEvalCells(r.cells)?'on':'')+'">MOV '+ladValLabel(r.mov.src)+' \u2192 '+r.mov.dst+' ['+ladNum(r.mov.dst)+']</span>';}
+  else if(r.math){out='<span class="ladcoil data '+(ladEvalCells(r.cells)?'on':'')+'">'+r.math.op+' '+r.math.dst+' = '+ladValLabel(r.math.a)+ladMathGlyph(r.math.op)+ladValLabel(r.math.b)+' ['+ladNum(r.math.dst)+']</span>';}
+  else if(r.seqo){var _sq=LAD.SEQ[r.seqo]||{pos:0,t:0};var _st=r.steps[_sq.pos];out='<span class="ladcoil seqo on">SEQ '+r.seqo+' \u2014 step '+(_sq.pos+1)+'/'+r.steps.length+' ('+(_sq.t/1000).toFixed(1)+'/'+(_st.ms/1000)+'s)</span>';}
+  else if(r.shift){var _sr=LAD.SR[r.shift]||{bits:[]};var _don=!!_sr.bits[r.len-1];out='<span class="ladcoil shift '+(_don?'on':'')+'">BSL '+r.shift+' \u2192 '+(r.dout||'')+'</span>';}
+  else if(r.pid){var _pd=LAD.PID[r.pid]||{pv:0,cv:0,sp:r.sp||150};out='<span class="ladcoil pid on">PID '+r.pid+' \u2014 SP '+(_pd.sp).toFixed(0)+'  PV '+(_pd.pv).toFixed(1)+'  CV '+(_pd.cv).toFixed(0)+'%</span>';}
+  else if(r.fout){var _fo=LAD.FO[r.fout]||{first:null};out='<span class="ladcoil fout on">1ST-OUT ANN '+(_fo.first?('\u2014 root: '+_fo.first):'\u2014 all healthy')+'</span>';}
+  else if(r.mcr){var _mon=ladEvalCells(r.cells);out='<span class="ladcoil mcr '+(_mon?'on':'')+'">MCR '+(r.mcr||'')+(_mon?' \u2014 zone LIVE':' \u2014 zone OFF')+'</span>';}
+  else if(r.mcre){out='<span class="ladcoil mcr">MCR END</span>';}
+  var _extra='';if(r.seqo){_extra='<div class="seqlamps">'+(r.disp||[]).map(function(o){return '<span class="seqlamp '+(ladBit(o)?'on':'')+'">'+o.replace('_',' ')+'</span>';}).join('')+'</div>';}
+  if(r.shift){var _srx=LAD.SR[r.shift]||{bits:[]};_extra='<div class="seqlamps srlamps">'+_srx.bits.map(function(b,ix){return '<span class="seqlamp '+(b?'on':'')+'">Z'+(ix+1)+'</span>';}).join('')+'</div>';}
+  if(r.pid){var _pf=LAD.PID[r.pid]||{pv:0,cv:0,sp:r.sp||150};var _span=r.span||120,_amb=r.amb||70;var _pvp=Math.max(0,Math.min(100,((_pf.pv-_amb)/_span)*100));var _spp=Math.max(0,Math.min(100,((_pf.sp-_amb)/_span)*100));_extra='<div class="pidface"><div class="pidrow"><span class="pidlbl">PV</span><div class="pidbar"><div class="pidfill" style="width:'+_pvp.toFixed(0)+'%"></div><div class="pidsp" style="left:'+_spp.toFixed(0)+'%"></div></div><span class="pidval">'+_pf.pv.toFixed(1)+'\u00b0F</span></div><div class="pidrow"><span class="pidlbl">CV</span><div class="pidbar"><div class="pidfill cv" style="width:'+_pf.cv.toFixed(0)+'%"></div></div><span class="pidval">'+_pf.cv.toFixed(0)+'%</span></div><div class="pidmeta">SP '+_pf.sp.toFixed(0)+'\u00b0F \u00b7 error '+(_pf.sp-_pf.pv).toFixed(1)+'\u00b0F'+(_pf.done?' \u00b7 <b>SETTLED</b>':'')+'</div></div>';}
+  if(r.fout){var _fg=LAD.FO[r.fout]||{first:null};_extra='<div class="foutgrid">'+r.inputs.map(function(inp){var _a=ladEvalTerm(inp);var _isf=(_fg.first===inp.a);return '<div class="foutile'+(_a?' active':'')+(_isf?' first':'')+'">'+(inp.l||inp.a)+(_isf?'<span class="fobadge">1ST OUT</span>':'')+'</div>';}).join('')+'</div>';}
+  return '<div class="ladrung"><span class="ladrail">&#9474;</span>'+cellsHtml+'<span class="ladfill"></span>'+out+'<span class="ladrail">&#9474;</span></div>'+_extra;}
+function ladDraw(){var box=$('lad_rungs');if(!box){if(window.__ladTimer){clearInterval(window.__ladTimer);window.__ladTimer=null;}return;}
+  var P=LADPROG[LAD.prog];box.innerHTML=P.rungs.map(ladRungHtml).join('');
+  var st=$('lad_status');if(st){var on=(P.outs||[]).map(function(o){return o+': <b class="'+(LAD.B[o]?'ldon':'ldoff')+'">'+(LAD.B[o]?'ENERGIZED':'off')+'</b>';}).join(' &nbsp; ');
+    st.innerHTML='Scan output &mdash; '+on+'<br><span style="font-size:.8rem;color:var(--txt2)">Green cells show live power flow left-to-right. The PLC re-solves every scan (~'+LAD.dt+' ms).</span>';}
+  var dg=$('lad_diag');if(dg){var Pd=LADPROG[LAD.prog];if(Pd&&Pd.diag){var _k=Pd.key||'lad_fault';var solved=(typeof S!=='undefined'&&S.ladDone&&S.ladDone.indexOf(_k)>=0);var ans=Pd.diag.filter(function(d){return d.ok;})[0];var q='<div class="ladlbl">&#128295; '+Pd.scenario+'</div>';if(solved){q+='<div class="ldon">&#10003; Diagnosed: <b>'+ans.t+'</b> \u2014 '+(Pd.fix||'fault identified.')+'</div>';}else{q+='<div class="laddiag">'+Pd.diag.map(function(d,i){return '<button class="ladbtn'+(LAD._diag==='wrong:'+i?' bad':'')+'" onclick="ladDiag('+i+')">'+d.t+'</button>';}).join('')+'</div>';}dg.innerHTML=q;}else{dg.innerHTML='';}}
+  if(typeof ladTrendRender==='function')ladTrendRender();
+}
+function ladderInit(){if(window.__ladTimer){clearInterval(window.__ladTimer);}
+  var sel=$('lad_prog');LAD.prog=sel?sel.value:'seal';LAD._auto=0;LAD._jog=0;LAD._ran=0;
+  ladSetProg(LAD.prog);
+  window.__ladTimer=setInterval(function(){ladScan();ladDraw();},LAD.dt);}
+
+/* ===== Guided walkthrough + Build sandbox ===== */
+var LADTOUR={
+ seal:['Meet 3-wire control. The Motor coil is OFF and the rung is open.',
+   'Tap-and-hold the green Start button. Power flows through the Start contact and the Motor coil energizes.',
+   'Release Start. The Motor stays ON \u2014 the parallel Motor aux contact now carries power around Start. That branch is the \u201cseal-in.\u201d',
+   'Press Stop (or trip the Overload). Its series NC contact opens and the coil drops out \u2014 and stays out until you press Start again.',
+   'That is a seal-in motor starter. You just traced start, seal, and stop.'],
+ delay:['Run is off, so the TON timer accumulator sits at 0.0 s.',
+   'Toggle Run ON. The timer counts toward 3.0 s and the warning Horn sounds during the delay.',
+   'When the accumulator reaches the preset the Done bit sets: the Horn drops and the Motor finally starts.',
+   'Toggle Run OFF and the timer resets to 0 instantly. That is an on-delay (TON) start.'],
+ count:['The CTU accumulator is 0 of 5 and Box-Full is off.',
+   'Tap the Part sensor. Each rising edge adds one count.',
+   'At 5 counts the Done bit sets and Box-Full energizes.',
+   'Tap Reset to clear the accumulator back to 0. That is batch counting with a CTU.'],
+ lock:['The conveyor is stopped. It needs guard closed AND E-stop OK AND (Auto OR Jog).',
+   'Close the Guard gate and leave E-Stop released \u2014 two series (AND) conditions satisfied.',
+   'Now either turn Auto ON, or hold Manual Jog \u2014 the parallel (OR) branch. Either one finishes the rung.',
+   'The Conveyor energizes. Open the guard or press E-Stop and it drops instantly \u2014 that is a safety interlock.'],
+ latch:['The Motor is OFF. This program uses OTL (Latch) and OTU (Unlatch) instead of a seal-in.',
+   'Tap Start. The OTL rung SETS the Motor coil \u2014 the ( L Motor ) coil energizes.',
+   'Release Start. The Motor STAYS on \u2014 a latch is retentive; it holds state with no seal-in branch and even through a power cycle.',
+   'Tap Stop. Only the OTU ( U Motor ) rung can reset a latched coil. The Motor drops.',
+   'OTL/OTU are ideal for alarms and faults that must be acknowledged \u2014 they will not clear themselves.'],
+ tof:['The Fan is OFF and the TOF accumulator is at 0.0 s.',
+   'Toggle Run ON. A TOF Done bit goes true immediately, so the Fan starts at once.',
+   'Toggle Run OFF. Now the off-delay times: the Fan keeps running while the TOF counts up to 3.0 s.',
+   'When the accumulator reaches the preset the Done bit drops and the Fan finally stops \u2014 that run-on is the off-delay (TOF).'],
+ data:['Register N7:0 = 0 and the Full lamp is off. Real PLCs compute with numbers, not just on/off bits.',
+   'Tap Add batch. A one-shot fires an ADD that adds 4 to N7:0 -- the register value jumps by 4 on each press.',
+   'Keep tapping. The ADD coil shows the running total. When N7:0 reaches 20 (five batches) the GEQ compare goes true.',
+   'The GEQ contact energizes the Full lamp. Tap Reset: a MOV writes 0 back into N7:0 and the lamp drops.',
+   'ADD, MOV and GEQ are data instructions -- the heart of analog, recipe and batching logic in a real PLC.'],
+ scale:['Raw counts N7:0 = 0. A MUL by 100 into N7:2, then a DIV by 4000 into N7:1, scale the raw analog to 0-100 percent. Right now the level is 0 percent, so the Low alarm and fill Pump are on.',
+   'Tap Raise a few times. Each press adds 400 raw counts; watch N7:1 climb by 10 percent each time as the scaling math runs every scan.',
+   'Keep raising. When the scaled value passes 10 percent the Low alarm and Pump drop out -- the tank is no longer low.',
+   'Drive it to 90 percent or more (raw >= 3600). The GEQ compare trips the High alarm.',
+   'Tap Lower to bleed it back down. MUL and DIV are how every analog signal -- level, temperature, pressure, flow -- becomes a usable number in a PLC.'],
+ seq:['Four-step traffic cycle. Step 1 is running: NS green, EW red. The phase timer counts toward 3.0 s.',
+   'When the timer expires the sequencer advances to step 2: NS yellow, EW red for 1.0 s. Each step drives its own output pattern.',
+   'Step 3 gives EW the green (NS red) for 3.0 s, then step 4 is EW yellow for 1.0 s.',
+   'After step 4 it wraps back to step 1 and repeats forever -- a full cycle awards the sequencer badge.',
+   'Toggle Hold: the phase timer freezes and the current pattern stays put until you release it. That is how you pause an automated cycle.'],
+ shift:['A bit shift register tracks parts moving down a belt. Turn the infeed photo-eye ON to place a package at zone 1.',
+   'Click Index once: the photo-eye value loads into zone 1 and the whole pattern shifts one zone toward the discharge.',
+   'Keep clicking Index. Watch the lit bit march Z1 -> Z2 -> Z3 ... down the eight zones of conveyor.',
+   'When the package reaches zone 8 (the divert point) the Divert output fires to push it onto a spur -- and awards the shift-register badge.',
+   'Turn the photo-eye off between packages: load a gap, then another package, and track several boxes down the belt at once.'],
+ pid:['A PID loop holds a process at a setpoint. This tank starts at 70F ambient and the setpoint is 150F. Right now the loop is in MANUAL, so the heater output (CV) sits at 0% and nothing happens.',
+   'Toggle Loop in AUTO. The controller sees a large error (150 - 70) and drives CV up: proportional gives an immediate push proportional to the error.',
+   'As the tank warms, the error shrinks and CV eases off. The integral term quietly trims out the last degree or two of offset so PV parks right on 150F -- watch the red setpoint marker line up with the PV bar.',
+   'Now toggle the Load disturbance -- a cold inflow that pulls the tank down. The error grows and the controller ramps CV back up to reject it, then re-settles. That disturbance rejection is the whole point of closed-loop control.',
+   'Hold within 2F of setpoint for a few seconds and you earn the PID badge. Same math runs VFD speed loops, flow loops and pressure loops across the plant.'],
+ firstout:['A first-out annunciator finds the root cause when a machine throws a cascade of alarms. Right now all four fault inputs are clear and the panel reads all healthy.',
+   'Toggle any one fault -- say E-Stop. The panel captures it and flashes it 1ST OUT. That is your root cause.',
+   'Now toggle a second and third fault. They light up active (red) but stay secondary -- the panel still holds the FIRST fault flashing. That is how you ignore the cascade and find what really failed.',
+   'Clear every fault (all inputs off), then press Reset to re-arm the annunciator for the next event.',
+   'On a real line this one tool saves hours: instead of chasing twenty lit alarms, you fix the one that tripped first.'],
+ mcr:['An MCR instruction fences off a block of rungs. Right now Zone Enable is on, so the fenced zone (Lamp 1, Lamp 2) runs normally.',
+   'Turn Switch 1 on: Lamp 1 lights. Turn Switch 2 on: Lamp 2 lights. Both are inside the MCR zone.',
+   'Now toggle Zone Enable OFF. Watch Lamp 1 and Lamp 2 drop instantly -- even though their switches are still on. The MCR force-de-energizes every non-retentive output in the zone.',
+   'Notice Lamp Ext (outside the zone) still follows Switch 1. That contrast is exactly how you spot a dropped MCR: one section dead, the rest fine.',
+   'A de-energized MCR is the classic root cause of half the panel being dead. Turn Zone Enable back on and both lamps return.']
+};
+var LADT={on:false,i:0};
+function ladTourStart(){var t=LADTOUR[LAD.prog];if(!t)return;LADT.on=true;LADT.i=0;ladTourRender();}
+function ladTourNext(){var t=LADTOUR[LAD.prog];if(!t)return;LADT.i++;if(LADT.i>=t.length){ladTourEnd();return;}ladTourRender();}
+function ladTourEnd(){LADT.on=false;var b=$('lad_tour');if(b)b.innerHTML='';}
+function ladTourRender(){var b=$('lad_tour');if(!b)return;var t=LADTOUR[LAD.prog];if(!LADT.on||!t){b.innerHTML='';return;}var last=LADT.i>=t.length-1;b.innerHTML='<div class="ladtourbox"><span class="ladtstep">Step '+(LADT.i+1)+' / '+t.length+'</span> '+t[LADT.i]+'<div class="ladtnav"><button class="ladbtn" onclick="ladTourEnd()">Close</button><button class="ladbtn on" onclick="ladTourNext()">'+(last?'Finish':'Next &#9654;')+'</button></div></div>';}
+function ladBuildCells(){return LADPROG.build.rungs[0].cells;}
+function ladBuildRender(){var b=$('lad_build');if(!b)return;if(LAD.prog!=='build'){b.innerHTML='';return;}
+  var cells=ladBuildCells();var P=LADPROG.build;
+  var addrs=['X1','X2','X3','Y1'];if(P.timers&&P.timers.T0)addrs.push('T0.dn');if(P.counters&&P.counters.C0)addrs.push('C0.dn');
+  var opts=addrs.map(function(a){return '<option value="'+a+'">'+a+'</option>';}).join('');
+  var h='<div class="ladlbl">&#128296; Build a rung feeding coil <b>Y1</b> &mdash; use a Y1 contact for a seal-in</div>';
+  h+='<div class="ladbuildrow">Contact <select id="lb_addr">'+opts+'</select> <select id="lb_type"><option value="no">NO &#8739;</option><option value="nc">NC &#8815;</option><option value="ons">ONS [&#8593;] one-shot</option><option value="cmp">N7:0 &#8805; 20 compare</option><option value="cmp2">N7:1 &#8805; 20 compare</option></select> ';
+  h+='<button class="ladbtn" onclick="ladBuildAdd()">+ Series contact</button> ';
+  h+='<button class="ladbtn" onclick="ladBuildOr()">+ OR branch on last</button> ';
+  h+='<button class="ladbtn bad" onclick="ladBuildClear()">Clear rung</button></div>';
+  h+='<div class="ladbuildrow">Instruction blocks: <button class="ladbtn'+(P.timers&&P.timers.T0?' on':'')+'" onclick="ladBuildAddTimer()">'+(P.timers&&P.timers.T0?'&#10003; TON T0 added':'+ TON timer (3 s, X1)')+'</button> <button class="ladbtn'+(P.counters&&P.counters.C0?' on':'')+'" onclick="ladBuildAddCounter()">'+(P.counters&&P.counters.C0?'&#10003; CTU C0 added':'+ CTU counter (3, count X2, reset X3)')+'</button></div>';
+  var _hasL=P.rungs.some(function(r){return r.latch==='Y1';}),_hasU=P.rungs.some(function(r){return r.unlatch==='Y1';});
+  h+='<div class="ladbuildrow">Latch coils: <button class="ladbtn'+(_hasL?' on':'')+'" onclick="ladBuildAddLatch()">'+(_hasL?'&#10003; OTL Y1 added':'+ OTL Y1 (latch on X1)')+'</button> <button class="ladbtn'+(_hasU?' on':'')+'" onclick="ladBuildAddUnlatch()">'+(_hasU?'&#10003; OTU Y1 added':'+ OTU Y1 (unlatch on X2)')+'</button> <span class="ladtrendhint">(adding a latch coil disables the plain Y1 rung)</span></div>';
+  var _hasA=P.rungs.some(function(r){return r.math&&r.math.dst==='N7:0';});
+  var _hasD=P.rungs.some(function(r){return r.math&&r.math.op==='DIV'&&r.math.dst==='N7:1';});
+  h+='<div class="ladbuildrow">Data / math: <button class="ladbtn'+(_hasA?' on':'')+'" onclick="ladBuildAddAccum()">'+(_hasA?'&#10003; ADD block added':'+ ADD accumulator (X1: N7:0 += 5, X3 resets)')+'</button> <button class="ladbtn'+(_hasD?' on':'')+'" onclick="ladBuildAddScale()">'+(_hasD?'&#10003; DIV scale added':'+ DIV scale (N7:1 = N7:0 / 5)')+'</button> <span class="ladtrendhint">then choose an "N7:0 &#8805; 20" or "N7:1 &#8805; 20" compare contact above to gate Y1</span></div>';
+  h+='<div class="ladbuildinfo">'+(cells.length?('Rung has '+cells.length+' cell'+(cells.length>1?'s':'')+'. Toggle X1/X2/X3 to drive it; ONS gives a 1-scan pulse; add T0.dn / C0.dn contacts after adding those blocks.'):'Empty rung \u2014 add a contact (NO / NC / ONS) or a TON / CTU block to start.')+'</div>';
+  h+=ladTasksHtml();
+  b.innerHTML=h;}
+function ladBuildAdd(){if(LAD.prog!=='build')return;var a=$('lb_addr').value,ty=$('lb_type').value;if(ty==='cmp'||ty==='cmp2'){ladBuildCells().push({t:{cmp:'GEQ',a:(ty==='cmp2'?'N7:1':'N7:0'),b:20}});if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();return;}var t={a:a};if(ty==='nc')t.nc=true;else if(ty==='ons'){t.ons=true;t._id='osb'+(LAD._osN=(LAD._osN||0)+1);}ladBuildCells().push({t:t});if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladBuildOr(){if(LAD.prog!=='build')return;var cells=ladBuildCells();if(!cells.length){if(typeof toast==='function')toast('Add a series contact first, then OR a branch onto it.','warn');return;}var a=$('lb_addr').value,ty=$('lb_type').value;var nt={a:a};if(ty==='nc')nt.nc=true;else if(ty==='ons'){nt.ons=true;nt._id='osb'+(LAD._osN=(LAD._osN||0)+1);}var last=cells[cells.length-1];if(last.par){last.par.push([nt]);}else{last.par=[[last.t],[nt]];delete last.t;}ladBuildRender();ladDraw();}
+function ladBuildClear(){if(LAD.prog!=='build')return;var P=LADPROG.build;P.rungs.length=1;P.rungs[0].cells.length=0;delete P.timers;delete P.counters;delete P.regs;LAD.T={};LAD.C={};LAD.N={};LAD.OS={};ladBuildRender();ladDraw();}
+
+/* ===== Timing chart (logic-analyzer trend) ===== */
+function ladTrendSignals(P){var sig=[];P.io.forEach(function(io){sig.push(io.a);});(P.outs||[]).forEach(function(o){if(sig.indexOf(o)<0)sig.push(o);});
+  if(P.timers)for(var tk in P.timers)sig.push(tk+'.dn');
+  if(P.counters)for(var ck in P.counters)sig.push(ck+'.dn');
+  return sig;}
+function ladBitVal(a){if(LAD.F&&(a in LAD.F))return LAD.F[a]?1:0;if(/\.dn$/.test(a)){var k=a.slice(0,-3);return ((LAD.T[k]&&LAD.T[k].dn)||(LAD.C[k]&&LAD.C[k].dn))?1:0;}return LAD.B[a]?1:0;}
+function ladTrendPush(P){var sig=ladTrendSignals(P);var sample={};sig.forEach(function(a){sample[a]=ladBitVal(a);});LAD.trend.push(sample);if(LAD.trend.length>90)LAD.trend.shift();}
+function ladTrendToggle(){LAD.trendOn=!LAD.trendOn;if(!LAD.trendOn)LAD.trend=[];ladBuildIO();ladDraw();}
+function ladTrendRender(){var box=$('lad_trend');if(!box)return;if(!LAD.trendOn){box.innerHTML='';return;}
+  var P=LADPROG[LAD.prog];var sig=ladTrendSignals(P);var n=LAD.trend.length;
+  var rows=sig.map(function(a){var cells='';for(var i=0;i<n;i++){var v=LAD.trend[i][a];cells+='<span class="tcell '+(v?'th':'tl')+'" title="'+a.replace('.dn',' DN')+' \u2014 scan '+i+' (t='+(i*LAD.dt/1000).toFixed(1)+'s): '+(v?'HIGH':'low')+'"></span>';}
+    return '<div class="trow"><span class="tlabel">'+a.replace('.dn','&#8239;DN')+'</span><span class="ttrack">'+cells+'</span></div>';}).join('');
+  var tools=n?'<div class="ladtrendtools"><button class="ladbtn" onclick="ladTrendCSV()">&#11015; Export CSV</button> <button class="ladbtn" onclick="ladTrendPNG()">&#128247; Export PNG</button> <span class="ladtrendhint">Hover any cell for its scan &amp; time.</span></div>':'';
+  box.innerHTML='<div class="ladlbl">&#128200; Timing chart &mdash; last '+n+' scans ('+(n*LAD.dt/1000).toFixed(1)+'s), newest on the right. Green = signal HIGH.</div>'+tools+rows;}
+
+/* ===== Sandbox graded challenge series ===== */
+var BUILDTASKS=[
+ {id:1,title:'AND gate',spec:'Y1 = X1 AND X2 (X3 ignored). Two series NO contacts.',fn:function(x){return x[0]&&x[1];},seq:false},
+ {id:2,title:'OR gate',spec:'Y1 = X1 OR X2. Two contacts in parallel (OR branch).',fn:function(x){return x[0]||x[1];},seq:false},
+ {id:3,title:'Run/Stop interlock',spec:'Y1 = X1 AND NOT X2. NO Run in series with an NC Stop.',fn:function(x){return x[0]&&!x[1];},seq:false},
+ {id:4,title:'Three-input AND',spec:'Y1 = X1 AND X2 AND X3. Three series NO contacts.',fn:function(x){return x[0]&&x[1]&&x[2];},seq:false},
+ {id:5,title:'Seal-in latch',spec:'Y1 seals in: pulse X1 to start, it stays on after release; NC X2 stops it. Use (X1 OR Y1) AND NOT X2.',seq:true},
+ {id:6,title:'One-shot (ONS)',spec:'Y1 pulses for exactly ONE scan each time X1 goes off->on. Add an ONS contact on X1 feeding Y1.',grade:function(){var sb=LAD.B,so=LAD.OS;LAD._grading=true;LAD.OS={};LAD.B={X1:false,X2:false,X3:false,Y1:false};ladScan();ladScan();var idle=!!LAD.B.Y1;LAD.B.X1=true;ladScan();var p1=!!LAD.B.Y1;ladScan();var p2=!!LAD.B.Y1;ladScan();var p3=!!LAD.B.Y1;LAD.B.X1=false;ladScan();LAD.B.X1=true;ladScan();var p4=!!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.OS=so;if(idle)return{ok:false,d:'Y1 should be OFF while X1 is idle.'};if(!p1)return{ok:false,d:'Y1 should pulse ON the scan X1 goes true \u2014 use an ONS contact.'};if(p2||p3)return{ok:false,d:'A one-shot must turn Y1 OFF after one scan even while X1 is still held.'};if(!p4)return{ok:false,d:'The one-shot should re-arm: pulsing X1 again should fire Y1 again.'};return{ok:true};}},
+ {id:7,title:'On-delay start (TON)',spec:'Add a TON block (button below) then gate Y1 with a T0.dn contact so Y1 turns on only after X1 is held ~3 s.',grade:function(){var P=LADPROG.build;if(!(P.timers&&P.timers.T0))return{ok:false,d:'Add the TON timer block first (button below), then gate Y1 with a T0.dn contact.'};var sb=LAD.B,st=LAD.T,so=LAD.OS;LAD._grading=true;LAD.T={T0:{acc:0,dn:false,preset:3000}};LAD.OS={};LAD.B={X1:true,X2:false,X3:false,Y1:false};for(var i=0;i<25;i++)ladScan();var early=!!LAD.B.Y1;for(var i=0;i<14;i++)ladScan();var late=!!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.T=st;LAD.OS=so;if(early)return{ok:false,d:'Y1 turned on too soon \u2014 it must wait for the TON Done bit (~3 s). Gate Y1 with T0.dn.'};if(!late)return{ok:false,d:'Y1 never energized. Add a T0.dn contact in the Y1 rung so it follows the timer Done bit.'};return{ok:true};}},
+ {id:8,title:'Count-to-3 (CTU)',spec:'Add a CTU block (button below) then gate Y1 with a C0.dn contact so Y1 turns on after X2 pulses 3 times.',grade:function(){var P=LADPROG.build;if(!(P.counters&&P.counters.C0))return{ok:false,d:'Add the CTU counter block first (button below), then gate Y1 with a C0.dn contact.'};var sb=LAD.B,sc=LAD.C,so=LAD.OS;LAD._grading=true;LAD.C={C0:{acc:0,dn:false,last:false,preset:3}};LAD.OS={};LAD.B={X1:false,X2:false,X3:false,Y1:false};ladScan();var s0=!!LAD.B.Y1;function pl(){LAD.B.X2=true;ladScan();LAD.B.X2=false;ladScan();}pl();pl();var a2=!!LAD.B.Y1;pl();var a3=!!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.C=sc;LAD.OS=so;if(s0)return{ok:false,d:'Y1 should start OFF.'};if(a2)return{ok:false,d:'Y1 should still be OFF after only 2 counts.'};if(!a3)return{ok:false,d:'Y1 should energize on the 3rd count. Gate Y1 with a C0.dn contact.'};return{ok:true};}},
+ {id:9,title:'Latch / Unlatch (OTL / OTU)',spec:'Add an OTL (latch on X1) and an OTU (unlatch on X2) coil block. Y1 must latch ON when X1 pulses, STAY on after release, and clear only when X2 pulses.',grade:function(){var P=LADPROG.build;var hL=P.rungs.some(function(r){return r.latch==='Y1';}),hU=P.rungs.some(function(r){return r.unlatch==='Y1';});if(!hL||!hU)return{ok:false,d:'Add both an OTL (latch on X1) and an OTU (unlatch on X2) coil block for Y1 (buttons below).'};var sb=LAD.B,so=LAD.OS;LAD._grading=true;LAD.OS={};LAD.B={X1:false,X2:false,X3:false,Y1:false};ladScan();var s0=!!LAD.B.Y1;LAD.B.X1=true;ladScan();var latched=!!LAD.B.Y1;LAD.B.X1=false;ladScan();ladScan();var held=!!LAD.B.Y1;LAD.B.X2=true;ladScan();var cleared=!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.OS=so;if(s0)return{ok:false,d:'Y1 should start OFF.'};if(!latched)return{ok:false,d:'Pulsing X1 should latch Y1 ON (OTL).'};if(!held)return{ok:false,d:'Y1 must STAY on after X1 is released — that is what a latch does.'};if(!cleared)return{ok:false,d:'Pulsing X2 (OTU / Unlatch) should clear Y1.'};return{ok:true};}},
+ {id:10,title:'Accumulate & compare (ADD + GEQ)',spec:'Add the ADD accumulator block (X1 adds 5 to N7:0; X3 resets), then gate Y1 with a \u201cN7:0 \u2265 20\u201d compare contact so Y1 lights after four presses of X1.',grade:function(){var P=LADPROG.build;var hasAdd=P.rungs.some(function(r){return r.math&&r.math.dst==='N7:0';});var hasCmp=P.rungs[0].cells.some(function(c){return (c.t&&c.t.cmp)||(c.par&&c.par.some(function(br){return br.some(function(t){return t.cmp;});}));});if(!hasAdd)return{ok:false,d:'Add the ADD accumulator block first (button below).'};if(!hasCmp)return{ok:false,d:'Gate Y1 with the \u201cN7:0 \u2265 20\u201d compare contact (contact-type dropdown).'};var sb=LAD.B,sn=LAD.N,so=LAD.OS;LAD._grading=true;LAD.OS={};LAD.N={'N7:0':0};LAD.B={X1:false,X2:false,X3:false,Y1:false};ladScan();var s0=!!LAD.B.Y1;function pl(){LAD.B.X1=true;ladScan();LAD.B.X1=false;ladScan();}pl();pl();pl();var a3=!!LAD.B.Y1;pl();var a4=!!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.N=sn;LAD.OS=so;if(s0)return{ok:false,d:'Y1 should start OFF.'};if(a3)return{ok:false,d:'After 3 presses N7:0=15 (below 20) \u2014 Y1 should still be OFF.'};if(!a4)return{ok:false,d:'After 4 presses N7:0=20 \u2014 the GEQ should be true and Y1 should light.'};return{ok:true};}},
+ {id:11,title:'Scale & compare (ADD + DIV + compare)',spec:'Add the ADD accumulator (X1: N7:0 += 5) AND the DIV scale block (N7:1 = N7:0 / 5), then gate Y1 with an \u201cN7:1 \u2265 20\u201d compare contact so Y1 lights only after the scaled value reaches 20 (twenty presses of X1).',grade:function(){var P=LADPROG.build;var hasAdd=P.rungs.some(function(r){return r.math&&r.math.op==='ADD'&&r.math.dst==='N7:0';});var hasDiv=P.rungs.some(function(r){return r.math&&r.math.op==='DIV'&&r.math.dst==='N7:1';});var hasCmp=P.rungs[0].cells.some(function(c){return (c.t&&c.t.cmp&&c.t.a==='N7:1')||(c.par&&c.par.some(function(br){return br.some(function(t){return t.cmp&&t.a==='N7:1';});}));});if(!hasAdd)return{ok:false,d:'Add the ADD accumulator block first (button below).'};if(!hasDiv)return{ok:false,d:'Add the DIV scale block (N7:1 = N7:0 / 5).'};if(!hasCmp)return{ok:false,d:'Gate Y1 with the \u201cN7:1 \u2265 20\u201d compare contact (contact-type dropdown).'};var sb=LAD.B,sn=LAD.N,so=LAD.OS;LAD._grading=true;LAD.OS={};LAD.N={'N7:0':0,'N7:1':0};LAD.B={X1:false,X2:false,X3:false,Y1:false};ladScan();var s0=!!LAD.B.Y1;function pl(){LAD.B.X1=true;ladScan();LAD.B.X1=false;ladScan();}for(var i=0;i<19;i++)pl();var a19=!!LAD.B.Y1;pl();var a20=!!LAD.B.Y1;LAD._grading=false;LAD.B=sb;LAD.N=sn;LAD.OS=so;if(s0)return{ok:false,d:'Y1 should start OFF.'};if(a19)return{ok:false,d:'After 19 presses N7:0=95, N7:1=19 (below 20) \u2014 Y1 should still be OFF.'};if(!a20)return{ok:false,d:'After 20 presses N7:0=100, N7:1=20 \u2014 the GEQ on N7:1 should be true and Y1 should light.'};return{ok:true};}}
+];
+function ladSimY1(x1,x2,x3){var save=LAD.B,sos=LAD.OS;LAD.OS={};LAD.B={X1:x1,X2:x2,X3:x3,Y1:false};LAD._grading=true;for(var i=0;i<6;i++)ladScan();var y=!!LAD.B.Y1;LAD._grading=false;LAD.B=save;LAD.OS=sos;return y;}
+function ladGrade(id){var t=null;for(var i=0;i<BUILDTASKS.length;i++)if(BUILDTASKS[i].id===id)t=BUILDTASKS[i];if(!t)return;
+  var pass=true,detail='';
+  if(t.grade){var _r=t.grade();pass=_r.ok;detail=_r.d||'';}
+  else if(!t.seq){var combos=[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1],[1,0,1],[0,1,1],[1,1,1]];
+    for(var c=0;c<combos.length;c++){var cb=combos[c];var got=ladSimY1(!!cb[0],!!cb[1],!!cb[2]);var exp=!!t.fn(cb);if(got!==exp){pass=false;detail='Failed at X1='+cb[0]+' X2='+cb[1]+' X3='+cb[2]+': got Y1='+(got?'ON':'off')+', expected '+(exp?'ON':'off')+'.';break;}}}
+  else{var save=LAD.B;LAD._grading=true;
+    LAD.B={X1:false,X2:false,X3:false,Y1:false};for(var i=0;i<4;i++)ladScan();var s0=!!LAD.B.Y1;
+    LAD.B.X1=true;for(var i=0;i<4;i++)ladScan();var s1=!!LAD.B.Y1;
+    LAD.B.X1=false;for(var i=0;i<4;i++)ladScan();var s2=!!LAD.B.Y1;
+    LAD.B.X2=true;for(var i=0;i<4;i++)ladScan();var s3=!!LAD.B.Y1;
+    LAD._grading=false;LAD.B=save;
+    if(s0){pass=false;detail='Y1 should start OFF.';}
+    else if(!s1){pass=false;detail='Pulsing X1 should turn Y1 ON.';}
+    else if(!s2){pass=false;detail='Y1 should stay ON after releasing X1 (seal-in missing).';}
+    else if(s3){pass=false;detail='NC X2 (Stop) should drop Y1.';}}
+  LAD._gradeMsg=LAD._gradeMsg||{};
+  if(pass){ladAward('lad_bt'+id,20,'Build challenge solved: '+t.title);LAD._gradeMsg[id]={ok:true};}
+  else{LAD._gradeMsg[id]={ok:false,d:detail};if(typeof toast==='function')toast('Not yet \u2014 '+detail,'warn');}
+  ladBuildRender();}
+function ladTasksHtml(){if(LAD.prog!=='build')return '';
+  var done=(typeof S!=='undefined'&&S.ladDone)?S.ladDone:[];
+  var rows=BUILDTASKS.map(function(t){var solved=done.indexOf('lad_bt'+t.id)>=0;var gm=(LAD._gradeMsg||{})[t.id];
+    var badge=solved?'<span class="tbadge ok">&#10003; solved</span>':(gm&&!gm.ok?'<span class="tbadge no">retry</span>':'<span class="tbadge">20 XP</span>');
+    var note=(!solved&&gm&&!gm.ok)?'<div class="tfail">'+gm.d+'</div>':'';
+    return '<div class="btask"><div class="btrow"><b>'+t.id+'. '+t.title+'</b> '+badge+' <button class="ladbtn" onclick="ladGrade('+t.id+')">Check my rung</button></div><div class="btspec">'+t.spec+'</div>'+note+'</div>';}).join('');
+  var nd=BUILDTASKS.filter(function(t){return done.indexOf('lad_bt'+t.id)>=0;}).length;
+  return '<div class="btasks"><div class="ladlbl">&#127942; Build challenges &mdash; '+nd+' / '+BUILDTASKS.length+' solved (build the rung, then Check)</div>'+rows+'</div>';}
+
+/* ===== One-shot (ONS) engine + sandbox instruction blocks + timing-chart export ===== */
+function ladOnsScan(P){if(!LAD.OS)LAD.OS={};function w(t){if(t&&t.ons){if(!t._id)t._id='os'+(LAD._osN=(LAD._osN||0)+1);if(!LAD.OS[t._id])LAD.OS[t._id]={last:false,pulse:false};var cur=!!LAD.B[t.a];var st=LAD.OS[t._id];st.pulse=cur&&!st.last;st.last=cur;}}
+  (P.rungs||[]).forEach(function(r){(r.cells||[]).forEach(function(c){if(c.par){c.par.forEach(function(br){br.forEach(w);});}else if(c.t){w(c.t);}});});}
+function ladSym(t){if(t.cmp)return '[CMP]';return t.ons?'[&#8593;]':(t.nc?'&#8815;':'&#8739;');}
+function ladBuildAddTimer(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.timers&&P.timers.T0){if(typeof toast==='function')toast('TON T0 is already in the sandbox.','warn');return;}if(!P.timers)P.timers={};P.timers.T0={preset:3000};LAD.T.T0={acc:0,dn:false,preset:3000};P.rungs.push({timer:'T0',cells:[{t:{a:'X1'}}]});if(typeof toast==='function')toast('Added TON T0 (3 s) driven by X1. Now add a T0.dn contact to the Y1 rung.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladBuildAddCounter(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.counters&&P.counters.C0){if(typeof toast==='function')toast('CTU C0 is already in the sandbox.','warn');return;}if(!P.counters)P.counters={};P.counters.C0={preset:3};LAD.C.C0={acc:0,dn:false,last:false,preset:3};P.rungs.push({creset:'C0',cells:[{t:{a:'X3'}}]});P.rungs.push({counter:'C0',cells:[{t:{a:'X2'}}]});if(typeof toast==='function')toast('Added CTU C0 (preset 3): X2 counts, X3 resets. Now add a C0.dn contact to the Y1 rung.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladDownload(name,mime,data){try{var a=document.createElement('a');a.href='data:'+mime+';charset=utf-8,'+encodeURIComponent(data);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);},60);}catch(e){if(typeof toast==='function')toast('Export failed: '+e.message,'warn');}}
+function ladTrendCSV(){if(!LAD.trend.length){if(typeof toast==='function')toast('No trend data yet \u2014 toggle the timing chart and run the sim.','warn');return;}var P=LADPROG[LAD.prog];var sig=ladTrendSignals(P);var lines=[['scan','time_s'].concat(sig).join(',')];for(var i=0;i<LAD.trend.length;i++){var row=[i,(i*LAD.dt/1000).toFixed(1)];sig.forEach(function(a){row.push(LAD.trend[i][a]);});lines.push(row.join(','));}ladDownload('ladder_'+LAD.prog+'_timing.csv','text/csv',lines.join('\n'));}
+function ladTrendPNG(){if(!LAD.trend.length){if(typeof toast==='function')toast('No trend data yet \u2014 toggle the timing chart and run the sim.','warn');return;}var P=LADPROG[LAD.prog];var sig=ladTrendSignals(P);var n=LAD.trend.length;var cw=6,rh=18,gap=8,lw=100,pad=12;var W=lw+n*cw+pad*2,H=pad*2+sig.length*(rh+gap);var cv=document.createElement('canvas');cv.width=W;cv.height=H;var g=cv.getContext('2d');g.fillStyle='#0d1117';g.fillRect(0,0,W,H);g.font='12px monospace';g.textBaseline='middle';sig.forEach(function(a,r){var y=pad+r*(rh+gap);g.fillStyle='#c9d1d9';g.fillText(a.replace('.dn',' DN'),4,y+rh/2);for(var i=0;i<n;i++){var v=LAD.trend[i][a];g.fillStyle=v?'#3fb950':'#21262d';g.fillRect(lw+i*cw,y,cw-1,rh);}});try{var url=cv.toDataURL('image/png');var a=document.createElement('a');a.href=url;a.download='ladder_'+LAD.prog+'_timing.png';document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);},60);}catch(e){if(typeof toast==='function')toast('PNG export failed: '+e.message,'warn');}}
+
+/* ===== Latch/Unlatch + Force I/O + program listing (v7.3) ===== */
+function ladNum(x){if(typeof x==='number')return x;if(x==null)return 0;if(/\.acc$/.test(x)){var k=x.slice(0,-4);return (LAD.T[k]?LAD.T[k].acc:(LAD.C[k]?LAD.C[k].acc:0));}if(LAD.N&&(x in LAD.N))return LAD.N[x];var _n=parseFloat(x);return isNaN(_n)?0:_n;}
+function ladCmp(op,a,b){switch(op){case 'EQU':return a===b;case 'NEQ':return a!==b;case 'GRT':return a>b;case 'LES':return a<b;case 'GEQ':return a>=b;case 'LEQ':return a<=b;}return false;}
+function ladMathGlyph(op){return op==='SUB'?' - ':op==='MUL'?' \u00d7 ':op==='DIV'?' \u00f7 ':' + ';}
+function ladMathGlyphA(op){return op==='SUB'?' - ':op==='MUL'?' * ':op==='DIV'?' / ':' + ';}
+function ladValLabel(x){return (x==null)?'0':(''+x);}
+function ladBit(a){return (LAD.F&&(a in LAD.F))?!!LAD.F[a]:!!LAD.B[a];}
+function ladLatched(P,out){return (P.rungs||[]).some(function(r){return r.latch===out||r.unlatch===out;});}
+var LADFORCE={on:false};
+function ladForceToggle(){LADFORCE.on=!LADFORCE.on;ladBuildIO();ladDraw();}
+function ladForceSet(a,v){if(v===null){delete LAD.F[a];}else{LAD.F[a]=v;}if(typeof markSim==='function')markSim('ladder');ladBuildIO();ladDraw();}
+function ladForceClearAll(){LAD.F={};ladBuildIO();ladDraw();}
+function ladForceAddrs(P){var arr=[];P.io.forEach(function(io){arr.push(io.a);});(P.outs||[]).forEach(function(o){if(arr.indexOf(o)<0)arr.push(o);});if(P.timers)for(var tk in P.timers)arr.push(tk+'.dn');if(P.counters)for(var ck in P.counters)arr.push(ck+'.dn');return arr;}
+function ladForceRender(){var box=$('lad_force');if(!box)return;if(!LADFORCE.on){box.innerHTML='';return;}
+  var P=LADPROG[LAD.prog];if(!P){box.innerHTML='';return;}var addrs=ladForceAddrs(P);var nf=Object.keys(LAD.F||{}).length;
+  var warn=nf?'<div class="ladforcebanner">&#9888; I/O FORCES ACTIVE \u2014 forced values override the live logic. On a real PLC an active force is a safety hazard; always remove forces when finished. <button class="ladbtn bad" onclick="ladForceClearAll()">Remove all forces</button></div>':'<div class="ladforcehint">Force any point ON or OFF to override the live scan \u2014 exactly like forcing I/O on a real PLC to test a circuit. Watch how a forced input or coil changes the rungs, then clear the force.</div>';
+  var rows=addrs.map(function(a){var f=(a in LAD.F)?LAD.F[a]:null;var nm=a.replace('.dn',' DN');
+    return '<div class="ladforcerow"><span class="ladforcea">'+nm+'</span> <button class="ladbtn'+(f===true?' on':'')+'" onclick="ladForceSet(\''+a+'\',true)">Force ON</button> <button class="ladbtn'+(f===false?' bad':'')+'" onclick="ladForceSet(\''+a+'\',false)">Force OFF</button> <button class="ladbtn" onclick="ladForceSet(\''+a+'\',null)">Clear</button>'+(f===null?'':' <span class="ladforcetag">forced '+(f?'ON':'OFF')+'</span>')+'</div>';}).join('');
+  box.innerHTML='<div class="ladlbl">&#128268; Force I/O &mdash; '+LADPROG[LAD.prog].title+'</div>'+warn+rows;}
+function ladBuildAddLatch(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.rungs.some(function(r){return r.latch==='Y1';})){if(typeof toast==='function')toast('An OTL Y1 coil is already in the sandbox.','warn');return;}P.rungs.push({latch:'Y1',cells:[{t:{a:'X1'}}]});if(typeof toast==='function')toast('Added OTL: X1 latches Y1 (retentive). Add an OTU to reset it.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladBuildAddUnlatch(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.rungs.some(function(r){return r.unlatch==='Y1';})){if(typeof toast==='function')toast('An OTU Y1 coil is already in the sandbox.','warn');return;}P.rungs.push({unlatch:'Y1',cells:[{t:{a:'X2'}}]});if(typeof toast==='function')toast('Added OTU: X2 unlatches Y1.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladBuildAddAccum(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.rungs.some(function(r){return r.math&&r.math.dst==='N7:0';})){if(typeof toast==='function')toast('The ADD accumulator block is already in the sandbox.','warn');return;}if(!P.regs)P.regs={};P.regs['N7:0']=0;LAD.N['N7:0']=0;P.rungs.push({math:{op:'ADD',dst:'N7:0',a:'N7:0',b:5},cells:[{t:{a:'X1',ons:true,_id:'osb'+(LAD._osN=(LAD._osN||0)+1)}}]});P.rungs.push({mov:{dst:'N7:0',src:0},cells:[{t:{a:'X3'}}]});if(typeof toast==='function')toast('Added ADD: X1 adds 5 to N7:0 (X3 resets). Now gate Y1 with the N7:0 \u2265 20 compare contact.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladBuildAddScale(){if(LAD.prog!=='build')return;var P=LADPROG.build;if(P.rungs.some(function(r){return r.math&&r.math.op==='DIV'&&r.math.dst==='N7:1';})){if(typeof toast==='function')toast('The DIV scale block is already in the sandbox.','warn');return;}if(!P.regs)P.regs={};P.regs['N7:1']=0;LAD.N['N7:1']=0;P.rungs.push({math:{op:'DIV',dst:'N7:1',a:'N7:0',b:5},cells:[]});if(typeof toast==='function')toast('Added DIV scale: N7:1 = N7:0 / 5 (runs every scan). Now gate Y1 with the N7:1 \u2265 20 compare contact.','ach');if(typeof markSim==='function')markSim('ladder');ladBuildRender();ladDraw();}
+function ladT1(t){if(t.cmp)return '['+t.cmp+' '+t.a+','+t.b+']';var s=t.ons?'[ONS]':(t.nc?'-|/|-':'-| |-');return s+t.a;}
+function ladTermAscii(c){if(c.par)return '('+c.par.map(function(br){return br.map(ladT1).join('--');}).join(' + ')+')';return ladT1(c.t);}
+function ladCoilAscii(r){if(r.out!==undefined)return '( '+r.out+' )';if(r.latch)return '( L '+r.latch+' )';if(r.unlatch)return '( U '+r.unlatch+' )';if(r.timer)return ((LAD.T[r.timer]&&LAD.T[r.timer].tof)?'TOF ':'TON ')+r.timer+' ('+((LADPROG[LAD.prog].timers[r.timer].preset)/1000)+'s)';if(r.counter)return 'CTU '+r.counter+' (preset '+LADPROG[LAD.prog].counters[r.counter].preset+')';if(r.mov)return 'MOV '+ladValLabel(r.mov.src)+' -> '+r.mov.dst;if(r.math)return r.math.op+' '+r.math.dst+' = '+ladValLabel(r.math.a)+ladMathGlyphA(r.math.op)+ladValLabel(r.math.b);if(r.seqo)return 'SEQ '+r.seqo+' ('+r.steps.length+' steps)';
+  if(r.shift)return 'BSL '+r.shift+' ('+r.len+' bits) \u2192 '+(r.dout||'');
+  if(r.pid)return 'PID '+r.pid+' (SP='+(r.sp||150)+'\u00b0F Kp='+(r.kp||2.5)+' Ki='+(r.ki||0.8)+')';
+  if(r.fout)return 'FIRST-OUT ANN ('+r.inputs.length+' inputs)';if(r.mcr)return 'MCR '+(r.mcr||'')+' (zone start)';if(r.mcre)return 'MCR END';if(r.creset)return 'RES '+r.creset;return '';}
+function ladListing(){var P=LADPROG[LAD.prog];var L='AET Academy \u2014 Ladder program listing\n';L+='Program: '+P.title+'\n';L+='========================================\n';P.rungs.forEach(function(r,i){var cells=(r.cells&&r.cells.length)?r.cells.map(ladTermAscii).join('--'):'(always)';L+='Rung '+i+':  |--'+cells+'--( '+ladCoilAscii(r).replace(/^\( | \)$/g,'')+' )\n';});L+='\nInputs:  '+P.io.map(function(x){return x.a+' ('+x.l+')';}).join(', ')+'\n';L+='Outputs: '+(P.outs||[]).join(', ')+'\n';if(P.note)L+='\nNotes: '+P.note.replace(/&\w+;/g,' ')+'\n';ladDownload('ladder_'+LAD.prog+'_listing.txt','text/plain',L);}
+
+/* ==== CodeForge ST interpreter (window.runSt) ported for live grading ==== */
+/* runner_st.js — a small Structured Text (IEC 61131-3) interpreter.
+   Executes a practical subset so ST challenges can be auto-graded:
+   assignment (:=), IF/ELSIF/ELSE, CASE OF, FOR/WHILE/REPEAT, arrays,
+   arithmetic (+ - * / MOD), comparison (= <> < <= > >=),
+   boolean (AND OR NOT XOR), MIN/MAX/ABS and type-conversion functions.
+   VAR/CONST blocks and comments are handled. Timers/function-blocks are
+   NOT supported — those challenges stay guided. */
+(function () {
+  "use strict";
+
+  var KW = { "IF":1,"THEN":1,"ELSIF":1,"ELSE":1,"END_IF":1,"CASE":1,"OF":1,
+    "END_CASE":1,"FOR":1,"TO":1,"BY":1,"DO":1,"END_FOR":1,"WHILE":1,
+    "END_WHILE":1,"REPEAT":1,"UNTIL":1,"END_REPEAT":1,"VAR":1,"VAR_INPUT":1,
+    "VAR_OUTPUT":1,"VAR_TEMP":1,"VAR_GLOBAL":1,"END_VAR":1,"CONST":1,
+    "END_CONST":1,"FUNCTION_BLOCK":1,"END_FUNCTION_BLOCK":1,"FUNCTION":1,"END_FUNCTION":1,"RETURN":1,
+    "EXIT":1,"TYPE":1,"END_TYPE":1 };
+  var OPWORD = { "AND":"&&","OR":"||","XOR":"xor","NOT":"!","MOD":"%","DIV":"/" };
+
+  function stripComments(src) {
+    var out = "", i = 0, n = src.length;
+    while (i < n) {
+      var two = src.substr(i, 2);
+      if (two === "(*") { var e = src.indexOf("*)", i + 2); i = (e < 0) ? n : e + 2; continue; }
+      if (two === "//") { var nl = src.indexOf("\n", i); i = (nl < 0) ? n : nl; continue; }
+      if (src[i] === "'") {
+        var j = i + 1; while (j < n && src[j] !== "'") j++;
+        out += src.substring(i, j + 1); i = j + 1; continue;
+      }
+      out += src[i]; i++;
+    }
+    return out;
+  }
+
+  // ---- tokenizer ----
+  function tokenize(src) {
+    src = stripComments(src);
+    var toks = [], i = 0, n = src.length;
+    var isD = function (c) { return c >= "0" && c <= "9"; };
+    var isA = function (c) { return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_"; };
+    while (i < n) {
+      var c = src[i];
+      if (c === " " || c === "\t" || c === "\r" || c === "\n") { i++; continue; }
+      if (c === "'") { var j = i + 1; while (j < n && src[j] !== "'") j++; toks.push({ t: "str", v: src.substring(i + 1, j) }); i = j + 1; continue; }
+      if (isD(c) || (c === "." && isD(src[i + 1]))) {
+        var s = i; var hex = false;
+        if (c === "1" && src[i + 1] === "6" && src[i + 2] === "#") { i += 3; var hs = i; while (i < n && /[0-9a-fA-F]/.test(src[i])) i++; toks.push({ t: "num", v: parseInt(src.substring(hs, i), 16) }); continue; }
+        if (c === "2" && src[i + 1] === "#") { i += 2; var bs = i; while (i < n && /[01]/.test(src[i])) i++; toks.push({ t: "num", v: parseInt(src.substring(bs, i), 2) }); continue; }
+        while (i < n && (isD(src[i]) || src[i] === "." || src[i] === "e" || src[i] === "E" || ((src[i] === "+" || src[i] === "-") && (src[i - 1] === "e" || src[i - 1] === "E")))) i++;
+        toks.push({ t: "num", v: parseFloat(src.substring(s, i)) }); continue;
+      }
+      if (isA(c)) {
+        var a = i; while (i < n && (isA(src[i]) || isD(src[i]))) i++;
+        var w = src.substring(a, i), U = w.toUpperCase();
+        // TIME literal like T#5s / T#500ms -> milliseconds number
+        if ((U === "T" || U === "TIME") && src[i] === "#") { var ts = i + 1; i++; while (i < n && /[0-9smhdSMHD_.]/.test(src[i])) i++; toks.push({ t: "num", v: parseTime(src.substring(ts, i)) }); continue; }
+        if (U === "TRUE") { toks.push({ t: "num", v: 1, b: true }); continue; }
+        if (U === "FALSE") { toks.push({ t: "num", v: 0, b: true }); continue; }
+        if (KW[U]) { toks.push({ t: "kw", v: U }); continue; }
+        if (OPWORD[U]) { toks.push({ t: "op", v: OPWORD[U] }); continue; }
+        toks.push({ t: "id", v: w }); continue;
+      }
+      var three = src.substr(i, 2);
+      if (three === ":=" || three === "<=" || three === ">=" || three === "<>") { toks.push({ t: "op", v: three }); i += 2; continue; }
+      if ("+-*/<>=(),;[].".indexOf(c) >= 0) { toks.push({ t: "op", v: c }); i++; continue; }
+      i++; // skip anything unexpected (e.g. ':' in decls handled elsewhere)
+      toks.push({ t: "op", v: c });
+    }
+    toks.push({ t: "eof" });
+    return toks;
+  }
+
+  function parseTime(s) {
+    var ms = 0, re = /([0-9.]+)\s*(ms|s|m|h|d)/gi, m;
+    var any = false;
+    while ((m = re.exec(s))) {
+      any = true; var v = parseFloat(m[1]), u = m[2].toLowerCase();
+      ms += u === "ms" ? v : u === "s" ? v * 1000 : u === "m" ? v * 60000 : u === "h" ? v * 3600000 : v * 86400000;
+    }
+    return any ? ms : parseFloat(s) || 0;
+  }
+
+  // ---- parser: produces statement list ----
+  function parse(toks) {
+    var p = 0;
+    function peek() { return toks[p]; }
+    function next() { return toks[p++]; }
+    function isKw(v) { return toks[p].t === "kw" && toks[p].v === v; }
+    function eatKw(v) { if (!isKw(v)) err("expected " + v + " got " + tokStr(toks[p])); p++; }
+    function isOp(v) { return toks[p].t === "op" && toks[p].v === v; }
+    function eatOp(v) { if (!isOp(v)) err("expected '" + v + "' got " + tokStr(toks[p])); p++; }
+    function err(m) { throw new Error("Parse error: " + m); }
+
+    function block(stops) {
+      var out = [];
+      while (peek().t !== "eof" && !(peek().t === "kw" && stops.indexOf(peek().v) >= 0)) {
+        var s = statement();
+        if (s) out.push(s);
+      }
+      return out;
+    }
+
+    function skipDecls() {
+      // consume tokens up to matching END_VAR / END_CONST / END_TYPE
+      var endTok = { "VAR": "END_VAR", "VAR_INPUT": "END_VAR", "VAR_OUTPUT": "END_VAR", "VAR_TEMP": "END_VAR", "VAR_GLOBAL": "END_VAR", "CONST": "END_CONST", "TYPE": "END_TYPE" };
+      var open = next().v, want = endTok[open], decls = [];
+      var FBT = { "TON":1,"TOF":1,"TP":1,"CTU":1,"CTD":1,"R_TRIG":1,"F_TRIG":1,"RS":1,"SR":1,"CTUD":1 };
+      while (peek().t !== "eof" && !(peek().t === "kw" && peek().v === want)) {
+        // capture `name : type [:= initExpr] ;`  (record FB type, user-FB type, or initializer)
+        if (peek().t === "id") {
+          var nm = next().v;
+          if (isOp(":")) { next();
+            var typeTok = peek(); var entry = { name: nm };
+            if (typeTok.t === "id") { var TU = typeTok.v.toUpperCase(); if (FBT[TU]) entry.fbType = TU; else entry.typeName = TU; }
+            while (peek().t !== "eof" && !isOp(";") && !isOp(":=") && !(peek().t === "kw" && peek().v === want)) next();
+            if (isOp(":=")) { next(); entry.init = expr(); }
+            decls.push(entry);
+          }
+        }
+        while (peek().t !== "eof" && !isOp(";") && !(peek().t === "kw" && peek().v === want)) next();
+        if (isOp(";")) next();
+      }
+      if (peek().t === "kw" && peek().v === want) next();
+      return { type: "decls", kind: open, decls: decls };
+    }
+
+    function statement() {
+      var tk = peek();
+      if (tk.t === "kw") {
+        switch (tk.v) {
+          case "VAR": case "VAR_INPUT": case "VAR_OUTPUT": case "VAR_TEMP": case "VAR_GLOBAL": case "CONST": case "TYPE": return skipDecls();
+          case "FUNCTION_BLOCK": return fbDefStmt();
+          case "END_FUNCTION_BLOCK": next(); return null;
+          case "FUNCTION": return fnDefStmt();
+          case "END_FUNCTION": next(); return null;
+          case "IF": return ifStmt();
+          case "CASE": return caseStmt();
+          case "FOR": return forStmt();
+          case "WHILE": return whileStmt();
+          case "REPEAT": return repeatStmt();
+          case "RETURN": next(); if (isOp(";")) next(); return { type: "return" };
+          case "EXIT": next(); if (isOp(";")) next(); return { type: "exit" };
+        }
+      }
+      if (isOp(";")) { next(); return null; }
+      // call-statement: Name( ... ) ;   (e.g. a timer/counter FB invocation)
+      if (peek().t === "id" && toks[p + 1] && toks[p + 1].t === "op" && toks[p + 1].v === "(") {
+        var callNode = primary(); if (isOp(";")) next(); return { type: "exprstmt", expr: callNode };
+      }
+      // assignment: lvalue := expr ;
+      var lv = lvalue();
+      eatOp(":="); var rhs = expr(); if (isOp(";")) next();
+      return { type: "assign", target: lv, value: rhs };
+    }
+
+    function lvalue() {
+      var id = next(); if (id.t !== "id") err("expected identifier");
+      var node = { type: "var", name: id.v };
+      while (isOp("[") || isOp(".")) {
+        if (isOp("[")) { next(); var idx = expr(); eatOp("]"); node = { type: "index", base: node, index: idx }; }
+        else { next(); var f = next(); node = { type: "field", base: node, name: f.v }; }
+      }
+      return node;
+    }
+
+    function ifStmt() {
+      eatKw("IF"); var cond = expr(); eatKw("THEN");
+      var then = block(["ELSIF", "ELSE", "END_IF"]);
+      var clauses = [{ cond: cond, body: then }], els = null;
+      while (isKw("ELSIF")) { next(); var c2 = expr(); eatKw("THEN"); clauses.push({ cond: c2, body: block(["ELSIF", "ELSE", "END_IF"]) }); }
+      if (isKw("ELSE")) { next(); els = block(["END_IF"]); }
+      eatKw("END_IF"); if (isOp(";")) next();
+      return { type: "if", clauses: clauses, els: els };
+    }
+
+    function caseBody() {
+      // a branch body runs until ELSE / END_CASE (keywords) or the next
+      // numeric/string label (which starts the next branch).
+      var out = [];
+      while (peek().t !== "eof" && !isKw("ELSE") && !isKw("END_CASE") && peek().t !== "num" && peek().t !== "str") {
+        var st = statement(); if (st) out.push(st);
+      }
+      return out;
+    }
+    function caseStmt() {
+      eatKw("CASE"); var sel = expr(); eatKw("OF");
+      var branches = [], els = null;
+      while (!isKw("END_CASE") && !isKw("ELSE") && peek().t !== "eof") {
+        var labels = [labelVal()];
+        while (isOp(",")) { next(); labels.push(labelVal()); }
+        eatOp(":");
+        branches.push({ labels: labels, body: caseBody() });
+      }
+      if (isKw("ELSE")) { next(); els = block(["END_CASE"]); }
+      eatKw("END_CASE"); if (isOp(";")) next();
+      return { type: "case", sel: sel, branches: branches, els: els };
+    }
+    function labelVal() { var t = next(); if (t.t === "num") return t.v; if (t.t === "str") return t.v; err("bad case label"); }
+
+    function fnDefStmt() {
+      eatKw("FUNCTION");
+      var nm = next(); var fnName = (nm.t === "id") ? nm.v : "FN";
+      if (isOp(":")) { next(); if (peek().t === "id" || peek().t === "kw") next(); }
+      var inputs = [], locals = [];
+      while (peek().t === "kw" && (peek().v === "VAR_INPUT" || peek().v === "VAR" || peek().v === "VAR_TEMP")) {
+        var d = skipDecls();
+        if (d.kind === "VAR_INPUT") inputs = inputs.concat(d.decls);
+        else locals = locals.concat(d.decls);
+      }
+      var body = block(["END_FUNCTION"]);
+      if (isKw("END_FUNCTION")) next(); if (isOp(";")) next();
+      return { type: "fndef", name: fnName, nameU: fnName.toUpperCase(), inputs: inputs, locals: locals, body: body };
+    }
+    function fbDefStmt() {
+      eatKw("FUNCTION_BLOCK");
+      var nm = next(); var fbName = (nm.t === "id") ? nm.v : "FB";
+      var inputs = [], outputs = [], locals = [];
+      while (peek().t === "kw" && (peek().v === "VAR_INPUT" || peek().v === "VAR_OUTPUT" || peek().v === "VAR" || peek().v === "VAR_TEMP")) {
+        var d = skipDecls();
+        if (d.kind === "VAR_INPUT") inputs = inputs.concat(d.decls);
+        else if (d.kind === "VAR_OUTPUT") outputs = outputs.concat(d.decls);
+        else locals = locals.concat(d.decls);
+      }
+      var body = block(["END_FUNCTION_BLOCK"]);
+      if (isKw("END_FUNCTION_BLOCK")) next(); if (isOp(";")) next();
+      return { type: "fbdef", name: fbName, nameU: fbName.toUpperCase(), inputs: inputs, outputs: outputs, locals: locals, body: body };
+    }
+    function forStmt() {
+      eatKw("FOR"); var v = next().v; eatOp(":="); var from = expr(); eatKw("TO"); var to = expr();
+      var by = null; if (isKw("BY")) { next(); by = expr(); }
+      eatKw("DO"); var body = block(["END_FOR"]); eatKw("END_FOR"); if (isOp(";")) next();
+      return { type: "for", v: v, from: from, to: to, by: by, body: body };
+    }
+    function whileStmt() { eatKw("WHILE"); var c = expr(); eatKw("DO"); var b = block(["END_WHILE"]); eatKw("END_WHILE"); if (isOp(";")) next(); return { type: "while", cond: c, body: b }; }
+    function repeatStmt() { eatKw("REPEAT"); var b = block(["UNTIL"]); eatKw("UNTIL"); var c = expr(); eatKw("END_REPEAT"); if (isOp(";")) next(); return { type: "repeat", cond: c, body: b }; }
+
+    // expression precedence: OR/XOR < AND < NOT < compare < add < mul < unary < primary
+    function expr() { return orExpr(); }
+    function orExpr() { var l = andExpr(); while (isOp("||") || isOp("xor")) { var o = next().v; var r = andExpr(); l = { type: "bin", op: o, l: l, r: r }; } return l; }
+    function andExpr() { var l = cmpExpr(); while (isOp("&&")) { next(); var r = cmpExpr(); l = { type: "bin", op: "&&", l: l, r: r }; } return l; }
+    function cmpExpr() { var l = addExpr(); while (isOp("=") || isOp("<>") || isOp("<") || isOp("<=") || isOp(">") || isOp(">=")) { var o = next().v; var r = addExpr(); l = { type: "bin", op: o, l: l, r: r }; } return l; }
+    function addExpr() { var l = mulExpr(); while (isOp("+") || isOp("-")) { var o = next().v; var r = mulExpr(); l = { type: "bin", op: o, l: l, r: r }; } return l; }
+    function mulExpr() { var l = unary(); while (isOp("*") || isOp("/") || isOp("%")) { var o = next().v; var r = unary(); l = { type: "bin", op: o, l: l, r: r }; } return l; }
+    function unary() { if (isOp("!")) { next(); return { type: "not", e: unary() }; } if (isOp("-")) { next(); return { type: "neg", e: unary() }; } if (isOp("+")) { next(); return unary(); } return primary(); }
+    function primary() {
+      var tk = peek();
+      if (isOp("(")) { next(); var e = expr(); eatOp(")"); return e; }
+      if (tk.t === "num") { next(); return { type: "lit", v: tk.v }; }
+      if (tk.t === "str") { next(); return { type: "lit", v: tk.v }; }
+      if (tk.t === "id") {
+        var name = next().v;
+        if (isOp("(")) {
+          next();
+          // named args (FB style):  IN := expr, PT := expr
+          if (peek().t === "id" && toks[p + 1] && toks[p + 1].t === "op" && toks[p + 1].v === ":=") {
+            var named = {};
+            while (!isOp(")") && peek().t !== "eof") {
+              var an = next().v; eatOp(":="); named[an.toUpperCase()] = expr();
+              if (isOp(",")) next();
+            }
+            eatOp(")");
+            return { type: "call", name: name, nameU: name.toUpperCase(), named: named };
+          }
+          var args = []; if (!isOp(")")) { args.push(expr()); while (isOp(",")) { next(); args.push(expr()); } } eatOp(")");
+          return { type: "call", name: name, nameU: name.toUpperCase(), args: args };
+        }
+        var node = { type: "var", name: name };
+        while (isOp("[") || isOp(".")) { if (isOp("[")) { next(); var idx = expr(); eatOp("]"); node = { type: "index", base: node, index: idx }; } else { next(); var f = next(); node = { type: "field", base: node, name: f.v }; } }
+        return node;
+      }
+      throw new Error("Parse error: unexpected " + tokStr(tk));
+    }
+
+    var prog = block([]);
+    if (peek().t !== "eof") throw new Error("Parse error: trailing input " + tokStr(peek()));
+    return prog;
+  }
+  function tokStr(t) { return t.t === "eof" ? "<end>" : (t.v != null ? String(t.v) : t.t); }
+
+  // ---- evaluator ----
+  function keyOf(node) {
+    if (node.type === "var") return node.name;
+    if (node.type === "field") return keyOf(node.base) + "." + node.name;
+    return null;
+  }
+  function run(prog, env) {
+    var STEPS = { n: 0, max: 2000000 };
+    var FBDEFS = {}; for (var _fi = 0; _fi < prog.length; _fi++) if (prog[_fi].type === "fbdef") FBDEFS[prog[_fi].nameU] = prog[_fi];
+    var FNDEFS = {}; for (var _gi = 0; _gi < prog.length; _gi++) if (prog[_gi].type === "fndef") FNDEFS[prog[_gi].nameU] = prog[_gi];
+    var fnSeq = 0;
+    var curPrefix = "";
+    function K(n) { return curPrefix + n; }
+    function tick() { if (++STEPS.n > STEPS.max) throw new Error("Runaway loop (>2M steps) — check loop bounds"); }
+    function get(name) { return env[name]; }
+    function evalNode(nd) {
+      switch (nd.type) {
+        case "lit": return nd.v;
+        case "var": { var v = env[K(nd.name)]; return v === undefined ? 0 : v; }
+        case "field": { var o = env[curPrefix + keyOf(nd)]; return o === undefined ? 0 : o; }
+        case "index": { var arr = evalNode(nd.base); var i = evalNode(nd.index) | 0; if (arr === 0 || arr === undefined) return 0; if (!Array.isArray(arr)) throw new Error("not an array: " + keyOf(nd.base)); if (i < 0) throw new Error("array index out of range [" + i + "]"); return arr[i] === undefined ? 0 : arr[i]; }
+        case "neg": return -evalNode(nd.e);
+        case "not": return truthy(evalNode(nd.e)) ? 0 : 1;
+        case "call": { var nu = nd.nameU || nd.name; if (FNDEFS[nu]) return runUserFn(FNDEFS[nu], (nd.args || []).map(evalNode)); return callFn(nu, (nd.args || []).map(evalNode)); }
+        case "bin": {
+          var l = evalNode(nd.l), r;
+          if (nd.op === "&&") return (truthy(l) && truthy(evalNode(nd.r))) ? 1 : 0;
+          if (nd.op === "||") return (truthy(l) || truthy(evalNode(nd.r))) ? 1 : 0;
+          r = evalNode(nd.r);
+          switch (nd.op) {
+            case "xor": return (truthy(l) !== truthy(r)) ? 1 : 0;
+            case "+": return l + r; case "-": return l - r; case "*": return l * r;
+            case "/": return r === 0 ? 0 : l / r; case "%": return r === 0 ? 0 : ((l % r) + r) % r;
+            case "=": return eqv(l, r) ? 1 : 0; case "<>": return eqv(l, r) ? 0 : 1;
+            case "<": return l < r ? 1 : 0; case "<=": return l <= r ? 1 : 0;
+            case ">": return l > r ? 1 : 0; case ">=": return l >= r ? 1 : 0;
+          }
+        }
+      }
+      throw new Error("cannot eval " + nd.type);
+    }
+    function evalRef(nd) { return nd; }
+    function truthy(v) { return v !== 0 && v !== false && v !== "" && v != null; }
+    function eqv(a, b) { if (typeof a === "string" || typeof b === "string") return String(a) === String(b); return a === b; }
+    function callFn(name, a) {
+      switch (name) {
+        case "MIN": return Math.min.apply(null, a); case "MAX": return Math.max.apply(null, a);
+        case "ABS": return Math.abs(a[0]); case "SQRT": return Math.sqrt(a[0]);
+        case "REAL_TO_DINT": case "REAL_TO_INT": case "TRUNC": return Math.round(a[0]);
+        case "LIMIT": return Math.max(a[0], Math.min(a[1], a[2]));
+        case "SEL": return truthy(a[0]) ? a[2] : a[1];
+        case "MUX": { var k = (a[0] | 0) + 1; if (k < 1) k = 1; if (k > a.length - 1) k = a.length - 1; return a[k]; }
+        case "SHL": return (a[0] | 0) << (a[1] | 0);
+        case "SHR": return (a[0] | 0) >> (a[1] | 0);
+        case "MOVE": return a[0];
+        case "LEN": return String(a[0]).length;
+        case "CONCAT": return a.map(String).join("");
+        case "LEFT": return String(a[0]).slice(0, a[1] | 0);
+        case "RIGHT": { var nR = a[1] | 0; return nR <= 0 ? "" : String(a[0]).slice(-nR); }
+        case "MID": return String(a[0]).substr((a[2] | 0) - 1, a[1] | 0);
+        case "FIND": { var fi = String(a[0]).indexOf(String(a[1])); return fi < 0 ? 0 : fi + 1; }
+        case "DELETE": { var sD = String(a[0]), lD = a[1] | 0, pD = a[2] | 0; return sD.slice(0, pD - 1) + sD.slice(pD - 1 + lD); }
+        case "INSERT": { var sI = String(a[0]), s2 = String(a[1]), pI = a[2] | 0; return sI.slice(0, pI) + s2 + sI.slice(pI); }
+        case "REPLACE": { var sR = String(a[0]), s2r = String(a[1]), lR = a[2] | 0, pR = a[3] | 0; return sR.slice(0, pR - 1) + s2r + sR.slice(pR - 1 + lR); }
+        default:
+          if (/_TO_/.test(name)) return a[0]; // DINT_TO_REAL, INT_TO_REAL, etc: passthrough
+          return a[0];
+      }
+    }
+    function assign(target, val) {
+      if (target.type === "var") { env[K(target.name)] = val; return; }
+      if (target.type === "field") { env[curPrefix + keyOf(target)] = val; return; }
+      if (target.type === "index") {
+        var bk = keyOf(target.base); var pbk = curPrefix + bk;
+        var arr = evalNode(target.base); var i = evalNode(target.index) | 0;
+        if (arr === 0 || arr === undefined) { arr = []; if (bk) env[pbk] = arr; }
+        if (!Array.isArray(arr)) throw new Error("not an array: " + bk);
+        if (i < 0) throw new Error("array index out of range [" + i + "]");
+        if (i > 100000) throw new Error("array index too large [" + i + "]");
+        while (arr.length <= i) arr.push(0);
+        arr[i] = val; return;
+      }
+      throw new Error("bad assignment target");
+    }
+    function fbScanMs() { return (typeof env.dt === "number") ? env.dt : 100; }
+    function runFB(inst, named) {
+      var base = curPrefix + inst;
+      var fb = env[base + ".__fb"]; if (!fb) { var uf = env[base + ".__ufb"]; if (uf && FBDEFS[uf]) runUserFB(base, FBDEFS[uf], named); return; }
+      var dt = fbScanMs();
+      function ip(k, dflt) { return named[k] !== undefined ? evalNode(named[k]) : dflt; }
+      if (fb === "TON" || fb === "TOF" || fb === "TP") {
+        var IN = truthy(ip("IN", env[base + ".IN"] || 0));
+        var PT = Number(ip("PT", env[base + ".PT"] || 0));
+        var ET = Number(env[base + ".ET"] || 0), Q = truthy(env[base + ".Q"] || 0);
+        var prev = truthy(env[base + ".__prevIN"] || 0);
+        env[base + ".IN"] = IN ? 1 : 0; env[base + ".PT"] = PT;
+        if (fb === "TON") { if (IN) { ET = Math.min(PT, ET + dt); Q = ET >= PT; } else { ET = 0; Q = false; } }
+        else if (fb === "TOF") { if (IN) { ET = 0; Q = true; } else if (Q) { ET = Math.min(PT, ET + dt); if (ET >= PT) Q = false; } }
+        else { var timing = truthy(env[base + ".__timing"] || 0);
+          if (IN && !prev && !timing) { timing = true; ET = 0; }
+          if (timing) { ET = Math.min(PT, ET + dt); Q = true; if (ET >= PT) { Q = false; timing = false; } } else Q = false;
+          if (!IN && !timing) ET = 0;
+          env[base + ".__timing"] = timing ? 1 : 0;
+        }
+        env[base + ".ET"] = ET; env[base + ".Q"] = Q ? 1 : 0; env[base + ".__prevIN"] = IN ? 1 : 0;
+      } else if (fb === "CTU") {
+        var CU = truthy(ip("CU", 0)), R = truthy(ip("R", 0)), PV = Number(ip("PV", env[base + ".PV"] || 0));
+        var CV = Number(env[base + ".CV"] || 0), pCU = truthy(env[base + ".__pCU"] || 0);
+        if (R) CV = 0; else if (CU && !pCU) CV += 1;
+        env[base + ".CV"] = CV; env[base + ".PV"] = PV; env[base + ".Q"] = CV >= PV ? 1 : 0; env[base + ".__pCU"] = CU ? 1 : 0;
+      } else if (fb === "CTD") {
+        var CD = truthy(ip("CD", 0)), LD = truthy(ip("LD", 0)), PVd = Number(ip("PV", env[base + ".PV"] || 0));
+        var CVd = Number(env[base + ".CV"] || 0), pCD = truthy(env[base + ".__pCD"] || 0);
+        if (LD) CVd = PVd; else if (CD && !pCD) CVd -= 1;
+        env[base + ".CV"] = CVd; env[base + ".PV"] = PVd; env[base + ".Q"] = CVd <= 0 ? 1 : 0; env[base + ".__pCD"] = CD ? 1 : 0;
+      } else if (fb === "R_TRIG") {
+        var clkR = truthy(ip("CLK", 0)), mR = truthy(env[base + ".__m"] || 0);
+        env[base + ".Q"] = (clkR && !mR) ? 1 : 0; env[base + ".__m"] = clkR ? 1 : 0;
+      } else if (fb === "F_TRIG") {
+        var clkF = truthy(ip("CLK", 0)), mF = truthy(env[base + ".__m"] || 0);
+        env[base + ".Q"] = (!clkF && !mF) ? 1 : 0; env[base + ".__m"] = clkF ? 0 : 1;
+      } else if (fb === "RS") {
+        var setR = truthy(ip("S", 0)), rstR = truthy(ip("R1", 0)), qRS = truthy(env[base + ".Q"] || 0);
+        qRS = (setR || qRS) && !rstR;
+        env[base + ".Q"] = qRS ? 1 : 0; env[base + ".Q1"] = qRS ? 1 : 0;
+      } else if (fb === "SR") {
+        var setS = truthy(ip("S1", 0)), rstS = truthy(ip("R", 0)), qSR = truthy(env[base + ".Q"] || 0);
+        qSR = setS || (qSR && !rstS);
+        env[base + ".Q"] = qSR ? 1 : 0; env[base + ".Q1"] = qSR ? 1 : 0;
+      } else if (fb === "CTUD") {
+        var cu = truthy(ip("CU", 0)), cd = truthy(ip("CD", 0)), rst = truthy(ip("R", 0)), ld = truthy(ip("LD", 0)), pv = Number(ip("PV", env[base + ".PV"] || 0));
+        var cv = Number(env[base + ".CV"] || 0), pcu = truthy(env[base + ".__pCU"] || 0), pcd = truthy(env[base + ".__pCD"] || 0);
+        if (rst) cv = 0; else if (ld) cv = pv; else { if (cu && !pcu) cv += 1; if (cd && !pcd) cv -= 1; }
+        env[base + ".CV"] = cv; env[base + ".PV"] = pv;
+        env[base + ".QU"] = cv >= pv ? 1 : 0; env[base + ".QD"] = cv <= 0 ? 1 : 0;
+        env[base + ".__pCU"] = cu ? 1 : 0; env[base + ".__pCD"] = cd ? 1 : 0;
+      }
+    }
+    function evalInScope(node, base) { var sp = curPrefix; curPrefix = base + "."; try { return evalNode(node); } finally { curPrefix = sp; } }
+    function initUserFB(base, def) {
+      function ini(list) { for (var i = 0; i < list.length; i++) { var v = list[i], key = base + "." + v.name;
+        if (v.fbType) { if (env[key + ".__fb"] === undefined) { env[key + ".__fb"] = v.fbType; env[key + ".Q"] = 0; env[key + ".ET"] = 0; env[key + ".CV"] = 0; } }
+        else if (v.typeName && FBDEFS[v.typeName]) { if (env[key + ".__ufb"] === undefined) { env[key + ".__ufb"] = v.typeName; initUserFB(key, FBDEFS[v.typeName]); } }
+        else if (env[key] === undefined) env[key] = (v.init !== undefined) ? evalInScope(v.init, base) : 0;
+      } }
+      ini(def.inputs); ini(def.outputs); ini(def.locals);
+    }
+    function runUserFn(def, args) {
+      var pfx = "__fn" + (fnSeq++) + ".";
+      for (var i = 0; i < def.inputs.length; i++) env[pfx + def.inputs[i].name] = args[i] === undefined ? 0 : args[i];
+      for (var j = 0; j < def.locals.length; j++) { var lv = def.locals[j]; env[pfx + lv.name] = (lv.init !== undefined) ? evalInScope(lv.init, pfx.slice(0, -1)) : 0; }
+      env[pfx + def.name] = 0;
+      var sp = curPrefix; curPrefix = pfx;
+      try { exec(def.body); } finally { curPrefix = sp; }
+      var rv = env[pfx + def.name];
+      for (var k in env) { if (k.indexOf(pfx) === 0) delete env[k]; }
+      return rv === undefined ? 0 : rv;
+    }
+    function runUserFB(base, def, named) {
+      if (env[base + ".__uinit"] === undefined) { initUserFB(base, def); env[base + ".__uinit"] = 1; }
+      for (var i = 0; i < def.inputs.length; i++) { var inp = def.inputs[i], up = inp.name.toUpperCase(); if (named[up] !== undefined) env[base + "." + inp.name] = evalNode(named[up]); }
+      var sp = curPrefix; curPrefix = base + ".";
+      try { exec(def.body); } finally { curPrefix = sp; }
+    }
+    var BRK = {};
+    function exec(list) {
+      for (var k = 0; k < list.length; k++) {
+        var s = list[k]; tick();
+        switch (s.type) {
+          case "decls": s.decls.forEach(function (d) {
+            var dk = K(d.name);
+            if (d.fbType) { if (env[dk + ".__fb"] === undefined) { env[dk + ".__fb"] = d.fbType; env[dk + ".Q"] = 0; env[dk + ".ET"] = 0; env[dk + ".CV"] = 0; } }
+            else if (d.typeName && FBDEFS[d.typeName]) { if (env[dk + ".__ufb"] === undefined) { env[dk + ".__ufb"] = d.typeName; initUserFB(dk, FBDEFS[d.typeName]); } }
+            else if (d.init !== undefined && env[dk] === undefined) env[dk] = evalNode(d.init);
+          }); break;
+          case "fbdef": break;
+          case "fndef": break;
+          case "assign": assign(s.target, evalNode(s.value)); break;
+          case "exprstmt": if (s.expr && s.expr.type === "call" && s.expr.named) runFB(s.expr.name, s.expr.named); else evalNode(s.expr); break;
+          case "if": {
+            var done = false;
+            for (var ci = 0; ci < s.clauses.length; ci++) { if (truthy(evalNode(s.clauses[ci].cond))) { exec(s.clauses[ci].body); done = true; break; } }
+            if (!done && s.els) exec(s.els);
+            break;
+          }
+          case "case": {
+            var sv = evalNode(s.sel), hit = false;
+            for (var bi = 0; bi < s.branches.length; bi++) { if (s.branches[bi].labels.some(function (L) { return eqv(L, sv); })) { exec(s.branches[bi].body); hit = true; break; } }
+            if (!hit && s.els) exec(s.els);
+            break;
+          }
+          case "for": {
+            var from = evalNode(s.from) | 0, to = evalNode(s.to) | 0, by = s.by ? evalNode(s.by) : 1;
+            if (by === 0) throw new Error("FOR step is 0");
+            if (by > 0) { for (var iv = from; iv <= to; iv += by) { env[K(s.v)] = iv; try { exec(s.body); } catch (e) { if (e === BRK) break; throw e; } tick(); } }
+            else { for (var iv2 = from; iv2 >= to; iv2 += by) { env[K(s.v)] = iv2; try { exec(s.body); } catch (e2) { if (e2 === BRK) break; throw e2; } tick(); } }
+            break;
+          }
+          case "while": { while (truthy(evalNode(s.cond))) { try { exec(s.body); } catch (e3) { if (e3 === BRK) break; throw e3; } tick(); } break; }
+          case "repeat": { do { try { exec(s.body); } catch (e4) { if (e4 === BRK) break; throw e4; } tick(); } while (!truthy(evalNode(s.cond))); break; }
+          case "exit": throw BRK;
+          case "return": return;
+        }
+      }
+    }
+    exec(prog);
+    return env;
+  }
+
+  // Public: interpret ST source with a set of cases.
+  // case = { set:{...}, scans:N, expect:{...}, name:"" }
+  //   or with input transitions: { set:{...init}, steps:[{set:{...},scans:N}, ...], expect:{...} }
+  // returns { results:[{name,pass,expected,actual,error}], fatal? }
+  window.runSt = function (src, cases) {
+    var prog;
+    try { prog = parse(tokenize(src)); }
+    catch (e) { return { fatal: String(e.message || e) }; }
+    var results = [];
+    for (var i = 0; i < cases.length; i++) {
+      var tc = cases[i], env = {};
+      // seed inputs (deep-copy arrays so cases don't share state)
+      var set = tc.set || {};
+      for (var kk in set) { env[kk] = Array.isArray(set[kk]) ? set[kk].slice() : set[kk]; }
+      var r = { name: tc.name || ("case " + (i + 1)), pass: false };
+      try {
+        if (tc.steps && tc.steps.length) {
+          for (var si = 0; si < tc.steps.length; si++) {
+            var stp = tc.steps[si], sset = stp.set || {};
+            for (var skk in sset) { env[skk] = Array.isArray(sset[skk]) ? sset[skk].slice() : sset[skk]; }
+            var ssc = stp.scans || 1;
+            for (var q = 0; q < ssc; q++) run(prog, env);
+          }
+        } else {
+          var scans = tc.scans || 1;
+          for (var sc = 0; sc < scans; sc++) run(prog, env);
+        }
+        var exp = tc.expect || {}, ok = true, ea = [], aa = [];
+        for (var ek in exp) {
+          var want = exp[ek], got = env[ek];
+          ea.push(ek + "=" + fmtV(want)); aa.push(ek + "=" + fmtV(got));
+          if (!approxEq(want, got)) ok = false;
+        }
+        r.pass = ok; r.expected = ea.join(", "); r.actual = aa.join(", ");
+      } catch (err) { r.error = String(err.message || err); }
+      results.push(r);
+    }
+    return { results: results };
+  };
+
+  function approxEq(a, b) {
+    if (Array.isArray(a)) { if (!Array.isArray(b) || a.length !== b.length) return false; for (var i = 0; i < a.length; i++) if (!approxEq(a[i], b[i])) return false; return true; }
+    if (typeof a === "boolean") a = a ? 1 : 0;
+    if (typeof b === "boolean") b = b ? 1 : 0;
+    if (typeof a === "number" && typeof b === "number") { if (Number.isInteger(a) && Number.isInteger(b)) return a === b; return Math.abs(a - b) < 1e-3; }
+    return String(a) === String(b);
+  }
+  function fmtV(v) { if (typeof v === "boolean") return v ? "TRUE" : "FALSE"; if (typeof v === "number" && !Number.isInteger(v)) return v.toFixed(3); return String(v); }
+})();
+
+
+
+/* ===== Ladder & ST Practice Lab: render + live grading ===== */
+var _llFilter='all';
+function llGroup(l){ if(l && l.mode==='predict') return 'diag'; if(l && l.stGrade) return 'st'; return 'ladder'; }
+function llFilter(g){ _llFilter=g; if(location.hash!=='#ladderlab'){ go('#ladderlab'); } else { renderLadderLab(); } }
+function _llEsc(t){ return String(t==null?'':t).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;'); }
+function _llFind(id){ var a=LADDERLABS; for(var i=0;i<a.length;i++){ if(a[i].id===id) return a[i]; } return null; }
+function _llNorm(s){ return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]/g,''); }
+function llCheckSt(id){
+  var lab=_llFind(id); if(!lab) return;
+  var ta=$('llta-'+id), out=$('llout-'+id); if(!ta||!out) return;
+  var res;
+  try{ res=window.runSt(ta.value, lab.cases||[]); }catch(e){ out.innerHTML='<div class="llbad">Runner error: '+_llEsc(e&&e.message||e)+'</div>'; return; }
+  if(res && res.fatal){ out.innerHTML='<div class="llbad">Compile/parse error: '+_llEsc(res.fatal)+'</div>'; return; }
+  var rs=(res&&res.results)||[]; var passed=0;
+  var rows='';
+  for(var i=0;i<rs.length;i++){
+    var r=rs[i]; if(r.pass) passed++;
+    rows+='<tr><td>'+(r.pass?'<span class="llok">PASS</span>':'<span class="llno">FAIL</span>')+'</td><td>'+_llEsc(r.name||('case '+(i+1)))+'</td><td>'+_llEsc(r.error?('ERR: '+r.error):('expected '+r.expected+', got '+r.actual))+'</td></tr>';
+  }
+  var all = rs.length>0 && passed===rs.length;
+  var head = all ? '<div class="llgood">&#9989; All '+rs.length+' test cases passed! +'+(lab.xp||0)+' XP earned.</div>' : '<div class="llbad">'+passed+' / '+rs.length+' cases passed. Keep going!</div>';
+  out.innerHTML = head + '<table class="lltable"><thead><tr><th>Result</th><th>Case</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  if(all){ try{ addXP(lab.xp||0); }catch(e){} try{ logActivity&&logActivity('Ladder Lab solved: '+(lab.title||id)); }catch(e){} }
+}
+function llCheckPredict(id){
+  var lab=_llFind(id); if(!lab) return;
+  var inp=$('llin-'+id), out=$('llout-'+id); if(!inp||!out) return;
+  var val=_llNorm(inp.value);
+  var accept=[lab.expectedOutput].concat(lab.altOutputs||[]);
+  var ok=accept.some(function(a){ var n=_llNorm(a); return n.length>0 && (val===n || (val.length>2 && (val.indexOf(n)>=0 || n.indexOf(val)>=0))); });
+  if(ok){ out.innerHTML='<div class="llgood">&#9989; Correct! +'+(lab.xp||0)+' XP. '+_llEsc(lab.expectedOutput)+'</div>'; try{ addXP(lab.xp||0); }catch(e){} }
+  else{ out.innerHTML='<div class="llbad">Not quite. Try again, or reveal the answer below.</div>'; }
+}
+function renderLadderLab(){
+  var host=$('v-ladderlab'); if(!host) return;
+  var labs=LADDERLABS||[];
+  var cAll=labs.length, cLad=0, cSt=0, cDiag=0;
+  for(var i=0;i<labs.length;i++){ var g=llGroup(labs[i]); if(g==='ladder')cLad++; else if(g==='st')cSt++; else cDiag++; }
+  function btn(g,label,n){ return '<button class="llfbtn'+(_llFilter===g?' on':'')+'" onclick="llFilter(\u0027'+g+'\u0027)">'+label+' ('+n+')</button>'; }
+  var h='<h2>&#129520; Ladder &amp; ST Practice Lab</h2>';
+  h+='<p class="sub">'+cAll+' hands-on PLC challenges ported from Code Armory. Structured-Text challenges are <b>live-graded</b> against real test cases; troubleshooting challenges accept a typed diagnosis; ladder challenges reveal a worked solution.</p>';
+  h+='<div class="llbar">'+btn('all','All',cAll)+btn('ladder','Ladder',cLad)+btn('st','Structured Text',cSt)+btn('diag','Troubleshooting',cDiag)+'</div>';
+  var shown=0;
+  for(var j=0;j<labs.length;j++){
+    var l=labs[j]; var g=llGroup(l);
+    if(_llFilter!=='all' && _llFilter!==g) continue;
+    shown++;
+    var tag = g==='st'?'<span class="llpill llst">Structured Text</span>' : (g==='diag'?'<span class="llpill lldiag">Troubleshooting</span>':'<span class="llpill lllad">Ladder</span>');
+    h+='<details class="card llcard"><summary><b>'+_llEsc(l.title||l.id)+'</b> '+tag+' <span class="lltier">'+_llEsc(l.tier||'')+' &bull; '+(l.xp||0)+' XP</span></summary>';
+    h+='<div class="llbody">';
+    if(l.prompt) h+='<div class="llprompt">'+l.prompt+'</div>';
+    if(l.snippet) h+='<pre class="llsnip">'+_llEsc(l.snippet)+'</pre>';
+    if(l.lesson) h+='<div class="lllesson">'+l.lesson+'</div>';
+    if(g==='st'){
+      h+='<label class="lllbl">Your Structured Text:</label>';
+      h+='<textarea id="llta-'+l.id+'" class="llcode" spellcheck="false">'+_llEsc(l.starter||'')+'</textarea>';
+      h+='<div class="llrow"><button class="btn" onclick="llCheckSt(\u0027'+l.id+'\u0027)">&#9654; Run &amp; Check</button></div>';
+      h+='<div id="llout-'+l.id+'" class="llout"></div>';
+      h+='<details class="llreveal"><summary>Reveal reference solution</summary><pre class="llsol">'+_llEsc(l.solution)+'</pre>'+(l.explain?'<div class="llexpl">'+l.explain+'</div>':'')+'</details>';
+    } else if(g==='diag'){
+      h+='<label class="lllbl">Your diagnosis:</label>';
+      h+='<div class="llrow"><input id="llin-'+l.id+'" class="llinput" placeholder="type the fault / fix..."><button class="btn" onclick="llCheckPredict(\u0027'+l.id+'\u0027)">Check</button></div>';
+      h+='<div id="llout-'+l.id+'" class="llout"></div>';
+      h+='<details class="llreveal"><summary>Reveal answer</summary><div class="llexpl"><b>'+_llEsc(l.expectedOutput)+'</b></div>'+(l.explain?'<div class="llexpl">'+l.explain+'</div>':'')+'</details>';
+    } else {
+      if(l.starter) h+='<label class="lllbl">Scratch pad:</label><textarea id="llta-'+l.id+'" class="llcode" spellcheck="false">'+_llEsc(l.starter)+'</textarea>';
+      h+='<details class="llreveal"><summary>Reveal solution</summary><pre class="llsol">'+_llEsc(l.solution)+'</pre>'+(l.explain?'<div class="llexpl">'+l.explain+'</div>':'')+'</details>';
+    }
+    h+='</div></details>';
+  }
+  if(shown===0) h+='<p class="sub">No challenges in this filter.</p>';
+  host.innerHTML=h;
+}
