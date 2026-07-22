@@ -13,6 +13,18 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.60 (2026-07-22) - Field Devices deep-dive: 5 modules expanded
+
+Massively deepened five previously-thin modules to Foundations-track depth (parallel-agent authored, fact-checked & structurally verified before integration):
+
+- **M4 Sensors & Instrumentation** 4->14 sections, 3->15 base quiz: photoelectric modes (through-beam/retro/polarized/diffuse/BGS, excess gain), inductive Sn/Su/hysteresis/target correction factors, NPN vs PNP sinking/sourcing, IEC wire colors & M12/M8 connectors, 4-20 mA loop & HART, RTD vs thermocouple (Pt100, CJC, lead compensation), level/flow (radar/GWR/magflow/Coriolis/vortex/DP), IO-Link, encoder quadrature x4 & RPM, systematic sensor troubleshooting.
+- **M5 Motors, VFDs & Drives** 4->16 sections, 3->15 quiz: induction motor theory, nameplate/service factor, VFD V/Hz & flux vector, parameters, braking/regen, fault diagnosis, installation/wiring, motor testing & maintenance.
+- **M6 Fluid Power** 4->14 sections, 3->15 quiz: pneumatics (FRL, cylinders, DCVs, meter-in/out), ISO 1219 symbols, hydraulics (Pascal's law, pumps/relief/accumulators), vacuum/venturi.
+- **M15 Electrical Troubleshooting** 4->14 sections, 3->15 quiz: systematic methodology, DMM/clamp/megger in depth, CAT ratings, voltage-drop testing, thermal imaging.
+- **M16 Preventive & Predictive Maintenance** 4->14 sections, 3->15 quiz: strategy spectrum, bathtub curve, P-F interval, vibration FFT, IR thermography, oil analysis, MCA, reliability KPIs (MTBF/MTTR/OEE), CMMS/EAM.
+
+All content fact-checked for technical accuracy; ACY1-specific over-claims softened to illustrative framing. HTML 1.44 MB, modules=22.
+
 ### v13.59 (2026-07-22) - Foundation reinforcement: flashcards &amp; glossary
 
 Rounded out the just-deepened Foundations lecture/quiz work across the **spaced-repetition and reference channels** so the electrical &amp; PLC-fundamentals depth now spans all learning modes (matching the ST/Ladder treatment). Added **16 foundation flashcards** (40 &rarr; 56): let-go threshold, live-dead-live, RMS vs peak, the sqrt(3) three-phase rule, wye vs delta, power factor, the power triangle, the AWG gotcha, the 3%/5% voltage-drop rule, grounding vs bonding, transformer turns ratio, 3-wire control seal-in, overload-relay trip classes, the PLC scan cycle, sinking vs sourcing I/O, and the automation pyramid. Added **16 glossary terms** (115 &rarr; 131): ampacity, arc flash, kVA (apparent power), kVAR (reactive power), wye (star), delta, line vs phase voltage, contactor, overload relay, control transformer (CPT), two-wire control, equipment grounding conductor (EGC), GFCI, full-load amps (FLA), inrush current, and the HOA switch. Merged flashcards(+gloss) 187. No module-count change (still 22). Bump v13.58 &rarr; v13.59.
