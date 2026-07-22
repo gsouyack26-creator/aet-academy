@@ -94,6 +94,34 @@ MODULES_3 = [
       {
         "h": "Major/Minor Fault Routines & Controller Redundancy Fundamentals",
         "body": "<b>Fault Classification</b><br>Logix 5000 faults are <b>Minor</b> (logged, execution continues) or <b>Major</b> (controller faults to Program mode, outputs de-energise). Major fault types: Type 4 (I/O), Type 6 (watchdog), Type 7 (program), Type 10 (motion).<br><b>Fault Routine Assignment</b><br>Each Program has a Fault Routine property. When a Major Fault fires, this routine runs before the controller halts. Read <code>S:FLT</code> for type and code. Clear only known, recoverable faults by writing 0 to <code>S:FLT</code>. Unknown faults should remain uncleared so the controller stays in Program mode with outputs de-energised - the safe default.<br><b>Logging Best Practice</b><br>Write fault type, code, and GSV timestamp into a retentive UDT array before clearing. This builds an on-controller fault history readable by maintenance without SCADA access.<br><b>Redundancy Fundamentals</b><br>ControlLogix Redundancy (756-SRM + paired chassis) gives automatic failover in &lt;100&nbsp;ms. Both controllers run identical logic; the secondary synchronises via the SRM backplane at each crossload point. Redundancy guards hardware failure only - a logic defect in the primary is replicated to the secondary unchanged."
+      },
+      {
+        "h": "Add-On Instructions (AOIs) - Reuse and Encapsulation",
+        "body": "An <b>Add-On Instruction (AOI)</b> in Studio 5000 is a user-defined instruction that packages logic, parameters, and local tags into a reusable block - like a custom function block you can drop into any routine. Define it once (e.g. a conveyor-zone controller, a valve with feedback, a motor starter with fault handling) and instantiate it many times, each with its own <b>backing tag</b> (an instance data structure).<br><br>AOI parameters have usage types: <b>Input</b> (copied in at scan start), <b>Output</b> (copied out at scan end), and <b>InOut</b> (passed <i>by reference</i> - the AOI reads/writes the caller's tag directly, used for large UDTs and arrays to avoid copying). Benefits: consistent tested logic, smaller/cleaner programs, and one place to fix a bug. Watch-outs: editing an AOI definition affects <b>every</b> instance; InOut parameters mean the AOI can change caller data mid-scan; and AOIs add a small scan-time overhead. Version and document AOIs like any released code."
+      },
+      {
+        "h": "User-Defined Data Types (UDTs)",
+        "body": "A <b>UDT</b> groups related tags into one named structure - e.g. a <code>Motor</code> UDT containing <code>.Run</code>, <code>.Fault</code>, <code>.Speed</code>, <code>.Hours</code>, <code>.FaultCode</code>. Instead of dozens of loose tags you declare one <code>Conveyor01</code> of type <code>Motor</code> and reference members with dot notation. UDTs make code self-documenting, enable arrays of structures (<code>Zone[0..23]</code> each a full UDT), and pass cleanly as AOI InOut parameters.<br><br>Best practices: design UDTs around real equipment (one per device class), nest UDTs for sub-assemblies, and keep member names consistent so HMI tag browsing and faceplates map predictably. Changing a UDT definition propagates to all tags of that type - plan the structure before you have hundreds of instances. Alignment/padding can affect memory but rarely matters for logic. UDTs plus AOIs plus arrays are the backbone of scalable, maintainable PLC programs in a fulfillment center where you may control 100+ identical conveyor zones."
+      },
+      {
+        "h": "Indirect Addressing and Array Indexing",
+        "body": "<b>Indirect addressing</b> uses a tag as the <i>index</i> into an array: <code>Zone[i]</code> where <code>i</code> is an integer tag. Increment <code>i</code> in a loop and one block of logic can process every element - essential for sequencers, recipe tables, and per-zone data. In Structured Text a <code>FOR i := 0 TO 23 DO ... Zone[i] ... END_FOR</code> walks the array.<br><br>The danger is <b>array-out-of-bounds</b>: if <code>i</code> exceeds the declared size (e.g. index 24 on a <code>[0..23]</code> array), Logix generates a <b>major fault</b> (type 4) and the controller faults to program mode - stopping the machine. Always bound the index (clamp or guard <code>IF i &lt;= 23</code>) before using it, initialize index tags, and never let an unbounded HMI entry drive an array index. Indirect addressing is powerful but a single bad index takes the whole controller down, so defensive bounds-checking is mandatory in production code."
+      },
+      {
+        "h": "Fault Handling - Major vs Minor Faults",
+        "body": "Logix distinguishes <b>minor faults</b> (recoverable, logged in <code>MINORFAULT</code> bits, controller keeps running - e.g. a math overflow, battery low) from <b>major faults</b> (controller goes to a faulted state and stops executing logic unless handled). Major fault <b>type/code</b> pairs identify the cause: Type 1 = power-up, Type 4 = program (e.g. array index out of range, T04:C20), Type 6 = watchdog, Type 11 = I/O.<br><br>The <b>controller fault handler</b> (a dedicated program) can run when a major fault occurs; by clearing the fault (writing 0 to the fault code in the <code>PROGRAM</code>/<code>CONTROLLER</code> fault record) you can attempt recovery instead of a full stop - but do this only for faults you understand, or you mask real problems. Read the fault via <code>GSV</code> (Get System Value) on the FaultLog. Good practice: prevent faults (bounds-check, guard divides) rather than catch them, and use the fault handler for graceful shutdown/annunciation, not to blindly clear and continue."
+      },
+      {
+        "h": "Structured Text - Advanced Constructs",
+        "body": "Beyond IF/CASE, Structured Text (ST) supports <b>FOR</b>, <b>WHILE</b>, and <b>REPEAT...UNTIL</b> loops, <b>EXIT</b> to break out, and rich expressions. ST shines for math, data processing, string handling, and state machines. Example clamp: <code>Out := LIMIT(Lo, In, Hi);</code> Example scale (4-20 mA to 0-100): <code>PV := (Raw - 6242) * 100.0 / (31208 - 6242);</code><br><br>Scan-safety rules: every loop must be <b>bounded</b> so it completes within the scan (an unbounded <code>WHILE</code> on a live signal can trip the <b>watchdog</b> and fault the controller); guard every division against zero; and remember function-block instances (TON, CTU) declared in ST must be <b>called every scan</b> with their instance tag, not conditionally skipped, or their internal timing breaks. ST is compiled per-scan like ladder, so the same real-time discipline applies - it is not a background script."
+      },
+      {
+        "h": "Sequencers and State Machines",
+        "body": "Many machines run as a <b>sequence</b>: home, index, clamp, process, release, repeat. Implement with a <b>state variable</b> (an integer or enumerated tag) and a CASE structure - each state does its work and sets the transition condition to the next state. This is far more maintainable than a tangle of interlocked coils.<br><br>Design rules: exactly one state active at a time; transitions on clear conditions (sensor made, timer done, command received); include a <b>fault/abort</b> state that safely stops and requires reset; and drive outputs from the current state, not scattered across rungs. Add a <b>step timer</b> so a stuck step (e.g. clamp never confirms) times out to an alarm instead of hanging forever. Sequencers map directly to how a technician thinks about the machine, so troubleshooting becomes: 'what step is it stuck in and why did the transition condition not satisfy?' - a fast path to root cause."
+      },
+      {
+        "h": "Task Types, Priorities, and Scan Time",
+        "body": "A Logix controller organizes programs into <b>tasks</b>. A <b>continuous task</b> runs, finishes, and immediately restarts (the background). <b>Periodic tasks</b> run on a fixed interval (e.g. every 10 ms) - use these for time-critical PID or motion. <b>Event tasks</b> trigger on an input or instruction. Higher-priority periodic tasks <b>interrupt</b> lower-priority/continuous ones.<br><br>Watch <b>scan time</b> and <b>task overlap</b>: if a periodic task cannot finish before its next scheduled start, you get an <b>overlap</b> fault - the logic is too heavy for the interval. Keep periodic tasks lean, put slow/non-critical logic (data logging, HMI housekeeping) in the continuous task, and size PID/motion in fast periodic tasks. The <b>watchdog</b> timer bounds total task time; exceeding it majors the controller. Monitoring max scan time and task-overlap counters is a key predictive indicator that a program is growing beyond the controller's real-time budget."
       }
     ],
     "lab": {
@@ -360,6 +388,116 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "If a fault routine encounters an unknown fault type it should NOT clear the fault. Allowing the fault to remain uncleared keeps the controller in Program mode with outputs de-energised, which is the safe state. Only faults that are fully understood and recoverable should be cleared programmatically."
+      },
+      {
+        "q": "What does an Add-On Instruction (AOI) InOut parameter do?",
+        "options": [
+          "Copies the value in at scan start only",
+          "Passes the caller's tag by reference so the AOI reads and writes it directly",
+          "Is read-only inside the AOI",
+          "Creates a new backing tag each scan"
+        ],
+        "answer": 1,
+        "explain": "InOut parameters pass by reference - the AOI operates directly on the caller's tag (used for large UDTs/arrays to avoid copying), meaning the AOI can change caller data during the scan."
+      },
+      {
+        "q": "Why use a UDT (User-Defined Data Type) for equipment like conveyor zones?",
+        "options": [
+          "It runs faster than any other logic",
+          "It groups related members into one self-documenting structure that can be arrayed and reused",
+          "It eliminates the need for I/O modules",
+          "It disables fault handling"
+        ],
+        "answer": 1,
+        "explain": "A UDT bundles related tags (Run, Fault, Speed, Hours...) into one named structure that can be arrayed (Zone[0..23]) and passed to AOIs - making code scalable and self-documenting."
+      },
+      {
+        "q": "An integer index tag reaches 24 while addressing an array declared [0..23]. What happens on a Logix controller?",
+        "options": [
+          "It silently wraps to 0",
+          "A major fault (Type 4, array out of range) faults the controller",
+          "It reads the next tag in memory safely",
+          "Nothing - indices are unbounded"
+        ],
+        "answer": 1,
+        "explain": "An out-of-range array index generates a Type 4 (program) major fault and faults the controller to program mode - which is why index tags must be bounds-checked before use."
+      },
+      {
+        "q": "Which is a MINOR (recoverable) fault rather than a major fault?",
+        "options": [
+          "Array index out of range",
+          "Watchdog timeout",
+          "A math overflow bit set while the controller keeps running",
+          "I/O module removed under power causing a Type 11"
+        ],
+        "answer": 2,
+        "explain": "A math overflow sets a minor-fault bit but the controller keeps running; array-out-of-range, watchdog, and I/O faults are major faults that stop logic execution unless handled."
+      },
+      {
+        "q": "An unbounded WHILE loop in Structured Text runs on a live input that stays true. What is the risk?",
+        "options": [
+          "It improves scan time",
+          "It can fail to complete within the scan and trip the watchdog, faulting the controller",
+          "It automatically becomes a FOR loop",
+          "Nothing - ST loops run in the background"
+        ],
+        "answer": 1,
+        "explain": "ST executes within the scan; an unbounded loop that never exits prevents the scan from completing and trips the watchdog timer, majoring the controller. Always bound loops."
+      },
+      {
+        "q": "What is the recommended way to structure a machine that runs home-index-clamp-process-release?",
+        "options": [
+          "Many independent latched coils across scattered rungs",
+          "A state variable with a CASE structure, one active state at a time, plus a fault/abort state",
+          "A single giant IF statement with no states",
+          "An unbounded WHILE loop"
+        ],
+        "answer": 1,
+        "explain": "A state-machine (state variable + CASE, one active state, defined transitions, fault/abort state, step timers) is maintainable and makes troubleshooting a matter of 'which step is stuck and why'."
+      },
+      {
+        "q": "A periodic task set to 10 ms cannot finish its logic before the next 10 ms trigger. What occurs?",
+        "options": [
+          "The controller speeds up the clock",
+          "A task overlap fault - the logic is too heavy for the interval",
+          "The task is deleted",
+          "Scan time drops to zero"
+        ],
+        "answer": 1,
+        "explain": "If a periodic task cannot complete before its next scheduled start you get a task-overlap fault; the fix is to lighten the task or lengthen the period."
+      },
+      {
+        "q": "When you edit an AOI definition, what is the effect?",
+        "options": [
+          "Only the first instance changes",
+          "Every instance of that AOI in the project uses the new logic",
+          "Nothing until you reboot",
+          "It creates a copy and leaves instances alone"
+        ],
+        "answer": 1,
+        "explain": "An AOI is defined once and shared; editing the definition changes behavior for every instance - powerful for fixing bugs in one place, but requires care since it affects all uses."
+      },
+      {
+        "q": "Which task type should host time-critical PID or motion logic?",
+        "options": [
+          "The continuous task",
+          "A periodic task at a fixed fast interval",
+          "A one-shot event that never repeats",
+          "The fault handler"
+        ],
+        "answer": 1,
+        "explain": "Time-critical control belongs in a periodic task running at a fixed, fast interval so it executes deterministically; slow/non-critical logic goes in the continuous task."
+      },
+      {
+        "q": "What is the purpose of a step timer in a sequencer state machine?",
+        "options": [
+          "To make the machine run faster",
+          "To time out a stuck step to an alarm instead of hanging forever",
+          "To disable the fault state",
+          "To skip states randomly"
+        ],
+        "answer": 1,
+        "explain": "A per-step timer detects a step that never satisfies its transition (e.g. a clamp that never confirms) and forces an alarm/abort rather than hanging the sequence indefinitely."
       }
     ],
     "resources": [
@@ -494,6 +632,30 @@ MODULES_3 = [
       {
         "h": "OT Incident Response: NIST SP 800-82 and ICS-CERT Runbook Procedures",
         "body": "<b>NIST SP 800-82 Rev 3 (2023)</b> is the authoritative ICS/OT security guide, forming the technical basis for OT incident response alongside NIST SP 800-61 Rev 2.<br><b>OT IR phases and unique challenges:</b><ol><li><b>Preparation:</b> Maintain a firmware/CVE asset inventory. Pre-stage offline backups of PLC/HMI programs on air-gapped media. Subscribe to ICS-CERT (CISA) advisories for site-relevant vendors (Rockwell, Siemens, Inductive Automation).</li><li><b>Detection:</b> Use passive network monitoring only (Claroty, Nozomi, Dragos) - active Nmap scanning can crash PLCs. Baseline normal EtherNet/IP and Modbus traffic; alert on new device MACs or unexpected sessions.</li><li><b>Containment:</b> Unlike IT, you cannot simply unplug a live conveyor. Isolate affected VLAN segments via managed switch ACLs while confirming with operations that the system can safely stop. Document every action with timestamps.</li><li><b>Eradication &amp; Recovery:</b> Re-flash PLCs/HMIs from verified air-gapped backups. Rotate all credentials. Validate all safety functions with a full proof test before restarting production.</li><li><b>Lessons Learned:</b> File an ICS-CERT voluntary incident report if applicable; update the site IR runbook within 14 days.</li></ol><b>OT forensics:</b> Before powering off any HMI, capture historian trend exports, managed switch SPAN/PCAP captures, and Windows Event Logs - volatile data is permanently lost on shutdown."
+      },
+      {
+        "h": "OT/IT Convergence and the Purdue Model",
+        "body": "<b>Industry 4.0</b> connects factory-floor equipment (OT - Operational Technology) to business/cloud systems (IT). The <b>Purdue Enterprise Reference Architecture</b> organizes this into levels: <b>Level 0</b> field devices (sensors/actuators), <b>Level 1</b> controllers (PLC/DCS), <b>Level 2</b> supervisory (SCADA/HMI), <b>Level 3</b> site operations (MES, historian), and <b>Levels 4-5</b> enterprise/cloud (ERP, analytics). A <b>DMZ</b> sits between Level 3 and 4 to broker data safely.<br><br>Convergence lets machine data flow up for analytics and dashboards while commands and recipes flow down - but it also exposes OT to IT-borne threats. The model's value is <b>segmentation</b>: keep control traffic isolated, cross boundaries only through defined, secured conduits, and never let enterprise/cloud reach directly into a Level 1 controller. A fulfillment center runs this hierarchy: conveyors/sorters at L1-L2, site systems and historians at L3, and Amazon-scale analytics above the DMZ."
+      },
+      {
+        "h": "MQTT and Report-by-Exception",
+        "body": "<b>MQTT</b> is a lightweight <b>publish/subscribe</b> protocol widely used for IIoT telemetry. Devices (publishers) send messages to <b>topics</b> on a <b>broker</b>; consumers subscribe to topics they care about. It is efficient over unreliable/low-bandwidth links and supports <b>QoS</b> levels (0 fire-and-forget, 1 at-least-once, 2 exactly-once) and <b>Last Will and Testament</b> (the broker announces if a device drops).<br><br>MQTT pairs with <b>report-by-exception</b>: instead of polling every tag constantly, a device publishes only when a value changes beyond a deadband - slashing network traffic versus continuous polling. <b>Sparkplug B</b> is a specification that standardizes MQTT payloads and state for industrial use (birth/death certificates, defined metrics). Compared to request/response polling (like Modbus scan), pub/sub scales better for thousands of sensors and decouples publishers from consumers - the data producer does not need to know who is listening."
+      },
+      {
+        "h": "OPC UA - Secure Interoperability",
+        "body": "<b>OPC UA</b> (Unified Architecture) is the vendor-neutral standard for moving structured data between OT devices and IT systems. Unlike the older Windows-only OPC (DA), OPC UA is <b>platform-independent</b>, has a rich <b>information model</b> (data plus metadata, types, and relationships), and includes <b>built-in security</b>: authentication, encryption, and signing.<br><br>OPC UA supports both client/server and pub/sub. Its information model lets a client browse a server and discover not just tag values but their engineering units, ranges, and structure - self-describing data. Many PLCs, gateways, and historians expose an OPC UA server. For a maintenance tech, OPC UA is often how the historian, dashboards, and analytics pull machine data without custom drivers. Security matters: use certificates and encryption, restrict endpoints, and do not leave a server open with anonymous access on the plant network."
+      },
+      {
+        "h": "Edge Computing vs Cloud",
+        "body": "<b>Edge computing</b> processes data <b>near the machine</b> (on a gateway, industrial PC, or smart device) instead of shipping everything to the cloud. Edge is used for low-latency actions (a vibration threshold that must react in milliseconds), bandwidth reduction (aggregate/filter locally, send summaries up), and resilience (keep running if the WAN drops).<br><br>The <b>cloud</b> is where you do heavy analytics, long-term storage, fleet-wide machine-learning models, and cross-site dashboards. The practical pattern is <b>hybrid</b>: edge does real-time filtering, feature extraction, and local alarms; cloud does training, trending, and enterprise reporting. Example: an edge device computes bearing vibration RMS and FFT peaks locally and only publishes the features (not the raw waveform) to the cloud, where a model flags developing faults across hundreds of motors. Deciding what runs at the edge versus the cloud is a core Industry 4.0 architecture choice driven by latency, bandwidth, and reliability."
+      },
+      {
+        "h": "Digital Twins",
+        "body": "A <b>digital twin</b> is a live virtual model of a physical asset or system, continuously fed by its real sensor data. It ranges from a simple parameter model to a full physics/3D simulation. Twins are used to <b>monitor</b> (see current state), <b>predict</b> (run the model forward to forecast wear or failure), and <b>optimize</b> (test changes virtually before touching the real line).<br><br>In practice a conveyor-system twin might mirror motor loads, belt speeds, and jam rates, letting engineers simulate a throughput change or a new sort profile without risking production. Twins also aid <b>commissioning</b> (test PLC logic against a simulated machine - virtual commissioning) and <b>training</b> (practice on the twin). The value depends on data quality and model fidelity: a twin fed bad or sparse data misleads. Digital twins tie together IIoT telemetry, historians, and simulation - a headline Industry 4.0 capability that shortens design cycles and reduces commissioning risk."
+      },
+      {
+        "h": "OT Cybersecurity Basics for Technicians",
+        "body": "Connecting machines raises real security stakes - a compromised control network can stop production or endanger people. Core defenses a tech supports: <b>network segmentation</b> (VLANs, firewalls, the Purdue DMZ) so a breach cannot roam; <b>least privilege</b> (accounts and access limited to need); <b>patch discipline</b> (test and apply firmware/OS updates in maintenance windows); and <b>physical security</b> (locked panels, disabled unused USB/ports).<br><br>Everyday hygiene: never plug an unknown USB into an HMI or engineering workstation; do not connect personal laptops to the control network; change default device passwords; and keep a known-good <b>backup</b> of PLC programs and HMI projects offline so you can recover from ransomware or a bricked controller. Recognize that OT patching is constrained by uptime and validation - you cannot always patch immediately, which makes segmentation and monitoring even more important. Standards like <b>IEC 62443</b> define the industrial cybersecurity framework."
       }
     ],
     "lab": {
@@ -828,6 +990,105 @@ MODULES_3 = [
         ],
         "answer": 2,
         "explain": "IEC 62061 governs functional safety of Safety-related Control Systems (SCS) on machinery, defining SILCL (SIL Claim Limit) and systematic capability. IEC 61511 covers process SIS; IEC 62443 covers OT cybersecurity; IEC 60204-1 covers general electrical equipment requirements."
+      },
+      {
+        "q": "In the Purdue model, what sits between Level 3 (site operations) and Level 4 (enterprise) to broker data safely?",
+        "options": [
+          "A PLC",
+          "A DMZ (demilitarized zone)",
+          "A field sensor",
+          "A variable frequency drive"
+        ],
+        "answer": 1,
+        "explain": "A DMZ between L3 and L4 brokers data across the OT/IT boundary so enterprise/cloud systems never reach directly into control-level devices."
+      },
+      {
+        "q": "What networking pattern does MQTT use?",
+        "options": [
+          "Request/response polling only",
+          "Publish/subscribe via a broker with topics",
+          "Point-to-point serial only",
+          "Broadcast to every device"
+        ],
+        "answer": 1,
+        "explain": "MQTT is publish/subscribe: publishers send to topics on a broker and subscribers receive topics of interest, decoupling producers from consumers and scaling well for many sensors."
+      },
+      {
+        "q": "What is 'report-by-exception' and why is it used?",
+        "options": [
+          "Reporting only during faults",
+          "Publishing a value only when it changes beyond a deadband, cutting network traffic vs constant polling",
+          "Reporting all tags every millisecond",
+          "A type of fault code"
+        ],
+        "answer": 1,
+        "explain": "Report-by-exception sends data only when a value changes beyond a deadband, dramatically reducing traffic compared to continuously polling every tag."
+      },
+      {
+        "q": "What is a key advantage of OPC UA over the older OPC DA?",
+        "options": [
+          "It only runs on Windows",
+          "It is platform-independent with a rich self-describing information model and built-in security",
+          "It has no security",
+          "It cannot browse tags"
+        ],
+        "answer": 1,
+        "explain": "OPC UA is platform-independent, carries data plus metadata (units, ranges, structure) in an information model, and includes authentication/encryption/signing - unlike the Windows-only, less-secure OPC DA."
+      },
+      {
+        "q": "Why compute bearing vibration features at the edge rather than sending raw waveforms to the cloud?",
+        "options": [
+          "The cloud cannot store data",
+          "For low latency and to cut bandwidth - send summarized features, react locally, stay resilient if the WAN drops",
+          "Edge devices cannot do math",
+          "It is required by MQTT"
+        ],
+        "answer": 1,
+        "explain": "Edge processing reacts in real time, reduces bandwidth by sending features instead of raw waveforms, and keeps working if the network link fails; the cloud then does heavy fleet analytics."
+      },
+      {
+        "q": "What is a digital twin?",
+        "options": [
+          "A backup PLC",
+          "A live virtual model of a physical asset fed by its real sensor data, used to monitor/predict/optimize",
+          "A second HMI screen",
+          "A duplicate barcode"
+        ],
+        "answer": 1,
+        "explain": "A digital twin is a continuously data-fed virtual model of an asset used to monitor current state, predict failures, and test changes virtually (including virtual commissioning)."
+      },
+      {
+        "q": "Which everyday practice best protects an OT network?",
+        "options": [
+          "Plugging found USB drives into the HMI to check them",
+          "Connecting personal laptops to the control network",
+          "Never plugging unknown USBs into HMIs/workstations and keeping offline PLC/HMI backups",
+          "Sharing one admin password on sticky notes"
+        ],
+        "answer": 2,
+        "explain": "Avoiding unknown USBs and personal devices on the control network, plus keeping offline known-good backups of PLC/HMI programs, are core OT-security hygiene practices for technicians."
+      },
+      {
+        "q": "Which standard defines the industrial (OT) cybersecurity framework?",
+        "options": [
+          "IEC 61131-3",
+          "IEC 62443",
+          "NEC 430",
+          "ISA-5.1"
+        ],
+        "answer": 1,
+        "explain": "IEC 62443 is the standard framework for industrial automation and control system (OT) cybersecurity; IEC 61131-3 is PLC languages and NEC 430 is motor circuits."
+      },
+      {
+        "q": "Why is OT patching often delayed compared to IT patching?",
+        "options": [
+          "OT devices never need patches",
+          "Uptime constraints and validation requirements limit when patches can be applied, making segmentation/monitoring more critical",
+          "Patches are illegal in OT",
+          "OT devices patch themselves automatically"
+        ],
+        "answer": 1,
+        "explain": "Production uptime and change-validation constraints mean OT systems often cannot be patched immediately, so network segmentation and monitoring carry more of the defensive load."
       }
     ],
     "resources": [
@@ -962,6 +1223,30 @@ MODULES_3 = [
       {
         "h": "Contactor and Relay Contact Resistance: Milliohm Testing, Tip Inspection, and Replacement Criteria",
         "body": "Contactor tips wear, oxidize, and pit over time, increasing contact resistance and causing I<sup>2</sup>R heating, voltage drop, and eventual welding. A common maintenance guideline (consistent with Siemens 3RT and Allen-Bradley 100-C service data) is: new contacts &lt;1 m&Omega; per pole; replace at &ge;5 m&Omega;. Measure with a four-wire milliohmmeter at 1 to 10 A test current with the contactor manually latched.<br><b>Worked example:</b> a 3-pole conveyor contactor measures L1: 0.8 m&Omega;, L2: 0.9 m&Omega;, L3: 6.1 m&Omega;. L3 fails. At 25 A load:<br>P<sub>L3</sub> = I<sup>2</sup> &times; R = 625 &times; 0.0061 = 3.8 W at one contact tip - visible as a hot spot on a thermal camera and sufficient to accelerate oxidation.<br>Visual inspection per IEC 60947-4-1: replace when tip thickness reaches &le;50% of original, when cratering extends beyond the wear mark, or when a contact spring is distorted. <b>Never file silver-alloy contacts:</b> filing removes the hardened silver-cadmium or silver-tin-oxide alloy that provides arc erosion resistance. Silver contacts are self-cleaning under normal inductive load cycling and filing causes more harm than good."
+      },
+      {
+        "h": "A Systematic Troubleshooting Method",
+        "body": "Random probing wastes time and risks damage. Use a repeatable method: (1) <b>Define the problem</b> - what exactly is not working, when did it start, what changed. (2) <b>Gather info</b> - fault codes, HMI messages, recent work, prints. (3) <b>Identify probable causes</b> - list them by likelihood. (4) <b>Test the most likely / easiest first</b>. (5) <b>Verify the fix</b> and (6) <b>document</b>.<br><br>The single most powerful technique is <b>half-splitting</b>: instead of checking a signal chain end-to-end, test in the <b>middle</b>. If a 24 VDC output should reach a solenoid through several terminals, measure halfway - good there means the fault is downstream, bad means upstream. Each measurement halves the search space, so a 16-point chain is isolated in about 4 measurements instead of 16. Combine with the golden rule: <b>compare to a known-good</b> identical circuit or the schematic's expected value. Confirm power/permissives before chasing exotic causes - most faults are simple (blown fuse, tripped OL, loose wire, failed sensor)."
+      },
+      {
+        "h": "Digital Multimeter - Beyond Volts",
+        "body": "A DMM does more than read voltage. <b>Continuity/beep</b> (de-energized only) finds broken wires and confirms fuses. <b>Resistance</b> checks coils and heaters against spec. <b>Diode test</b> checks rectifier diodes and LED junctions. <b>Capacitance</b> checks motor-run/start caps. <b>Frequency (Hz)</b> reads VFD output and line frequency. <b>Min/Max/record</b> catches intermittent dropouts you would miss watching the display.<br><br>Critical habit: measure <b>voltage in parallel</b> (across the load), <b>current in series</b> (break the circuit - or better, use a clamp). Never put a meter in current mode across a voltage source - that low-resistance path blows the fuse or the meter. Use <b>True-RMS</b> meters on VFD/PWM and non-sinusoidal signals; an averaging meter reads those wrong. Always verify your meter on a known live source before and after a zero-energy check (live-dead-live). Match the meter's <b>CAT rating</b> (CAT III/IV for distribution) to where you are working."
+      },
+      {
+        "h": "Clamp Meters and Current Signatures",
+        "body": "A <b>clamp meter</b> measures AC (and, with a Hall-effect clamp, DC) current without breaking the circuit - jaw around <b>one</b> conductor only (clamping two cancels the reading). Use it to read motor running current versus nameplate FLA, spot a phase drawing high/low current (imbalance), and confirm a load is actually drawing power.<br><br>Current tells a story: current well above FLA means overload/mechanical drag; near-zero on one of three phases means a lost phase (single-phasing - dangerous for motors); large phase-to-phase <b>imbalance</b> (a few percent matters) points to supply or winding problems. Inrush capture shows starting current (6-8x FLA typical). A clamp around all three phases together should read near zero on a balanced 3-phase load (and around a conductor pair, the difference); a non-zero reading with the ground included indicates a <b>ground fault</b> (leakage). Clamp meters are the fastest non-invasive way to see what a motor is really doing."
+      },
+      {
+        "h": "Insulation Resistance Testing (Megger)",
+        "body": "A <b>megohmmeter (megger)</b> applies a high DC test voltage (250/500/1000 VDC common) to measure insulation resistance between a conductor and ground - detecting winding/cable insulation breakdown before it becomes a fault. Healthy motor insulation reads in the <b>megohms to gigohms</b>; a rule of thumb is at least <b>1 megohm per kV plus 1</b> (so a 480 V motor should exceed ~1.5 M-ohm, though modern standards expect far more).<br><br>Procedure discipline: <b>de-energize and lock out</b>, disconnect the device from the drive/controller (never megger through a VFD - the test voltage destroys drive electronics and semiconductors), discharge afterward, and compare readings over time (trending a slow decline predicts failure). A <b>polarization index</b> (10-minute / 1-minute ratio) assesses insulation quality: higher is better. Meggering is a cornerstone predictive test for motors, cables, and transformers - but only when the item is isolated and the equipment (especially drives) is protected."
+      },
+      {
+        "h": "Thermal Imaging for Electrical Faults",
+        "body": "An <b>infrared (thermal) camera</b> sees heat, revealing electrical problems that are invisible to the eye: a loose or corroded connection has higher resistance and runs hot (<b>I&sup2;R heating</b>), an overloaded conductor or unbalanced phase shows elevated temperature, and a failing breaker or fuse clip glows. Scanning MCCs, panels, and terminations under <b>normal load</b> (heat only appears with current flowing) catches developing faults for planned repair.<br><br>Interpretation uses comparison: evaluate a suspect point against a similar component under similar load (<b>component-to-component</b>) - a delta-T over ~15 deg C between similar components under similar load is a major discrepancy needing prompt action (per NETA MTS criteria). Account for <b>emissivity</b> (shiny metal reads falsely low - target painted or taped surfaces or use reference tape) and reflections. Thermography is a fast, safe (behind a closed IR window if available), high-value survey for finding the loose lugs and overloaded circuits that cause fires and downtime."
+      },
+      {
+        "h": "Finding Intermittent and Ground Faults",
+        "body": "Intermittent faults are the hardest - the failure is not present when you look. Tactics: use the DMM <b>Min/Max/record</b> or a datalogger to catch transient dropouts; <b>wiggle-test</b> harnesses and connectors while monitoring to provoke loose contacts; check for <b>thermal</b> dependence (fails only when hot - a connection that opens with expansion); and review the machine's own <b>first-out</b>/fault history for a pattern (time of day, specific step, vibration event).<br><br>For a <b>ground fault</b> on an ungrounded or resistance-grounded system, the classic method is <b>isolate and divide</b>: open sections and watch when the ground indication clears to localize the faulted branch, or use a clamp meter reading net current (a nonzero sum indicates leakage to ground on that path). Insulation testing then pinpoints the failed cable or winding. Document what provokes the fault - reproducibility is half the battle, and a fault you can trigger on demand is a fault you can fix and verify."
       }
     ],
     "lab": {
@@ -1294,6 +1579,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "In Fixed Loop Current mode, the transmitter locks its 4-20 mA analog output at the specified value regardless of the actual measured process variable. Any PLC control loop using this signal operates on a false constant input. Always coordinate with operators before entering Fixed Loop mode and restore the transmitter to measurement mode immediately after the trim is complete."
+      },
+      {
+        "q": "Which troubleshooting technique halves the search space with each measurement?",
+        "options": [
+          "Checking every point end-to-end in order",
+          "Half-splitting - testing in the middle of the signal chain",
+          "Replacing parts until it works",
+          "Only reading fault codes"
+        ],
+        "answer": 1,
+        "explain": "Half-splitting measures at the midpoint: a good reading moves the search downstream, a bad one upstream, halving the remaining points each time - far faster than sequential checks."
+      },
+      {
+        "q": "Why must you use a True-RMS meter on a VFD output or other non-sinusoidal signal?",
+        "options": [
+          "It looks more professional",
+          "An averaging meter reads non-sinusoidal/PWM waveforms incorrectly; True-RMS reads them correctly",
+          "True-RMS meters are cheaper",
+          "It prevents fuse blowing"
+        ],
+        "answer": 1,
+        "explain": "Averaging meters assume a pure sine and misread distorted/PWM waveforms; a True-RMS meter computes actual RMS and reads VFD outputs and non-sinusoidal signals correctly."
+      },
+      {
+        "q": "You clamp a clamp meter around a single motor phase conductor. One of three phases reads near zero amps while the others read normal FLA. What does this indicate?",
+        "options": [
+          "Normal balanced operation",
+          "A lost phase (single-phasing) - dangerous for the motor",
+          "The clamp is around all three conductors",
+          "A ground fault only"
+        ],
+        "answer": 1,
+        "explain": "Near-zero on one phase while others carry current means that phase is lost (single-phasing), which overheats the motor and must be corrected immediately."
+      },
+      {
+        "q": "Why must you NEVER perform a megger (insulation resistance) test through a connected VFD?",
+        "options": [
+          "It gives a low reading",
+          "The high DC test voltage destroys the drive's semiconductors/electronics",
+          "It is too slow",
+          "The megger will not turn on"
+        ],
+        "answer": 1,
+        "explain": "A megger applies hundreds of volts DC; sent through a drive it destroys the sensitive power semiconductors. Always isolate/disconnect the motor from the VFD before meggering."
+      },
+      {
+        "q": "A thermal scan compares a suspect lug to an adjacent similar lug under similar load and finds it 20 deg C hotter. Per NETA component-to-component criteria this is:",
+        "options": [
+          "Normal, no action",
+          "A major discrepancy needing prompt corrective action",
+          "Only monitored at the next annual survey",
+          "Caused by high emissivity, ignore it"
+        ],
+        "answer": 1,
+        "explain": "A delta-T over ~15 deg C between similar components under similar load is a major discrepancy per NETA MTS component-to-component criteria, warranting prompt action - here 20 deg C exceeds that threshold."
+      },
+      {
+        "q": "When measuring current with a standard clamp meter, how many conductors should be inside the jaw?",
+        "options": [
+          "All three phases together",
+          "Exactly one conductor",
+          "Two conductors",
+          "The ground and one phase"
+        ],
+        "answer": 1,
+        "explain": "A clamp reads the net magnetic field; clamping one conductor gives that conductor's current. Multiple conductors' fields partially cancel, giving a wrong (often near-zero) reading."
+      },
+      {
+        "q": "What is the safe sequence for verifying a circuit is de-energized before work?",
+        "options": [
+          "Test dead only",
+          "Live-dead-live: prove the meter works on a known live source, test the target dead, then re-prove the meter live",
+          "Assume it is off if the breaker is open",
+          "Dead-live-dead"
+        ],
+        "answer": 1,
+        "explain": "Live-dead-live confirms your meter is actually working before and after the zero-energy test, so a dead reading truly means de-energized and not a failed meter."
+      },
+      {
+        "q": "Which meter function best catches an intermittent voltage dropout you cannot watch continuously?",
+        "options": [
+          "Diode test",
+          "Min/Max / record mode",
+          "Capacitance",
+          "Continuity beep"
+        ],
+        "answer": 1,
+        "explain": "Min/Max/record captures the lowest and highest values (and transients) over time, revealing intermittent dropouts you would miss watching the live display."
+      },
+      {
+        "q": "Why does a loose or corroded electrical connection show up on a thermal camera?",
+        "options": [
+          "It reflects sunlight",
+          "Higher contact resistance causes I-squared-R heating under load",
+          "It is painted a dark color",
+          "Thermal cameras detect sound"
+        ],
+        "answer": 1,
+        "explain": "A poor connection has elevated resistance; with current flowing it dissipates I-squared-R heat and runs hotter than good connections - visible to an IR camera under normal load."
       }
     ],
     "resources": [
@@ -1428,6 +1812,30 @@ MODULES_3 = [
       {
         "h": "Root Cause Analysis: 5-Why, Fishbone, and PROACT Logic Trees",
         "body": "<b>Physical vs. Human vs. Latent Root Causes:</b> The physical root cause (e.g., bearing fatigue spalling) is only the starting point. Human root causes explain the act or omission that allowed the physical cause. Latent root causes are organizational or systemic conditions (inadequate PM procedures, wrong lubricant specified in CMMS, missing training) that enabled the human error. Effective RCA reaches the latent level.<br><br><b>5-Why Example:</b> (1) Conveyor belt mistracked &rarr; (2) Tail pulley bearing seized &rarr; (3) Bearing ran without grease &rarr; (4) Re-lubrication PM was 6 months overdue &rarr; (5) CMMS had no escalation alert for overdue PMs on that asset class. Corrective action: configure CMMS overdue PM alerts. Stop when a corrective action that can be implemented and sustained is identified.<br><br><b>Fishbone (Ishikawa) Diagram:</b> Organizes potential causes into 6M categories: Machine, Method, Material, Man (People), Measurement, Mother Nature (Environment). Valuable for brainstorming before selecting 5-Why chains; do not treat unverified brainstormed causes as confirmed root causes.<br><br><b>PROACT (Logic Tree Method):</b> Preserve evidence &rarr; Order analysis team &rarr; Analyze (logic tree with verified nodes) &rarr; Communicate findings &rarr; Track corrective action effectiveness. Each branch must be confirmed as fact before proceeding - hypotheses labeled and tested. Recommended for failures with &gt;25K dollar impact or any safety event. Aligns with ISO 31010 risk analysis techniques."
+      },
+      {
+        "h": "Maintenance Strategies - From Reactive to Predictive",
+        "body": "There are four core strategies. <b>Reactive (run-to-failure)</b> - fix it when it breaks; acceptable only for cheap, non-critical, redundant items. <b>Preventive/time-based (PM)</b> - service on a calendar or runtime interval (e.g. lubricate every 500 hours) regardless of condition. <b>Condition-based (CBM)</b> - act on measured condition (vibration, temperature, oil). <b>Predictive (PdM)</b> - use condition data plus trending/models to <b>forecast</b> the failure and act just in time.<br><br>The maturity progression moves work from unplanned to planned. Over-maintaining (too-frequent PM) wastes labor and can <b>induce</b> failures (every intrusion risks contamination or reassembly error); under-maintaining causes breakdowns. The goal is the right strategy per asset based on <b>criticality</b> and failure behavior - not one blanket policy. In a fulfillment center, a critical sorter drive gets PdM/CBM while a redundant exhaust fan may be run-to-failure."
+      },
+      {
+        "h": "The P-F Curve and Lead Time",
+        "body": "The <b>P-F curve</b> plots equipment condition over time toward failure. <b>P</b> is the <b>point of potential failure</b> - the earliest a developing defect is detectable (e.g. vibration first rises). <b>F</b> is <b>functional failure</b> - the asset no longer performs. The interval between them is the <b>P-F interval</b>: the warning/lead time you have to plan and act.<br><br>Different technologies detect at different points: vibration and ultrasonic catch bearing defects earliest (weeks to months of lead time), then heat (thermography), then audible noise, then hot-to-touch - by which point failure is imminent. The inspection interval must be <b>shorter than the P-F interval</b> (commonly half) or you will miss the window between checks. Understanding the P-F curve is why PdM works: it converts sudden breakdowns into scheduled, low-cost interventions by acting in the detectable-but-not-yet-failed region."
+      },
+      {
+        "h": "Vibration Analysis Fundamentals",
+        "body": "Rotating equipment vibrates in patterns that reveal specific faults. An accelerometer captures the signal; an <b>FFT</b> converts it to a spectrum (amplitude vs frequency) where fault frequencies appear as peaks. Key signatures: <b>imbalance</b> shows a high peak at 1x running speed (radial); <b>misalignment</b> shows strong 2x (and axial) components; <b>looseness</b> shows many harmonics (1x, 2x, 3x...); and <b>bearing defects</b> show high-frequency, non-synchronous peaks at calculated bearing frequencies (BPFO, BPFI, BSF, FTF) plus rising overall high-frequency energy.<br><br>Overall vibration level trends (per ISO 10816/20816 severity zones) tell you when a machine moves from good to unacceptable. The power of vibration is <b>early detection</b> and <b>diagnosis</b> - it not only says something is wrong but often what (unbalance vs misalignment vs bearing vs looseness), directing the repair. Baseline each machine when healthy so you trend against its own normal, and always measure at consistent points and speed."
+      },
+      {
+        "h": "Oil Analysis and Lubrication",
+        "body": "<b>Oil analysis</b> is a lab (or on-site) test of a lubricant sample that reveals both lubricant health and machine wear. Key tests: <b>viscosity</b> (has the oil degraded or been cross-contaminated), <b>wear metals</b> via spectrometry (iron from gears, copper from bushings, chrome from rings - rising trends and ratios localize the wearing component), <b>water/coolant</b> contamination, <b>particle count</b> (ISO cleanliness code), and <b>additive depletion/oxidation</b>.<br><br>Lubrication itself is a top failure cause when done wrong: <b>over-greasing</b> blows out seals and cooks bearings; <b>under-greasing</b> starves them; and <b>mixing incompatible greases</b> destroys both. Best practice: right lubricant, right amount, right interval, right method, and cleanliness (a single dirty grease gun contaminates every bearing it touches). Oil analysis plus vibration together give a strong PdM picture - oil catches wear-metal and contamination trends, vibration catches mechanical defects, and they confirm each other."
+      },
+      {
+        "h": "RCM, FMEA, and Criticality",
+        "body": "<b>Reliability-Centered Maintenance (RCM)</b> decides the right maintenance for each asset by asking how it can fail, what the consequences are, and what task (if any) prevents or detects the failure cost-effectively. It explicitly allows run-to-failure where consequences are low. <b>FMEA (Failure Mode and Effects Analysis)</b> is the workhorse tool: for each component, list failure modes, effects, and causes, then score <b>Severity x Occurrence x Detection = RPN</b> (Risk Priority Number) to prioritize action on the highest risks.<br><br><b>Criticality ranking</b> classifies assets by the consequence of their failure (safety, throughput, cost, redundancy) so PdM/PM resources go where they matter most. These tools turn a gut-feel PM list into a defensible, risk-based program. For a tech, understanding criticality explains why the main sorter gets weekly attention and a spare fan gets none - and FMEA explains which failure modes the PM tasks are actually targeting."
+      },
+      {
+        "h": "Reliability Metrics - MTBF, MTTR, and Availability",
+        "body": "<b>MTBF</b> (Mean Time Between Failures) measures reliability - the average uptime between failures of a repairable asset (higher is better). <b>MTTR</b> (Mean Time To Repair) measures maintainability - the average time to restore it (lower is better). <b>Availability</b> combines them: Availability = MTBF / (MTBF + MTTR). Improving availability means either failing less often (raise MTBF via PdM/design) or recovering faster (lower MTTR via spares, procedures, training).<br><br>Related metrics: <b>OEE</b> (Overall Equipment Effectiveness = Availability x Performance x Quality) captures total productive capability, and <b>DPMO</b> (defects per million opportunities) tracks quality/jam rates in material handling. Track these to prove a PdM program's value: a rising MTBF and stable/falling MTTR show fewer breakdowns and faster recovery. Beware chasing a single metric - high availability with poor quality still loses throughput. Metrics guide where to focus reliability effort and justify maintenance investment to management."
       }
     ],
     "lab": {
@@ -1761,6 +2169,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "BPFO = (Z/2) x (n/60) x geometry factor = (8/2) x (1200/60) x 0.60 = 4 x 20 x 0.60 = 48.0 Hz. Setting a spectral alarm line at exactly 48 Hz in the vibration analyzer triggers detection only when an outer race defect is present, providing much greater specificity than a broadband RMS alarm threshold."
+      },
+      {
+        "q": "Which maintenance strategy uses condition data plus trending/models to forecast a failure and act just in time?",
+        "options": [
+          "Reactive (run-to-failure)",
+          "Time-based preventive",
+          "Predictive (PdM)",
+          "Breakdown maintenance"
+        ],
+        "answer": 2,
+        "explain": "Predictive maintenance uses measured condition data and trending/models to forecast when failure will occur and intervene just in time, minimizing both breakdowns and unnecessary work."
+      },
+      {
+        "q": "On the P-F curve, what does the P-F interval represent?",
+        "options": [
+          "The total life of the asset",
+          "The warning/lead time between detectable potential failure (P) and functional failure (F)",
+          "The time to order parts",
+          "The calendar PM frequency"
+        ],
+        "answer": 1,
+        "explain": "The P-F interval is the time from when a defect first becomes detectable (P) to functional failure (F) - the window in which you can plan and act. Inspections must be more frequent than this interval."
+      },
+      {
+        "q": "A vibration spectrum shows a dominant peak at 1x running speed in the radial direction. What fault does this most likely indicate?",
+        "options": [
+          "Bearing defect",
+          "Imbalance",
+          "Electrical noise",
+          "Cavitation"
+        ],
+        "answer": 1,
+        "explain": "A high 1x radial peak is the classic signature of imbalance; misalignment shows strong 2x, looseness shows many harmonics, and bearing defects show non-synchronous high-frequency peaks."
+      },
+      {
+        "q": "Why can over-greasing a bearing cause failure?",
+        "options": [
+          "It cannot - more grease is always better",
+          "Excess grease blows out seals and overheats/cooks the bearing",
+          "It lowers the oil viscosity",
+          "It reduces vibration to zero"
+        ],
+        "answer": 1,
+        "explain": "Too much grease over-pressurizes the housing, blows out seals, and churns/overheats, damaging the bearing. Correct lubrication is right amount, interval, type, and cleanliness."
+      },
+      {
+        "q": "In FMEA, what does the Risk Priority Number (RPN) equal?",
+        "options": [
+          "Severity + Occurrence + Detection",
+          "Severity x Occurrence x Detection",
+          "MTBF / MTTR",
+          "Cost x Downtime"
+        ],
+        "answer": 1,
+        "explain": "RPN = Severity x Occurrence x Detection; it ranks failure modes so the highest-risk ones are addressed first in a risk-based maintenance program."
+      },
+      {
+        "q": "If MTBF = 200 hours and MTTR = 5 hours, what is the availability?",
+        "options": [
+          "About 80%",
+          "About 97.6%",
+          "About 40%",
+          "About 100%"
+        ],
+        "answer": 1,
+        "explain": "Availability = MTBF / (MTBF + MTTR) = 200 / 205 = 0.976, about 97.6%. Raising MTBF or lowering MTTR both improve availability."
+      },
+      {
+        "q": "Which detection technology typically gives the EARLIEST warning of a developing bearing defect?",
+        "options": [
+          "Hot-to-touch by hand",
+          "Audible noise",
+          "Vibration/ultrasonic analysis",
+          "Visible smoke"
+        ],
+        "answer": 2,
+        "explain": "Vibration and ultrasonic detect bearing defects earliest (weeks-months of lead time); heat, then audible noise, then hot-to-touch appear progressively later as failure nears."
+      },
+      {
+        "q": "Why is applying one blanket maintenance policy to every asset a poor practice?",
+        "options": [
+          "It is too cheap",
+          "Strategy should match each asset's criticality and failure behavior - critical assets need PdM, low-consequence redundant ones may run-to-failure",
+          "Blanket policies always over-maintain",
+          "Regulations forbid it"
+        ],
+        "answer": 1,
+        "explain": "RCM matches strategy to consequence and failure mode; a critical sorter drive warrants PdM while a redundant fan may justifiably run to failure. One policy for all wastes effort or courts breakdowns."
+      },
+      {
+        "q": "Rising iron content in gearbox oil analysis most directly indicates what?",
+        "options": [
+          "Water contamination",
+          "Wear of ferrous components (gears) - a developing mechanical problem",
+          "Additive depletion only",
+          "Correct viscosity"
+        ],
+        "answer": 1,
+        "explain": "Iron is a ferrous wear metal; a rising trend points to gear/component wear. Wear-metal ratios help localize which part is degrading, complementing vibration data."
       }
     ],
     "resources": [
@@ -1895,6 +2402,30 @@ MODULES_3 = [
       {
         "h": "Panel Schematic Documentation, Revision Control, and As-Built Practices",
         "body": "Accurate, up-to-date documentation is a safety requirement, not administrative overhead. NFPA 79 section 6.1 requires schematic and connection diagrams to be available at the machine.<br><br><b>Drawing layers in a typical IEC-style schematic</b>: (1) power diagram - line voltage, disconnects, fuses, motor contactors; (2) control circuit diagram - PLC I/O, relays, pushbuttons; (3) terminal layout diagram - each terminal block row with wire numbers; (4) cabinet layout drawing - component positions, wireway routes.<br><br><b>Revision control</b>: each drawing has a revision block (rev letter, date, author, brief description). Field changes must be red-lined on the physical print and transferred to CAD within 30 days per most quality standards. Using EPLAN, AutoCAD Electrical, or equivalent CAD tools enables automatic cross-referencing and BOM generation, eliminating manual errors.<br><br><b>As-built reconciliation checklist</b>: wire numbers match terminal labels; component reference designators match legend; all installed components appear in BOM; removed or changed components updated; arc-flash label recalculated if protective devices changed; revision letter incremented and signed.<br><br>Electronic documents must be stored in a controlled location (SharePoint, Teamcenter, etc.) with version history. Providing a laminated pocket drawing inside the panel door is best practice and speeds up field troubleshooting."
+      },
+      {
+        "h": "Enclosure Selection and NEMA/IP Ratings",
+        "body": "The enclosure protects the controls and the people around them. <b>NEMA type ratings</b> define the environment: <b>Type 1</b> indoor general, <b>Type 12</b> indoor dust/drip (typical plant floor), <b>Type 4</b> watertight/washdown, <b>Type 4X</b> adds corrosion resistance (stainless/food areas), <b>Type 7/9</b> hazardous locations. The IEC equivalent is the <b>IP code</b> (e.g. IP54, IP65) where the first digit is solids and the second is water ingress.<br><br>Pick the rating for the worst-case location: a washdown zone needs 4X, a dusty conveyor area needs 12. Over-rating costs money and can trap heat (a sealed 4X enclosure cannot use louvers, so it needs a sealed cooling method). Under-rating lets dust/moisture kill the electronics. Also size the enclosure for the components plus <b>wire-bending space, heat dissipation, and future expansion</b> - cramped panels overheat and are miserable to service. Mounting orientation and door swing matter for maintenance access on a crowded mezzanine."
+      },
+      {
+        "h": "Panel Layout and Wire Management",
+        "body": "Good layout follows logic and safety: incoming power and disconnect at top or a defined corner, <b>high voltage separated from low-voltage/signal</b> wiring (run them in different ducts and cross at right angles to limit coupling), and heat-producing devices (drives, transformers, resistors) placed where their heat rises without cooking sensitive electronics. Components mount on <b>DIN rail</b> or subpanel with room to land wires.<br><br><b>Wire duct (Panduit) fill</b> should stay around <b>40-60%</b> so wires can be added and heat escapes; overfilled duct traps heat and makes changes impossible. Route wires in ducts, not free-air bundles, and leave service loops. Segregate: AC power, DC control, analog/signal, and communications each kept apart. A clean, labeled, logically arranged panel is not cosmetic - it directly determines how fast a tech can troubleshoot at 3 a.m. and how safely the next person can work in it."
+      },
+      {
+        "h": "Wire Labeling, Color, and Terminal Blocks",
+        "body": "Every conductor should be <b>labeled at both ends</b> with a wire number that matches the schematic - this is the single biggest time-saver in troubleshooting. Common <b>color conventions</b> (NFPA 79 for industrial machinery): <b>black</b> AC power, <b>red</b> AC control, <b>blue</b> DC control, <b>white</b> AC grounded (neutral), <b>green/green-yellow</b> equipment ground, and <b>orange</b> for voltage that remains live with the main disconnect off (foreign/backfed voltage) - a critical safety warning.<br><br><b>Terminal blocks</b> organize field wiring: use them for every field connection so devices can be disconnected for testing, group by circuit, use <b>fused terminals</b> where individual protection helps, and mark them to the drawing. Ground and neutral get dedicated marked bars. Ferrules or proper landing of stranded wire prevents strands from spreading and shorting. Labeling and orange-wire discipline are safety-critical: a tech who opens a panel must instantly know what is live even with the main off."
+      },
+      {
+        "h": "Thermal Management and Cooling",
+        "body": "Electronics fail faster when hot - roughly, life halves for every ~10 deg C rise. A panel's internal temperature is set by heat generated (drives, power supplies, transformers all list watts dissipated) versus heat removed. Sum the component wattages to size cooling.<br><br>Options, from simple to sealed: <b>natural convection</b> (louvers/vents - only for clean, non-sealed environments); <b>filtered fans</b> (forced air, needs clean ambient and filter maintenance); <b>air-to-air heat exchangers</b> (sealed, moves heat out without mixing air - good for dusty areas); <b>air conditioners</b> (sealed, for high heat loads or hot ambients); and <b>vortex coolers</b> (compressed-air driven, niche). Sealed enclosures (4/4X) cannot use louvers, so they need a sealed method. Maintenance items: <b>fan filters</b> clog and are a top cause of overtemp trips - a blocked filter starves airflow and drives overheat. Keep filters clean and verify fans run."
+      },
+      {
+        "h": "UL 508A, SCCR, and Compliance",
+        "body": "<b>UL 508A</b> is the standard for industrial control panels in North America; a listed panel carries the shop's UL label and follows rules for component selection, spacing, wiring, and marking. A central concept is <b>SCCR - Short-Circuit Current Rating</b>: the maximum fault current the panel can safely withstand at its supply. The panel's SCCR is limited by its <b>weakest-rated component</b> in the power path (often a control transformer, contactor, or terminal block).<br><br>The available fault current at the installation must not exceed the panel's SCCR, or a short could turn the panel into a shrapnel bomb. Improve SCCR with current-limiting fuses, higher-rated components, or documented combinations. Panels must be marked with their SCCR (NEC 409.110). For a tech, this means you cannot freely swap in a lower-rated component - substitutions can silently drop the panel's SCCR below the site's fault current. Compliance (UL 508A, NFPA 79, NEC) is about safety, insurability, and inspection sign-off, not just paperwork."
+      },
+      {
+        "h": "Grounding, Bonding, and Arc-Flash Labeling",
+        "body": "Inside the panel, <b>bonding</b> ties all non-current-carrying metal (subpanel, door, enclosure) together and to the <b>equipment grounding conductor</b> so a fault trips protection instead of energizing the box. Use a marked ground bar, star-washer or paint-piercing connections to bare metal, and a bonding jumper on the hinged door (a door with a display/pilot devices is a shock path if not bonded). Keep the <b>equipment ground</b> and the <b>signal/0 V reference</b> handled per design - improper grounding causes both shock hazards and noise/analog problems.<br><br>Externally, panels operating above thresholds must carry an <b>arc-flash label</b> (per NFPA 70E) stating incident energy or PPE category, arc-flash boundary, and shock-approach boundaries so workers know required PPE before opening. A tech relies on this label to dress correctly. Proper bonding plus current-limiting protection reduces both shock and arc-flash energy - grounding is the foundation that makes every other protective device work."
       }
     ],
     "lab": {
@@ -2228,6 +2759,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "NFPA 79 section 6.1 requires drawings to be available at the machine. A laminated pocket drawing inside the panel door ensures technicians have immediate access without leaving the work area, satisfying the requirement and accelerating troubleshooting."
+      },
+      {
+        "q": "A control panel will be mounted in a washdown food-processing area. Which enclosure rating is appropriate?",
+        "options": [
+          "NEMA Type 1",
+          "NEMA Type 12",
+          "NEMA Type 4X",
+          "NEMA Type 7"
+        ],
+        "answer": 2,
+        "explain": "Type 4X is watertight AND corrosion-resistant (stainless), suited to washdown/food areas. Type 1 is general indoor, Type 12 is dust/drip, Type 7 is hazardous-location."
+      },
+      {
+        "q": "What does an ORANGE wire signify under NFPA 79 wiring color conventions?",
+        "options": [
+          "Equipment ground",
+          "DC control",
+          "Voltage that remains live even with the main disconnect OFF (foreign/backfed)",
+          "AC neutral"
+        ],
+        "answer": 2,
+        "explain": "Orange marks voltage that stays energized with the main disconnect off (foreign/backfed source) - a critical safety warning so a tech knows part of the panel is still live."
+      },
+      {
+        "q": "Recommended wire-duct (Panduit) fill is approximately what, and why?",
+        "options": [
+          "100% to maximize wire count",
+          "40-60% so wires can be added and heat can escape",
+          "10% to look neat",
+          "Fill does not matter"
+        ],
+        "answer": 1,
+        "explain": "Keeping duct fill around 40-60% leaves room for future wires and lets heat dissipate; overfilled duct traps heat and makes modifications nearly impossible."
+      },
+      {
+        "q": "A panel's SCCR (Short-Circuit Current Rating) is determined by...",
+        "options": [
+          "The largest motor it controls",
+          "Its weakest-rated component in the power path",
+          "The enclosure color",
+          "The PLC scan time"
+        ],
+        "answer": 1,
+        "explain": "The panel SCCR is limited by the lowest-rated component in the power path (often a transformer, contactor, or terminal block). The site's available fault current must not exceed this rating."
+      },
+      {
+        "q": "A sealed NEMA 4X enclosure runs hot in a dusty area. Which cooling method is appropriate?",
+        "options": [
+          "Add louvers/vents",
+          "A filtered exhaust fan",
+          "A sealed air-to-air heat exchanger or air conditioner",
+          "Leave the door open"
+        ],
+        "answer": 2,
+        "explain": "A sealed 4/4X enclosure cannot use louvers or open fans without losing its rating; a sealed air-to-air heat exchanger (or A/C) removes heat without letting dust/moisture in."
+      },
+      {
+        "q": "Why must a hinged panel door with pilot devices be bonded to the enclosure ground?",
+        "options": [
+          "To make it look finished",
+          "Because the door carries live-device wiring and is a shock path if a fault is not given a low-impedance ground return",
+          "To reduce weight",
+          "It is only for aesthetics"
+        ],
+        "answer": 1,
+        "explain": "A door with pilot devices/displays has energized wiring; bonding it to ground ensures a fault trips protection instead of leaving the door energized as a shock hazard."
+      },
+      {
+        "q": "Roughly how does elevated temperature affect electronic component life?",
+        "options": [
+          "No effect",
+          "Life approximately halves for every ~10 deg C rise",
+          "Life doubles when hotter",
+          "Only fans are affected"
+        ],
+        "answer": 1,
+        "explain": "A common rule of thumb is that component life roughly halves for every 10 deg C temperature increase, which is why thermal management and clean fan filters matter."
+      },
+      {
+        "q": "Why should high-voltage power wiring be separated from low-voltage signal/analog wiring in a panel?",
+        "options": [
+          "To use less wire",
+          "To limit electrical noise coupling into sensitive signals and improve safety/serviceability",
+          "It is required to be the same color",
+          "Signal wires carry more current"
+        ],
+        "answer": 1,
+        "explain": "Separating power from signal (different ducts, right-angle crossings) limits capacitive/inductive coupling that corrupts analog and communication signals, and keeps the layout safer and easier to service."
+      },
+      {
+        "q": "What information does an NFPA 70E arc-flash label on a panel provide?",
+        "options": [
+          "The paint color and model number",
+          "Incident energy or PPE category, arc-flash boundary, and shock-approach boundaries",
+          "The PLC program version",
+          "The wire duct fill percentage"
+        ],
+        "answer": 1,
+        "explain": "The arc-flash label states incident energy/PPE category and the arc-flash and shock-approach boundaries so a worker selects correct PPE and maintains safe distances before opening the panel."
       }
     ],
     "resources": [
@@ -2362,6 +2992,30 @@ MODULES_3 = [
       {
         "h": "Offer Evaluation, Counter-Offers, and Total Compensation Analysis",
         "body": "<b>Total Compensation Worksheet:</b> Never compare offers on base pay alone. Build a side-by-side comparison:<br><ol><li>Base pay &times; 2080 hrs = annual base</li><li>Expected OT (hrs/yr &times; 1.5 &times; hourly rate)</li><li>Shift differential (differential rate &times; hrs on premium shift)</li><li>401(k) match (company match % &times; your contribution, up to match cap)</li><li>Healthcare: compare premium costs (employee share). A plan saving $200/mo vs. competitor = $2,400/yr.</li><li>RSU/stock value (if applicable: granted shares &times; current price, vesting schedule)</li><li>PTO value: (base hourly &times; additional PTO days &times; 8 hrs)</li></ol><b>Counter-Offer Risks:</b> If your current employer counter-offers after you resign, research shows 80% of employees who accept a counter-offer leave within 18 months anyway (cited widely in HR literature; treat as directional, not exact). The underlying reasons for leaving rarely change with a pay increase alone.<br><br><b>Decision Criteria Beyond Pay:</b> Growth trajectory, manager quality (ask your future manager for their team tenure), schedule predictability, commute/remote options, and safety culture. Request a 30-minute call with a potential peer before accepting any offer to calibrate culture fit."
+      },
+      {
+        "h": "Building a Technical Portfolio",
+        "body": "A <b>portfolio</b> proves you can do the work, which a resume only claims. For an automation/controls or RME tech, include: <b>projects</b> (a PLC program you wrote or modified, an HMI screen you built, a panel you wired - with before/after and your specific contribution), <b>troubleshooting case studies</b> (a hard fault you diagnosed, the method, and the result), <b>documentation samples</b> (a clear procedure, a wiring diagram, a PM you developed), and <b>certifications</b>.<br><br>Keep it concrete and quantified: 'reduced sorter jams 30% by re-tuning gapping and replacing worn photoeyes,' not 'worked on conveyors.' Sanitize anything proprietary. A simple organized PDF or a private repo is enough - the point is evidence. Bring one or two strong examples to interviews and be ready to walk through your reasoning. In the trades and controls, demonstrated hands-on capability plus clear communication of <i>how you think</i> beats a long list of buzzwords."
+      },
+      {
+        "h": "Resumes and the STAR Interview Method",
+        "body": "A maintenance/controls resume should lead with <b>skills and results</b>: equipment/platforms (Allen-Bradley, Siemens, specific MHE), quantified achievements (uptime, MTTR, jam reduction), and certifications. Use action verbs and numbers; mirror keywords from the posting so it passes automated screening.<br><br>For interviews, answer behavioral questions with <b>STAR</b>: <b>Situation</b> (context), <b>Task</b> (your responsibility), <b>Action</b> (what YOU specifically did), <b>Result</b> (the outcome, ideally quantified). Example - 'A sorter kept faulting on shift (S). I owned restoring throughput (T). I read the fault log, half-split the divert circuit, found a marginal photoeye, aligned and replaced it, and adjusted gapping (A). Jams dropped and the line held rate the rest of the shift (R).' STAR keeps answers structured and evidence-based, and it naturally showcases your troubleshooting method - exactly what a maintenance employer is screening for."
+      },
+      {
+        "h": "Certifications That Matter",
+        "body": "Certifications validate skills and often gate pay/roles. Vendor-neutral: <b>SACA</b> (Smart Automation Certification Alliance - modern Industry 4.0 credentials), <b>ISA CCST</b> (Certified Control Systems Technician, levels I-III for instrumentation/controls). Vendor: <b>Rockwell</b> and <b>Siemens</b> training/certs for their PLC platforms, <b>FANUC</b> robotics certifications. Trade: <b>journeyman/master electrician</b> licenses, <b>NFPA 70E</b> electrical-safety training, and OSHA 10/30.<br><br>Choose by your target role: a controls tech benefits from ISA CCST and platform certs; a robotics tech from FANUC; anyone working live electrical from 70E. Many are stackable - start with foundational safety (70E, LOTO) and a platform cert, then add specialty credentials. Employers like Amazon RME value demonstrated competency and safety credentials. Certifications are most powerful <b>combined with hands-on evidence</b> - a cert plus a portfolio project on the same skill is far stronger than either alone."
+      },
+      {
+        "h": "Apprenticeships, Continuing Education, and Career Ladders",
+        "body": "The trades reward structured skill-building. <b>Apprenticeships</b> (registered programs, often 4 years, earn-while-you-learn combining OJT and classroom) build journeyman-level electrical/mechanical skills. <b>Community college AAS/certificate</b> programs in mechatronics/automation and manufacturer courses fill controls gaps. In-house programs (like RME learning paths) accelerate site-specific skills.<br><br>A typical RME/controls <b>career ladder</b>: technician - senior/lead technician - controls/automation specialist or reliability engineer - maintenance supervisor/manager - or a technical specialist track (SME in robotics/controls). Advancement comes from broadening (more equipment, more platforms), deepening (become the go-to on a hard system), and adding <b>soft skills</b> (documentation, mentoring, planning). Keep learning deliberately: pick the next skill your target role needs, get hands-on with it, and document the win. The techs who advance treat their careers like a maintained asset - planned, measured, and continuously improved."
+      },
+      {
+        "h": "Networking, Mentorship, and Professional Presence",
+        "body": "Opportunities often come through people. Build a professional network: connect with coworkers across shifts and departments, join industry groups (ISA, IEEE, local trade associations), attend vendor training and trade shows, and maintain a clean professional profile (e.g. LinkedIn) listing real skills and certs. Find a <b>mentor</b> - a senior tech or engineer who will review your work and open doors - and later, mentor others (teaching cements your own mastery and builds reputation).<br><br>Reputation on the floor is currency: reliability, safety discipline, clear communication, and willingness to take the hard call build trust that leads to lead roles and references. Document and share wins appropriately. When you help another team solve a problem, you expand your network and visibility. Career acceleration is rarely just technical - it is technical competence made <b>visible and trusted</b> through relationships, communication, and a consistent professional presence."
+      },
+      {
+        "h": "Interview Technical Prep and Salary Discussion",
+        "body": "Technical interviews for controls/maintenance roles probe <b>fundamentals and reasoning</b>: expect Ohm's law and 3-phase basics, how a VFD/contactor/overload works, PLC scan and basic ladder, how you would troubleshoot a given failure, and safety (LOTO, arc flash, live-dead-live). Prepare by reviewing fundamentals and by rehearsing your <b>troubleshooting method</b> out loud - interviewers care as much about <i>how</i> you approach an unknown fault as the exact answer.<br><br>On compensation: research the <b>market range</b> for the role and region before discussing numbers, know your value (certs, quantified results, shift flexibility), and let the employer name a range first when possible. Negotiate on the total package (base, shift differential, overtime, benefits, training, advancement). Be professional and evidence-based - point to your portfolio and results. Preparation converts nervousness into confidence: knowing your fundamentals, your stories (STAR), and your worth lets you interview as a professional evaluating a mutual fit, not a supplicant."
       }
     ],
     "lab": {
@@ -2696,6 +3350,105 @@ MODULES_3 = [
         ],
         "answer": 2,
         "explain": "Reverse mentorship - where the mentee also brings value to the relationship - converts a one-directional relationship into a productive exchange. Specific, prepared questions signal respect for the mentor's time and produce actionable guidance. Vague questions and crisis-only contact are the most common reasons mentor relationships dissolve."
+      },
+      {
+        "q": "Why is a technical portfolio valuable in addition to a resume for a controls/maintenance role?",
+        "options": [
+          "It replaces the need for any experience",
+          "It provides concrete evidence (projects, case studies, docs) of what you can actually do",
+          "It is required by law",
+          "It guarantees a higher salary automatically"
+        ],
+        "answer": 1,
+        "explain": "A portfolio shows evidence - programs, troubleshooting case studies, documentation - proving capability a resume only claims, and lets you walk an interviewer through how you think."
+      },
+      {
+        "q": "In the STAR interview method, what does the 'A' stand for?",
+        "options": [
+          "Analysis",
+          "Action - what YOU specifically did",
+          "Availability",
+          "Assessment"
+        ],
+        "answer": 1,
+        "explain": "STAR = Situation, Task, Action, Result. 'Action' is the specific steps you personally took, which showcases your troubleshooting method and contribution."
+      },
+      {
+        "q": "Which certification is a vendor-neutral credential specifically for control systems technicians (instrumentation/controls)?",
+        "options": [
+          "FANUC robotics certification",
+          "ISA CCST (Certified Control Systems Technician)",
+          "A Rockwell-only PLC course",
+          "OSHA 10"
+        ],
+        "answer": 1,
+        "explain": "ISA CCST is a vendor-neutral, multi-level certification for control systems technicians. FANUC is robotics-specific and Rockwell courses are vendor platform training."
+      },
+      {
+        "q": "What is the best way to make a certification most powerful to an employer?",
+        "options": [
+          "Collect as many unrelated certs as possible",
+          "Combine it with hands-on evidence (a portfolio project) demonstrating the same skill",
+          "Hide it until after hiring",
+          "List only the cert name with no context"
+        ],
+        "answer": 1,
+        "explain": "A certification plus a portfolio project demonstrating that same skill is far stronger than either alone - it pairs validated knowledge with proven application."
+      },
+      {
+        "q": "What is a defining feature of a registered apprenticeship?",
+        "options": [
+          "It is purely classroom with no pay",
+          "Earn-while-you-learn: paid on-the-job training combined with classroom instruction, often ~4 years",
+          "It requires a bachelor's degree first",
+          "It has no structure or mentoring"
+        ],
+        "answer": 1,
+        "explain": "Registered apprenticeships combine paid on-the-job training with classroom instruction over a structured period (often 4 years), building journeyman-level skills while earning."
+      },
+      {
+        "q": "During a technical interview, why do interviewers care about HOW you approach an unknown fault?",
+        "options": [
+          "They do not - only the final answer matters",
+          "Your troubleshooting method predicts how you will perform on real, novel problems",
+          "To trick candidates",
+          "Method is irrelevant in maintenance"
+        ],
+        "answer": 1,
+        "explain": "Real faults are often novel; a sound, systematic troubleshooting method (define, gather, half-split, verify) predicts on-the-job success better than memorized answers."
+      },
+      {
+        "q": "What is a smart practice before discussing salary for a role?",
+        "options": [
+          "Name the lowest number so you seem cheap",
+          "Research the market range for the role/region and know your quantified value",
+          "Refuse to discuss compensation",
+          "Demand double the posted range immediately"
+        ],
+        "answer": 1,
+        "explain": "Researching the market range and knowing your value (certs, results, flexibility) lets you negotiate the total package professionally and evidence-based rather than guessing."
+      },
+      {
+        "q": "On a maintenance resume, which achievement statement is strongest?",
+        "options": [
+          "Worked on conveyors",
+          "Responsible for equipment",
+          "Reduced sorter jams 30% by re-tuning gapping and replacing worn photoeyes",
+          "Did various tasks daily"
+        ],
+        "answer": 2,
+        "explain": "Quantified, specific, action-and-result statements ('reduced jams 30% by...') prove impact and pass keyword screening, unlike vague duty descriptions."
+      },
+      {
+        "q": "Why does mentoring others help your own career?",
+        "options": [
+          "It does not help at all",
+          "Teaching cements your mastery and builds reputation and network visibility",
+          "It is only for managers",
+          "It reduces your technical skills"
+        ],
+        "answer": 1,
+        "explain": "Explaining and teaching deepens your own understanding, builds trust and reputation on the floor, and expands your professional network - all of which accelerate advancement."
       }
     ],
     "resources": [
@@ -2814,6 +3567,30 @@ MODULES_3 = [
       {
         "h": "Retentive Memory, Initialization, and Cross-Vendor Portability",
         "body": "<b>Retentive vs Non-Retentive:</b> Non-retentive variables (VAR) reset to initial values on power cycle or cold start. Retentive variables (VAR RETAIN) survive power-down via battery-backed RAM or flash. VAR PERSISTENT (Codesys) survives even firmware downloads. Rockwell uses separate retain tags in controller properties; Siemens uses DB blocks marked Non-optimized with retentive setting per variable.<br><b>Initialization order (IEC 61131-3 clause 2.5.3):</b> (1) VAR declarations with <code>:= value</code> run at cold start. (2) At warm restart (power cycle without download), RETAIN vars keep last value; non-retain vars re-initialize. (3) On program download, ALL vars re-initialize - a critical live-maintenance hazard that can drop a running conveyor if state-machine variables reset to 0/IDLE. Best practice: separate startup-state logic from normal-run logic so a warm restart does not force a full home sequence.<br><b>Cross-Vendor Portability Reality:</b> IEC 61131-3 compliance is voluntary and incomplete. Key incompatibilities:<br><ul><li>Vendor-specific FB libraries (<code>MSG</code> in Rockwell, <code>TSEND_C</code> in Siemens) have no IEC equivalent and must be rewritten.</li><li>Task timing models differ: Rockwell uses Continuous/Periodic/Event tasks; Siemens uses OB1/OB35/interrupts. Scan-time assumptions embedded in code may break.</li><li>PLCopen Motion Control provides portable FBs like <code>MC_MoveAbsolute</code> and <code>MC_Home</code>, but axis parameter mapping remains vendor-specific.</li></ul>Export via <b>PLCopen XML (IEC 61131-10)</b> achieves partial portability for POU bodies but does not transfer hardware configuration. Budget significant re-commissioning time for any cross-vendor migration."
+      },
+      {
+        "h": "IEC 61131-3 - The Five Languages",
+        "body": "The <b>IEC 61131-3</b> standard defines five PLC programming languages so skills transfer across brands. Three are graphical and two textual:<br><br>&bull; <b>Ladder Diagram (LD)</b> - relay-style rungs; intuitive for electricians, dominant for discrete/interlock logic.<br>&bull; <b>Function Block Diagram (FBD)</b> - wired blocks (AND, timers, PID); great for signal flow and process control.<br>&bull; <b>Sequential Function Chart (SFC)</b> - steps and transitions; ideal for sequential/batch machines.<br>&bull; <b>Structured Text (ST)</b> - Pascal-like text; best for math, loops, string/data handling.<br>&bull; <b>Instruction List (IL)</b> - low-level assembler-style; deprecated in the 3rd edition, rarely used now.<br><br>Real projects mix languages: ladder for interlocks, ST for calculations, SFC for the machine sequence, FBD for loops. Choosing the right language per task makes code clearer and easier to maintain. Portability is partial - vendors add extensions - but the concepts and standard blocks carry over."
+      },
+      {
+        "h": "Function Block Diagram (FBD)",
+        "body": "<b>FBD</b> represents logic as <b>blocks connected by wires</b>, where signals flow left to right. Inputs enter a block (AND, OR, ADD, timer, PID, filter), it processes, and outputs feed the next block. It reads like a signal-flow schematic, which makes it natural for <b>continuous/process control</b> and analog signal conditioning.<br><br>Strengths: visualizing how a measured value is scaled, filtered, fed to a PID, limited, and sent to an output; reusing library blocks; and seeing data flow at a glance. Watch-outs: <b>execution order</b> matters (the tool assigns block order; feedback loops need care to avoid one-scan delays), and dense FBD sheets can become hard to follow. In many process skids you will find PID, totalizers, and alarm blocks wired in FBD while discrete permissives sit in ladder - the same controller runs both."
+      },
+      {
+        "h": "Sequential Function Chart (SFC)",
+        "body": "<b>SFC</b> models a process as <b>steps</b> (boxes) connected by <b>transitions</b> (horizontal bars with a condition). Only active steps execute their associated actions; when a transition condition is true, the chart advances to the next step. It directly mirrors a process sequence - fill, heat, mix, drain - and supports parallel branches (simultaneous steps) and selective branches (choose one path).<br><br>SFC is excellent for <b>batch and sequential machines</b> because the chart <i>is</i> the sequence documentation, and an operator/tech can literally see which step is active. Each step's actions are often written in ST or ladder. Design well: one clear transition condition per branch, defined handling for faults (a transition to a safe/hold step), and avoid leaving a step with no exit. SFC troubleshooting is fast: find the active step, then examine why its outgoing transition is not satisfied."
+      },
+      {
+        "h": "Online Editing, Forcing, and Safe Commissioning",
+        "body": "<b>Online editing</b> lets you modify running logic and accept changes without stopping the machine - powerful and dangerous. <b>Forcing</b> overrides an input or output to a fixed state for testing (e.g. force an output on to verify wiring). Both must be used with extreme discipline in a live fulfillment center.<br><br>Rules: announce and coordinate before forcing (a forced output can move a conveyor or actuator unexpectedly); track every force (Logix shows a <b>forces-enabled</b> indicator - never leave forces active and walk away); test online edits in a safe state; and always have a rollback. Forgotten forces are a classic cause of 'it worked on the bench but does something weird in production.' A disciplined tech documents forces, removes them when done, and treats online edits like surgery on a running patient - minimal, verified, reversible."
+      },
+      {
+        "h": "Program Organization - Routines, Subroutines, and JSR",
+        "body": "Large programs are broken into <b>routines</b> (ladder/ST/FBD/SFC files) grouped under <b>programs</b> within <b>tasks</b>. A <b>main routine</b> calls others with <b>JSR</b> (Jump to Subroutine); parameters can pass in/out. Organizing by machine area or function (Safety, Conveyor, Sortation, HMI, Diagnostics) keeps code navigable and lets teams work in parallel.<br><br>Good structure: a lean main routine that JSRs to functional routines; consistent naming; safety logic isolated and clearly marked; and diagnostics/first-out fault capture in its own routine. Avoid one giant routine - it is unsearchable and merge-hostile. Note scan behavior: routines execute in the order they are called, top to bottom; an unconditional JSR runs every scan, a conditional JSR runs only when its rung is true. Modular organization is the difference between a program a new tech can learn and one only its author understands."
+      },
+      {
+        "h": "Tag-Based vs Address-Based Addressing",
+        "body": "Legacy PLCs (SLC-500, PLC-5, many small PLCs) use <b>physical addresses</b> like <code>I:1/0</code> (input, slot 1, bit 0) or <code>N7:5</code> (integer file). Modern controllers (ControlLogix/CompactLogix) use <b>named tags</b> like <code>Conveyor01.Run</code> tied to a data type, not a physical location. Tag-based addressing is self-documenting, supports UDTs/arrays, and decouples logic from I/O layout.<br><br>Implications for techs: on address-based systems you must keep the I/O map handy and cross-reference addresses to devices; on tag-based systems the name tells you the device, and aliases map a friendly tag to a physical I/O point (<code>StartPB</code> aliased to <code>Local:1:I.Data.0</code>). When migrating old code, addresses become tags and documentation quality jumps. Understanding both is essential in a mixed plant where a 20-year-old SLC still runs a machine next to a new CompactLogix line."
       }
     ],
     "lab": {
@@ -3113,6 +3890,105 @@ MODULES_3 = [
         ],
         "answer": 2,
         "explain": "IEC 62061 (functional safety of machinery) and ISO 13849 both require that safety-related software be protected from unauthorized modification and that any change triggers re-validation. AOI version locking with encryption enforces this at the tool level, supporting the documented safety lifecycle required by these standards."
+      },
+      {
+        "q": "Which IEC 61131-3 language is best suited to a batch/sequential machine like fill-heat-mix-drain?",
+        "options": [
+          "Instruction List (IL)",
+          "Sequential Function Chart (SFC)",
+          "Ladder Diagram for the whole thing",
+          "Function Block Diagram only"
+        ],
+        "answer": 1,
+        "explain": "SFC models steps and transitions, directly mirroring a process sequence and showing which step is active - ideal for batch/sequential machines."
+      },
+      {
+        "q": "Function Block Diagram (FBD) is most naturally suited to what?",
+        "options": [
+          "Discrete relay interlocks only",
+          "Signal-flow and continuous/process control (scaling, filtering, PID)",
+          "Replacing all ladder logic",
+          "Writing string-manipulation code"
+        ],
+        "answer": 1,
+        "explain": "FBD wires blocks in a left-to-right signal flow, making it natural for analog conditioning and process/PID control; discrete interlocks are usually clearer in ladder."
+      },
+      {
+        "q": "Which IEC 61131-3 language is deprecated in the 3rd edition and rarely used today?",
+        "options": [
+          "Ladder Diagram",
+          "Structured Text",
+          "Instruction List (IL)",
+          "Sequential Function Chart"
+        ],
+        "answer": 2,
+        "explain": "Instruction List, a low-level assembler-style language, was deprecated in the 3rd edition of IEC 61131-3 and is rarely used in new work."
+      },
+      {
+        "q": "What is the biggest risk of leaving a FORCE active on an output and walking away?",
+        "options": [
+          "It speeds up the scan",
+          "The forced output can drive an actuator/conveyor unexpectedly, creating a safety hazard",
+          "It clears all faults",
+          "It improves documentation"
+        ],
+        "answer": 1,
+        "explain": "A forgotten force holds an output in a commanded state regardless of logic, which can move equipment unexpectedly - a classic and dangerous commissioning mistake. Track and remove all forces."
+      },
+      {
+        "q": "In Studio 5000, an unconditional JSR (Jump to Subroutine) in the main routine executes...",
+        "options": [
+          "Only once at power-up",
+          "Every scan",
+          "Only when a fault occurs",
+          "Never unless forced"
+        ],
+        "answer": 1,
+        "explain": "An unconditional JSR runs every scan; a conditional JSR (preceded by contacts) runs only when its rung is true. Routines execute in call order, top to bottom."
+      },
+      {
+        "q": "What is the key advantage of tag-based addressing (e.g. Conveyor01.Run) over address-based (e.g. I:1/0)?",
+        "options": [
+          "It runs at a higher clock speed",
+          "It is self-documenting and decoupled from physical I/O layout, supporting UDTs and aliases",
+          "It uses less memory always",
+          "It cannot be aliased"
+        ],
+        "answer": 1,
+        "explain": "Named tags describe the device and data type, decouple logic from I/O slot layout, and support UDTs/arrays/aliases - far more maintainable than physical file addresses."
+      },
+      {
+        "q": "Why break a large PLC program into multiple routines called by JSR rather than one giant routine?",
+        "options": [
+          "It is required by the watchdog",
+          "For navigability, parallel teamwork, isolation of safety logic, and easier troubleshooting",
+          "To slow the scan intentionally",
+          "To avoid using tags"
+        ],
+        "answer": 1,
+        "explain": "Modular routines organized by function keep code navigable, let teams work in parallel, isolate safety logic, and make troubleshooting far easier than one unsearchable giant routine."
+      },
+      {
+        "q": "When troubleshooting an SFC that has stopped advancing, what is the fastest diagnostic path?",
+        "options": [
+          "Rewrite it in Instruction List",
+          "Find the active step and examine why its outgoing transition condition is not satisfied",
+          "Force every output on",
+          "Delete the transitions"
+        ],
+        "answer": 1,
+        "explain": "Because only active steps execute and transitions gate advancement, you locate the active step and check why its transition condition is false - a direct route to root cause."
+      },
+      {
+        "q": "A real project uses ladder for interlocks, ST for calculations, and SFC for the machine sequence in one controller. Is this valid under IEC 61131-3?",
+        "options": [
+          "No, only one language per controller is allowed",
+          "Yes, mixing languages per task is standard and encouraged for clarity",
+          "Only if all code is Instruction List",
+          "Only on legacy PLC-5 systems"
+        ],
+        "answer": 1,
+        "explain": "IEC 61131-3 explicitly supports mixing languages; choosing the best language per task (ladder for interlocks, ST for math, SFC for sequence, FBD for loops) improves clarity and maintainability."
       }
     ],
     "resources": [

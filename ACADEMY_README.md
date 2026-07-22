@@ -13,6 +13,17 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.68 (2026-07-22)
+- **Curriculum deepening wave 2 - all advanced modules (M13-M19).** Continued the effort to double the content, expanding the advanced half of the curriculum.
+- **M13 Advanced PLC:** +7 sec/+10 quiz (AOIs, UDTs, indirect addressing/array bounds, major-vs-minor fault handling, advanced ST, sequencers/state machines, task types & scan time).
+- **M14 IIoT / Industry 4.0:** +6 sec/+9 quiz (Purdue model/OT-IT, MQTT & report-by-exception, OPC UA, edge vs cloud, digital twins, OT cybersecurity/IEC 62443).
+- **M15 Electrical Troubleshooting:** +6 sec/+9 quiz (systematic method & half-splitting, DMM depth, clamp/current signatures, megger, thermography, intermittent/ground faults).
+- **M16 PM/PdM Reliability:** +6 sec/+9 quiz (maintenance strategies, P-F curve, vibration analysis, oil analysis, RCM/FMEA/criticality, MTBF/MTTR/availability).
+- **M17 Control Panel Design:** +6 sec/+9 quiz (NEMA/IP ratings, layout & wire management, labeling/color/terminals, thermal management, UL 508A/SCCR, grounding & arc-flash labeling).
+- **M18 Career Acceleration:** +6 sec/+9 quiz (portfolio, resume & STAR, certifications, apprenticeships/ladders, networking/mentorship, interview & salary prep).
+- **M19 PLC Languages:** +6 sec/+9 quiz (IEC 61131-3 five languages, FBD, SFC, online editing/forcing, program organization/JSR, tag vs address addressing).
+- Totals: sections 582 -> 625, quiz 634 -> 698 (curriculum-wide 566 -> 625 / 612 -> 698 across waves 1-2). Re-audit 0 errors, ruff clean, py_compile clean. Rebuild modules=22 glossary=131 flashcards(+gloss)=187 sims=11 ladderlabs=236.
+
 ### v13.67 (2026-07-22)
 - **Curriculum deepening wave 1 (of a multi-part effort to double the content).** Began systematically expanding every module with brand-new teaching sections and quiz questions.
 - **Module 20 (Material Handling / MHE):** +9 sections, +11 quiz - MDR/ZPA zone-card diagnostics, photoeye alignment (through-beam/retroreflective/polarized), belt tracking correction, mechanical vs vulcanized splices, gapping/singulation, sortation-type comparison, scan-tunnel no-reads, print-and-apply labelers, VFD conveyor faults/ramps.
