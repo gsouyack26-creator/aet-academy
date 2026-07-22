@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.48 &mdash; 2026-07-22
+- **12 new Ladder &amp; ST Lab challenges (138 &rarr; 150).** Synced 5 latest Structured-Text challenges from Code Armory (barcode length/parse, location-label CONCAT, user-defined FUNCTION clamp &amp; scale) and authored 7 original ACY1/RME-flavored ST challenges, all live-graded: Conveyor Run Permit (boolean interlock), Sortation Chute Select (CASE), Scale a 4-20 mA Signal, Clamp a VFD Speed Command (MIN/MAX), Gearbox Output Speed (FUNCTION), Build an Asset Tag (STRING/CONCAT), and Motor Temp Alarm with Hysteresis (SR latch). Structured-Text graded challenges now number 72.
+
 ### v13.47 &mdash; 2026-07-22
 - **Ladder &amp; ST Lab now tracks completion with checkmarks.** Solving a challenge (all ST test cases pass, or a correct troubleshooting diagnosis) now records it as solved: the challenge card shows a green &#10004; in its header, a &#8220;X of Y graded challenges solved&#8221; progress line appears at the top, and XP is awarded only on your <i>first</i> solve (no re-farming by re-running). Solved state persists between sessions.
 
