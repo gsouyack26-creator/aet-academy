@@ -13,6 +13,18 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.62 (2026-07-22) - Final deep-dive: last 5 modules - ALL 22 MODULES NOW DEEP
+
+Third and final parallel-agent wave. Every remaining thin module is now full-depth (agent-authored, fact-checked & structurally verified). With this release all 22 AET Academy modules have 12-16 lecture sections and 15 quiz questions (rendering 21 with supplemental banks):
+
+- **M10 Process Control & PID** 4->14 sections, 3->15 quiz: open/closed loop, PV/SP/error/MV & 4-20mA scaling, FOPDT model (Kp/tau/theta step-test), P/I/D terms (offset, reset windup, derivative kick/filtering), PID forms (parallel/ideal/series conversions), Ziegler-Nichols ultimate-gain (worked Ku/Tu example), Cohen-Coon & Lambda/IMC, control valves/VFD affinity laws/dampers, cascade/feedforward/ratio/split-range/Smith predictor, common facility loops.
+- **M12 Capstone - System Integration & Career Paths** 4->14 sections, 3->15 quiz: systems thinking (sensor->PLC->drive->HMI->network->safety), end-to-end sortation walkthrough, project lifecycle (URS/FDS/FAT/SAT), reading a full machine (P&ID/one-line/ladder/network together), cross-discipline root-cause, documentation/handoff, MOC, working with integrators, the RME->controls->automation->reliability ladder, Kaizen/5S/TPM.
+- **M14 IIoT & Industry 4.0** 4->14 sections, 3->15 quiz: nine pillars, IT/OT convergence & Purdue model, edge/fog/cloud, MQTT (QoS 0/1/2, Sparkplug B, topics/retained/LWT) vs OPC-UA pub/sub, digital twin, PdM data pipeline & MCSA, time-series DBs, IEC 62443 zones/conduits & defense-in-depth, 5G/WirelessHART/LoRaWAN, ML anomaly detection (honestly framed).
+- **M17 Control Panel Design & Build** 4->14 sections, 3->15 quiz: UL 508A/NFPA 79/NEC/IEC 61439, NEMA/UL enclosure types, thermal heat-load & cooling (worked deltaT + fan sizing), layout/wire routing/segregation, SCCR series vs fully-rated (worked example), grounding/bonding, NFPA 79 wire color code (incl orange foreign-voltage), terminal/ferrule/torque, component & CPT/24VDC sizing (worked), labeling/arc-flash/commissioning tests.
+- **M18 Career Acceleration** 4->14 sections, 3->15 quiz: RME/automation ladder & pay bands (honestly framed, not guaranteed), certifications (NFPA 70E, OSHA 10/30, Rockwell CCP, Siemens SITRAIN, ISA CCST I-III, FANUC, SACA/Amatrol, Six Sigma, PMP - accurate issuers), technical portfolio, technician resume/skills matrix, technical & behavioral (STAR) interview prep, skills-gap learning plan, networking & internal advancement.
+
+Fact-checked all numerics (PID: 4-20mA=200kPa, FOPDT theta=15/tau=40, ZN Kc/Ti/Td, ISA<->parallel form conversion; IIoT: FFT 20Mb/s->102kb/s ~200:1, MQTT QoS-2 handshake; panel: SCCR/thermal/CPT/24VDC sizing). Normalized smart-quote entities to ASCII. HTML 1.66 MB, modules=22 - curriculum depth pass COMPLETE.
+
 ### v13.61 (2026-07-22) - Systems & Safety deep-dive: 4 more modules expanded
 
 Second parallel-agent wave. Deepened four more thin modules to full track depth (agent-authored, fact-checked & structurally verified before integration):

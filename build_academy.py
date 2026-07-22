@@ -155,7 +155,7 @@ SKELETON = """<!DOCTYPE html>
 <body>
 <div id="gate" style="display:none"></div>
 <div id="sb">
-  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.61</div></div>
+  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.62</div></div>
   <div id="usercard" onclick="go('#profile')">
     <div class="nm"><span id="u-name">Set your name</span></div>
     <div class="rk" id="u-rank">Lv 1</div>
