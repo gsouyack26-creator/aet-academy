@@ -91,7 +91,17 @@ FLASHCARDS = [
   {"f":"Modbus RTU vs TCP","b":"RTU = serial (RS-485). TCP = Modbus frames over Ethernet. Simple, widely supported"},
   {"f":"MQTT QoS","b":"0 = fire-and-forget, 1 = at least once, 2 = exactly once. Sparkplug B standardizes SCADA topics"},
   {"f":"Half-split troubleshooting","b":"Test at the midpoint of a suspect path; each good/bad result halves the search space"},
-  {"f":"True-RMS meter","b":"Required to accurately measure the non-sinusoidal (chopped) output of a VFD"}
+  {"f":"True-RMS meter","b":"Required to accurately measure the non-sinusoidal (chopped) output of a VFD"},
+  {"f": "Ladder scan cycle order", "b": "Read inputs to image table &rarr; solve rungs top-to-bottom/left-to-right &rarr; write outputs &rarr; housekeeping, then repeat (typ 1-10 ms)."},
+  {"f": "Double-coil bug", "b": "Writing the same output coil on two rungs: only the LAST one solved each scan controls the output - the earlier is ignored. Avoid it."},
+  {"f": "Series vs parallel contacts", "b": "Series contacts = logical AND (all must be true); parallel branches = logical OR (any true path energizes the output)."},
+  {"f": "ONS / OSR / OSF (one-shots)", "b": "Edge instructions that stay true for exactly one scan: ONS/OSR on a rising edge, OSF on a falling edge. Use for count-once-per-press actions."},
+  {"f": "RTO (retentive timer)", "b": "Retentive on-delay: accumulates true-time and HOLDS .ACC through rung/power loss. Only a RES instruction clears it. Used for total runtime tracking."},
+  {"f": "R_TRIG / F_TRIG (ST)", "b": "Structured Text edge-detect function blocks: R_TRIG.Q pulses one scan on a rising CLK edge, F_TRIG on falling - the ST equivalent of a ladder one-shot."},
+  {"f": "IEC timer in ST", "b": "A function-block instance, not a box: declare (JamTmr : TON;), call each scan JamTmr(IN:=cond, PT:=T#3s), then read JamTmr.Q (done) and JamTmr.ET (elapsed)."},
+  {"f": "IN_OUT parameter", "b": "AOI/function parameter passed BY REFERENCE (no copy) - the block edits your live tag directly. Best for large UDTs; INPUT is copied in, OUTPUT copied out."},
+  {"f": "Hysteresis (deadband)", "b": "Two thresholds prevent output chatter: e.g. Fan ON at &gt;=80&deg;, OFF at &lt;=70&deg;; between the two it HOLDS its last state."},
+  {"f": "Safe divide (ST)", "b": "Always guard division: IF Divisor &lt;&gt; 0 THEN Result := Total / Divisor; ELSE handle; - dividing by zero faults the processor."}
 ]
 
 # Simulator registry (metadata; the interactive JS lives in the app)

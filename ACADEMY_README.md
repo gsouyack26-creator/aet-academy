@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.54 &mdash; 2026-07-22
+Added 10 flashcards reinforcing the deepened ST/Ladder material (30 &rarr; 40; 147 with glossary): ladder scan-cycle order, double-coil bug, series/parallel contacts, ONS/OSR/OSF one-shots, RTO retentive timer, R_TRIG/F_TRIG, instantiating an IEC timer in ST, IN_OUT-by-reference parameters, hysteresis deadband, and safe divide. Bump v13.53 &rarr; v13.54.
+
 ### v13.53 &mdash; 2026-07-22
 Expanded **Module 19 (PLC Programming Languages &mdash; Ladder vs ST)** quiz 8 &rarr; 12 to cover the v13.51 deep sections. New questions test seal-in latch mechanics, the double-coil bug, TON `.ACC`/`.DN` (ladder) vs `.ET`/`.Q` (ST) naming, and instantiating a TON function block in Structured Text. Bump v13.52 &rarr; v13.53.
 
