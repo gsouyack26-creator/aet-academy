@@ -13,6 +13,17 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.64 (2026-07-22) - Full QA / proofreading pass (lint, markup, grammar, factual)
+
+Comprehensive quality pass across the doubled v13.63 curriculum (566 sections / 612 quiz across 22 modules). No content added; all changes are corrections and cleanup.
+
+- **Markup/entity audit:** built a tokenizer-based escaper that protects real HTML tags (including Module 19's attributed `<table>`) and valid entities while escaping bare `<`/`>`/`&` in comparison/formula prose. Fixed 64 flagged markup issues (e.g. `PF < 1`, `ACC>=PRE`, `>100M`) across modules_data*.py. Re-audit: 0 errors.
+- **ruff + py_compile:** all 17 data/build modules pass clean.
+- **Grammar/proofreading (6 parallel copyediting agents):** 12 genuine prose/factual fixes applied - M1 redundant "physical PHYSICAL layout"; M0 ISA option capitalization ("indicator"->"Indicator"); M5 "repeated"->"replicated" assets; M7 HMI "reverses"->"rejects ... in favor of"; M8 "Last Will Testament"->"Last Will and Testament"; M9 "derogate"->"derate" and "target retaught"->"target re-teaching"; M15 E-stop/drive/motor subject-verb rewrite; M15 transformer TTR fix (3.85 reading = fewer effective PRIMARY turns / shorted primary, not secondary - corrected reversed physics); M20 "structure frame"->"structural frame"; M21 missing copula "charging IS most efficient".
+- Every correction verified as a unique verbatim source match before applying; no code, math notation, tag members, file extensions, or IP octets were altered.
+- Rebuild verified: modules=22 glossary=131 flashcards(+gloss)=187 sims=11 ladderlabs=236. Ship zip AET_Academy_v13.64_20260722.zip (5 members, testzip None).
+
+
 ### v13.63 (2026-07-22) - CURRICULUM DOUBLED: +13 sections and +14 quiz to ALL 22 modules
 
 Massive parallel-agent expansion. Every one of the 22 modules gained 13 new advanced/adjacent lecture sections and 14 new quiz questions, roughly doubling the entire curriculum: 280 to 566 lecture sections and 304 to 612 quiz questions (before supplemental banks). All content was agent-authored across multiple waves, then structurally verified (entity/tag/ASCII checks) and numerically fact-checked section-by-section by the lead. Every worked calculation, standards citation, and answer index was independently recomputed before splicing.
