@@ -22,7 +22,7 @@ function mdLite(raw){
   if(inList)out.push('</ul>');
   return out.join('<br>').replace(/<\/ul><br>/g,'</ul>').replace(/<br>(<ul)/g,'$1').replace(/<br>(<li)/g,'$1').replace(/(<\/li>)<br>/g,'$1');
 }
-const DEF={name:'',theme:'dark',xp:0,done:[],scores:{},aced:[],sims:[],flashSeen:0,flashBox:{},flashDue:{},notes:{},refPins:[],lastMod:null,qotd:null,exam:null,skillsExam:null,streak:0,bestStreak:0,lastDay:'',ach:[],visits:0,late:false,early:false,opened:false,seenAsg:[],missed:{},guessed:{},qBox:{},qDue:{},goalMin:20,dayMin:{},modExam:{},leaderOptOut:false,bookmarks:[],arcadeBest:{},glossQuizBest:0,glossQuizPlays:0,doneDate:{},examLog:[],fcStars:[],recentSearches:[]};
+const DEF={name:'',theme:'dark',xp:0,done:[],scores:{},aced:[],sims:[],labSolved:[],flashSeen:0,flashBox:{},flashDue:{},notes:{},refPins:[],lastMod:null,qotd:null,exam:null,skillsExam:null,streak:0,bestStreak:0,lastDay:'',ach:[],visits:0,late:false,early:false,opened:false,seenAsg:[],missed:{},guessed:{},qBox:{},qDue:{},goalMin:20,dayMin:{},modExam:{},leaderOptOut:false,bookmarks:[],arcadeBest:{},glossQuizBest:0,glossQuizPlays:0,doneDate:{},examLog:[],fcStars:[],recentSearches:[]};
 let S=Object.assign({},DEF);
 function persist(){localStorage.setItem(acctKey(),JSON.stringify(S));}
 const DECK=FLASH.map(c=>({f:c.f,b:c.b,k:'c:'+c.f})).concat(GLOSS.map(g=>({f:g.term,b:g.def,k:'g:'+g.term})));

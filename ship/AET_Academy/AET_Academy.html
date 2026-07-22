@@ -176,6 +176,10 @@ a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
 .gavo:hover{background:var(--bg2)}
 .gavo.on{border-color:var(--accent);background:var(--bg2)}
 .grolepick{display:flex;gap:.5rem}
+.llcheck{color:var(--ok);font-weight:800;margin-right:.15rem}
+.llcard.llsolved>summary{color:var(--txt)}
+.llcard.llsolved{border-color:var(--ok)}
+.llprog{color:var(--txt2);font-size:.82rem}
 .rolehint{font-size:.72rem;color:var(--txt2);margin:.4rem 0 .2rem;line-height:1.35;min-height:1em}
 .grolo{flex:1;text-align:center;padding:.55rem;border-radius:10px;border:1px solid var(--line);background:var(--bg2);cursor:pointer;font-size:.85rem}
 .grolo.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
@@ -470,7 +474,7 @@ mark{background:var(--accent);color:#000;border-radius:3px;padding:0 .12em}
 <body>
 <div id="gate" style="display:none"></div>
 <div id="sb">
-  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.46</div></div>
+  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.47</div></div>
   <div id="usercard" onclick="go('#profile')">
     <div class="nm"><span id="u-name">Set your name</span></div>
     <div class="rk" id="u-rank">Lv 1</div>
@@ -535,7 +539,7 @@ function mdLite(raw){
   if(inList)out.push('</ul>');
   return out.join('<br>').replace(/<\/ul><br>/g,'</ul>').replace(/<br>(<ul)/g,'$1').replace(/<br>(<li)/g,'$1').replace(/(<\/li>)<br>/g,'$1');
 }
-const DEF={name:'',theme:'dark',xp:0,done:[],scores:{},aced:[],sims:[],flashSeen:0,flashBox:{},flashDue:{},notes:{},refPins:[],lastMod:null,qotd:null,exam:null,skillsExam:null,streak:0,bestStreak:0,lastDay:'',ach:[],visits:0,late:false,early:false,opened:false,seenAsg:[],missed:{},guessed:{},qBox:{},qDue:{},goalMin:20,dayMin:{},modExam:{},leaderOptOut:false,bookmarks:[],arcadeBest:{},glossQuizBest:0,glossQuizPlays:0,doneDate:{},examLog:[],fcStars:[],recentSearches:[]};
+const DEF={name:'',theme:'dark',xp:0,done:[],scores:{},aced:[],sims:[],labSolved:[],flashSeen:0,flashBox:{},flashDue:{},notes:{},refPins:[],lastMod:null,qotd:null,exam:null,skillsExam:null,streak:0,bestStreak:0,lastDay:'',ach:[],visits:0,late:false,early:false,opened:false,seenAsg:[],missed:{},guessed:{},qBox:{},qDue:{},goalMin:20,dayMin:{},modExam:{},leaderOptOut:false,bookmarks:[],arcadeBest:{},glossQuizBest:0,glossQuizPlays:0,doneDate:{},examLog:[],fcStars:[],recentSearches:[]};
 let S=Object.assign({},DEF);
 function persist(){localStorage.setItem(acctKey(),JSON.stringify(S));}
 const DECK=FLASH.map(c=>({f:c.f,b:c.b,k:'c:'+c.f})).concat(GLOSS.map(g=>({f:g.term,b:g.def,k:'g:'+g.term})));
@@ -3965,9 +3969,10 @@ function llCheckSt(id){
     rows+='<tr><td>'+(r.pass?'<span class="llok">PASS</span>':'<span class="llno">FAIL</span>')+'</td><td>'+_llEsc(r.name||('case '+(i+1)))+'</td><td>'+_llEsc(r.error?('ERR: '+r.error):('expected '+r.expected+', got '+r.actual))+'</td></tr>';
   }
   var all = rs.length>0 && passed===rs.length;
-  var head = all ? '<div class="llgood">&#9989; All '+rs.length+' test cases passed! +'+(lab.xp||0)+' XP earned.</div>' : '<div class="llbad">'+passed+' / '+rs.length+' cases passed. Keep going!</div>';
+  var _already = (S.labSolved||[]).indexOf(id)>=0;
+  var head = all ? '<div class="llgood">&#9989; All '+rs.length+' test cases passed!'+(_already?' (already solved)':' +'+(lab.xp||0)+' XP earned.')+'</div>' : '<div class="llbad">'+passed+' / '+rs.length+' cases passed. Keep going!</div>';
   out.innerHTML = head + '<table class="lltable"><thead><tr><th>Result</th><th>Case</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  if(all){ try{ addXP(lab.xp||0); }catch(e){} try{ logActivity&&logActivity('Ladder Lab solved: '+(lab.title||id)); }catch(e){} }
+  if(all && !_already){ if(!S.labSolved)S.labSolved=[]; S.labSolved.push(id); try{ addXP(lab.xp||0); }catch(e){} try{ logActivity&&logActivity('Ladder Lab solved: '+(lab.title||id)); }catch(e){} try{ if(typeof persist==='function')persist(); }catch(e){} var _sm=$('llsum-'+id); if(_sm && _sm.innerHTML.indexOf('llcheck')<0){ _sm.innerHTML='<span class="llcheck" title="solved">&#10004;</span> '+_sm.innerHTML; } }
 }
 function llCheckPredict(id){
   var lab=_llFind(id); if(!lab) return;
@@ -3975,25 +3980,27 @@ function llCheckPredict(id){
   var val=_llNorm(inp.value);
   var accept=[lab.expectedOutput].concat(lab.altOutputs||[]);
   var ok=accept.some(function(a){ var n=_llNorm(a); return n.length>0 && (val===n || (val.length>2 && (val.indexOf(n)>=0 || n.indexOf(val)>=0))); });
-  if(ok){ out.innerHTML='<div class="llgood">&#9989; Correct! +'+(lab.xp||0)+' XP. '+_llEsc(lab.expectedOutput)+'</div>'; try{ addXP(lab.xp||0); }catch(e){} }
+  if(ok){ var _already=(S.labSolved||[]).indexOf(id)>=0; out.innerHTML='<div class="llgood">&#9989; Correct!'+(_already?' (already solved) ':' +'+(lab.xp||0)+' XP. ')+_llEsc(lab.expectedOutput)+'</div>'; if(!_already){ if(!S.labSolved)S.labSolved=[]; S.labSolved.push(id); try{ addXP(lab.xp||0); }catch(e){} try{ if(typeof persist==='function')persist(); }catch(e){} var _sm=$('llsum-'+id); if(_sm && _sm.innerHTML.indexOf('llcheck')<0){ _sm.innerHTML='<span class="llcheck" title="solved">&#10004;</span> '+_sm.innerHTML; } } }
   else{ out.innerHTML='<div class="llbad">Not quite. Try again, or reveal the answer below.</div>'; }
 }
 function renderLadderLab(){
   var host=$('v-ladderlab'); if(!host) return;
   var labs=LADDERLABS||[];
-  var cAll=labs.length, cLad=0, cSt=0, cDiag=0;
-  for(var i=0;i<labs.length;i++){ var g=llGroup(labs[i]); if(g==='ladder')cLad++; else if(g==='st')cSt++; else cDiag++; }
+  var cAll=labs.length, cLad=0, cSt=0, cDiag=0, cSolved=0; var _slv=S.labSolved||[];
+  for(var i=0;i<labs.length;i++){ var g=llGroup(labs[i]); if(g==='ladder')cLad++; else if(g==='st')cSt++; else cDiag++; if(_slv.indexOf(labs[i].id)>=0)cSolved++; }
   function btn(g,label,n){ return '<button class="llfbtn'+(_llFilter===g?' on':'')+'" onclick="llFilter(\u0027'+g+'\u0027)">'+label+' ('+n+')</button>'; }
   var h='<h2>&#129520; Ladder &amp; ST Practice Lab</h2>';
   h+='<p class="sub">'+cAll+' hands-on PLC challenges ported from Code Armory. Structured-Text challenges are <b>live-graded</b> against real test cases; troubleshooting challenges accept a typed diagnosis; ladder challenges reveal a worked solution.</p>';
+  h+='<p class="sub llprog" style="margin-top:-.4rem"><b>'+cSolved+'</b> of '+(cSt+cDiag)+' graded challenges solved &#10004;</p>';
   h+='<div class="llbar">'+btn('all','All',cAll)+btn('ladder','Ladder',cLad)+btn('st','Structured Text',cSt)+btn('diag','Troubleshooting',cDiag)+'</div>';
   var shown=0;
   for(var j=0;j<labs.length;j++){
     var l=labs[j]; var g=llGroup(l);
     if(_llFilter!=='all' && _llFilter!==g) continue;
     shown++;
+    var _sv=(S.labSolved||[]).indexOf(l.id)>=0;
     var tag = g==='st'?'<span class="llpill llst">Structured Text</span>' : (g==='diag'?'<span class="llpill lldiag">Troubleshooting</span>':'<span class="llpill lllad">Ladder</span>');
-    h+='<details class="card llcard"><summary><b>'+_llEsc(l.title||l.id)+'</b> '+tag+' <span class="lltier">'+_llEsc(l.tier||'')+' &bull; '+(l.xp||0)+' XP</span></summary>';
+    h+='<details class="card llcard'+(_sv?' llsolved':'')+'"><summary id="llsum-'+l.id+'">'+(_sv?'<span class="llcheck" title="solved">&#10004;</span> ':'')+'<b>'+_llEsc(l.title||l.id)+'</b> '+tag+' <span class="lltier">'+_llEsc(l.tier||'')+' &bull; '+(l.xp||0)+' XP</span></summary>';
     h+='<div class="llbody">';
     if(l.prompt) h+='<div class="llprompt">'+l.prompt+'</div>';
     if(l.snippet) h+='<pre class="llsnip">'+_llEsc(l.snippet)+'</pre>';

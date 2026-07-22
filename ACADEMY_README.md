@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.47 &mdash; 2026-07-22
+- **Ladder &amp; ST Lab now tracks completion with checkmarks.** Solving a challenge (all ST test cases pass, or a correct troubleshooting diagnosis) now records it as solved: the challenge card shows a green &#10004; in its header, a &#8220;X of Y graded challenges solved&#8221; progress line appears at the top, and XP is awarded only on your <i>first</i> solve (no re-farming by re-running). Solved state persists between sessions.
+
 ### v13.46 &mdash; 2026-07-22
 - **Simulators now require real interaction for credit.** Opening the Simulators page used to auto-credit XP for every simulator, because the page ran each sim&#39;s calculation once to populate its initial output. A new `_simSilent` guard suppresses crediting during that startup pass (wrapped in try/finally so it always resets), so you only earn XP + a &#10004; on a sim once you actually change an input or interact with it.
 

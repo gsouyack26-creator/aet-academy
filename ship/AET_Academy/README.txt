@@ -1,5 +1,5 @@
 AET ACADEMY - Automation Engineering Technology
-Offline training bundle  |  v13.46  |  built 2026-07-22
+Offline training bundle  |  v13.47  |  built 2026-07-22
 
 WHAT'S INSIDE
   index.html                 Double-click this to start (opens the Academy).
