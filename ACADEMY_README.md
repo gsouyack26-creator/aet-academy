@@ -13,6 +13,17 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.49 &mdash; 2026-07-22
+Ladder &amp; ST Lab depth wave: **150 &rarr; 158 challenges** (ST-graded 72 &rarr; 80). Added 8 new original ACY1/RME Structured Text challenges, each verified 100% against the built-in runSt engine:
+- **st-rme-tote-reject** (novice) &mdash; boolean OR oversize/overweight reject
+- **st-rme-vfd-fault-decode** (journey) &mdash; CASE decode of a PowerFlex fault code to a STRING message
+- **st-rme-torque-deviation** (adept) &mdash; ABS symmetric tolerance band alarm
+- **st-rme-fan-speed-select** (journey) &mdash; IF/ELSIF temperature banding to fan speed
+- **st-rme-air-pressure-alarm** (adept) &mdash; SR low-side alarm with hysteresis (trip &le;80, recover &ge;90)
+- **st-rme-divert-count** (journey) &mdash; CTU chute divert counter with shift reset
+- **st-rme-photoeye-debounce** (adept) &mdash; TON 3s jam qualification (rejects momentary blockage)
+- **st-rme-estop-reset** (expert) &mdash; R_TRIG + reset-dominant RS interlock (no auto-restart after E-stop)
+
 ### v13.48 &mdash; 2026-07-22
 - **12 new Ladder &amp; ST Lab challenges (138 &rarr; 150).** Synced 5 latest Structured-Text challenges from Code Armory (barcode length/parse, location-label CONCAT, user-defined FUNCTION clamp &amp; scale) and authored 7 original ACY1/RME-flavored ST challenges, all live-graded: Conveyor Run Permit (boolean interlock), Sortation Chute Select (CASE), Scale a 4-20 mA Signal, Clamp a VFD Speed Command (MIN/MAX), Gearbox Output Speed (FUNCTION), Build an Asset Tag (STRING/CONCAT), and Motor Temp Alarm with Hysteresis (SR latch). Structured-Text graded challenges now number 72.
 
