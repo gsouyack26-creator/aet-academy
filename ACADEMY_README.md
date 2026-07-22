@@ -13,6 +13,12 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.50 &mdash; 2026-07-22
+**Doubled the two hands-on Ladder-Lab categories** &mdash; total lab count **158 &rarr; 236**:
+- **Guided ladder challenges: 50 &rarr; 100** (+50). New rungs cover 3-wire starters, jog, HOA, 2-of-3 voting, permissive strings, pre-start horns, recycle timers, CTUD buffers, MOV/ADD/LIM/averaging/min-max, watchdogs, jam/back-pressure logic, traffic-light &amp; star-delta &amp; index-table &amp; palletizer sequences, metering/merge/slug-release/divert-tracking MHE, VFD jog, brake release, two-speed &amp; soft-start, light curtains, guard locking, dual-channel E-stop monitoring, cell reset, first-out annunciator, comms heartbeat, EU scaling w/ offset, deadband, setpoint ramp, flow totalizer, mode manager, sequential zone start, pressure-following VFD, run-on purge, and a fail-to-start feedback fault.
+- **Predict / troubleshooting challenges: 28 &rarr; 56** (+28). New scenarios: missing seal-in, stuck parallel branch, missing one-shot, TOF-vs-TON, divide-by-zero, blocked OTU, inverted photo-eye, VFD accel overcurrent, brake not releasing, prox sensing frame, dead input module, AR firmware/version mismatch, AR wheel wear, safety-relay channel open, MCR fence, uncalled JSR, stuck sequencer, swapped analog scaling, open thermistor, VFD ground fault, single-phasing, encoder coupling slip, AR charge-ratio Sev-3, loose take-up, open solenoid coil, shared-ground phantom input, comms CRC/cable, and VFD overtemp airflow.
+- All 236 labs verified: ST-graded 80 (0 failures), no duplicate ids; completion-checkmark regression still green.
+
 ### v13.49 &mdash; 2026-07-22
 Ladder &amp; ST Lab depth wave: **150 &rarr; 158 challenges** (ST-graded 72 &rarr; 80). Added 8 new original ACY1/RME Structured Text challenges, each verified 100% against the built-in runSt engine:
 - **st-rme-tote-reject** (novice) &mdash; boolean OR oversize/overweight reject
