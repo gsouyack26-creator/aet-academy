@@ -13,6 +13,17 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.61 (2026-07-22) - Systems & Safety deep-dive: 4 more modules expanded
+
+Second parallel-agent wave. Deepened four more thin modules to full track depth (agent-authored, fact-checked & structurally verified before integration):
+
+- **M7 HMI / SCADA Systems** 4->14 sections, 3->15 quiz: HMI/SCADA/DCS hierarchy (ISA-95), panel-PC hardware & IP ratings, tag database & data types, ISA-101 High-Performance HMI, ISA-18.2 alarm management, historians (swinging-door compression), SCADA architecture (RTU/polling/RBE/DNP3), OPC-DA vs OPC-UA, recipe/redundancy/security (21 CFR Part 11), platform comparison & IEC 62443 remote access.
+- **M8 Industrial Networks & Fieldbus** 4->14 sections, 3->15 quiz: OSI in automation, EtherNet/IP (CIP, implicit/explicit, RPI), PROFINET conformance classes, Modbus RTU/TCP, PROFIBUS DP, DeviceNet/CANopen, RS-485 termination, DLR/MRP ring redundancy, managed switches/IGMP/VLAN, subnetting (worked /27 example), IO-Link, TSN, network troubleshooting.
+- **M9 Robotics & Motion Control** 4->14 sections, 3->15 quiz: robot types (articulated/SCARA/delta/cartesian/cobot), FK/IK & DH matrices, servo cascade loops & FOC, trapezoidal vs S-curve profiles (jerk), coordinate frames, payload & moment-of-inertia (worked), EOAT & vacuum force (worked), RIA R15.06/ISO 10218/TS 15066 cobot modes, Amazon Robotics AMR navigation, servo feedback devices.
+- **M11 Machine Safety & Functional Safety** 4->14 sections, 3->15 quiz: ISO 12100 risk assessment, ISO 13849-1 PL & categories, IEC 62061 SIL, safety-function reaction-time budget, safety relays vs safety PLCs, E-stop & IEC 60204-1 stop categories, light curtains & ISO 13855 safety-distance (worked S=K*T+C), interlocks & guard locking, area protection, MTTFd/DC/PFHd & LOTO.
+
+Fact-check caught & fixed one agent error: M8 EtherNet/IP connection-timeout question ("3 missed packets = default") corrected to timeout = RPI x multiplier (4x RPI = 40 ms). HTML 1.54 MB, modules=22.
+
 ### v13.60 (2026-07-22) - Field Devices deep-dive: 5 modules expanded
 
 Massively deepened five previously-thin modules to Foundations-track depth (parallel-agent authored, fact-checked & structurally verified before integration):
