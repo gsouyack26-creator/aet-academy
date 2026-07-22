@@ -1,6 +1,7 @@
 /* ===== Accounts / login gate ===== */
 const AVATARS=['\uD83D\uDD27','\u2699\uFE0F','\uD83D\uDD0C','\uD83E\uDD16','\u26A1','\uD83D\uDEE0\uFE0F','\uD83D\uDD29','\uD83C\uDFED','\uD83D\uDCDF','\uD83E\uDDF0','\uD83D\uDE82','\uD83E\uDDBE'];
 const ROLES=['Trainee','Technician','Lead'];
+const ROLE_HINT={'Trainee':'New learner \u2014 full access to every lesson, quiz &amp; sim.','Technician':'Same access as Trainee \u2014 used to group you for team assignments.','Lead':'Instructor \u2014 unlocks Team Roster, module assignment &amp; reports.'};
 let ACCT=Object.assign({users:[],current:null},JSON.parse(localStorage.getItem('aet_accounts')||'{}'));
 function saveAcct(){localStorage.setItem('aet_accounts',JSON.stringify(ACCT));}
 function hashPin(p){let h=5381;const s='aet.kiosk.salt::'+p;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return h.toString(16);}
@@ -38,7 +39,7 @@ function renderGate(){
     h+='<div class="gh">Create your account</div>';
     h+='<label class="gl">Name</label><input class="gin" id="gc-name" value="'+esc(GATE.cname||'')+'" placeholder="e.g. Jordan T." maxlength="24" oninput="GATE.cname=this.value">';
     h+='<label class="gl">Avatar</label><div class="gavpick">'+AVATARS.map(function(a){return '<span class="gavo'+(a===GATE.avatar?' on':'')+'" data-ga="av" data-gv="'+a+'">'+a+'</span>';}).join('')+'</div>';
-    h+='<label class="gl">Role</label><div class="grolepick">'+ROLES.map(function(r){return '<span class="grolo'+(r===GATE.role?' on':'')+'" data-ga="role" data-gv="'+r+'">'+r+'</span>';}).join('')+'</div>';
+    h+='<label class="gl">Role</label><div class="grolepick">'+ROLES.map(function(r){return '<span class="grolo'+(r===GATE.role?' on':'')+'" title="'+ROLE_HINT[r]+'" data-ga="role" data-gv="'+r+'">'+r+'</span>';}).join('')+'</div><div class="rolehint">'+ROLE_HINT[GATE.role]+'</div>';
     h+='<label class="gl">4-digit PIN <span class="gopt">(optional \u2014 protects your progress)</span></label>';
     h+='<input class="gin" id="gc-pin" type="password" inputmode="numeric" maxlength="4" placeholder="\u2022\u2022\u2022\u2022" value="'+(GATE.cpin||'')+'" oninput="GATE.cpin=this.value.replace(/[^0-9]/g,\u0027\u0027)">';
     if(GATE.err)h+='<div class="gerr">'+esc(GATE.err)+'</div>';

@@ -13,6 +13,10 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.45 &mdash; 2026-07-22
+- **Completed-module checkmark.** The collapsed module list in Learn now shows a green &#10004; next to any module you&#39;ve finished, so completed modules are obvious at a glance without expanding a track.
+- **Role picker hints.** The sign-in gate and profile role pickers now explain each role: hover any chip for a tooltip, and a caption under the picker describes the selected role. Clarifies that Trainee/Technician are display/grouping labels while **Lead** unlocks the Team Roster, module assignment &amp; reports.
+
 ### v13.44 &mdash; 2026-07-22 &mdash; Level-aware Question of the Day + Sign-out relocated
 - **Question of the Day now scales to the learner's level.** A day-one trainee only gets Foundations questions &mdash; harder tracks unlock as they rank up (Foundations &rarr; Field Devices &rarr; Systems &amp; Control &rarr; Reliability &amp; Career &rarr; Safety &amp; Advanced, ~one track per two levels). Any module you have completed or been quizzed on is always in the pool, so you are never asked advanced material you have not studied. The card now shows a &#127919; rank badge (e.g. "Apprentice level").
 - The answered-state is now pinned to the exact question (stores module + question index), so feedback stays stable even if your pool changes during the day.

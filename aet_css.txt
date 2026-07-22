@@ -171,6 +171,7 @@ a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
 .gavo:hover{background:var(--bg2)}
 .gavo.on{border-color:var(--accent);background:var(--bg2)}
 .grolepick{display:flex;gap:.5rem}
+.rolehint{font-size:.72rem;color:var(--txt2);margin:.4rem 0 .2rem;line-height:1.35;min-height:1em}
 .grolo{flex:1;text-align:center;padding:.55rem;border-radius:10px;border:1px solid var(--line);background:var(--bg2);cursor:pointer;font-size:.85rem}
 .grolo.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
 .gbtn{width:100%;margin-top:1.2rem;padding:.85rem;border:none;border-radius:12px;background:var(--accent);color:#fff;font-size:.95rem;font-weight:600;cursor:pointer}
