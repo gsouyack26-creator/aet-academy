@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.53 &mdash; 2026-07-22
+Expanded **Module 19 (PLC Programming Languages &mdash; Ladder vs ST)** quiz 8 &rarr; 12 to cover the v13.51 deep sections. New questions test seal-in latch mechanics, the double-coil bug, TON `.ACC`/`.DN` (ladder) vs `.ET`/`.Q` (ST) naming, and instantiating a TON function block in Structured Text. Bump v13.52 &rarr; v13.53.
+
 ### v13.52 &mdash; 2026-07-22
 Expanded **Module 13 (Advanced PLC)** quiz coverage to match its new lecture depth: 3 &rarr; 9 base questions (15 with supplemental banks). New questions test R_TRIG edge-triggering a counter, TON `.Q`/`.ET` outputs, RTO retentive timing, unbounded-loop watchdog risk, array out-of-bounds, and IN_OUT-by-reference parameter passing. Bump v13.51 &rarr; v13.52.
 

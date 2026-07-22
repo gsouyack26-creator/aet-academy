@@ -247,7 +247,11 @@ MODULES_3 = [
         ],
         "answer": 2,
         "explain": "Studio 5000 supports ST on ControlLogix, CompactLogix, and Micro800 (via CCW), but legacy MicroLogix / SLC-500 do not support Structured Text."
-      }
+      },
+      {"q": "In a ladder seal-in (latch) rung, what keeps the motor coil energized after the Start button is released?", "options": ["A retentive timer", "The Motor contact wired in parallel with Start holds the rung true", "The Stop button", "The scan cycle automatically re-energizes it"], "answer": 1, "explain": "The output's own contact placed in parallel with the momentary Start forms the seal-in; it maintains the true path until a series Stop (XIO) breaks it."},
+      {"q": "Writing to the same output coil on two different rungs (a 'double-coil') causes what?", "options": ["Both rungs energize the output", "A compile error every time", "Only the LAST rung solved each scan controls the output; the earlier one is effectively ignored", "The output toggles rapidly"], "answer": 2, "explain": "Because rungs solve top-to-bottom and outputs write once per scan, the last coil solved wins - the classic double-coil bug that hides intermittent behavior."},
+      {"q": "For a Studio 5000 TON timer, which pair correctly names the elapsed value and the done bit?", "options": [".ET and .Q", ".ACC (accumulator) and .DN (done)", ".CV and .PT", ".PRE and .EN"], "answer": 1, "explain": "In ladder/Studio 5000 the timer tag uses .ACC for elapsed ms and .DN for done. (In IEC Structured Text the same block instead exposes .ET and .Q.)"},
+      {"q": "In Structured Text, how do you use a TON on-delay timer?", "options": ["Drop a TON box on a rung", "Declare a TON instance, then call it each scan with named params (IN, PT) and read .Q/.ET", "Write TON = TRUE in a loop", "Timers are not available in ST"], "answer": 1, "explain": "IEC timers are function blocks: declare an instance (JamTmr : TON;), call JamTmr(IN:=cond, PT:=T#3s) every scan, then read JamTmr.Q and JamTmr.ET."}
     ],
     "resources": [
       {
