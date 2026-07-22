@@ -13,6 +13,14 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.63 (2026-07-22) - CURRICULUM DOUBLED: +13 sections and +14 quiz to ALL 22 modules
+
+Massive parallel-agent expansion. Every one of the 22 modules gained 13 new advanced/adjacent lecture sections and 14 new quiz questions, roughly doubling the entire curriculum: 280 to 566 lecture sections and 304 to 612 quiz questions (before supplemental banks). All content was agent-authored across multiple waves, then structurally verified (entity/tag/ASCII checks) and numerically fact-checked section-by-section by the lead. Every worked calculation, standards citation, and answer index was independently recomputed before splicing.
+
+- Coverage spans cybersecurity (IEC 62443 zones/conduits), functional safety (SIL/PFH/PFDavg worked calcs), TSN/deterministic Ethernet, OPC-UA security, IIoT (edge AI/ONNX quantization, MQTT hardening, LoRaWAN, digital twins, K3s), reliability engineering (Weibull, FMEA/RPN, MCSA, BPFO, EOQ, RCM), Amazon Robotics (LiFePO4 packs, CBS/MAPF, fiducial nav, OEE, Little's Law), advanced Logix (nested UDTs, AOIs, SQO/SQC, PIDE anti-windup, MSG/produced-consumed, fault routines), panel design (bus-bar I2t sizing, voltage drop, VFD derating, arc-flash IEEE 1584), motor/electrical diagnostics (Kelvin resistance, TTR, megger per IEC 60204-1), and career development (total-comp analysis, SMRP certs, interview prep).
+- Fact-check corrections during review: M0 SIL band, M1 short-circuit current, M2/M3 Logix array-out-of-bounds (Type 4 Code 20), M3 BOOL 4-byte alignment, M14 Q11 PFDavg SIL band, M15 Q7 turns-ratio (shorted primary), M17 Q12 megger 500 VDC per IEC 60204-1, M18 Q0 total-comp arithmetic, plus numerous entity/markup fixes.
+- Totals now: 22 modules, 566 lecture sections, 612 base quiz questions, glossary 131, flashcards(+gloss) 187, 5 tracks, 22 achievements, 11 simulators, 236 ladder/ST labs. Built HTML ~2.25 MB.
+
 ### v13.62 (2026-07-22) - Final deep-dive: last 5 modules - ALL 22 MODULES NOW DEEP
 
 Third and final parallel-agent wave. Every remaining thin module is now full-depth (agent-authored, fact-checked & structurally verified). With this release all 22 AET Academy modules have 12-16 lecture sections and 15 quiz questions (rendering 21 with supplemental banks):
