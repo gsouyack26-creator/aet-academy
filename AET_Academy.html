@@ -470,7 +470,7 @@ mark{background:var(--accent);color:#000;border-radius:3px;padding:0 .12em}
 <body>
 <div id="gate" style="display:none"></div>
 <div id="sb">
-  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.45</div></div>
+  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.46</div></div>
   <div id="usercard" onclick="go('#profile')">
     <div class="nm"><span id="u-name">Set your name</span></div>
     <div class="rk" id="u-rank">Lv 1</div>
@@ -2754,7 +2754,7 @@ function renderAchieve(){
 /* ===== Simulators ===== */
 function vv(id){const e=$(id);return e?e.value:'';}
 var _SIM_SESS={};
-function markSim(id){var isNew=!S.sims.includes(id);if(isNew){S.sims.push(id);addXP(XP.sim_use,'tried a simulator');}if(typeof logStudy==='function')logStudy(3);if(!S.simStats)S.simStats={};if(!_SIM_SESS[id]){_SIM_SESS[id]=1;var today=new Date().toISOString().slice(0,10);var st=S.simStats[id]||{attempts:0,first:today,last:today};st.attempts=(st.attempts||0)+1;st.last=today;if(!st.first)st.first=today;S.simStats[id]=st;persist();}if(isNew)checkAch();}
+function markSim(id){if(window._simSilent)return;var isNew=!S.sims.includes(id);if(isNew){S.sims.push(id);addXP(XP.sim_use,'tried a simulator');}if(typeof logStudy==='function')logStudy(3);if(!S.simStats)S.simStats={};if(!_SIM_SESS[id]){_SIM_SESS[id]=1;var today=new Date().toISOString().slice(0,10);var st=S.simStats[id]||{attempts:0,first:today,last:today};st.attempts=(st.attempts||0)+1;st.last=today;if(!st.first)st.first=today;S.simStats[id]=st;persist();}if(isNew)checkAch();}
 
 function simChecklist(){
   var stats=S.simStats||{};
@@ -2804,7 +2804,7 @@ function renderSims(){
   $('v-sims').innerHTML=h;
   var _da=(location.hash||'').split('/')[1]||'';
   if(_da.indexOf('ladder-')===0){var _pg=_da.slice(7);var _sel=$('lad_prog');if(_sel&&typeof LADPROG!=='undefined'&&LADPROG[_pg]){_sel.value=_pg;}}
-  scale420();ohmCalc();resistorCalc();phase3Calc();calcVHz();sealDraw();calcRel();calcPulley();calcRnet();calcPID();ladderInit();
+  window._simSilent=1;try{scale420();ohmCalc();resistorCalc();phase3Calc();calcVHz();sealDraw();calcRel();calcPulley();calcRnet();calcPID();ladderInit();}finally{window._simSilent=0;}
   if(_da.indexOf('ladder')===0){var _t=$('sim-ladder');if(_t&&_t.scrollIntoView)setTimeout(function(){_t.scrollIntoView({behavior:'smooth',block:'start'});},60);}
 }
 

@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.46 &mdash; 2026-07-22
+- **Simulators now require real interaction for credit.** Opening the Simulators page used to auto-credit XP for every simulator, because the page ran each sim&#39;s calculation once to populate its initial output. A new `_simSilent` guard suppresses crediting during that startup pass (wrapped in try/finally so it always resets), so you only earn XP + a &#10004; on a sim once you actually change an input or interact with it.
+
 ### v13.45 &mdash; 2026-07-22
 - **Completed-module checkmark.** The collapsed module list in Learn now shows a green &#10004; next to any module you&#39;ve finished, so completed modules are obvious at a glance without expanding a track.
 - **Role picker hints.** The sign-in gate and profile role pickers now explain each role: hover any chip for a tooltip, and a caption under the picker describes the selected role. Clarifies that Trainee/Technician are display/grouping labels while **Lead** unlocks the Team Roster, module assignment &amp; reports.
