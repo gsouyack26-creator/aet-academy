@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.56 &mdash; 2026-07-22
+**Foundation depth pass 1/4: Module 1 (Electrical Fundamentals &amp; Motor-Control Wiring).** Grew 4 &rarr; 16 sections (+12) and 3 &rarr; 15 base quiz questions (21 rendered). New sections: Electrical Safety &amp; Shock Hazards (current thresholds, arc-flash, LOTO/live-dead-live); DC Circuits Worked in Depth (Ohm/power/series-parallel/dividers, KVL/KCL as troubleshooting tools); AC Waveforms, RMS &amp; Measurement (peak/RMS math, why true-RMS on VFD outputs); Three-Phase Power Systems (wye/delta, sqrt(3), 480/277 and 208/120, phase rotation); Power, Energy &amp; Power Factor (kW/kVAR/kVA, power triangle, PF correction); Conductors, Ampacity &amp; Voltage Drop (AWG, THHN, derating, 3% rule); Grounding &amp; Bonding (EGC, neutral-ground bond point, GFCI); Transformers (turns ratio, VA rating, control/isolation types, inrush); Motor-Control Components in Depth (disconnect &rarr; fuses &rarr; contactor &rarr; overload classes &rarr; CPT); Control-Circuit Logic (2-wire vs 3-wire, reversing starters w/ mechanical &amp; electrical interlocks, jogging, HOA); Reading Electrical Prints (ladder/one-line/wiring/panel-layout, NEMA vs IEC symbols); Test Instruments &amp; Safe Measurement (DMM/clamp/megger, CAT ratings). Bump v13.55 &rarr; v13.56.
+
 ### v13.55 &mdash; 2026-07-22
 Added 8 glossary terms completing the ST/Ladder reference channel (107 &rarr; 115): R_TRIG/F_TRIG, one-shot (ONS/OSR/OSF), double-coil, IN_OUT parameter, hysteresis/deadband, watchdog timer, seal-in latch, and the T# time literal. Bump v13.54 &rarr; v13.55.
 
