@@ -13,7 +13,13 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
-### v13.57 (2026-07-22) - Foundation depth 2/4 & 3/4: Module 2 PLC Fundamentals + Module 3 PLC II
+### v13.58 (2026-07-22) - Foundation depth 4/4: Module 0 Intro to AET
+
+- **Module 0 (Intro to AET)** deepened: 4 -> 12 lecture sections (+8): What Is AET Really (Engineering vs Engineering Technology, the AET stack, what AET is NOT), Automation Pyramid & ISA-95 in depth (5 levels with protocols and time-scales), Day in the Life of a Controls Tech (time breakdown, physical + mental tool belt, 3 core skills), 10 Core Domains Deep Dive (all 10 with vendors and specifics), Systems Thinking & Signal Flow (half-split troubleshooting, 5-whys), Standards & Codes You Must Know (NFPA 70/70E/79, OSHA 1910, ISO 13849, IEC 61508/61131-3, UL 508A, ISA-5.1/88/95), Documentation Culture (redline discipline, MOC), Career Pathways (levels 0-12+ yr, off-ramps, Amazon RME ladder).
+- **Module 0 quiz**: 3 -> 12 base Qs (ISA-95, NFPA 70E, half-split, IEC 61131-3, UL 508A, redline, ISO 13849, historians, 5-whys).
+- **Foundations track completes 4-part depth pass**: M0 (v13.58), M1 (v13.56), M2+M3 (v13.57), M19 (v13.51). All 5 Foundations modules now have deep lecture + expanded quiz coverage.
+
+## v13.57 (2026-07-22) - Foundation depth 2/4 & 3/4: Module 2 PLC Fundamentals + Module 3 PLC II
 
 - **Module 2 (PLC Fundamentals)** deepened: 5 -> 14 lecture sections (+9): PLC hardware architecture, discrete I/O wiring (sinking/sourcing/PNP/NPN/relay/transistor/triac/optical iso), analog I/O (4-20mA/0-10V, 12-16bit, scaling, shield grounding), scan cycle in depth (I/O timing, one-scan lag, watchdog, tasks), memory/data types/tags (BOOL/SINT/INT/DINT/REAL IEEE-754/STRING/UDT/ARRAY, scope), program organization (task/program/routine, naming), online tools (monitor/trend/force danger/edits/faults), PLC communications (EtherNet/IP, PROFINET, Modbus TCP, OPC UA, legacy), systematic PLC troubleshooting.
 - **Module 2 quiz**: 3 -> 15 base Qs (21 rendered w/ supplemental banks).
