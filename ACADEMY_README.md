@@ -13,6 +13,8 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+- v13.69 - Curriculum doubling Wave 3: deepened all applied modules M6-M12 (Fluid Power, HMI/SCADA, Industrial Networks, Robotics/Motion, Process Control/PID, Machine Safety, Capstone), +6 sections and +9 quiz each. Totals now 22 modules, 667 sections, 761 quiz.
+
 ### v13.68 (2026-07-22)
 - **Curriculum deepening wave 2 - all advanced modules (M13-M19).** Continued the effort to double the content, expanding the advanced half of the curriculum.
 - **M13 Advanced PLC:** +7 sec/+10 quiz (AOIs, UDTs, indirect addressing/array bounds, major-vs-minor fault handling, advanced ST, sequencers/state machines, task types & scan time).
