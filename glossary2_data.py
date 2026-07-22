@@ -46,4 +46,12 @@ GLOSSARY_EXTRA = [
   {'term': 'Vibration Signature', 'def': 'The characteristic frequency of a fault: 1x imbalance, 1x/2x misalignment, harmonics looseness, high-freq bearings'},
   {'term': 'RCM', 'def': 'Reliability-Centered Maintenance - choosing the maintenance strategy per asset based on criticality and failure modes'},
   {'term': 'Commissioning', 'def': 'The disciplined bottom-up checkout (wiring, I/O, functions, integrated) that proves a system before production'},
+  {'term': 'R_TRIG / F_TRIG', 'def': 'IEC 61131-3 edge-detection function blocks. R_TRIG.Q pulses TRUE for one scan on a rising CLK edge; F_TRIG on a falling edge - the Structured Text equivalent of a ladder one-shot.'},
+  {'term': 'One-shot (ONS/OSR/OSF)', 'def': 'A ladder instruction that stays true for exactly one scan on a transition - ONS/OSR on rising, OSF on falling. Used to fire an action once per button press instead of every scan.'},
+  {'term': 'Double-coil', 'def': 'A programming bug where the same output coil is written on more than one rung; because outputs update once per scan, only the last-solved rung controls the output, hiding intermittent behavior.'},
+  {'term': 'IN_OUT parameter', 'def': "An AOI/function parameter passed by reference (not copied) so the block reads and writes the caller's live tag directly - efficient for large UDTs, unlike INPUT (copied in) and OUTPUT (copied out)."},
+  {'term': 'Hysteresis (deadband)', 'def': 'Two separated switching thresholds that prevent output chatter - e.g. turn a fan ON at 80 deg and OFF at 70 deg; between the thresholds the output holds its last state.'},
+  {'term': 'Watchdog timer', 'def': 'A processor supervisory timer that faults the controller if a single program scan takes too long - the reason unbounded loops in Structured Text are dangerous in scan-based code.'},
+  {'term': 'Seal-in (latch)', 'def': "A three-wire control rung where the output's own contact is wired parallel to a momentary Start, keeping the output energized after Start is released until a series Stop breaks the path."},
+  {'term': 'Time literal (T#)', 'def': "The IEC syntax for a duration constant in Structured Text - e.g. T#500ms, T#3s, T#1m30s, T#2h - passed to a timer's PT (preset time) input."},
 ]

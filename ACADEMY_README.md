@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.55 &mdash; 2026-07-22
+Added 8 glossary terms completing the ST/Ladder reference channel (107 &rarr; 115): R_TRIG/F_TRIG, one-shot (ONS/OSR/OSF), double-coil, IN_OUT parameter, hysteresis/deadband, watchdog timer, seal-in latch, and the T# time literal. Bump v13.54 &rarr; v13.55.
+
 ### v13.54 &mdash; 2026-07-22
 Added 10 flashcards reinforcing the deepened ST/Ladder material (30 &rarr; 40; 147 with glossary): ladder scan-cycle order, double-coil bug, series/parallel contacts, ONS/OSR/OSF one-shots, RTO retentive timer, R_TRIG/F_TRIG, instantiating an IEC timer in ST, IN_OUT-by-reference parameters, hysteresis deadband, and safe divide. Bump v13.53 &rarr; v13.54.
 
