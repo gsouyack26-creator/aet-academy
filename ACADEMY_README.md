@@ -13,6 +13,9 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.52 &mdash; 2026-07-22
+Expanded **Module 13 (Advanced PLC)** quiz coverage to match its new lecture depth: 3 &rarr; 9 base questions (15 with supplemental banks). New questions test R_TRIG edge-triggering a counter, TON `.Q`/`.ET` outputs, RTO retentive timing, unbounded-loop watchdog risk, array out-of-bounds, and IN_OUT-by-reference parameter passing. Bump v13.51 &rarr; v13.52.
+
 ### v13.51 &mdash; 2026-07-22
 Deepened the lecture material for Structured Text &amp; Ladder Logic. **Module 19 (PLC Programming Languages)** grew 5 &rarr; 9 sections: Ladder Scan &amp; Rung Anatomy (scan cycle, series/parallel, seal-in, scan-order &amp; double-coil gotchas, ONS/OSR/OSF edges); Ladder Timers &amp; Counters in Depth (.EN/.TT/.DN, .ACC/.PRE, TON/TOF/RTO/RES, CTU/CTD, cascading long timers); Structured Text Operators &amp; IEC Function Blocks (operator precedence, TON/CTU/R_TRIG/F_TRIG/SR/RS as FB instances, T# literals, STRING funcs); and a Structured Text Pattern Cookbook (scaling, clamp, hysteresis, debounce, safe divide, moving average, state-machine skeleton). **Module 13 (Advanced PLC)** grew 5 &rarr; 8 sections: IEC Timers/Counters/Edge Detection in ST; Arrays, Loops &amp; Data Processing (bounded FOR, array bounds, FIFO/shift); and Writing Robust, Scan-Safe ST (guard divides, bounded loops, INPUT vs IN_OUT, deliberate fault latching, comment intent). No module-count change (still 22). Bump v13.50 &rarr; v13.51.
 
