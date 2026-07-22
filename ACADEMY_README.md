@@ -13,7 +13,14 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
-### v13.56 &mdash; 2026-07-22
+### v13.57 (2026-07-22) - Foundation depth 2/4 & 3/4: Module 2 PLC Fundamentals + Module 3 PLC II
+
+- **Module 2 (PLC Fundamentals)** deepened: 5 -> 14 lecture sections (+9): PLC hardware architecture, discrete I/O wiring (sinking/sourcing/PNP/NPN/relay/transistor/triac/optical iso), analog I/O (4-20mA/0-10V, 12-16bit, scaling, shield grounding), scan cycle in depth (I/O timing, one-scan lag, watchdog, tasks), memory/data types/tags (BOOL/SINT/INT/DINT/REAL IEEE-754/STRING/UDT/ARRAY, scope), program organization (task/program/routine, naming), online tools (monitor/trend/force danger/edits/faults), PLC communications (EtherNet/IP, PROFINET, Modbus TCP, OPC UA, legacy), systematic PLC troubleshooting.
+- **Module 2 quiz**: 3 -> 15 base Qs (21 rendered w/ supplemental banks).
+- **Module 3 (PLC Programming II)** deepened: 4 -> 13 lecture sections (+9): timer instructions in depth (TON/TOF/RTO worked examples, jam-qualify, run-on, cascading), counters & edge detection (CU/CD/OV/UN, ONS/OSR/OSF, rate calc), compare/math/CPT (LIM, div-by-zero, integer vs REAL, overflow), data movement (MOV/COP/FLL/BTD/MSG/Produced-Consumed), shift registers/FIFOs/sequencers (BSL/BSR/FFL/FFU/LFL/LFU/SQO), retentive vs non-retentive (S:FS), analog scaling/filtering/PID preview (SCP, first-order filter, ramp), instruction set (bit/word/program-control + ST), program organization best practices (MainRoutine as index, backups/L5X).
+- **Module 3 quiz**: 3 -> 15 base Qs (21 rendered).
+
+## v13.56 &mdash; 2026-07-22
 **Foundation depth pass 1/4: Module 1 (Electrical Fundamentals &amp; Motor-Control Wiring).** Grew 4 &rarr; 16 sections (+12) and 3 &rarr; 15 base quiz questions (21 rendered). New sections: Electrical Safety &amp; Shock Hazards (current thresholds, arc-flash, LOTO/live-dead-live); DC Circuits Worked in Depth (Ohm/power/series-parallel/dividers, KVL/KCL as troubleshooting tools); AC Waveforms, RMS &amp; Measurement (peak/RMS math, why true-RMS on VFD outputs); Three-Phase Power Systems (wye/delta, sqrt(3), 480/277 and 208/120, phase rotation); Power, Energy &amp; Power Factor (kW/kVAR/kVA, power triangle, PF correction); Conductors, Ampacity &amp; Voltage Drop (AWG, THHN, derating, 3% rule); Grounding &amp; Bonding (EGC, neutral-ground bond point, GFCI); Transformers (turns ratio, VA rating, control/isolation types, inrush); Motor-Control Components in Depth (disconnect &rarr; fuses &rarr; contactor &rarr; overload classes &rarr; CPT); Control-Circuit Logic (2-wire vs 3-wire, reversing starters w/ mechanical &amp; electrical interlocks, jogging, HOA); Reading Electrical Prints (ladder/one-line/wiring/panel-layout, NEMA vs IEC symbols); Test Instruments &amp; Safe Measurement (DMM/clamp/megger, CAT ratings). Bump v13.55 &rarr; v13.56.
 
 ### v13.55 &mdash; 2026-07-22
