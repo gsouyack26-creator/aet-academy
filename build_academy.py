@@ -155,7 +155,7 @@ SKELETON = """<!DOCTYPE html>
 <body>
 <div id="gate" style="display:none"></div>
 <div id="sb">
-  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.43</div></div>
+  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.44</div></div>
   <div id="usercard" onclick="go('#profile')">
     <div class="nm"><span id="u-name">Set your name</span></div>
     <div class="rk" id="u-rank">Lv 1</div>
@@ -163,7 +163,7 @@ SKELETON = """<!DOCTYPE html>
     <div class="xptxt"><span id="u-xp">0 XP</span><span id="u-next"></span></div>
   </div>
   <div id="navmenu"></div>
-  <div id="sbfoot"><button class="mini" id="themebtn" onclick="toggleTheme()" title="Theme">&#9728;&#65039;</button><button class="mini" id="fontbtn" onclick="cycleFont()" title="Text size">A</button><button class="mini" id="contrastbtn" onclick="toggleContrast()" title="High contrast">&#9681;</button><button class="mini" onclick="palOpen()" title="Command palette (Ctrl+K)">&#128269; Search</button><button class="mini" onclick="showShortcuts()" title="Keyboard shortcuts (?)">&#9000;&#65039;</button></div>
+  <div id="sbfoot"><div id="sbtools"><button class="mini" id="themebtn" onclick="toggleTheme()" title="Theme">&#9728;&#65039;</button><button class="mini" id="fontbtn" onclick="cycleFont()" title="Text size">A</button><button class="mini" id="contrastbtn" onclick="toggleContrast()" title="High contrast">&#9681;</button><button class="mini" onclick="palOpen()" title="Command palette (Ctrl+K)">&#128269; Search</button><button class="mini" onclick="showShortcuts()" title="Keyboard shortcuts (?)">&#9000;&#65039;</button></div></div>
 </div>
 <div id="main">
   <div id="topbar"><span class="crumb" id="crumb">AET Academy</span><span class="streak" id="streaktop"></span><button id="searchbtn" onclick="palOpen()">&#128269; Search &middot; Ctrl+K</button></div>

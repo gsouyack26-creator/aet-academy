@@ -319,9 +319,29 @@ function estModMin(m){var secs=(m.sections&&m.sections.length)||0;var q=(m.quiz&
 function estRemainingMin(){var t=0;MODS.forEach(function(m){if(!S.done.includes(m.id))t+=estModMin(m);});return Math.round(t);}
 function fmtMin(n){if(n<60)return n+' min';var h=Math.floor(n/60),mm=n%60;return h+'h'+(mm?' '+mm+'m':'');}
 function _flatQuiz(){var out=[];MODS.forEach(function(m){(m.quiz||[]).forEach(function(q,qi){out.push({mid:m.id,qi:qi,q:q});});});return out;}
+var _QOTD_TRACK_ORDER=['found','field','systems','reliab','safety'];
+function _qotdMods(){
+  var lv=(typeof lvlOf==='function')?lvlOf(S.xp||0):1;
+  var nTracks=Math.max(1,Math.min(_QOTD_TRACK_ORDER.length,Math.ceil(lv/2)));
+  var ids={};
+  if(typeof TRACKS!=='undefined'){
+    for(var t=0;t<nTracks;t++){
+      var tr=TRACKS.filter(function(x){return x.id===_QOTD_TRACK_ORDER[t];})[0];
+      if(tr&&tr.mods)tr.mods.forEach(function(m){ids[m]=1;});
+    }
+  }
+  (S.done||[]).forEach(function(m){ids[m]=1;});
+  if(S.scores)Object.keys(S.scores).forEach(function(k){var n=parseInt(k,10);if(!isNaN(n))ids[n]=1;});
+  return ids;
+}
+function _qotdPool(){
+  var flat=_flatQuiz();var ids=_qotdMods();
+  var pool=flat.filter(function(it){return ids[it.mid];});
+  return pool.length?pool:flat;
+}
 function _todayKey(){return new Date().toISOString().slice(0,10);}
 function _qotdIndex(n){var s=_todayKey(),h=5381;for(var i=0;i<s.length;i++){h=((h*33)^s.charCodeAt(i))>>>0;}return n?h%n:0;}
-function qotdAns(mid,qi,sel){var m=MODS.find(function(x){return x.id===mid;});if(!m)return;var q=m.quiz[qi];var correct=(sel===q.answer);S.qotd={date:_todayKey(),answered:true,correct:correct,sel:sel};persist();if(correct&&typeof addXP==='function')addXP(2,'question of the day');if(typeof checkAch==='function')checkAch();renderDash();}
+function qotdAns(mid,qi,sel){var m=MODS.find(function(x){return x.id===mid;});if(!m)return;var q=m.quiz[qi];var correct=(sel===q.answer);S.qotd={date:_todayKey(),answered:true,correct:correct,sel:sel,mid:mid,qi:qi};persist();if(correct&&typeof addXP==='function')addXP(2,'question of the day');if(typeof checkAch==='function')checkAch();renderDash();}
 function _flashReviewDue(){
   if(typeof DECK==='undefined'||!S.flashDue)return 0;
   var n=0;DECK.forEach(function(c){if(S.flashDue[c.k]&&(typeof fcIsDue!=='function'||fcIsDue(c.k)))n++;});return n;
@@ -377,9 +397,18 @@ function renderTermOfDay(){
   return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#128218; Term of the day</div><div style="font-weight:700;margin:.3rem 0 .3rem;font-size:1.05rem">'+esc(g.term)+'</div><div style="font-size:.9rem;line-height:1.5;color:var(--txt)">'+esc(g.def)+'</div><div class="btnrow" style="margin-top:.5rem">'+_star+_spk+'</div><div class="sub" style="margin-top:.5rem;font-size:.78rem"><a href="#" onclick="go(\u0027#glossary\u0027);return false">Browse the full glossary &rarr;</a>'+_gmlink+'</div></div>';
 }
 function renderQOTD(){
-  var flat=_flatQuiz();if(!flat.length)return '';
-  var pick=flat[_qotdIndex(flat.length)];var q=pick.q;
+  var pool=_qotdPool();if(!pool.length)return '';
   var st=(S.qotd&&S.qotd.date===_todayKey())?S.qotd:null;
+  var pick=null;
+  if(st&&st.mid!=null&&st.qi!=null){
+    var _sm=MODS.find(function(x){return x.id===st.mid;});
+    if(_sm&&_sm.quiz&&_sm.quiz[st.qi])pick={mid:st.mid,qi:st.qi,q:_sm.quiz[st.qi]};
+  }
+  if(!pick)pick=pool[_qotdIndex(pool.length)];
+  var q=pick.q;
+  var _lv=(typeof lvlOf==='function')?lvlOf(S.xp||0):1;
+  var _rk=(typeof RANKS!=='undefined')?(RANKS.filter(function(r){return r.lvl===_lv;})[0]||RANKS[0]):null;
+  var _badge=_rk?'<span style="font-size:.66rem;font-weight:600;color:var(--accent2)" title="Questions are tuned to your current level - harder topics unlock as you rank up">&#127919; '+esc(_rk.name)+' level</span>':'';
   var opts=q.options.map(function(o,i){
     var chk=(st&&st.sel===i)?' checked':'';var dis=st?' disabled':'';
     var oc=st?'':' onchange="qotdAns('+pick.mid+','+pick.qi+','+i+')"';
@@ -391,7 +420,7 @@ function renderQOTD(){
     var _qlink=_qm?'<div class="sub" style="margin-top:.4rem;font-size:.78rem"><a href="#" onclick="go(\u0027#module/'+pick.mid+'\u0027);return false">&#128218; Review Module '+pick.mid+': '+esc(_qm.title)+' &rarr;</a></div>':'';
     fb='<div class="qf '+(st.correct?'c':'w')+'">'+(st.correct?'\u2713 Correct! ':'\u2717 Not quite. ')+esc(q.explain)+'</div>'+_qlink;
   }
-  return '<div class="card" style="margin-bottom:1rem"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#128161; Question of the day</div><div style="font-weight:600;margin:.3rem 0 .55rem">'+esc(q.q)+'</div><div class="qo">'+opts+'</div>'+fb+'</div>';
+  return '<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap"><div style="font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--txt2)">&#128161; Question of the day</div>'+_badge+'</div><div style="font-weight:600;margin:.3rem 0 .55rem">'+esc(q.q)+'</div><div class="qo">'+opts+'</div>'+fb+'</div>';
 }
 var DOMAINS=[
  {name:'Foundations & Career',icon:'&#127891;',mods:[0,12,18]},

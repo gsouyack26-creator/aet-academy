@@ -98,7 +98,7 @@ function enterApp(){
   updateUserCard();
   var u=curUser();var sf=document.getElementById('sbfoot');
   if(u&&sf&&!document.getElementById('signout-btn')){
-    var b=document.createElement('button');b.className='mini';b.id='signout-btn';b.title='Sign out / switch learner';b.innerHTML='\uD83D\uDEAA Sign out';b.onclick=signOut;sf.appendChild(b);
+    var b=document.createElement('button');b.className='signoutbtn';b.id='signout-btn';b.title='Sign out / switch learner';b.innerHTML='\uD83D\uDEAA Sign out';b.onclick=signOut;sf.appendChild(b);
   }
   if(!location.hash)location.hash='#dash';
   render();

@@ -13,6 +13,12 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+### v13.44 &mdash; 2026-07-22 &mdash; Level-aware Question of the Day + Sign-out relocated
+- **Question of the Day now scales to the learner's level.** A day-one trainee only gets Foundations questions &mdash; harder tracks unlock as they rank up (Foundations &rarr; Field Devices &rarr; Systems &amp; Control &rarr; Reliability &amp; Career &rarr; Safety &amp; Advanced, ~one track per two levels). Any module you have completed or been quizzed on is always in the pool, so you are never asked advanced material you have not studied. The card now shows a &#127919; rank badge (e.g. "Apprentice level").
+- The answered-state is now pinned to the exact question (stores module + question index), so feedback stays stable even if your pool changes during the day.
+- **Sign-out button moved to its own full-width row** at the bottom of the sidebar. It was cramped in the icon toolbar and wrapping to two lines; the five tool icons (theme / text size / contrast / search / shortcuts) now sit in a centered wrapping row (`#sbtools`) with a clean full-width Sign-out button beneath them (red on hover).
+- Verified: 15/15 QOTD level-gating VM checks (L1&rarr;foundations only, L3&rarr;+field, L10&rarr;all incl. advanced, completed/scored modules join pool, badge renders, feedback stable) + 8/8 sign-out layout checks.
+
 ### v13.43 &mdash; 2026-07-22 &mdash; Ladder &amp; ST Lab goes LIVE-GRADED
 - Ported Code Armory's Structured-Text runtime (`runSt`) into the Ladder &amp; ST Practice Lab. The 138 challenges now grade three ways:
   - **Structured Text (60):** type ST code, hit **Run &amp; Check** &mdash; your program executes against real test cases (set inputs, run scans, assert outputs) and you get a pass/fail table plus XP when all cases pass.
