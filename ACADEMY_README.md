@@ -13,6 +13,8 @@ Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 fla
 
 ## Changelog (newest first)
 
+- v13.70 - Curriculum doubling Wave 4 (final): deepened all foundation modules M0-M5 (Intro, Electrical, PLC Fundamentals, PLC II, Sensors, Motors/VFD), +6 sections and +9 quiz each. All 22 modules now completed this deepening pass. Totals: 703 sections, 815 quiz (from 566/612 at the start of the effort).
+
 - v13.69 - Curriculum doubling Wave 3: deepened all applied modules M6-M12 (Fluid Power, HMI/SCADA, Industrial Networks, Robotics/Motion, Process Control/PID, Machine Safety, Capstone), +6 sections and +9 quiz each. Totals now 22 modules, 667 sections, 761 quiz.
 
 ### v13.68 (2026-07-22)
