@@ -182,6 +182,38 @@ MODULES = [
       {
         "h": "Measuring Performance: OEE, Availability, and Throughput",
         "body": "Automation exists to improve output, and the standard yardstick is <b>Overall Equipment Effectiveness (OEE)</b>, the product of three factors each expressed as a fraction. <b>Availability</b> is run time divided by planned production time, hurt by breakdowns and changeovers. <b>Performance</b> is actual speed divided by rated speed, hurt by minor stops and slow cycles. <b>Quality</b> is good units divided by total units, hurt by scrap and rework. OEE = Availability &times; Performance &times; Quality. If a line is available 90%, runs at 95% of rated speed, and yields 98% good parts, OEE = 0.90 &times; 0.95 &times; 0.98 = 0.838, or about 84%. World-class discrete lines target 85% or higher. <b>Throughput</b> is the raw count of good units per hour and is what finance ultimately cares about. These metrics turn vague complaints (\"the line feels slow\") into data that pinpoints the biggest loss: an availability problem points maintenance at reliability, a performance problem points engineering at bottlenecks and micro-stops, a quality problem points at process control. A technician who can read the OEE breakdown knows exactly which lever to pull to raise output."
+      },
+      {
+        "h": "Electrical Schematics, Wiring Diagrams, and One-Line Diagrams Compared",
+        "body": "Three drawing types answer three different questions. A <b>one-line (single-line) diagram</b> shows power flow from utility to loads using one line per circuit regardless of phase count; it is the map for coordination studies and shows breakers, transformers, and feeder sizes. A <b>schematic (elementary or ladder) diagram</b> shows control logic function by function, ignoring physical layout, so you can trace how a start button energizes a coil. A <b>wiring (connection) diagram</b> shows the actual terminals, wire numbers, and routing inside a panel so an electrician can physically land conductors. A technician diagnosing a control fault reaches for the schematic; one pulling new feeders reads the one-line; one landing field wires uses the wiring diagram. Confusing them wastes hours. Every wire in a well-documented system carries a unique number that cross-references all three views, letting you jump from a symbol on the schematic to the exact terminal in the enclosure."
+      },
+      {
+        "h": "Root Cause Analysis Tools: 5-Whys, Fishbone, and Pareto",
+        "body": "Fixing a symptom without the root cause guarantees the fault returns. The <b>5-Whys</b> asks &quot;why&quot; iteratively: a conveyor stopped (why) the motor tripped (why) overload heaters opened (why) bearing seized (why) no lubrication (why) the PM was skipped &mdash; the fix is scheduling discipline, not just replacing a bearing. The <b>Ishikawa (fishbone) diagram</b> organizes candidate causes into categories &mdash; Man, Machine, Material, Method, Measurement, Environment &mdash; so a team brainstorms systematically instead of fixating on one theory. The <b>Pareto chart</b> ranks failure causes by frequency or cost, applying the 80/20 rule so limited resources attack the vital few problems generating most downtime. Effective RCA combines them: Pareto finds which machine to study, fishbone widens the hypothesis set, and 5-Whys drills to the actionable root. Corrective actions should be verifiable and address the system that allowed the failure, not merely the broken part."
+      },
+      {
+        "h": "SI Units, Dimensional Analysis, and Conversion Discipline",
+        "body": "Automation spans mechanical, electrical, thermal, and fluid domains, so unit errors are a constant hazard. The <b>SI base units</b> &mdash; metre, kilogram, second, ampere, kelvin, mole, candela &mdash; combine into derived units: force in newtons (kg&middot;m/s&sup2;), pressure in pascals (N/m&sup2;), energy in joules, power in watts. <b>Dimensional analysis</b> is the discipline of tracking units through every calculation so both sides of an equation balance; if you compute a torque and the units are not N&middot;m, you made an error. Conversions bite hardest at boundaries: 1 bar &asymp; 100 kPa &asymp; 14.5 psi; 1 HP &asymp; 746 W; a 4&ndash;20 mA loop maps to engineering units by linear scaling. Prefixes matter &mdash; a milliamp is 10&minus;3 A, a megohm is one million ohms (1 M&Omega;). Always carry units in scaling math (counts to psi, RPM to Hz) and sanity-check the magnitude before trusting a controller value."
+      },
+      {
+        "h": "Plant-Floor Cybersecurity and the Purdue Model",
+        "body": "Operational technology (OT) networks were historically isolated, but IIoT connectivity exposed them to the same threats as IT. The <b>Purdue Enterprise Reference Architecture</b> segments a plant into levels: Level 0 field devices (sensors, actuators), Level 1 controllers (PLC, DCS), Level 2 supervisory (HMI, SCADA), Level 3 site operations (MES, historians), and Levels 4&ndash;5 enterprise IT. A <b>demilitarized zone (DMZ)</b> sits between Level 3 and 4 so enterprise systems never touch control networks directly. Core defenses follow <b>IEC 62443</b>: network segmentation, least-privilege access, patch management, removable-media control, and monitoring. The Stuxnet worm proved that even air-gapped PLCs are vulnerable through infected USB drives and engineering laptops. Technicians must treat programming laptops as trusted assets, avoid connecting personal devices, and report unusual controller behavior &mdash; a PLC that faults or a setpoint that changes without operator action may signal compromise, not just a hardware fault."
+      },
+      {
+        "h": "Revision Control, As-Built Drawings, and Document Management",
+        "body": "A drawing that does not match the installed system is worse than no drawing &mdash; it sends technicians chasing wires that do not exist. <b>Revision control</b> assigns each document a revision letter or number, a date, and a change description in a title-block revision table, so everyone works from the current version. <b>As-built (red-line) drawings</b> capture field changes made during installation and commissioning: a relocated sensor, a re-terminated wire, an added jumper. Field changes are marked in red on a print, then formally incorporated into the master. Modern plants use electronic document management with check-in/check-out to prevent two people editing the same file and to keep an audit trail. The discipline extends to PLC programs and HMI applications, which carry their own version tags. When you finish a modification, updating documentation is part of the job, not optional paperwork &mdash; the next technician's troubleshooting time depends on it."
+      },
+      {
+        "h": "Scope of Work, Quotation, and the Bid Process",
+        "body": "Automation projects begin as a <b>scope of work (SOW)</b> &mdash; a written definition of what will be delivered, the boundaries, and the acceptance criteria. Ambiguity here causes disputes later, so a good SOW lists included equipment, integration points, documentation deliverables, and explicit exclusions. Integrators respond with a <b>quotation</b> that breaks down hardware, software engineering hours, panel fabrication, commissioning, and contingency. A <b>request for proposal (RFP)</b> invites multiple vendors to bid against the same specification so the buyer can compare apples to apples. Change orders formally capture additions beyond the original SOW, protecting both parties. Even a maintenance technician benefits from understanding this: when you request a machine upgrade, framing a clear scope, tying it to downtime or throughput data, and estimating payback dramatically improves the odds of approval. Poorly scoped projects overrun budgets and schedules and erode trust between plant and integrator."
+      },
+      {
+        "h": "Return on Investment and Payback Period",
+        "body": "Automation must be justified financially, not just technically. The <b>simple payback period</b> divides the project cost by annual savings: a $80,000 vision-inspection cell that eliminates $40,000/year of scrap and rework pays back in two years. <b>Return on investment (ROI)</b> expresses net gain as a percentage of cost over a defined horizon. More rigorous analysis uses <b>net present value (NPV)</b>, which discounts future cash flows to today's dollars because a dollar saved next year is worth less than one saved now, and <b>internal rate of return (IRR)</b>. Savings sources include reduced labor, less scrap, higher throughput, lower energy, fewer safety incidents, and reduced downtime. Costs include hardware, engineering, installation, training, and ongoing maintenance &mdash; the total cost of ownership. Capital committees typically want payback under two to three years for factory automation. Presenting a defensible payback calculation, backed by measured data, is how technical ideas become funded projects."
+      },
+      {
+        "h": "Safety Culture, Near-Miss Reporting, and the Hierarchy of Controls",
+        "body": "Engineering safeguards fail if the surrounding culture tolerates shortcuts. A strong <b>safety culture</b> treats every incident and near-miss as a learning opportunity rather than a blame event, so people report freely. A <b>near-miss</b> &mdash; a bypassed guard, a dropped tool, an almost-contact &mdash; is a free warning of a future injury; organizations that capture and act on near-misses reduce serious incidents. Risk is reduced by the <b>hierarchy of controls</b>, in decreasing order of effectiveness: elimination (remove the hazard), substitution (a safer alternative), engineering controls (guards, interlocks, ventilation), administrative controls (procedures, training, signage), and personal protective equipment (PPE) as the last line. Automation contributes at the top of the hierarchy by removing people from hazardous tasks. Lockout/tagout, job safety analyses, and permit-to-work systems operationalize these principles daily. The safest plants make safety a line-management responsibility, measured and reviewed like production."
       }
     ],
     "lab": {
@@ -776,6 +808,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "In closed-loop control a faulty feedback sensor makes the controller chase a phantom error, so the level transmitter is a prime suspect when actuators check out."
+      },
+      {
+        "q": "A technician needs to trace how a start pushbutton energizes a motor contactor coil through the control logic. Which drawing is the correct reference?",
+        "options": [
+          "The one-line diagram",
+          "The schematic (elementary/ladder) diagram",
+          "The panel layout drawing",
+          "The site plot plan"
+        ],
+        "answer": 1,
+        "explain": "The schematic (elementary) diagram shows control logic function by function, ideal for tracing how a start button energizes a coil. One-lines show power flow; wiring/layout drawings show physical terminals."
+      },
+      {
+        "q": "In the hierarchy of controls, which measure is considered MOST effective at reducing risk?",
+        "options": [
+          "Personal protective equipment",
+          "Administrative procedures and training",
+          "Engineering controls such as guards",
+          "Elimination of the hazard"
+        ],
+        "answer": 3,
+        "explain": "Elimination sits at the top of the hierarchy of controls &mdash; removing the hazard entirely is more effective than guarding it, training around it, or relying on PPE, which is the last line of defense."
+      },
+      {
+        "q": "An $80,000 automated inspection cell eliminates $40,000 per year in scrap and rework. What is the simple payback period?",
+        "options": [
+          "6 months",
+          "1 year",
+          "2 years",
+          "4 years"
+        ],
+        "answer": 2,
+        "explain": "Simple payback = project cost / annual savings = $80,000 / $40,000 per year = 2 years, a typical threshold for approving factory automation projects."
+      },
+      {
+        "q": "In the Purdue model, what is the primary purpose of the DMZ placed between Level 3 (site operations) and Level 4 (enterprise IT)?",
+        "options": [
+          "To increase network bandwidth to the PLCs",
+          "To prevent enterprise IT systems from directly touching the control network",
+          "To store PLC backup programs",
+          "To provide power to field devices"
+        ],
+        "answer": 1,
+        "explain": "The DMZ isolates the OT control network from enterprise IT, brokering data through controlled services so IT-side threats cannot reach controllers directly &mdash; a core IEC 62443 segmentation practice."
       }
     ],
     "resources": [
@@ -990,6 +1066,38 @@ MODULES = [
       {
         "h": "Raceway Systems: Conduit, Cable Tray, and Wireways",
         "body": "Conductors between panels and field devices must be protected and organised by <b>raceway systems</b>, and each type suits a different job. <b>Rigid metal conduit (RMC)</b> and <b>intermediate metal conduit (IMC)</b> give the toughest mechanical and EMI protection for exposed runs. <b>Electrical metallic tubing (EMT)</b> is thin-wall, lighter, and common indoors. <b>Liquidtight flexible metal conduit (LFMC)</b> makes the vibration-tolerant, watertight final connection to a motor or sensor. <b>Cable tray</b> is an open ladder or trough that carries many cables along a plant's backbone, easy to add to and inspect. <b>Wireway (gutter)</b> is a rectangular sheet-metal trough with a removable cover used to fan out and organise conductors around panels. NEC rules govern <b>conduit fill</b> (generally 40% for three or more conductors) to allow heat dissipation and pulling room, and <b>bend limits</b> (no more than 360 degrees total between pull points). Grounding continuity through metal raceway can serve as the equipment grounding path if properly bonded. Choosing and installing raceway correctly protects wiring from damage, controls electrical noise around VFD cables, eases future changes, and keeps an installation code-compliant and inspectable."
+      },
+      {
+        "h": "Wiring Methods: Conduit Fill, Cable Tray, and NEC Chapter 3",
+        "body": "How conductors are routed is governed by <b>NEC Chapter 3</b>. <b>Conduit fill</b> limits the cross-sectional area of conductors to a percentage of the raceway interior &mdash; 40% for three or more conductors &mdash; so wires can be pulled without damaging insulation and heat can dissipate. Exceeding fill causes overheating and derating. <b>Cable tray</b> supports many cables in open runs and is common in large plants; tray-rated (TC) cable is required, and fill and spacing rules still apply. Raceway types each have a niche: EMT for dry indoor runs, rigid galvanized for physical protection, PVC for corrosive or underground, liquidtight flexible metal (LFMC) for vibration and motor connections. <b>Ampacity derating</b> reduces allowable current when many current-carrying conductors share a raceway or when ambient temperature is high. Proper sizing, support spacing, and bend radius protect conductors mechanically and thermally over the installation's life."
+      },
+      {
+        "h": "Grounding Electrode System vs Equipment Grounding",
+        "body": "Two grounding concepts are often confused. The <b>grounding electrode system</b> connects the electrical service to earth through ground rods, building steel, water pipe, and concrete-encased electrodes (Ufer ground); its job is to stabilize voltage relative to earth and handle lightning and utility surges. The <b>equipment grounding conductor (EGC)</b> is a low-impedance metallic path bonding all non-current-carrying metal &mdash; enclosures, conduit, motor frames &mdash; back to the source so a ground fault produces enough current to trip the breaker fast. Earth itself is a poor fault-clearing path because soil resistance is too high; the EGC, not the earth, clears faults. The <b>main bonding jumper</b> connects the neutral to ground at exactly one point, the service. Downstream, neutral and ground are kept separate to prevent objectionable current on grounding paths. Understanding this distinction prevents dangerous miswiring where a floating enclosure becomes energized during a fault."
+      },
+      {
+        "h": "Short-Circuit Current Rating (SCCR) of Control Panels",
+        "body": "Every control panel has a <b>short-circuit current rating (SCCR)</b> &mdash; the maximum fault current it can safely withstand without becoming a hazard. If the available fault current at the installation exceeds the panel's SCCR, a short circuit can rupture components explosively. UL 508A requires panels to be marked with their SCCR, calculated by the <b>weakest-link</b> method: the assembly rating is limited by its lowest-rated component in the fault path unless current-limiting protection raises it. A common default is 5 kA, which is inadequate near large transformers where available fault current can exceed 65 kA. Using <b>current-limiting fuses</b> or series-rated combinations lets downstream components ride through because the fuse clears the fault within the first quarter-cycle. Designers obtain the available fault current from the utility or a study, then ensure the SCCR meets or exceeds it. This is a safety-critical calculation, not a formality, and inspectors check the panel label against the site's available fault current."
+      },
+      {
+        "h": "Selective Coordination and Protective-Device Curves",
+        "body": "When a fault occurs, only the protective device nearest the fault should open, leaving the rest of the plant energized &mdash; this is <b>selective coordination</b>. It is achieved by studying the <b>time-current curves</b> of series breakers and fuses on a log-log plot. Upstream devices must be slower (higher time and current) than downstream ones across the full range of fault magnitudes. A miscoordinated system trips the main breaker for a fault on one small branch, causing a plant-wide blackout. Fuses coordinate by ampere ratio (commonly 2:1 between line and load fuses); breakers coordinate through instantaneous, short-time, and long-time pickup settings on electronic trip units. NEC requires selective coordination for certain critical systems such as elevators and emergency circuits. Coordination studies also verify that devices clear faults fast enough to limit arc-flash energy and protect conductors, tying protection settings directly to worker safety and equipment survival."
+      },
+      {
+        "h": "Capacitors, Inductors, and RC/RL Time Constants",
+        "body": "Energy-storage elements shape how circuits respond over time. A <b>capacitor</b> stores energy in an electric field and opposes voltage change; an <b>inductor</b> stores energy in a magnetic field and opposes current change. In a DC circuit, a resistor-capacitor pair charges along an exponential curve with <b>time constant &tau; = R&times;C</b>; after one time constant the capacitor reaches 63% of final voltage, and it is essentially fully charged after five time constants. A resistor-inductor pair has &tau; = L/R. These time constants explain real behavior: the delay in an RC snubber, the collapse of an inductor's field that generates the flyback spike across a relay coil (why a freewheeling diode is added), and the inrush that momentarily fools protection. Understanding charge and discharge curves lets a technician predict soft-start ramps, filter response, and why a de-energized VFD DC bus still holds a lethal charge for minutes until bleeder resistors discharge it."
+      },
+      {
+        "h": "Power-Factor Correction Capacitor Banks",
+        "body": "Inductive loads &mdash; motors, transformers, ballasts &mdash; draw <b>reactive power (kVAR)</b> that does no useful work but loads the distribution system and lowers <b>power factor (PF = kW/kVA)</b>. Utilities penalize low PF because they must supply the apparent power. <b>Capacitor banks</b> supply leading reactive power locally, cancelling the lagging reactive current so the source sees mostly real power. Correcting PF from 0.75 to 0.95 can cut line current substantially, freeing transformer and feeder capacity and reducing I&sup2;R losses. Banks are sized in kVAR from the load's existing PF and target PF, and are often <b>automatically switched</b> in stages by a PF controller so correction tracks changing load. Caution: fixed capacitors on a lightly loaded system can over-correct to a leading PF, and capacitors interacting with system inductance can create <b>harmonic resonance</b> that amplifies distortion &mdash; near VFDs, detuned reactors are added to the bank to avoid resonance."
+      },
+      {
+        "h": "DC Control Power, Batteries, and UPS Systems",
+        "body": "Many control systems run on regulated DC (commonly 24 VDC) supplied by switch-mode power supplies, chosen for their efficiency and wide input range. Critical controls add ride-through and backup. A <b>DC UPS</b> places a battery in parallel with the load through a charger so a brief power dip does not drop out PLCs, HMIs, or safety relays that would otherwise need a manual restart. <b>Battery chemistries</b> differ: sealed lead-acid is cheap and tolerant but bulky; lithium offers higher density and longer life at higher cost. Sizing considers the load current, desired hold-up time, and end-of-discharge voltage. Larger facilities use station batteries for switchgear tripping and DCS ride-through. Maintenance matters: batteries degrade with heat and age, so periodic capacity testing and replacement on a schedule prevent a dead backup discovered only during an outage. Redundant supplies with diode-OR-ing further protect essential loads from a single supply failure."
+      },
+      {
+        "h": "Enclosure Ratings: NEMA Types and IP Codes",
+        "body": "An enclosure protects electronics from the environment and people from live parts. <b>NEMA enclosure types</b> classify protection: Type 1 general indoor, Type 3R rainproof outdoor, Type 4 watertight and hose-down, Type 4X adds corrosion resistance (stainless or fiberglass), Type 7/9 for hazardous (explosive) atmospheres, and Type 12 for industrial dust and dripping oil. The international <b>IP (Ingress Protection) code</b> uses two digits: the first (0&ndash;6) rates solids/dust ingress, the second (0&ndash;9K) rates liquids; IP65 means dust-tight and protected against water jets. NEMA ratings include additional tests (icing, corrosion) that IP does not, so they are not perfectly interchangeable. Selecting the right rating prevents both premature failure (an indoor panel rusting outdoors) and wasted cost (an expensive 4X box where Type 12 suffices). In hazardous locations, enclosure selection is safety-critical and driven by the area classification &mdash; Class/Division or Zone &mdash; not merely by weather."
       }
     ],
     "lab": {
@@ -1618,6 +1726,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "At resonance X_L = X_C, the reactances cancel, so impedance equals R alone and current is maximum."
+      },
+      {
+        "q": "For three or more current-carrying conductors in a conduit, NEC generally limits the conductor fill to what percentage of the raceway's interior cross-sectional area?",
+        "options": [
+          "25%",
+          "40%",
+          "53%",
+          "80%"
+        ],
+        "answer": 1,
+        "explain": "NEC Chapter 9 limits conduit fill to 40% for three or more conductors, allowing heat dissipation and safe pulling. One conductor allows 53%, two allow 31%."
+      },
+      {
+        "q": "A control panel is marked with a 5 kA SCCR but the available fault current at its location is 42 kA. What is the correct conclusion?",
+        "options": [
+          "The panel is fine because SCCR is only advisory",
+          "The installation is unsafe; the panel could rupture during a fault",
+          "The 5 kA rating automatically increases at higher fault currents",
+          "Only the neutral needs upsizing"
+        ],
+        "answer": 1,
+        "explain": "If available fault current exceeds the panel SCCR, a short circuit can rupture components explosively. The panel SCCR must meet or exceed the site's available fault current, often via current-limiting fuses."
+      },
+      {
+        "q": "In an RC charging circuit with R = 10 k&Omega; and C = 100 &micro;F, approximately what is the time constant, and what percent of final voltage is reached after one time constant?",
+        "options": [
+          "1 second, 63%",
+          "1 millisecond, 37%",
+          "10 seconds, 95%",
+          "0.1 second, 100%"
+        ],
+        "answer": 0,
+        "explain": "&tau; = R&times;C = 10,000 &Omega; &times; 0.0001 F = 1 second. After one time constant a capacitor charges to about 63% of its final voltage; it is nearly full after five time constants."
+      },
+      {
+        "q": "What is the primary safety function of the equipment grounding conductor (EGC), as distinct from the grounding electrode (earth) system?",
+        "options": [
+          "It stabilizes voltage against lightning surges",
+          "It provides a low-impedance path so a ground fault trips the breaker quickly",
+          "It carries normal load current back to the source",
+          "It connects the neutral to earth at every panel"
+        ],
+        "answer": 1,
+        "explain": "The EGC is a low-impedance metallic fault-return path that lets a ground fault draw enough current to trip protection fast. Earth is too resistive to clear faults; the electrode system handles surge/voltage stabilization."
       }
     ],
     "resources": [
@@ -1824,6 +1976,38 @@ MODULES = [
       {
         "h": "Emulating and Testing PLC Logic Before Field Deployment",
         "body": "Deploying untested logic to a live machine risks damage and downtime, so professionals test first in a safe environment. Most platforms offer a software <b>emulator</b> (such as Studio 5000 Emulate or Siemens PLCSIM) that runs the actual program on a PC without hardware, letting you toggle input bits, watch outputs, and step through logic. For discrete sequences you build a simple <b>simulation routine</b> inside the program itself: fake feedback bits that mimic what field devices would do, for example setting a \"cylinder extended\" input a half-second after the \"extend\" output turns on, so the sequence advances realistically on the bench. This exposes logic errors, missing interlocks, and race conditions before wiring is even complete. Testing should cover normal operation, every fault and abort path, and boundary conditions like power-up state and recovery after an E-stop. Document expected versus observed behaviour for each test case. When moving to real hardware, keep the simulation code but gate it behind a \"simulate\" switch so it can be disabled for production. This disciplined emulate-then-commission workflow catches the majority of programming defects in the office, turning a tense multi-hour startup into a quick confirmation that hardware matches the already-proven logic."
+      },
+      {
+        "h": "PLC Power Supply Sizing and Backplane Current Budget",
+        "body": "A PLC chassis distributes a limited amount of current across its backplane to power the CPU and I/O modules; exceeding it causes brownouts, random faults, or failure to boot. Sizing starts by summing each module's <b>backplane current draw</b> (published in milliamps for both 5 VDC and 24 VDC rails) and comparing the total to the power supply's rated output on each rail with margin. This is separate from the <b>field power</b> that switches loads &mdash; a 24 VDC output module may draw little from the backplane but switch amps of field current supplied externally. Designers leave 20&ndash;30% headroom for future modules and account for inrush at power-up. A common mistake is filling every slot without checking the budget, producing a chassis that works cold but faults as it warms. Distributed and remote I/O racks each have their own supply and budget, so the calculation repeats for every chassis in the system."
+      },
+      {
+        "h": "Discrete I/O Wiring In Depth: Sinking, Sourcing, and Leakage",
+        "body": "Discrete I/O interfacing hinges on current direction. A <b>sinking (NPN)</b> output pulls the load to common (current flows into the device); a <b>sourcing (PNP)</b> output pushes current from the supply into the load. An input module is likewise sinking or sourcing, and a sourcing sensor must pair with a sinking input (and vice versa) so current has a complete path. Mismatching them leaves the point permanently off or on. Real devices add complications: solid-state (transistor) outputs have <b>leakage current</b> when off that can falsely trigger a sensitive input or a small relay &mdash; a bleeder resistor drains it. Two-wire proximity sensors need a minimum load current to operate and have a voltage drop that must be tolerated by the input. Sourcing sensor + sinking input is the North American convention; sinking sensor + sourcing input dominates in Europe. Reading the module and sensor wiring diagrams before landing wires prevents hours of chasing phantom faults."
+      },
+      {
+        "h": "Analog Input Scaling and Signal Conditioning",
+        "body": "An analog input module converts a field signal &mdash; 4&ndash;20 mA, 0&ndash;10 V, RTD, or thermocouple &mdash; into a raw count via its <b>analog-to-digital converter</b>. A 16-bit converter yields 0&ndash;65535 counts; the program then <b>scales</b> raw counts to engineering units with a linear equation (SCP/SCL or CPT). A 4&ndash;20 mA sensor measuring 0&ndash;100 psi maps 4 mA to 0 psi and 20 mA to 100 psi, and the live-zero (4 mA) lets the PLC distinguish 0 psi from a broken wire (0 mA), which drives a signal fault. <b>Signal conditioning</b> improves quality: shielded twisted-pair cabling grounded at one end rejects noise, input filtering (a small time constant) smooths jitter, and cold-junction compensation corrects thermocouple readings. Current loops are preferred over voltage for long runs because they are immune to wire-resistance voltage drop. Resolution, sample rate, and update-to-scan timing all affect how faithfully the controller sees the process."
+      },
+      {
+        "h": "Memory Organization: Data Files, Tags, and Addressing",
+        "body": "How a PLC organizes memory shapes how you program it. Legacy processors use <b>data files</b> addressed by type and number &mdash; input (I), output (O), status (S), bit (B3), timer (T4), counter (C5), integer (N7), float (F8) &mdash; with element and bit specifiers like N7:12/3. Modern tag-based controllers replace fixed files with <b>named tags</b> and user-defined data types, so a tag like Conveyor1.Speed is self-documenting and its memory is allocated automatically. Tags can be <b>controller-scoped</b> (global) or <b>program-scoped</b> (local), preventing name collisions and encouraging modular code. Aliases let a meaningful name point at a physical I/O point. Understanding addressing is essential for indirect/indexed access, cross-referencing where a tag is used, and interpreting a fault that references a specific memory location. Good tag naming conventions &mdash; area, equipment, function &mdash; make a program readable years later; cryptic names make maintenance a nightmare."
+      },
+      {
+        "h": "Scan-Time Anomalies: Latency, Jitter, and I/O Update",
+        "body": "The PLC executes a repeating cycle: read inputs, solve logic, update outputs, housekeeping. The <b>scan time</b> is how long one cycle takes, and it directly bounds responsiveness &mdash; an input that changes just after the input scan is not seen until the next cycle, adding up to one scan of <b>latency</b>. Variable logic paths (jumps, subroutines, loops) cause <b>jitter</b>, scan-to-scan variation that matters for time-critical control. Fast events shorter than a scan can be missed entirely, which is why high-speed counters and event/interrupt tasks bypass the normal scan. Remote I/O adds network transport delay on top of scan time, so a distributed output may lag a local one. Designers keep scan times short by minimizing unnecessary logic, using periodic tasks for slow routines, and reserving interrupts for the fastest events. Diagnosing an intermittent I/O timing problem requires understanding that the PLC sees a frozen snapshot of inputs, not their instantaneous state."
+      },
+      {
+        "h": "Forcing I/O Safely During Commissioning",
+        "body": "<b>Forcing</b> overrides the real state of an I/O point, holding an input on/off or an output energized/de-energized regardless of logic. It is a powerful commissioning and troubleshooting tool &mdash; forcing an output verifies field wiring to a valve without running the whole sequence &mdash; but it is dangerous because forced points ignore interlocks and safety logic. A forced output can start machinery unexpectedly or defeat a permissive. Discipline is mandatory: know exactly what a force will move, ensure the area is clear, and use the controller's <b>force-active indicator</b> to remain aware that forces are present. Forces must be removed before returning to production; a forgotten force has caused serious incidents when the next person assumed normal operation. Many sites prohibit forcing safety-related I/O entirely and log every force. Simulation and test modes are safer alternatives when the goal is to test logic rather than exercise real actuators."
+      },
+      {
+        "h": "Chassis, Firmware, and Module Configuration",
+        "body": "Commissioning a PLC includes matching the physical hardware to the project's configuration. The <b>I/O tree</b> or hardware configuration in the programming software must list each module by exact catalog number, series, and slot; a mismatch causes a module fault. <b>Firmware revision</b> must be compatible between the CPU, the modules, and the project &mdash; a project built for a newer firmware may refuse to download to older firmware, and updating firmware is a deliberate, documented step because it can change behavior. Configuration also sets analog ranges, filter times, fault responses, and communication parameters per module. Getting this wrong produces subtle problems: an analog module left in the default range reads nonsense, or an output module set to hold-last-state instead of go-safe behaves dangerously on a fault. Keeping an accurate record of catalog numbers, firmware revisions, and configuration settings is essential for spare-parts stocking and for rebuilding a controller after a failure."
+      },
+      {
+        "h": "Retentive Memory, Battery Backup, and Program Persistence",
+        "body": "PLC memory divides into <b>volatile</b> and <b>non-volatile</b> regions with different persistence across power cycles. The user program and configuration are stored in non-volatile flash or on a memory card so they survive power loss. Data values are trickier: <b>retentive</b> tags and files keep their value through a power cycle (a retentive timer resumes its accumulated time, a production counter keeps counting), while <b>non-retentive</b> data resets to zero. Older processors relied on a <b>backup battery</b> to hold RAM; a dead battery lost the program, so battery-low warnings demanded prompt action. Modern controllers store the program in flash and use a capacitor or small battery only for the real-time clock and retentive data, greatly reducing risk. Choosing which data is retentive is a design decision: recipe and totalizer values should persist, but a fault latch might need to clear on restart. Regular program backups to external media remain essential regardless of the memory technology."
       }
     ],
     "lab": {
@@ -2452,6 +2636,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Verifying wiring by continuity and forcing each input/output proves the field connections before the program runs, catching faults cheaply."
+      },
+      {
+        "q": "When sizing a PLC chassis, why must you sum each module's backplane current draw rather than only its field-switching current?",
+        "options": [
+          "Field current is always zero",
+          "The backplane supply has a limited current budget that all modules share, and exceeding it causes faults",
+          "Backplane current is only relevant for analog modules",
+          "The two currents are always equal"
+        ],
+        "answer": 1,
+        "explain": "The chassis power supply provides a limited current on the backplane rails shared by all modules. Field-switching current comes from external supplies; overloading the backplane budget causes brownouts and random faults."
+      },
+      {
+        "q": "A 4-20 mA transmitter measures 0-100 psi. The PLC reads 4 mA. What is the interpreted pressure, and why is the 4 mA live-zero useful?",
+        "options": [
+          "0 psi; a broken wire (0 mA) can be distinguished from a true 0 psi reading",
+          "50 psi; it marks mid-scale",
+          "100 psi; full scale",
+          "Undefined; 4 mA is a fault"
+        ],
+        "answer": 0,
+        "explain": "4 mA maps to 0 psi. The live-zero (4 mA at bottom of range) lets the PLC detect a broken loop, which reads 0 mA, as a distinct fault versus a genuine 0 psi process value."
+      },
+      {
+        "q": "Why is forcing an output during commissioning considered dangerous?",
+        "options": [
+          "It permanently damages the output module",
+          "It overrides interlocks and safety logic, so machinery can move unexpectedly",
+          "It erases the PLC program",
+          "It can only be done offline"
+        ],
+        "answer": 1,
+        "explain": "A forced output ignores all interlocks and permissives and can energize actuators unexpectedly. Forces must be applied knowingly with the area clear, tracked via the force-active indicator, and removed before returning to production."
+      },
+      {
+        "q": "After a power cycle, a retentive timer in a PLC will:",
+        "options": [
+          "Reset its accumulated value to zero",
+          "Resume from its previously accumulated value",
+          "Fault the processor",
+          "Double its preset"
+        ],
+        "answer": 1,
+        "explain": "Retentive memory keeps its value through a power cycle, so a retentive timer resumes from its stored accumulated time. Non-retentive data resets to zero on restart."
       }
     ],
     "resources": [
@@ -2654,6 +2882,38 @@ MODULES = [
       {
         "h": "Handshaking and Data Exchange Sequencing Between Devices",
         "body": "When two controllers, or a PLC and a smart device (weigh scale, printer, robot), exchange data, both sides must agree not just on the numbers but on <b>when</b> to send and when to read, a protocol called <b>handshaking</b>. The simplest three-signal handshake uses a REQUEST bit from the master, a NEW_DATA bit and payload from the slave, and an ACK bit from the master. Sequence: master pulses REQUEST; slave loads the payload registers and raises NEW_DATA; master detects NEW_DATA, latches the payload, and pulses ACK; slave sees ACK and drops NEW_DATA, ready for the next cycle. Timeouts on each wait state prevent lockups: if NEW_DATA never rises within, say, 500 ms, the master faults and alarms. Without handshaking the master might read the slave's registers mid-update and get half-old, half-new data, a classic hard-to-find defect that produces one bad reading in a thousand. Handshaking scales to any data size (a single scale reading or a 100-word recipe) and works across any transport, hardwired discretes, MSG instructions, produced/consumed tags, or Modbus registers. Recognising a handshake in code, and diagnosing which side is stuck when data stops flowing, is a core skill for anyone integrating multiple controllers or third-party devices."
+      },
+      {
+        "h": "Cascading Timers for Delays Beyond a Single Preset",
+        "body": "A single timer is limited by its preset range and time base, so long or multi-stage delays are built by <b>cascading</b> timers. The done bit of the first timer enables the second, whose done bit enables the third, chaining their times additively. This technique creates delays longer than one timer allows and, more usefully, builds <b>sequential timing</b>: energize a lubrication pump for 10 s, wait 5 minutes, repeat. A self-resetting cascade &mdash; where the final done bit resets the first timer &mdash; produces a repeating cycle or a flasher without any counter. Watch the scan-order subtlety: whether the reset takes effect this scan or next depends on rung order, which can shift the effective period by one scan. Cascaded timers are readable and reliable for fixed sequences, though for many identical steps a sequencer or step-based state machine is cleaner. Choosing the right time base (1 s vs 0.01 s) balances range against resolution."
+      },
+      {
+        "h": "Counter Overflow and High-Speed Counter Inputs",
+        "body": "A standard counter increments once per false-to-true rung transition, but two limits bite in practice. First, <b>overflow</b>: a 16-bit counter rolls over past 32767, setting an overflow bit; production totals that exceed this must use a larger integer or a second counter that increments each rollover. Second, <b>speed</b>: normal counters only see transitions during the program scan, so pulses faster than the scan time are missed. A conveyor encoder or a high-rate part sensor therefore uses a dedicated <b>high-speed counter (HSC)</b> input that counts in hardware independent of the scan, supporting quadrature encoders for direction and position. The HSC generates interrupts at preset counts to trigger immediate action &mdash; firing a reject at an exact position &mdash; without waiting for the scan. Configuring an HSC involves setting the counting mode, presets, and rollover, and understanding that its accumulated value updates asynchronously to the ladder logic that reads it."
+      },
+      {
+        "h": "Indirect and Indexed Addressing",
+        "body": "<b>Indirect (indexed) addressing</b> lets one rung operate on different memory locations depending on a pointer value, which is the key to compact, table-driven code. Instead of writing 20 nearly identical rungs to check 20 recipe slots, you index into an array: N7:[index] reads element number 'index', and incrementing the index in a loop walks the whole table. This powers recipe selection, data logging into a buffer, and tracking many identical parts. The danger is going <b>out of bounds</b>: if the index exceeds the array size, the processor may fault or, worse, read/write unintended memory, corrupting other data. Robust code clamps or validates the index before use. Pointers also make cross-referencing harder because the target is computed at runtime, not visible statically, so document the intent clearly. Modern tag-based controllers offer array tags with the same indexing concept and often built-in bounds checking that faults gracefully rather than corrupting memory."
+      },
+      {
+        "h": "Compare Instructions: EQU, LIM, MEQ in Practice",
+        "body": "Comparison instructions turn analog and numeric data into logical decisions. <b>EQU/NEQ</b> test equality; <b>GRT/LES/GEQ/LEQ</b> test magnitude, common for alarm thresholds and setpoint windows. <b>LIM (limit test)</b> is true when a value falls within a low-to-high band, ideal for &quot;in tolerance&quot; checks &mdash; a temperature between 68 and 72 &deg;F &mdash; in a single instruction, and it handles the circular case where low is greater than high (an out-of-band test). <b>MEQ (masked equal)</b> compares only selected bits through a mask, letting you check a few status bits inside a word while ignoring the rest, useful for decoding a device's packed status register. Chaining compares builds bang-bang control with deadband: turn a heater on below the low limit, off above the high limit, with the gap preventing chatter. Because compares evaluate every scan, they belong in the fast-response category and pair naturally with analog scaling upstream."
+      },
+      {
+        "h": "Math Instructions and Analog Scaling with SCP/SCL/CPT",
+        "body": "Numeric processing converts raw signals into meaningful values and computes derived quantities. <b>SCP (Scale with Parameters)</b> and <b>SCL (Scale)</b> map an input range to an output range with a single instruction &mdash; raw ADC counts to engineering units, or engineering units to a DAC output for an analog command. <b>CPT (Compute)</b> evaluates a full arithmetic expression in one instruction, respecting operator precedence, which is cleaner than stringing ADD/SUB/MUL/DIV rungs. Watch data-type pitfalls: integer division truncates, so 7/2 gives 3 unless a float is used; intermediate results can overflow if the data type is too small; and mixing signed and unsigned or 16- and 32-bit values silently corrupts results. Rounding versus truncation matters when converting float back to integer for a display or output. Well-scaled math keeps resolution &mdash; scaling early to a float preserves precision that integer scaling would throw away &mdash; and always documents the units at each step."
+      },
+      {
+        "h": "Program Flow Control: JMP, LBL, JSR, and Subroutines",
+        "body": "Ladder normally executes top to bottom, but flow-control instructions alter that path for efficiency and structure. <b>JMP/LBL</b> skips a block of rungs when a condition is true, saving scan time on logic that need not run &mdash; but skipped output rungs hold their last state, a subtle trap, so jumping around outputs requires care. <b>JSR/SBR/RET</b> call a subroutine, execute it, and return, enabling modular code where a reusable sequence lives in one place and is called from many. Parameters can be passed in and results returned. Subroutines organize a large program into logical units &mdash; one per machine section &mdash; improving readability and letting you enable or disable whole sections cleanly. Overuse or deep nesting hurts readability and can complicate online troubleshooting because the active rung jumps between files. Periodic and event tasks are a structured alternative for code that must run at a fixed rate or on a trigger rather than every scan."
+      },
+      {
+        "h": "User-Defined Data Types and Structured Data",
+        "body": "<b>User-defined data types (UDTs)</b> bundle related tags into a single named structure, transforming scattered addresses into self-documenting objects. A UDT named Motor might contain .Run, .Fault, .Speed, .Hours, .Current; declaring an array of ten Motor tags instantly gives Motor[3].Fault with consistent structure. This mirrors object thinking: define the template once, instantiate many. UDTs make code portable and readable, ease copying logic between similar equipment, and integrate cleanly with add-on instructions and HMIs that browse the structure. Nested UDTs model hierarchy &mdash; a Line contains Stations, each containing Motors. The discipline pays off in maintenance: a new engineer reads Conveyor.Infeed.Jam and understands it instantly, versus decoding B3:14/2. The cost is upfront design and that changing a UDT definition ripples to every instance. Combined with arrays and indirect addressing, UDTs enable powerful table-driven programs where one block of logic services many identical devices."
+      },
+      {
+        "h": "Debouncing, One-Shots, and Edge Detection Patterns",
+        "body": "Real inputs are noisy and mechanical contacts <b>bounce</b>, making one physical press look like several transitions. A short <b>debounce timer</b> &mdash; require the input stable for, say, 30 ms before accepting it &mdash; filters bounce so a counter increments once per press. The complementary need is capturing a single event exactly once: a <b>one-shot (ONS/OSR)</b> produces a true output for exactly one scan on a false-to-true transition, so an action &mdash; loading a recipe, incrementing a total, latching an alarm &mdash; happens once no matter how long the input stays on. Rising- and falling-edge detection distinguishes press from release, enabling toggle logic (each press flips a state) built from a one-shot flipping a latch. These patterns appear everywhere and their misuse causes classic bugs: a missing one-shot double-counts, and a missing debounce miscounts noisy sensors. Recognizing when an application needs edge detection versus level sensing is a core programming skill."
       }
     ],
     "lab": {
@@ -3283,6 +3543,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Without handshaking the PLC can catch the scale mid-update and read half-old data; a NEW_DATA/ACK sequence ensures consistent samples."
+      },
+      {
+        "q": "Why must a conveyor encoder pulse train be counted by a dedicated high-speed counter (HSC) input rather than a standard counter instruction?",
+        "options": [
+          "Standard counters cannot count up",
+          "Pulses faster than the program scan time would be missed by a standard counter",
+          "HSC inputs use less memory",
+          "Encoders output analog signals"
+        ],
+        "answer": 1,
+        "explain": "A standard counter only sees transitions during the program scan, so pulses faster than the scan are missed. An HSC counts in hardware, asynchronous to the scan, and supports quadrature encoders for direction/position."
+      },
+      {
+        "q": "Which instruction is BEST suited to test whether a temperature value falls within an in-tolerance band of 68 to 72 degrees in a single instruction?",
+        "options": [
+          "EQU (equal)",
+          "LIM (limit test)",
+          "ADD",
+          "MEQ (masked equal)"
+        ],
+        "answer": 1,
+        "explain": "LIM (limit test) is true when a value lies within a low-to-high band, making it ideal for in-tolerance window checks in one instruction. MEQ compares masked bits; EQU tests exact equality."
+      },
+      {
+        "q": "A one-shot (ONS/OSR) instruction is used when you need an action to occur:",
+        "options": [
+          "Continuously while an input is true",
+          "Exactly once on a false-to-true transition",
+          "Only after a time delay",
+          "Once per power cycle"
+        ],
+        "answer": 1,
+        "explain": "A one-shot produces a true output for a single scan on a false-to-true transition, so actions like incrementing a total or latching an alarm happen exactly once regardless of how long the input stays on."
+      },
+      {
+        "q": "What is the main risk of using indirect (indexed) addressing without validating the index?",
+        "options": [
+          "The program runs slower",
+          "Going out of bounds can fault the processor or corrupt unintended memory",
+          "Timers stop working",
+          "It disables the HMI"
+        ],
+        "answer": 1,
+        "explain": "If the index exceeds the array size, the controller may fault or read/write unintended memory, corrupting other data. Robust code clamps or validates the index before using it."
       }
     ],
     "resources": [
@@ -3489,6 +3793,38 @@ MODULES = [
       {
         "h": "Application-Driven Sensor Selection: A Decision Framework",
         "body": "Selecting a sensor is a structured trade-off, not a catalogue pick. Start with the <b>measurand and range</b>: what property (position, temperature, level, flow), and over what span with what resolution. Add <b>environment</b>: temperature, moisture, dust, chemicals, vibration, hazardous-area classification, all of which drive IP rating, materials, and enclosure. Next <b>target properties</b>: is the target metal, plastic, transparent, at variable distance, moving fast? A photoeye works on nearly anything but reflective foils need polarised retro-reflective; an inductive proxy only sees metal but is immune to dust. <b>Interface</b>: does the receiving device want a discrete 24 V signal, an analog 4-20 mA, a communication protocol like IO-Link, or an industrial-Ethernet node? <b>Response time</b> must exceed the process's fastest event by a comfortable margin. <b>Accuracy and repeatability</b> should be honestly matched to what the process controls to; buying 0.1% accuracy for a valve that positions to 5% wastes money. Finally <b>lifecycle</b>: is the manufacturer supported, are spares stocked, is the connector standard (M8, M12), and is the calibration procedure realistic on-site? A good selection matrix prevents the two most common mistakes, over-specifying (wasted budget) and under-specifying (nuisance trips and rework)."
+      },
+      {
+        "h": "Ultrasonic and Time-of-Flight Distance Sensing",
+        "body": "<b>Ultrasonic sensors</b> emit a high-frequency sound pulse and measure the time for the echo to return; distance = (speed of sound &times; time)/2. They excel where optical sensors struggle: clear objects, liquids, foam, and dusty or misty environments, and they sense almost any material regardless of color or transparency. Limitations include a <b>blind zone</b> close to the face where the transducer is still ringing, sensitivity to temperature (sound speed rises with temperature, so precision units add compensation), and difficulty with sound-absorbing surfaces (foam, cloth) or steep angles that deflect the echo away. <b>Time-of-flight (ToF) optical</b> sensors apply the same principle with light, offering faster response and tighter beams for precise ranging and 3D depth cameras. Both give an analog distance output or switch at a taught threshold. Selecting between ultrasonic and photoelectric comes down to the target's optical properties, required precision, environment, and the minimum sensing distance the blind zone allows."
+      },
+      {
+        "h": "Non-Contact Level: Capacitive, Radar, and Guided-Wave",
+        "body": "Measuring the level of solids and liquids without contact avoids fouling and maintenance. <b>Capacitive</b> sensing detects the change in dielectric constant as material rises near a probe, working through nonmetallic tank walls for point detection. <b>Through-air radar</b> sends microwaves down and times the reflection off the surface, unaffected by temperature, pressure, vapor, or dust, making it the workhorse for continuous level in tanks and silos; it does struggle with foam and very low-dielectric media. <b>Guided-wave radar (GWR)</b> runs the microwave pulse along a probe, concentrating the signal for reliable readings in turbulence, foam, and low-dielectric liquids where free-space radar falters. For point-level, vibrating forks and rotating paddles confirm high/low alarms cheaply. Choosing a technology weighs the medium's dielectric, presence of foam or coating, agitation, temperature/pressure, and whether continuous measurement or simple point detection is needed. Redundant point switches often back up a continuous sensor for overfill protection."
+      },
+      {
+        "h": "Load Cells, Strain Gauges, and Weigh Systems",
+        "body": "Weight and force are measured with <b>load cells</b> built around <b>strain gauges</b> &mdash; foil resistors bonded to a flexing metal element. As the element deforms under load, the gauge resistance changes minutely; four gauges wired in a <b>Wheatstone bridge</b> convert this into a small millivolt signal proportional to force, amplified by a transmitter to 4&ndash;20 mA or digital. Multiple cells under a tank or hopper are summed for total weight, and their placement must share load evenly. Accuracy demands attention to installation: piping and conduit must not shunt force around the cells, thermal expansion must be accommodated, and the system is <b>calibrated</b> with known dead weights or a certified reference. Batching and check-weighing systems use load cells with fast filtering to settle quickly. Common faults include a damaged cell (over-range shock), moisture ingress corrupting the bridge, and mechanical binding &mdash; diagnosed by checking individual cell outputs and comparing to expected millivolt-per-volt sensitivity."
+      },
+      {
+        "h": "Flow Measurement: Magnetic, Coriolis, Vortex, and DP",
+        "body": "No single flowmeter fits all fluids. A <b>magnetic flowmeter</b> applies Faraday's law &mdash; conductive liquid moving through a magnetic field generates a voltage proportional to velocity &mdash; with no moving parts and no pressure drop, but it requires a conductive fluid (not oils or gases). A <b>Coriolis meter</b> measures mass flow directly by sensing the twist of a vibrating tube, giving high accuracy and density too, at higher cost. A <b>vortex meter</b> counts vortices shed behind a bluff body, whose frequency tracks flow, suiting steam and gases. <b>Differential-pressure (DP)</b> flow uses an orifice plate or Venturi and infers flow from the square root of the pressure drop &mdash; cheap and universal but with permanent pressure loss and lower turndown. Selection weighs whether mass or volumetric flow is needed, fluid conductivity and cleanliness, accuracy, pressure-drop budget, and turndown ratio. Installing straight upstream and downstream pipe runs is critical for accuracy in most technologies."
+      },
+      {
+        "h": "RTD, Thermocouple, and Thermistor Selection",
+        "body": "Three main contact temperature sensors trade off range, accuracy, and cost. A <b>thermocouple</b> generates a small voltage from the junction of two dissimilar metals (Seebeck effect); types K, J, T, and others cover wide ranges to over 1200 &deg;C, are rugged and cheap, but are less accurate and need cold-junction compensation. An <b>RTD</b> (resistance temperature detector, typically Pt100) uses the predictable rise of platinum resistance with temperature for high accuracy and stability over a moderate range (about &minus;200 to 600 &deg;C), at higher cost and slower response; 3- or 4-wire wiring cancels lead resistance error. A <b>thermistor</b> is a low-cost semiconductor with a large, nonlinear resistance change, giving high sensitivity over a narrow range near ambient. Rule of thumb: thermocouples for high heat and ruggedness, RTDs where accuracy and repeatability matter, thermistors for inexpensive narrow-range sensing. Sensor mass, sheath, and thermowell all affect response time."
+      },
+      {
+        "h": "HART Protocol and Smart Transmitters",
+        "body": "<b>HART (Highway Addressable Remote Transducer)</b> superimposes a low-level digital signal on the analog 4&ndash;20 mA current loop, so a smart transmitter carries both the familiar analog process value and a rich digital channel on the same two wires. The digital layer conveys additional variables (a Coriolis meter's flow, density, and temperature at once), diagnostics, calibration data, and configuration, accessed by a handheld communicator or asset-management software. Because the analog value is unaffected, HART is fully backward compatible with existing loops &mdash; a huge reason it dominates installed instrumentation. Diagnostics are the payoff: a transmitter can report a plugged impulse line, sensor drift, or electronics fault before the process is affected, enabling predictive maintenance. WirelessHART extends the same command set over a mesh radio network for hard-to-wire points. Understanding HART lets a technician remotely re-range, re-zero, and troubleshoot a transmitter without climbing to it, and read health status that a bare 4&ndash;20 mA loop cannot provide."
+      },
+      {
+        "h": "Calibration, Span and Zero, and Traceability",
+        "body": "An instrument that is not calibrated is only a rough guess. <b>Calibration</b> compares a device against a known reference and adjusts it so its output matches reality across the range. <b>Zero</b> sets the output at the low end of the range (4 mA at 0 units); <b>span</b> sets the difference between low and high (adjusting the slope so 20 mA equals full scale). The two interact: zero shifts the whole line, span rotates it, so calibration checks multiple points (0, 25, 50, 75, 100%) to catch nonlinearity. Corrections must be <b>traceable</b> &mdash; the reference standard itself is periodically certified against a national standard (NIST), forming an unbroken chain that makes measurements defensible for quality and regulatory purposes. Calibration intervals depend on criticality and drift history, and records document as-found and as-left values. A five-point as-found/as-left calibration on critical loops is a routine PM that catches sensor drift, wiring degradation, and transmitter faults before they corrupt product quality."
+      },
+      {
+        "h": "Photoelectric Sensing Modes and Background Suppression",
+        "body": "Photoelectric sensors detect objects by interrupting or reflecting a light beam, and the sensing <b>mode</b> determines reliability. <b>Through-beam</b> uses a separate emitter and receiver; the object breaks the beam. It offers the longest range and highest reliability but needs two aligned units and wiring on both sides. <b>Retroreflective</b> puts emitter and receiver in one housing aimed at a reflector, simplifying wiring but risking false reads from shiny targets (solved by polarized versions). <b>Diffuse (proximity) mode</b> detects light bounced back from the target itself, needing only one device on one side but sensitive to target color, angle, and background. <b>Background suppression</b> diffuse sensors add optics or triangulation to ignore surfaces beyond a set distance, reliably detecting a near object while ignoring a wall just behind it &mdash; essential for detecting dark objects against bright backgrounds. Choosing the mode balances range, wiring, target properties, and immunity to reflective backgrounds and ambient light."
       }
     ],
     "lab": {
@@ -4117,6 +4453,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Toroidal sensors have no exposed electrodes to foul; contacting cells suit clean, low-conductivity streams like ultrapure water."
+      },
+      {
+        "q": "Which flowmeter measures MASS flow directly and can also report fluid density?",
+        "options": [
+          "Orifice-plate differential-pressure meter",
+          "Magnetic flowmeter",
+          "Coriolis flowmeter",
+          "Vortex-shedding meter"
+        ],
+        "answer": 2,
+        "explain": "A Coriolis meter senses the twist of a vibrating tube to measure mass flow directly and also derives fluid density. Magnetic and DP meters give volumetric flow; magnetic requires a conductive fluid."
+      },
+      {
+        "q": "A magnetic flowmeter will NOT work on which fluid?",
+        "options": [
+          "Water with dissolved minerals",
+          "A conductive acid solution",
+          "Non-conductive oil",
+          "Wastewater slurry"
+        ],
+        "answer": 2,
+        "explain": "Magnetic flowmeters rely on Faraday's law, requiring a conductive fluid to generate a voltage. Non-conductive fluids like oils and gases produce no signal, so another technology (e.g., Coriolis or vortex) is used."
+      },
+      {
+        "q": "For high-accuracy, stable temperature measurement over a moderate range where repeatability matters most, which sensor is generally preferred?",
+        "options": [
+          "Type K thermocouple",
+          "Pt100 RTD",
+          "NTC thermistor",
+          "Infrared pyrometer"
+        ],
+        "answer": 1,
+        "explain": "An RTD (Pt100) offers high accuracy and long-term stability over a moderate range. Thermocouples handle higher temperatures ruggedly but less accurately; thermistors are sensitive only over a narrow range."
+      },
+      {
+        "q": "What key advantage does HART provide over a plain 4-20 mA loop?",
+        "options": [
+          "It doubles the loop current for more power",
+          "It adds a digital channel for extra variables, diagnostics, and configuration on the same wires",
+          "It eliminates the need for a power supply",
+          "It converts the signal to pneumatic"
+        ],
+        "answer": 1,
+        "explain": "HART superimposes a digital signal on the 4-20 mA loop, carrying additional process variables, diagnostics, and configuration without disturbing the analog value, enabling remote re-ranging and predictive maintenance."
       }
     ],
     "resources": [
@@ -4331,6 +4711,38 @@ MODULES = [
       {
         "h": "Motor Current Signature Analysis (MCSA) for Rotor Bar and Air-Gap Faults",
         "body": "<b>Motor Current Signature Analysis (MCSA)</b> is a non-intrusive predictive-maintenance technique that spots motor mechanical faults by examining the frequency spectrum of the stator current, no shutdown, no shaft access required. A clamp-on CT captures line current; a spectrum analyzer (or a permanently-installed monitor) computes the FFT. Certain fault mechanisms create characteristic sideband frequencies around the supply frequency f_s. <b>Broken rotor bars</b> produce sidebands at f_s &plusmn; 2sf_s, where s is slip. A healthy motor shows sidebands 45-50 dB below the line frequency component; broken bars raise them to within 30 dB or less, and each 6 dB rise doubles the sideband amplitude. <b>Air-gap eccentricity</b> (rotor not centred, bent shaft) creates sidebands at f_s &plusmn; f_r, where f_r is rotational frequency. <b>Bearing defects</b> generate sidebands at the standard bearing fault frequencies (BPFO, BPFI) modulated onto the line frequency. Interpretation needs a clean load, MCSA is unreliable at very light load because slip is too small to separate the sidebands. Trending sideband amplitude over months is more diagnostic than a single reading, catching bars fracturing over time. MCSA complements vibration analysis, catching electrical and inside-the-rotor faults that vibration alone cannot see, and it works fully online without opening the motor."
+      },
+      {
+        "h": "NEMA Motor Design Letters and Torque-Speed Curves",
+        "body": "An induction motor's <b>torque-speed curve</b> defines how much torque it develops from standstill to full speed, and NEMA classifies standard curves by <b>design letter</b>. <b>Design B</b> is the general-purpose workhorse: normal starting torque (about 150% of full-load), moderate starting current, and low slip (about 3%), suiting fans, pumps, and most conveyors. <b>Design C</b> adds high starting torque (about 200%) via a double-cage rotor for hard-to-start loads like loaded conveyors and compressors. <b>Design D</b> delivers very high starting torque and high slip (5&ndash;13%), used for punch presses and hoists where the motor must lug heavy intermittent loads. <b>Design A</b> resembles B but with higher starting current. Key points on the curve are locked-rotor (starting) torque, pull-up torque (the minimum during acceleration), and breakdown torque (the peak before stalling). Matching the motor's curve to the load's torque demand at every speed ensures it accelerates without stalling and runs at an efficient operating point near full speed."
+      },
+      {
+        "h": "Sensorless Vector vs Closed-Loop Flux Vector Control",
+        "body": "Beyond simple V/Hz, modern VFDs use vector control to command torque precisely. <b>Sensorless vector control (SVC)</b> uses a mathematical <b>motor model</b> and measured currents to estimate rotor flux and slip, delivering high starting torque and good speed regulation without any feedback device &mdash; excellent for most industrial loads down to low speeds. Its limits show near zero speed and for precise positioning, where the model has too little information. <b>Closed-loop (flux) vector control</b> adds an encoder for direct speed/position feedback, achieving full torque at zero speed, tight speed holding, and true torque control for cranes, elevators, and coordinated web lines. The tradeoff is the cost, wiring, and failure point of the encoder. Commissioning vector modes requires an <b>auto-tune</b> where the drive measures motor resistance and inductance to populate its model; skipping or mis-doing auto-tune degrades performance. Choosing SVC versus closed-loop hinges on whether the application needs torque at standstill and precise positioning."
+      },
+      {
+        "h": "Using the VFD's Built-In PID for Process Control",
+        "body": "Most modern VFDs include an internal <b>PID loop</b> that closes a process variable directly, eliminating a separate controller for simple applications. A pressure or flow transmitter wires into the drive's analog input as the <b>feedback</b>, an internal or external <b>setpoint</b> defines the target, and the drive modulates motor speed to hold the setpoint &mdash; maintaining constant pressure on a booster pump or constant flow regardless of demand. This saves energy dramatically versus throttling a valve, because slowing the pump follows the affinity laws (power drops with the cube of speed). Configuration sets the feedback scaling, PID gains, and often a <b>sleep function</b> that stops the motor at no demand and wakes it when pressure falls. Tuning follows the same principles as any PID: raise proportional gain until responsive, add integral to remove offset, use derivative sparingly. The built-in loop is ideal for single-variable pump and fan control; complex multi-loop processes still warrant a PLC or DCS."
+      },
+      {
+        "h": "Reading the Complete Motor Nameplate",
+        "body": "The nameplate is the motor's specification sheet and every field guides application and replacement. <b>HP/kW</b> is rated mechanical output; <b>voltage</b> may list dual ratings (230/460) for reconnectable windings; <b>FLA (full-load amps)</b> sets overload and conductor sizing and appears per voltage. <b>RPM</b> is full-load speed, revealing pole count and slip (an 1750-RPM motor is a 4-pole running below 1800 synchronous). <b>Service factor (SF)</b> above 1.0 allows short-term overload. <b>Frame size</b> (e.g., 256T) standardizes mounting dimensions and shaft. <b>Insulation class</b> (B, F, H) and <b>temperature rise</b> define thermal limits; <b>duty</b> (continuous S1 vs intermittent) sets how long it can run. <b>Efficiency</b> and <b>power factor</b> at rated load, <b>code letter</b> (locked-rotor kVA/HP for starting current), <b>design letter</b>, and <b>enclosure</b> (TEFC, ODP) complete the picture. Reading every field prevents mismatches &mdash; ordering a replacement by HP alone ignores frame, mounting, shaft, and voltage that must all match."
+      },
+      {
+        "h": "Motor Space Heaters, Storage, and Long-Term Layup",
+        "body": "Idle and stored motors face a quiet enemy: <b>condensation</b>. When a warm motor cools, humid air inside condenses on windings, and moisture lowers insulation resistance, eventually causing ground faults on start-up. <b>Space heaters</b> &mdash; small resistive elements energized while the motor is off &mdash; keep windings a few degrees above ambient to prevent condensation, standard on outdoor and large motors. For <b>storage</b>, motors are kept in a dry, vibration-free area; vibration transmitted to a stationary bearing causes <b>false brinelling</b> (fretting damage at the contact points), so shafts are periodically rotated and stored motors may have shaft locks removed and be turned monthly. Long-term layup includes protecting the shaft with preservative, sealing openings, and periodically running or meggering to verify insulation. Before returning a stored motor to service, measure insulation resistance and, if low, dry the windings before applying full voltage. These practices prevent the common scenario of a spare motor failing the moment it is finally installed."
+      },
+      {
+        "h": "Two-Speed and Pole-Changing Motors",
+        "body": "Before VFDs were affordable, discrete speed changes came from <b>multi-speed motors</b>, still used where only two or three fixed speeds are needed cheaply and ruggedly. A <b>consequent-pole</b> single-winding motor changes pole count &mdash; and thus synchronous speed &mdash; by reconnecting the winding, giving a 2:1 speed ratio (for example 1800/900 RPM) with one winding. A <b>two-winding</b> motor has separate windings for each speed, allowing non-2:1 ratios like 1200/1800 RPM. Multi-speed motors are switched by contactors that reconnect the winding, and the control must prevent connecting both speeds simultaneously and often requires a time delay when shifting from high to low so the motor decelerates first. Torque and horsepower characteristics differ between speeds &mdash; constant-torque, constant-horsepower, or variable-torque connections are ordered to match the load. Though largely superseded by VFDs for infinite speed control, multi-speed motors remain on cooling-tower fans and some ventilation where a simple, robust two-step is all that is required."
+      },
+      {
+        "h": "12-Pulse and 18-Pulse Front Ends for Harmonic Mitigation",
+        "body": "A standard 6-pulse VFD rectifier draws current in pulses that inject <b>harmonics</b> (notably 5th and 7th) back onto the supply, distorting voltage and potentially violating IEEE 519 limits. <b>Multi-pulse front ends</b> cancel harmonics at the source using phase-shifting transformers. A <b>12-pulse</b> drive splits the input into two 6-pulse bridges fed 30 degrees apart, cancelling the 5th and 7th harmonics so the lowest significant harmonics become the 11th and 13th. An <b>18-pulse</b> drive uses three bridges 20 degrees apart, pushing the lowest harmonics to the 17th and 19th and achieving very low total harmonic distortion without external filters. The cost is a bulky, expensive phase-shifting transformer. Alternatives include <b>active front ends</b> that use IGBTs to draw near-sinusoidal current (and allow regeneration) and passive/active harmonic filters added to a 6-pulse drive. Selecting a mitigation strategy weighs the utility's distortion limits, the size of the drive relative to the transformer, and whether regeneration is also needed."
+      },
+      {
+        "h": "Motor Circuit Analysis and Surge Comparison Testing",
+        "body": "Beyond a simple megger, advanced tests find winding faults before they cause failure. <b>Motor circuit analysis (MCA)</b>, done de-energized, measures resistance, inductance, capacitance-to-ground, and phase-to-phase impedance balance; an imbalance among the three phases signals turn-to-turn shorts, contamination, or connection problems that a megger (which only checks insulation to ground) misses entirely. <b>Surge comparison testing</b> applies matched high-voltage pulses to pairs of phases and compares the resulting waveforms; identical windings produce identical traces, so a divergence reveals a weak turn-to-turn insulation spot that is about to become a short &mdash; the only common test that detects incipient turn-insulation failure. <b>Polarization index (PI)</b> &mdash; the ratio of 10-minute to 1-minute insulation resistance &mdash; assesses winding cleanliness and dryness. Together these form a predictive program: trending phase balance and PI over time flags degradation, and surge testing before returning a repaired or stored motor to service confirms winding health, avoiding an expensive in-service burnout."
       }
     ],
     "lab": {
@@ -4960,6 +5372,50 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "SCRs ramp voltage from a reduced start value to full over a set time, cutting inrush and mechanical shock; a bypass contactor typically closes at speed."
+      },
+      {
+        "q": "A loaded conveyor is hard to start and requires high breakaway torque. Which NEMA design letter is best suited?",
+        "options": [
+          "Design A",
+          "Design B",
+          "Design C",
+          "Design D"
+        ],
+        "answer": 2,
+        "explain": "NEMA Design C uses a double-cage rotor to deliver high starting torque (about 200% of full-load) for hard-to-start loads like loaded conveyors and compressors, while keeping reasonable slip."
+      },
+      {
+        "q": "What is the key capability that closed-loop (encoder) flux vector control provides that sensorless vector cannot fully deliver?",
+        "options": [
+          "Lower drive cost",
+          "Full rated torque at zero speed with precise positioning",
+          "Immunity to harmonics",
+          "Operation without auto-tune"
+        ],
+        "answer": 1,
+        "explain": "Adding an encoder for direct feedback lets closed-loop vector control produce full torque at zero speed and hold position precisely, needed for cranes and elevators. Sensorless vector estimates flux and weakens near zero speed."
+      },
+      {
+        "q": "Which test can detect an incipient turn-to-turn winding insulation weakness that a standard insulation-resistance (megger) test to ground cannot?",
+        "options": [
+          "Polarization index",
+          "Surge comparison test",
+          "No-load current test",
+          "Bearing temperature check"
+        ],
+        "answer": 1,
+        "explain": "Surge comparison testing applies matched high-voltage pulses to phase pairs and compares waveforms; a divergence reveals weak turn-to-turn insulation. A megger only checks insulation to ground, missing turn-insulation faults."
+      },
+      {
+        "q": "Why are motor space heaters energized while a motor is idle?",
+        "options": [
+          "To keep the bearings lubricated",
+          "To prevent condensation on the windings that would lower insulation resistance",
+          "To pre-magnetize the rotor",
+          "To reduce starting current"
+        ],
+        "answer": 1,
+        "explain": "Space heaters keep the windings slightly above ambient so humid air does not condense inside as the motor cools. Condensation lowers insulation resistance and can cause ground faults on the next start."
       }
     ],
     "resources": [

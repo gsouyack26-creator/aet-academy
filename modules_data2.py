@@ -190,6 +190,38 @@ MODULES_2 = [
       {
         "h": "Reading a Machine's Fluid Power Schematic and Bill of Materials",
         "body": "When a machine breaks, the drawings should tell you what the components are and where they fit. A complete fluid-power drawing package has three parts. The <b>circuit schematic</b> (ISO 1219) shows every valve, cylinder, filter, and gauge with standardised symbols, tagged with component IDs (V1, C2, F3, etc.) and port labels (P, T, A, B); flow paths are drawn without regard to physical layout. The <b>bill of materials (BOM)</b> lists each tagged component with its manufacturer part number, description, and quantity, letting you look up the exact spare needed. The <b>installation or piping diagram</b> shows physical layout and hose runs, with hose part numbers, lengths, and end fittings. Reading a fault: locate the misbehaving cylinder on the schematic, trace its flow paths through directional valves and pressure controls to the pump, checking each element you meet against the BOM to know what to inspect (a Rexroth 4WE valve, a 210-bar relief, a 25-micron return filter). Modern machines add electrical overlays (which solenoid is on which PLC output) so you can move between electrical and hydraulic domains. A technician who cannot read a fluid-power drawing is limited to trial-and-error; one who can slashes diagnostic time and orders the right spare the first time."
+      },
+      {
+        "h": "Air Preparation: The FRL Unit",
+        "body": "Compressed air is dirty, wet, and unregulated as it leaves the header, so every pneumatic system begins with air preparation, classically the <b>FRL: filter, regulator, lubricator</b>. The <b>filter</b> removes particulates and coalesces water; a bowl with an auto-drain sheds condensate that would otherwise rust components and freeze exhausts. The <b>regulator</b> reduces and stabilizes downstream pressure to the machine's requirement (often 6 bar / 90 psi), holding it constant despite header fluctuations &mdash; a pressure gauge confirms the setting. The <b>lubricator</b> meters a fine oil mist into the air to lubricate valve spools and cylinder seals, though many modern components are pre-lubricated and run oil-free, in which case adding oil can actually wash out factory grease. Correct micron rating, flow capacity, and drain type matter: an undersized filter starves the machine at peak flow, and a clogged element causes a pressure drop that mimics a weak actuator. Air prep is the cheapest insurance against premature pneumatic failure."
+      },
+      {
+        "h": "Directional Control Valve Configurations",
+        "body": "Directional control valves route air to actuators and are described by <b>ports and positions</b>: a 5/2 valve has five ports and two positions. A <b>3/2</b> valve (three ports, two positions) drives a single-acting cylinder or acts as an on/off pilot &mdash; normally-closed or normally-open. A <b>5/2</b> valve is the standard for double-acting cylinders, alternately pressurizing each side while exhausting the other. A <b>5/3</b> valve adds a center position: <b>closed-center</b> locks the cylinder in place, <b>exhaust-center (open)</b> vents both sides so the rod floats, and <b>pressure-center</b> applies air to both sides. Actuation may be solenoid, air-pilot, mechanical, or manual, and valves may be <b>monostable</b> (spring-return to a default, fail-safe) or <b>bistable</b> (detented, holds last state on power loss). Selecting the configuration is a safety decision: a spring-return 5/2 retracts a clamp on power loss, while a detented valve holds it &mdash; choose based on what state is safe when power or air is lost."
+      },
+      {
+        "h": "Cylinder Cushioning and Speed Control",
+        "body": "A pneumatic cylinder slamming into its end stops at full speed hammers the end caps and shortens life. <b>Cushioning</b> decelerates the piston near end of stroke: an adjustable needle valve traps a pocket of air that the piston must bleed out slowly, absorbing energy over the last few millimeters. Setting the cushion too tight stalls the stroke; too loose and it slams &mdash; adjust until the impact is quiet without losing cycle time. Overall cylinder speed is set not by the supply pressure but by <b>flow control</b>, typically <b>meter-out</b>: a flow-control valve restricts the exhaust air so the piston moves against a controlled back-pressure, giving smooth, load-independent motion. <b>Meter-in</b> (restricting supply) is jerky under varying loads and reserved for special cases. For very heavy or high-speed loads, external <b>shock absorbers</b> supplement internal cushions. Matching cylinder bore, air flow, and cushioning to the load and cycle rate prevents both sluggishness and destructive impact."
+      },
+      {
+        "h": "Vacuum Generation and Venturi Ejectors",
+        "body": "Vacuum grips lift porous and non-ferrous parts that magnets and mechanical grippers cannot. Most machine vacuum comes not from a pump but from a <b>Venturi ejector</b>: compressed air blown through a converging-diverging nozzle accelerates and, by Bernoulli's principle, creates a low-pressure region that entrains air from the suction port, generating vacuum with no moving parts. Ejectors are compact, mount at the point of use, and respond instantly, but consume compressed air continuously unless an <b>air-saving circuit</b> shuts off supply once the setpoint vacuum is reached and a check valve holds it. <b>Vacuum cups</b> are sized by the part weight, the achievable vacuum level, and a safety factor for acceleration and sealing on rough surfaces; multiple small cups often beat one large cup for stability. A vacuum switch confirms grip before the robot moves &mdash; lifting before vacuum is established drops the part. For high, continuous flow (leaky or very porous loads), a mechanical vacuum pump is more economical than a large ejector."
+      },
+      {
+        "h": "Hydraulic Accumulators: Types and Function",
+        "body": "A <b>hydraulic accumulator</b> stores pressurized fluid energy and releases it on demand, smoothing a system's behavior. The most common <b>gas-charged (bladder or piston) accumulator</b> pre-charges nitrogen behind a bladder; as pump pressure exceeds the pre-charge, oil compresses the gas, storing energy that discharges when demand spikes. Functions include: supplying a burst of flow for a fast cylinder stroke so a smaller pump suffices; maintaining pressure during hold phases while the pump unloads, saving energy and heat; absorbing <b>pressure surges and pulsations</b> from the pump; and providing emergency actuation (clamping or safe retraction) on power loss. Pre-charge pressure is critical &mdash; too low and the bladder over-extends and fails, too high and capacity shrinks &mdash; and it is checked with the system depressurized. Because accumulators store energy, they are a stored-energy hazard: lockout must include bleeding the accumulator, and a bleed-down valve is required. Correct sizing balances stored volume, pressure range, and gas pre-charge."
+      },
+      {
+        "h": "Proportional and Servo Valves",
+        "body": "Where on/off directional valves give only full-open or full-closed, <b>proportional and servo valves</b> position their spool continuously in response to an analog command, enabling smooth control of speed, position, and force. A <b>proportional valve</b> uses a proportional solenoid to move the spool roughly in proportion to current, suitable for controlled acceleration/deceleration and mid-accuracy positioning. A <b>servo valve</b> adds a precision torque-motor pilot stage and internal spool-position feedback for very fast, accurate response used in closed-loop hydraulic servo axes (injection molding, testing machines, flight simulators). Both require clean fluid &mdash; contamination is the leading cause of failure because tight spool clearances silt up &mdash; making filtration to a fine ISO cleanliness code mandatory. They are driven by a controller closing a position or pressure loop, with a transducer providing feedback. Understanding valve <b>gain, hysteresis, and null (deadband)</b> is key to tuning; a worn valve's increased null band shows up as sluggish or drifting axis control."
+      },
+      {
+        "h": "Air Consumption, SCFM, and Compressor Sizing",
+        "body": "Sizing a compressed-air system starts with honest demand accounting in <b>SCFM (standard cubic feet per minute)</b>, air volume corrected to standard conditions. Each actuator's consumption per cycle depends on bore, stroke, pressure, and cycles per minute; summing all devices, adding continuous users (ejectors, air blows, leaks), and applying a diversity and future-growth factor yields the required delivery. A compressor is then chosen with adequate SCFM at the working pressure, plus a <b>receiver tank</b> to buffer peak demand and reduce short-cycling. A rule of thumb sizes the tank in gallons to several times the compressor CFM. <b>Leaks</b> are the silent budget-killer &mdash; a plant can waste 20&ndash;30% of its air through leaks, so leak detection with ultrasonic tools pays back quickly. Pressure drop across piping, filters, and fittings must be budgeted so the point-of-use sees rated pressure. Right-sizing avoids both a starved system that slows machines and an oversized compressor that short-cycles and wastes energy."
+      },
+      {
+        "h": "Reading Fluid-Power Schematics: ISO 1219 Symbols",
+        "body": "Pneumatic and hydraulic circuits are documented with standardized <b>ISO 1219</b> symbols that show function, not physical appearance. A valve is drawn as a box per position, with arrows and blocked-port symbols inside showing flow paths; the number of boxes equals the positions, and actuation symbols (solenoid, spring, pilot, manual) attach to the ends. Lines differ: solid for working (pressure) lines, dashed for pilot/control lines, and a circle for pumps and motors (arrows show direction and whether variable). Cylinders show single- or double-acting construction and cushioning. Reading a circuit means tracing from the supply through preparation, valves, and flow controls to the actuator, then following the exhaust or return path &mdash; and identifying the <b>rest (de-energized) state</b>, since a schematic shows valves in their normal position. Recognizing check valves, flow controls, pressure reliefs, and sequence valves lets a technician predict machine behavior and troubleshoot systematically rather than by trial and error. The same literacy transfers between pneumatic and hydraulic prints because the symbol language is shared."
       }
     ],
     "lab": {
@@ -819,6 +851,50 @@ MODULES_2 = [
         ],
         "answer": 0,
         "explain": "During extension, rod-side oil is combined with pump flow to the cap side, roughly doubling extend speed at reduced extend force."
+      },
+      {
+        "q": "To control a double-acting pneumatic cylinder's speed smoothly regardless of load variation, which flow-control method is preferred?",
+        "options": [
+          "Meter-in (restrict supply air)",
+          "Meter-out (restrict exhaust air)",
+          "Increase supply pressure",
+          "Remove the flow control entirely"
+        ],
+        "answer": 1,
+        "explain": "Meter-out restricts the exhaust so the piston moves against a controlled back-pressure, giving smooth, load-independent motion. Meter-in restricts supply and is jerky under varying loads."
+      },
+      {
+        "q": "A clamp must automatically release (retract) if electrical power is lost. Which directional valve choice supports this fail-safe behavior?",
+        "options": [
+          "A detented (bistable) 5/2 valve",
+          "A spring-return (monostable) valve that returns to the release position",
+          "A 5/3 closed-center valve",
+          "A manual valve"
+        ],
+        "answer": 1,
+        "explain": "A monostable spring-return valve reverts to its default (release) position on power loss, providing fail-safe retraction. A detented valve holds its last state, keeping the clamp engaged."
+      },
+      {
+        "q": "How does a Venturi ejector generate vacuum?",
+        "options": [
+          "A motor-driven piston pump",
+          "Compressed air through a converging-diverging nozzle entrains air at low pressure (Bernoulli)",
+          "A magnetic field",
+          "Heating the air to expand it"
+        ],
+        "answer": 1,
+        "explain": "A Venturi ejector accelerates compressed air through a nozzle; by Bernoulli's principle the high-velocity jet creates a low-pressure region that entrains air from the suction port, generating vacuum with no moving parts."
+      },
+      {
+        "q": "Why is fine filtration critical for servo and proportional hydraulic valves?",
+        "options": [
+          "To increase fluid viscosity",
+          "Contamination silts up their tight spool clearances, causing failure",
+          "To raise the fluid temperature",
+          "To reduce the flow rate"
+        ],
+        "answer": 1,
+        "explain": "Servo and proportional valves have very tight spool clearances; particulate contamination silts them up and is the leading cause of failure, so filtration to a fine ISO cleanliness code is mandatory."
       }
     ],
     "resources": [
@@ -1025,6 +1101,38 @@ MODULES_2 = [
       {
         "h": "OPC Tag Browsing, Address Space, and Client-Server Basics",
         "body": "<b>OPC</b> (Open Platform Communications) is the standard bridge between HMI/SCADA clients and controllers of every brand. Every OPC server exposes an <b>address space</b>: a hierarchical namespace of <b>nodes</b> representing tags (variables), objects (grouped tags), and metadata (data types, ranges, engineering units). A client browses this space (like a file explorer for tags), picks the nodes it needs, and subscribes to their values. The classic <b>OPC-DA</b> (Data Access) protocol runs on Windows COM/DCOM, is easy to use inside a plant but painful to route across firewalls and unsuitable for internet-scale use. Its successor <b>OPC-UA</b> (Unified Architecture) uses TCP with strong security (X.509 certificates, message signing, encryption), object-oriented information models, and platform-independent stacks (C, .NET, Java, Python), making it suitable for cloud and IIoT deployments. Whichever protocol, three practical concerns dominate: <b>subscription rate</b> (update every 100 ms is common; asking for 10 ms on 10,000 tags floods the network), <b>deadband</b> (only report analog changes above a threshold to reduce chatter), and <b>quality codes</b> (Good, Bad, Uncertain) that indicate whether a value is trustworthy. Any HMI/SCADA architect must be fluent in OPC because it dictates how much data flows and how securely."
+      },
+      {
+        "h": "HMI Screen Hierarchy and Navigation Design",
+        "body": "A well-designed HMI organizes screens into a <b>navigation hierarchy</b> so an operator moves logically from overview to detail. The <b>Level 1 overview</b> shows the whole process at a glance with key values and alarm status; <b>Level 2 unit</b> screens detail a process area; <b>Level 3 detail/faceplate</b> screens expose a single device's controls and diagnostics; and <b>Level 4</b> holds trends, alarms, and configuration. Consistent navigation &mdash; a persistent header/footer with home, alarm, and back buttons &mdash; lets operators reach any screen in a couple of taps without getting lost, critical during an upset. Screens should mirror the operator's mental model and the physical flow of material. Overloading a single screen with everything forces hunting; too many shallow screens bury information. Navigation depth, button placement, and a logical map reduce operator response time and errors. The design goal is that during an abnormal event the operator instantly finds the affected equipment and the controls needed to intervene."
+      },
+      {
+        "h": "High-Performance HMI: The Gray-Screen Philosophy",
+        "body": "Traditional HMIs used bright colors, 3D pipes, and animation that looked impressive but hid problems &mdash; a screen already full of red and green leaves no visual room to make a real alarm stand out. The <b>high-performance HMI</b> philosophy, promoted by ISA-101, inverts this: a muted gray-scale background with low-contrast equipment, where <b>color is reserved for abnormal conditions</b>. Normal values appear as plain dark text; only an alarm or out-of-range value draws color (typically red/yellow) and shape cues, so the eye is pulled instantly to what needs attention. Values are shown with <b>analog indicators and trends</b> (a small sparkline or moving bar) rather than raw numbers alone, giving context &mdash; is the level rising or falling, near a limit? This design measurably reduces the time operators take to detect and correct upsets. Retrofitting a legacy colorful HMI to high-performance principles is one of the highest-value, lowest-cost improvements a plant can make to reduce abnormal-situation losses."
+      },
+      {
+        "h": "SCADA Polling, Report-by-Exception, and Tag Rates",
+        "body": "A SCADA system gathers data from many remote devices, and how it does so shapes bandwidth and freshness. <b>Polling</b> has the master periodically request each device's data on a schedule; simple and deterministic but it consumes bandwidth even when nothing changes and its poll cycle bounds how fresh data is. <b>Report-by-exception (unsolicited)</b> has devices send data only when a value changes beyond a deadband, dramatically cutting traffic on slow-changing processes and low-bandwidth links (radio, cellular) common in water and pipeline SCADA. <b>Tag scan rates</b> are tuned per point: a fast-changing pressure might update every 250 ms while a daily total updates every minute; over-scanning wastes CPU and network, under-scanning misses transients. A <b>deadband</b> on analog tags prevents noise from generating endless updates. Designing an efficient SCADA means matching each tag's rate and reporting method to its importance and dynamics, so operators see critical data promptly without saturating the communications infrastructure."
+      },
+      {
+        "h": "Historians and Time-Series Data Compression",
+        "body": "A <b>process historian</b> is a specialized time-series database that records thousands of tags for years, enabling trend analysis, troubleshooting, regulatory reporting, and analytics. Storing every sample of every tag would be enormous, so historians use <b>compression</b>. <b>Deadband (exception) compression</b> discards a new sample if it has not changed beyond a threshold since the last stored value. <b>Swinging-door compression</b> stores only the points needed to reconstruct the trend within a tolerance band, keeping the shape of the curve while dropping redundant straight-line points &mdash; hugely reducing storage while preserving fidelity. Retrieval interpolates between stored points. Configuring compression is a tradeoff: too aggressive and you lose real detail (a brief spike vanishes), too little and storage balloons. Historians timestamp data at the source where possible and handle store-and-forward buffering so a network outage does not lose data. Modern historians add analytics, and their data feeds dashboards, KPI calculations, and machine-learning models for predictive maintenance."
+      },
+      {
+        "h": "SCADA Redundancy and Failover",
+        "body": "Continuous processes cannot tolerate losing their supervisory system, so critical SCADA is built <b>redundant</b>. A <b>redundant server pair</b> runs primary and standby: both receive data, but only the primary controls; on failure the standby takes over automatically (<b>failover</b>), ideally without operators noticing beyond a brief alarm. Redundancy layers include dual servers, dual network paths (so one switch or cable failure does not isolate a node), redundant PLC communication, and mirrored or clustered databases so historical data is not lost. <b>Hot standby</b> keeps the backup fully synchronized for instant takeover; <b>warm/cold standby</b> trades faster recovery for lower cost. Designers avoid <b>single points of failure</b> &mdash; a lone switch, a single power feed, one time source &mdash; because redundant servers on one switch are not truly redundant. Failover must be tested regularly; an untested standby often fails when finally needed. The right level of redundancy is driven by the cost of downtime versus the cost of the redundant hardware and complexity."
+      },
+      {
+        "h": "Recipe Management on the HMI",
+        "body": "Flexible machines that make many products need <b>recipe management</b> &mdash; storing named sets of parameters (setpoints, times, speeds, ingredient amounts) that download to the controller for each product. Rather than an operator manually entering dozens of values (error-prone and slow), they select a recipe by name and the HMI transfers the whole parameter set at once, ensuring repeatability. A good recipe system separates the <b>recipe (the data)</b> from the <b>equipment logic (how it runs)</b>, so adding a product means adding data, not reprogramming. Features include version control of recipes, security so only authorized users edit them, validation of parameter ranges before download, and an audit trail of which recipe ran when &mdash; important for quality traceability and regulated industries (the ISA-88 batch standard formalizes recipe structure). Uploading current settings back to a new recipe captures a proven configuration. Robust recipe management reduces changeover time and scrap, and prevents the classic error of running product A with product B's settings."
+      },
+      {
+        "h": "HMI/SCADA Security, User Roles, and Audit Trails",
+        "body": "An HMI that lets anyone change any setpoint is a safety and quality risk, so access is controlled by <b>user roles</b>. Operators can run and acknowledge alarms; supervisors can change setpoints within limits; engineers can edit configuration; and each level requires authentication. <b>Role-based access control</b> ties permissions to a login, and screens gray out or hide controls the current user may not use. An <b>audit trail</b> logs who did what and when &mdash; every setpoint change, alarm acknowledgment, recipe download, and login &mdash; providing accountability and, in regulated industries (pharma under FDA 21 CFR Part 11), a legal requirement with electronic signatures. Sessions time out to prevent an unattended terminal being misused. Beyond application logins, SCADA security spans network segmentation, patched operating systems, disabled unused ports, and controlled remote access, all part of an IEC 62443 program. The weakest link is often a shared generic login with a taped-up password &mdash; individual accountable accounts are the foundation of both security and troubleshooting the human factors behind an incident."
+      },
+      {
+        "h": "Trends, Sparklines, and Data Presentation for Operators",
+        "body": "A single number tells an operator the current value but not the story; <b>trends</b> reveal direction, rate, and history that turn data into insight. A <b>real-time trend</b> plots a tag over recent minutes so an operator sees a level climbing toward a limit long before the alarm. A <b>historical trend</b> pulled from the historian lets a technician correlate a fault with what changed &mdash; did the temperature spike when the valve stuck? Overlaying related tags (setpoint, process value, and controller output) on one trend diagnoses control problems at a glance: a PV oscillating around SP with the output swinging signals poor tuning. <b>Sparklines</b> embed miniature trends beside values on overview screens, giving context without a separate page. Good trend design uses appropriate time spans, clear scaling, and distinguishable pens, and lets the user pan and zoom. Teaching operators and technicians to read trends is as important as building them; the trend is often the fastest path from symptom to root cause."
       }
     ],
     "lab": {
@@ -1654,6 +1762,50 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Character-per-word varies by language; sizing labels only to English text leads to truncated or wrapped translated captions."
+      },
+      {
+        "q": "In high-performance (ISA-101) HMI design, how is color used?",
+        "options": [
+          "Bright colors everywhere to make the screen engaging",
+          "Reserved mainly for abnormal/alarm conditions against a muted gray background",
+          "Green for all running equipment, red for all stopped",
+          "Randomly assigned per screen"
+        ],
+        "answer": 1,
+        "explain": "High-performance HMI uses a muted gray-scale background with normal values in plain text, reserving color for abnormal conditions so the eye is drawn instantly to what needs attention, reducing detection time during upsets."
+      },
+      {
+        "q": "On a low-bandwidth radio SCADA link with slowly changing values, which data-acquisition method minimizes traffic?",
+        "options": [
+          "Fast continuous polling of every tag",
+          "Report-by-exception (send only when a value changes beyond a deadband)",
+          "Storing everything locally only",
+          "Increasing the poll rate"
+        ],
+        "answer": 1,
+        "explain": "Report-by-exception transmits only when a value changes beyond a deadband, dramatically cutting traffic on slow-changing processes and low-bandwidth links, versus polling which consumes bandwidth even when nothing changes."
+      },
+      {
+        "q": "What is the primary purpose of an audit trail in a regulated HMI/SCADA system?",
+        "options": [
+          "To speed up screen rendering",
+          "To log who made each change and when, providing accountability and traceability",
+          "To compress historical data",
+          "To manage network bandwidth"
+        ],
+        "answer": 1,
+        "explain": "An audit trail records every setpoint change, alarm acknowledgment, and login with user and timestamp, providing accountability and, in regulated industries, a compliance requirement (e.g., FDA 21 CFR Part 11)."
+      },
+      {
+        "q": "Swinging-door compression in a process historian works by:",
+        "options": [
+          "Deleting the oldest data first",
+          "Storing only the points needed to reconstruct the trend within a tolerance band",
+          "Averaging all tags together",
+          "Recording every sample without loss"
+        ],
+        "answer": 1,
+        "explain": "Swinging-door compression keeps only the points required to reconstruct the trend within a set tolerance, dropping redundant straight-line samples to greatly reduce storage while preserving the curve's shape."
       }
     ],
     "resources": [
@@ -1860,6 +2012,38 @@ MODULES_2 = [
       {
         "h": "Firewall Rules and Deep Packet Inspection at the IT/OT Boundary",
         "body": "The industrial DMZ (see Purdue Levels 3-4 boundary) is enforced by firewalls that permit only defined traffic between operations technology (OT) and information technology (IT). Rule design follows <b>default-deny</b>: everything is blocked unless a specific rule allows it. Typical allowed flows: historian data from OT to IT via OPC-UA on TCP 4840; MES-to-DCS commands over defined protocol/ports; NTP time-sync from IT to OT clock; and Windows domain-controller traffic for OT workstations. Each rule specifies source IP or subnet, destination IP or subnet, protocol, port, and often direction and stateful tracking. <b>Deep Packet Inspection (DPI)</b> firewalls (like Palo Alto, Fortinet, and OT-specialised Cisco Cyber Vision or Claroty CTD) go beyond port matching and examine the protocol payload; they can, for example, permit Modbus reads (function codes 3, 4) but block writes (function code 6, 16), a huge safety improvement over allow-all-Modbus. DPI also detects protocol anomalies, malformed frames, unexpected function codes, that often indicate reconnaissance or attack. Any rule that opens Level 3-4 without stateful inspection and DPI leaves the OT network exposed; every industrial cyber incident of the past decade has traversed a permissive IT/OT boundary. Regularly audit the ruleset: unused rules should be removed, and each rule should be traceable to a business need approved by both IT and OT owners."
+      },
+      {
+        "h": "The OSI Model Applied to Industrial Networks",
+        "body": "The seven-layer <b>OSI model</b> is the mental framework for understanding any network. From the bottom: <b>Physical</b> (cables, connectors, voltage levels), <b>Data Link</b> (MAC addresses, Ethernet framing, switching), <b>Network</b> (IP addressing and routing), <b>Transport</b> (TCP reliable streams or UDP fast datagrams), <b>Session, Presentation</b>, and <b>Application</b> (the protocol the device speaks, such as EtherNet/IP or Modbus TCP). Industrial protocols map onto these layers: EtherNet/IP rides on standard TCP/UDP/IP over Ethernet, so a plant network reuses ordinary IT infrastructure at the lower layers while the CIP application layer carries automation data. Troubleshooting is layered too: check the physical link light first, then addressing (can you ping?), then the transport port, then the application. A cable fault is Layer 1; a wrong subnet mask is Layer 3; a device that pings but will not exchange I/O is an application-layer or configuration issue. Thinking in layers turns a vague 'network is down' into a systematic diagnosis that isolates the fault quickly."
+      },
+      {
+        "h": "Ethernet Switching: Managed Switches, VLANs, and QoS",
+        "body": "Modern industrial Ethernet centers on switches, and the choice between <b>unmanaged and managed</b> matters. An unmanaged switch simply forwards frames &mdash; cheap and plug-and-play but blind and uncontrollable. A <b>managed switch</b> adds features essential to a robust plant network: <b>VLANs</b> segment one physical switch into isolated broadcast domains so control traffic, safety, and office data do not mix, improving security and cutting broadcast load; <b>Quality of Service (QoS)</b> prioritizes time-critical I/O and motion frames over bulk file transfers; <b>IGMP snooping</b> tames the multicast traffic that EtherNet/IP produces so it reaches only interested nodes rather than flooding every port; and diagnostics (port statistics, mirroring, alarms) enable troubleshooting. <b>Ring topologies</b> with fast recovery protocols (DLR, MRP, RSTP) give redundancy so a single cable break heals in milliseconds. Managed switches also support port security and administrative shutdown of unused ports. For anything beyond a trivial machine, managed switches are the backbone that makes deterministic, secure, diagnosable industrial networking possible."
+      },
+      {
+        "h": "IP Addressing, Subnets, and Gateways for the Plant Floor",
+        "body": "Every Ethernet device needs an <b>IP address</b>, a <b>subnet mask</b>, and often a <b>gateway</b>, and getting these right is fundamental. The IP address identifies the device; the subnet mask defines which portion is the network versus the host, determining which devices are 'local'. Two devices communicate directly only if they share the same subnet; to reach another subnet, traffic goes through the <b>default gateway</b> (a router). A classic fault is two devices with correct IPs but mismatched masks, so each thinks the other is remote and traffic never flows. Plants typically use <b>static addressing</b> for controllers and I/O (so an address never changes unexpectedly) and reserve DHCP for transient devices. Good practice documents an <b>IP address plan</b> &mdash; a scheme mapping address ranges to areas and device types &mdash; preventing duplicate-address conflicts that knock nodes offline. Understanding subnetting lets a technician predict whether two devices can talk, size an address range, and configure the VLANs and routers that segment a larger network."
+      },
+      {
+        "h": "EtherNet/IP: Implicit vs Explicit Messaging",
+        "body": "EtherNet/IP, built on the <b>Common Industrial Protocol (CIP)</b>, moves data two distinct ways. <b>Implicit (I/O) messaging</b> is cyclic, connected, real-time data exchange &mdash; a PLC and a remote I/O block or drive swap their I/O at a fixed <b>requested packet interval (RPI)</b> using UDP for speed, with connection health watched by a timeout that faults the connection if packets stop. This is the high-priority traffic that runs the machine. <b>Explicit messaging</b> is on-demand, request/response communication over TCP for non-time-critical tasks &mdash; reading a drive parameter, uploading a program, a one-time configuration &mdash; using the MSG instruction. Understanding the difference guides both design and troubleshooting: I/O (implicit) connections should be tuned so RPIs match the application's needs without saturating the network, while explicit messages should be throttled so a flood of MSG reads does not steal bandwidth from time-critical I/O. A connection-timeout fault points at the implicit path (cabling, switch, RPI), whereas a failed parameter read points at the explicit path."
+      },
+      {
+        "h": "PROFINET Conformance Classes and Real-Time Channels",
+        "body": "<b>PROFINET</b>, the Ethernet successor to PROFIBUS, defines <b>conformance classes (CC-A, CC-B, CC-C)</b> that set escalating capability. CC-A covers basic cyclic data over standard Ethernet; CC-B adds network diagnostics and topology (and CC-B/PA for process); CC-C adds hardware-based <b>isochronous real-time (IRT)</b> for tightly synchronized motion. PROFINET uses three communication channels layered by urgency: standard <b>TCP/IP</b> for configuration and non-real-time data, <b>RT (real-time)</b> that bypasses the TCP/IP stack for cyclic I/O with millisecond determinism, and <b>IRT</b> that uses time-scheduled, hardware-synchronized transmission for microsecond-level jitter in coordinated motion. Devices are identified by a <b>device name</b> (not just IP), assigned by the engineering tool, and the controller addresses them by that name &mdash; a common startup issue is an unassigned or duplicate device name. Understanding conformance classes helps specify hardware: buying CC-A switches for an IRT motion application will not deliver the required synchronization. PROFINET and EtherNet/IP solve the same problems with different mechanisms, and large plants often run both."
+      },
+      {
+        "h": "Time Synchronization: PTP and Sequence of Events",
+        "body": "Many automation tasks need devices to share a common, precise <b>time base</b>. Coordinated motion, synchronized sampling, and especially <b>sequence-of-events (SOE)</b> recording &mdash; determining the exact order in which alarms and trips occurred during a fast cascade &mdash; require clocks aligned far tighter than a human-set wall clock. <b>NTP (Network Time Protocol)</b> synchronizes to within milliseconds, adequate for logging and HMIs. <b>PTP (Precision Time Protocol, IEEE 1588)</b> achieves sub-microsecond synchronization by exchanging timestamped messages and correcting for network delay, and with hardware timestamping in switches it disciplines device clocks tightly enough for IRT motion and precise SOE. A <b>grandmaster clock</b>, often GPS-disciplined, is the reference the network follows. When investigating why two trips happened, correctly ordered timestamps reveal cause and effect; poorly synchronized clocks make a downstream effect look like it preceded its cause, misleading the analysis. Designing time sync means choosing NTP versus PTP by the required accuracy and ensuring the whole path (switches included) supports it."
+      },
+      {
+        "h": "Network Media: Copper, Fiber, and Cable Selection",
+        "body": "The physical layer's reliability starts with correct <b>media</b> selection. <b>Copper twisted-pair (Cat 5e/6)</b> is inexpensive and easy to terminate but is limited to about 100 m per segment and is susceptible to electromagnetic interference &mdash; a serious concern near VFDs and large motors, where industrial cable with heavier shielding and proper single-point grounding is required. <b>Fiber optic</b> immunizes the link against EMI entirely, spans long distances (multimode for hundreds of meters, single-mode for kilometers), and provides galvanic isolation between buildings with different ground potentials, avoiding ground loops. Fiber is the right choice for runs between buildings, in high-noise environments, and for backbone links. Industrial connectors (M12 D-code or X-code) seal against dust and moisture where RJ45 would fail. Cable routing matters as much as type: separating signal cables from power runs, respecting bend radius, and strain-relieving connectors prevent the intermittent faults that plague field networks. Choosing media by distance, noise environment, and isolation needs prevents the most common and frustrating physical-layer problems."
+      },
+      {
+        "h": "Network Diagnostics: Ping, Port Mirroring, and Packet Capture",
+        "body": "Systematic tools turn network troubleshooting from guesswork into evidence. <b>Ping</b> tests basic reachability at Layer 3 &mdash; a reply confirms addressing and physical path, no reply narrows the fault. <b>ARP</b> tables and duplicate-IP detection catch address conflicts that cause nodes to intermittently drop. A managed switch's <b>port statistics</b> reveal errors: CRC errors point to cabling or noise, collisions to a duplex mismatch, and high utilization to a bandwidth problem. <b>Port mirroring (SPAN)</b> copies traffic from one port to a monitoring port so a laptop running a <b>packet capture</b> tool (like Wireshark) can see the actual frames &mdash; the ultimate ground truth. Capturing reveals whether a PLC is even requesting data, whether replies come back, retransmissions signaling loss, and broadcast/multicast storms saturating a link. Vendor tools show connection health and RPI timing for EtherNet/IP. The disciplined approach works up the layers &mdash; link light, ping, switch stats, then capture &mdash; so a technician proves where the fault is rather than swapping parts hopefully."
       }
     ],
     "lab": {
@@ -2488,6 +2672,50 @@ MODULES_2 = [
         ],
         "answer": 2,
         "explain": "802.1Q inserts the tag before EtherType; it carries a 12-bit VLAN ID plus a 3-bit priority (PCP) for QoS."
+      },
+      {
+        "q": "Two Ethernet devices have valid IP addresses but different subnet masks, so each believes the other is on a remote network. What is the likely symptom?",
+        "options": [
+          "Faster communication",
+          "They cannot communicate directly even though both are on the same physical LAN",
+          "The switch overheats",
+          "IP addresses change automatically"
+        ],
+        "answer": 1,
+        "explain": "Devices communicate directly only if the subnet mask places them on the same subnet. A mismatched mask makes each treat the other as remote, so traffic is sent to a gateway and never reaches the local peer."
+      },
+      {
+        "q": "In EtherNet/IP, which type of messaging carries cyclic real-time I/O at a fixed requested packet interval (RPI)?",
+        "options": [
+          "Explicit messaging over TCP",
+          "Implicit (I/O) messaging over UDP",
+          "Email over SMTP",
+          "HTTP polling"
+        ],
+        "answer": 1,
+        "explain": "Implicit (I/O) messaging is cyclic, connected real-time data exchanged at the RPI using UDP, running the machine. Explicit messaging is on-demand request/response over TCP for parameters and configuration."
+      },
+      {
+        "q": "For accurate sequence-of-events (SOE) recording to determine the exact order of fast cascading trips, which time-synchronization technology is most appropriate?",
+        "options": [
+          "Manually setting each clock",
+          "NTP only",
+          "PTP (IEEE 1588) with sub-microsecond accuracy",
+          "No synchronization is needed"
+        ],
+        "answer": 2,
+        "explain": "PTP (IEEE 1588) achieves sub-microsecond synchronization, tight enough to correctly order fast events. NTP's millisecond accuracy is fine for logging but can misorder rapid cascades, misleading cause-and-effect analysis."
+      },
+      {
+        "q": "Why is fiber optic media often chosen for network runs near large VFDs and motors or between separate buildings?",
+        "options": [
+          "It is cheaper than copper",
+          "It is immune to EMI and provides galvanic isolation, avoiding noise and ground loops",
+          "It supports more IP addresses",
+          "It does not need connectors"
+        ],
+        "answer": 1,
+        "explain": "Fiber is immune to electromagnetic interference and galvanically isolates the link, avoiding noise pickup near drives/motors and ground-loop problems between buildings with different ground potentials, over long distances."
       }
     ],
     "resources": [
@@ -2694,6 +2922,38 @@ MODULES_2 = [
       {
         "h": "Return-to-Home After Emergency Stop: Recovery Protocols",
         "body": "Recovering a robot cell or motion system from an <b>E-stop</b> is a defined procedure, not a fumble in the moment. When the E-stop is pressed, the safety system commands STO (Safe Torque Off) on all drives, freezing the mechanism where it is; brakes engage on axes with load-holding brakes. First, secure the scene: identify why the E-stop was pressed, and correct the trigger (an operator inside the cell, a fault, a jam). Only after that reset the E-stop and clear any latched safety-relay faults. Now the recovery <b>homing</b>: incremental-encoder axes have lost their position reference during power-off brake time; some drives use battery-backed absolute encoders and remember. Any axis needing home returns via a defined sequence to its safe home. Then check <b>program state</b>: some controllers auto-resume where they left off (dangerous if a workpiece has been removed or the gripper is holding something); others require the operator to explicitly command \"resume\" or restart the cycle from a known start step. Best practice: after any E-stop, take the machine to a defined <b>safe start position</b> before resuming, so operators can visually verify everything is where it should be. Document the recovery procedure clearly on the panel and in training; well-trained operators clear an E-stop in a minute rather than calling maintenance for every event."
+      },
+      {
+        "h": "Robot Coordinate Frames: World, Tool, and User",
+        "body": "Precise robot programming depends on understanding <b>coordinate frames</b>. The <b>world (base) frame</b> is fixed to the robot's base and never moves &mdash; the absolute reference. The <b>tool (TCP) frame</b> is attached to the tool center point at the end of the arm and moves with it; defining the TCP correctly (its offset from the wrist flange) is critical so the robot knows where the gripper fingertip or weld tip actually is, and mis-defining it makes taught points inaccurate and reorientations swing wildly. The <b>user (work) frame</b> is a custom frame aligned to a fixture, conveyor, or workpiece, so a programmer can jog and teach in directions that make sense relative to the part (along the pallet edge) rather than the robot base. Shifting a whole program to a relocated fixture becomes a matter of redefining one user frame instead of re-teaching every point. Fluency in switching between frames &mdash; jogging in tool versus world versus user &mdash; is a core skill that separates efficient robot programmers from those who fight the machine."
+      },
+      {
+        "h": "Payload, Reach, and Robot Selection",
+        "body": "Selecting a robot starts with two headline specs: <b>payload</b> and <b>reach</b>. Payload is the maximum mass at the wrist including the end-of-arm tool, not just the part &mdash; a 10 kg part on a 6 kg gripper needs a 16-kg-plus robot, and payload must be de-rated as the load's center of gravity moves away from the flange (inertia and moment matter, not just mass). <b>Reach</b> is how far the robot can extend; the usable workspace is smaller than the maximum reach because of joint limits and singularities near full extension. Other selection factors: number of <b>axes</b> (4-axis SCARA/palletizers for planar pick-place, 6-axis for arbitrary orientation), repeatability spec, mounting (floor, inverted, wall), speed and cycle-time capability, and environmental rating (washdown, cleanroom, explosion-proof). Undersizing payload causes overload faults and premature wear; oversizing wastes money and floor space. Matching kinematic type, payload with margin, reach with workspace analysis, and duty to the application is the foundation of a successful robotic cell."
+      },
+      {
+        "h": "End-of-Arm Tooling and Gripper Selection",
+        "body": "The <b>end-of-arm tool (EOAT)</b> is what makes a robot useful, and its design often determines cell success more than the robot itself. <b>Mechanical grippers</b> (two- or three-jaw, parallel or angular) grip rigid parts with force and positive location; jaw design is customized to the part geometry. <b>Vacuum grippers</b> handle flat, smooth, or porous sheets and boxes and are forgiving of position, but need adequate seal area and vacuum. <b>Magnetic grippers</b> lift ferrous parts quickly. <b>Soft/compliant grippers</b> handle delicate or variable produce. EOAT design accounts for weight (it eats payload), the center of gravity's effect on the robot, tool-change needs (a quick-change coupler lets one robot run multiple tools), and sensing &mdash; part-present, grip-confirm, and force feedback. Utilities (air, vacuum, electrical for sensors) route through dress packs to the tool. Poorly designed EOAT causes dropped parts, mispicks, and collisions; good EOAT is lightweight, rigid, reliably senses the part, and tolerates the real variation the cell will see."
+      },
+      {
+        "h": "Robot Programming Methods: Teach, Lead-Through, and Offline",
+        "body": "Robots are programmed by several complementary methods. <b>Teach-pendant programming</b> is the workhorse: the programmer jogs the robot to positions, records points, and builds the motion/logic program on the handheld pendant &mdash; precise and universal but slow and requiring the robot and cell to be available. <b>Lead-through (hand-guiding)</b>, common on collaborative robots, lets a person physically move the arm to positions that are recorded, intuitive for simple paths. <b>Offline programming (OLP)</b> builds and simulates the program in 3D software on a PC using CAD models of the cell, then downloads it &mdash; enabling programming without stopping production, collision checking in simulation, and cycle-time optimization before the robot is touched, though it requires accurate <b>calibration</b> between the virtual and real cell to be worth trusting. Complex applications (automotive body shops) rely on OLP; a single pick-place is faster to teach directly. Understanding when each method pays off &mdash; and that OLP-generated points still need touch-up against the real world &mdash; guides efficient deployment."
+      },
+      {
+        "h": "Singularities, Joint Limits, and Reachability",
+        "body": "A robot's mathematics breaks down at <b>singularities</b> &mdash; arm configurations where two joint axes align and the robot loses a degree of freedom, so achieving a small Cartesian move would require enormous, near-infinite joint speeds. Common on 6-axis arms are the <b>wrist singularity</b> (axes 4 and 6 align), the <b>shoulder singularity</b>, and the <b>elbow singularity</b> near full extension. Passing a path straight through a singularity causes the robot to fault, stop, or jerk violently. Programmers avoid them by planning paths that skirt these configurations, using joint-space moves through the region, or reorienting the workpiece. Related limits: each joint has a <b>rotation limit</b>, and the reachable workspace is bounded not just by reach but by combinations of joint angles &mdash; a point may be physically within reach yet unreachable in the orientation required. Simulation flags singularities and unreachable poses before they surprise you on the floor. Recognizing a singularity fault (versus a collision or overload) is key to diagnosing why a robot stumbles at a specific spot in its path."
+      },
+      {
+        "h": "Motion Profiles: Trapezoidal vs S-Curve",
+        "body": "How a servo axis accelerates between points shapes cycle time, smoothness, and mechanical stress. A <b>trapezoidal velocity profile</b> ramps at constant acceleration to a top speed, cruises, then decelerates &mdash; simple and time-efficient, but the abrupt change from zero to constant acceleration produces a step in <b>jerk</b> (rate of change of acceleration) that excites vibration, wears mechanics, and can spill or damage delicate loads. An <b>S-curve profile</b> ramps acceleration gradually (limiting jerk), producing smooth starts and stops at the cost of slightly longer moves. S-curves are preferred for high-speed, high-inertia, or fragile-load motion and for reducing wear and settling time &mdash; a smoother move often settles faster, so the net cycle time can even improve despite the gentler ramp. Tuning involves setting max velocity, acceleration, deceleration, and jerk limits to the mechanics and load. Understanding the tradeoff lets a technician diagnose vibration or overshoot (often too-aggressive trapezoidal ramps) and improve both quality and equipment life by shaping the profile."
+      },
+      {
+        "h": "Electronic Gearing and Camming",
+        "body": "Coordinated motion often requires one axis to follow another precisely, achieved electronically rather than with physical gears and cams. <b>Electronic gearing</b> slaves a follower axis to a master at a programmable ratio, so a follower runs at, say, 2.5 times the master's position &mdash; used for synchronizing conveyors, feed rolls, or a flying-cutoff that must match line speed. Changing the ratio is a software edit, not a gear swap, and the ratio can even change on the fly. <b>Electronic camming</b> is more general: a <b>cam profile</b> table defines the follower's position as an arbitrary function of the master's position, replicating a mechanical cam's complex motion (dwell, rise, return) in software. This drives packaging, printing registration, and rotary knife applications where the follower must trace a precise, non-linear relationship to the master. Cam profiles are built graphically or by point tables and can be blended and switched. Electronic gearing/camming brings flexibility, quick changeover, and precision impossible with mechanical linkages, and understanding the master-follower relationship is central to modern multi-axis machine design and troubleshooting."
+      },
+      {
+        "h": "Collaborative Robots and Power-and-Force Limiting",
+        "body": "<b>Collaborative robots (cobots)</b> are designed to work alongside people without traditional guarding, but 'collaborative' describes the application and risk assessment, not merely the robot. ISO/TS 15066 defines four collaborative methods: <b>safety-rated monitored stop</b> (robot halts when a person enters), <b>hand guiding</b>, <b>speed and separation monitoring</b> (robot slows/stops as a person approaches, using area scanners), and <b>power and force limiting (PFL)</b> &mdash; the robot's design and control limit contact forces and pressures to biomechanical limits so an incidental contact does not injure. PFL cobots have rounded, padded designs, joint torque sensing, and limits derived from the ISO/TS 15066 pain-threshold data for each body region. Crucially, adding a sharp tool or a heavy fast-moving payload can void the collaborative safety &mdash; a cobot wielding a knife or moving at speed still needs guarding or SSM. Every cobot deployment requires its own risk assessment of the tool, part, speed, and reachable contact points; the robot being labeled collaborative is the start, not the end, of the safety analysis."
       }
     ],
     "lab": {
@@ -3323,6 +3583,50 @@ MODULES_2 = [
         ],
         "answer": 2,
         "explain": "Motor and structural limits set the peak; at low payload the inertia and torque required drop so the same peak torque yields higher acceleration."
+      },
+      {
+        "q": "A robot must lift a 9 kg part using a 5 kg gripper. What minimum payload rating should the robot have, before considering center-of-gravity effects?",
+        "options": [
+          "5 kg",
+          "9 kg",
+          "14 kg or more",
+          "4 kg"
+        ],
+        "answer": 2,
+        "explain": "Payload includes the end-of-arm tool plus the part: 9 kg + 5 kg = 14 kg minimum, and it must be de-rated further as the load's center of gravity moves away from the flange (moment/inertia)."
+      },
+      {
+        "q": "What happens if a robot path passes directly through a wrist singularity?",
+        "options": [
+          "The robot moves faster and smoother",
+          "Joint speeds approach infinity for a small Cartesian move, causing a fault, stop, or violent motion",
+          "Payload capacity increases",
+          "Nothing; singularities only affect accuracy"
+        ],
+        "answer": 1,
+        "explain": "At a singularity two joint axes align and the robot loses a degree of freedom, so a small Cartesian move demands near-infinite joint speed, causing the robot to fault, stop, or jerk. Programmers plan paths around singularities."
+      },
+      {
+        "q": "Compared to a trapezoidal profile, an S-curve motion profile primarily reduces:",
+        "options": [
+          "Maximum velocity",
+          "Jerk (rate of change of acceleration), lowering vibration and wear",
+          "The number of axes needed",
+          "Payload"
+        ],
+        "answer": 1,
+        "explain": "An S-curve limits jerk by ramping acceleration gradually, producing smoother starts/stops that reduce vibration, mechanical wear, and settling time, at the cost of slightly gentler (sometimes net-faster) moves."
+      },
+      {
+        "q": "A power-and-force-limiting (PFL) cobot is fitted with a sharp cutting tool and a heavy payload run at high speed. What is the correct safety conclusion?",
+        "options": [
+          "It remains collaborative because it is a cobot",
+          "The application may no longer be safe without additional guarding or speed/separation monitoring; a new risk assessment is required",
+          "PFL automatically compensates for any tool",
+          "Cobots never need risk assessment"
+        ],
+        "answer": 1,
+        "explain": "Collaborative operation depends on the application, not just the robot. A sharp tool or fast heavy payload can exceed biomechanical limits, voiding PFL safety, so a fresh risk assessment and possibly guarding or SSM are required."
       }
     ],
     "resources": [
@@ -3529,6 +3833,34 @@ MODULES_2 = [
       {
         "h": "Model Predictive Control (MPC): When and Why",
         "body": "<b>Model Predictive Control (MPC)</b> is the workhorse of modern supervisory control on units with many interacting variables and constraints (distillation columns, catalytic crackers, cement kilns). Unlike PID, which acts on the current error, MPC uses a <b>dynamic model</b> of the process to predict future behaviour over a horizon (say 60 minutes ahead in 1-minute steps) and then computes the sequence of moves in the manipulated variables that minimises predicted deviation from setpoint while respecting constraints on inputs, outputs, and rates of change. Only the first move is applied, then the whole calculation repeats each cycle (receding-horizon control). Advantages: MPC handles <b>multi-variable interactions</b> (moving one control valve affects several PVs), <b>hard constraints</b> (never let this pressure exceed 50 psig), <b>deadtime</b> (the model predicts the delayed effect), and <b>economic optimisation</b> layered onto stability. Costs: MPC requires a good model (built from step-tests), commissioning takes weeks, and maintenance requires an engineer trained in model tuning. Payback on a well-implemented MPC on a distillation column can be millions of dollars a year through tighter operation closer to product-quality limits. Any operator running a complex unit should understand MPC's principles even if they don't design it, because when MPC misbehaves it can drive multiple loops off simultaneously in ways plain PID cannot."
+      },
+      {
+        "h": "Process Dynamics: Gain, Dead Time, and Time Constant",
+        "body": "Before tuning any loop you must understand how the <b>process</b> itself responds. Three parameters characterize most self-regulating processes. <b>Process gain</b> is how much the output (process variable) changes per unit of controller output &mdash; a high-gain process moves a lot for a small valve change. The <b>time constant (lag)</b> is how quickly the process reaches its new value, set by capacitance and resistance (a large tank has a long thermal or level time constant). <b>Dead time (transport delay)</b> is the pure delay before any response begins &mdash; the time for heated fluid to travel down a pipe to the sensor, or for material to traverse a conveyor. Dead time is the enemy of control: the more dead time relative to the time constant, the harder the loop is to tune and the more sluggish it must be to stay stable, because the controller is always acting on old information. Identifying gain, lag, and dead time from a step test (bump the output, watch the response) is the basis of every rational tuning method and predicts which loops will be easy or troublesome."
+      },
+      {
+        "h": "Cascade Control",
+        "body": "<b>Cascade control</b> uses two nested PID loops to reject disturbances before they upset the main variable. An <b>outer (primary/master)</b> loop controls the variable you care about &mdash; say, reactor temperature &mdash; but instead of directly driving the valve, its output becomes the <b>setpoint</b> of an <b>inner (secondary/slave)</b> loop that controls a faster intermediate variable, such as the temperature or flow of the heating jacket. The inner loop, being fast, catches disturbances (a change in steam pressure) and corrects them quickly before they ever reach the slow outer variable. The rule of thumb: the inner loop must be several times faster than the outer, and you tune the inner loop first, then the outer. Cascade dramatically improves disturbance rejection versus a single loop that would only react after the disturbance had already changed the main variable. It is one of the most common and powerful advanced strategies, used wherever a fast, measurable intermediate variable stands between the final control element and the slow primary variable."
+      },
+      {
+        "h": "Feedforward Control",
+        "body": "Feedback control is reactive &mdash; it only corrects after an error appears. <b>Feedforward control</b> is proactive: it measures a <b>disturbance</b> and computes a corrective action before the disturbance affects the process variable. Classic example: a heat exchanger heating a variable inlet flow &mdash; feedback alone lags because it waits for the outlet temperature to droop, but a feedforward element measures the inlet flow and immediately adjusts steam in anticipation, holding outlet temperature nearly constant. Feedforward requires a <b>process model</b> relating the disturbance to the needed correction, and it is almost always combined with feedback (<b>feedforward-plus-feedback</b>): feedforward handles the measured disturbance's bulk, and feedback trims the residual and handles everything the model misses. Feedforward cannot correct errors it does not measure, and a wrong model can push in the wrong direction, so the feedback trim is essential for robustness. Where a major, measurable disturbance dominates a slow loop, adding feedforward transforms control performance far more than any amount of feedback tuning could."
+      },
+      {
+        "h": "Ratio and Split-Range Control",
+        "body": "Two specialized strategies handle common process needs. <b>Ratio control</b> holds two flows in a fixed proportion &mdash; blending fuel and air for combustion, or mixing two ingredients &mdash; by measuring the 'wild' (uncontrolled) flow and setting the controlled flow's setpoint to a multiple of it, so as one changes the other tracks to maintain the ratio. The ratio itself can be adjusted (trimming air-fuel for efficiency). <b>Split-range control</b> uses one controller output to operate two or more final control elements over different portions of the range &mdash; for example, one PID output from 0&ndash;50% opens a cooling valve while 50&ndash;100% opens a heating valve, so a single temperature loop both heats and cools with a smooth handover. Split range also sequences multiple identical valves for wide turndown (a small trim valve acts first, a large valve opens for high demand). Both strategies extend basic PID to real process requirements; recognizing when an application calls for ratio or split range, and configuring the scaling and handover cleanly, prevents the hunting and gaps that naive single-valve control would cause."
+      },
+      {
+        "h": "Controller Tuning Methods: Ziegler-Nichols and Lambda",
+        "body": "Systematic tuning beats trial and error. The <b>Ziegler-Nichols (Z-N)</b> methods produce starting gains from a simple test. The <b>ultimate (closed-loop)</b> Z-N method raises proportional-only gain until the loop oscillates steadily, records that <b>ultimate gain</b> and <b>oscillation period</b>, and applies formulas for P, PI, or PID settings &mdash; effective but the sustained oscillation is risky on real plant, and Z-N tends toward aggressive, quarter-amplitude-decay responses that overshoot. The <b>open-loop (reaction-curve)</b> Z-N method uses a step test's gain, dead time, and time constant instead, avoiding forced oscillation. <b>Lambda (IMC) tuning</b> takes a different philosophy: from the same process model it computes gains for a chosen closed-loop response speed (lambda, the desired time constant), trading speed for robustness and producing smooth, non-oscillating responses preferred in many process plants where stability matters more than the fastest possible settling. Modern software auto-tuners automate the step test and calculation. Whatever the method, the results are a starting point to be verified and trimmed against the real loop's behavior."
+      },
+      {
+        "h": "Valve Nonlinearity: Deadband, Hysteresis, and Stiction",
+        "body": "A control loop is only as good as its final control element, and real valves misbehave. <b>Deadband</b> is a range of controller-output change that produces no valve movement &mdash; after reversing direction the actuator must take up slack before the valve responds, so small corrections are ignored and the loop cycles. <b>Hysteresis</b> means the valve position for a given signal differs depending on whether the signal was rising or falling. <b>Stiction (static friction)</b> is the worst: the valve sticks until the signal builds enough force to break it free, then it jumps past the target, and the loop settles into a slow <b>limit cycle</b> &mdash; a steady oscillation that no amount of PID tuning cures because the fault is mechanical. These nonlinearities also come from the valve's inherent <b>flow characteristic</b> (linear, equal-percentage, quick-open), which should be matched to the loop so effective gain stays roughly constant across the range. Diagnosing a persistent oscillation means checking the valve (a valve-signature or step test) before blaming the controller; a positioner, valve maintenance, or a characteristic change often fixes what tuning cannot."
+      },
+      {
+        "h": "Integral Windup and Bumpless Transfer",
+        "body": "Two practical issues plague real PID implementations. <b>Integral windup</b> occurs when the controller output saturates (valve fully open) yet the error persists, so the integral term keeps accumulating; when the process finally responds, the wound-up integral holds the output saturated long past the setpoint, causing a large overshoot. <b>Anti-windup</b> logic stops or limits integration whenever the output is saturated, so the controller resumes clean control the instant the error reverses. The second issue is <b>bumpless transfer</b>: switching a loop between manual and automatic, or changing setpoint, should not jolt the output. A bumpless controller initializes its integral so the auto output equals the last manual output at the moment of transfer, and ramps setpoint changes, so the process is not disturbed by the mode change itself. Together these features &mdash; standard in modern controllers but requiring correct configuration &mdash; separate a loop that behaves gracefully at limits and during operator intervention from one that overshoots wildly after every saturation or mode switch. Verifying anti-windup and bumpless transfer is part of commissioning any loop that will hit its output limits."
       }
     ],
     "lab": {
@@ -4160,6 +4492,50 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "When supervisory rate exceeds regulatory bandwidth, the lower loops chase moving setpoints and destabilise; supervisory moves must respect the regulatory time constants."
+      },
+      {
+        "q": "Which process characteristic most makes a control loop difficult to tune and forces sluggish, conservative settings for stability?",
+        "options": [
+          "High process gain",
+          "A large ratio of dead time to time constant",
+          "A short time constant",
+          "Low measurement noise"
+        ],
+        "answer": 1,
+        "explain": "Dead time (transport delay) is the enemy of control: a large dead-time-to-time-constant ratio means the controller always acts on old information, forcing sluggish tuning to remain stable."
+      },
+      {
+        "q": "In cascade control, which loop must be tuned first and must be faster?",
+        "options": [
+          "The outer (primary/master) loop",
+          "The inner (secondary/slave) loop",
+          "They are tuned simultaneously",
+          "Neither; cascade has one loop"
+        ],
+        "answer": 1,
+        "explain": "The inner (slave) loop must be several times faster than the outer loop and is tuned first. It catches disturbances quickly, and its setpoint is driven by the outer (master) loop's output."
+      },
+      {
+        "q": "A control valve exhibits stiction: it sticks, then jumps past target, producing a steady limit-cycle oscillation. What is the correct fix?",
+        "options": [
+          "Increase the integral gain",
+          "Increase the proportional gain",
+          "Address the valve mechanically (positioner, maintenance); tuning cannot cure a mechanical fault",
+          "Add more dead time"
+        ],
+        "answer": 2,
+        "explain": "Stiction is a mechanical fault causing a limit cycle that no PID tuning can eliminate. The remedy is valve maintenance, a positioner, or valve replacement; a valve step/signature test confirms it before blaming the controller."
+      },
+      {
+        "q": "What does anti-windup logic prevent in a PID controller?",
+        "options": [
+          "The valve from ever fully opening",
+          "The integral term from accumulating while the output is saturated, avoiding large overshoot",
+          "The setpoint from changing",
+          "Derivative kick"
+        ],
+        "answer": 1,
+        "explain": "Anti-windup stops or limits integration when the output saturates, so the integral does not keep accumulating during saturation and cause a large overshoot when the process finally responds and the error reverses."
       }
     ],
     "resources": [
@@ -4366,6 +4742,38 @@ MODULES_2 = [
       {
         "h": "Machinery Directive vs OSHA: EU and US Regulatory Comparison",
         "body": "Two very different regulatory frameworks govern machine safety worldwide. In the <b>European Union</b>, the <b>Machinery Directive 2006/42/EC</b> requires that any machine placed on the EU market has been designed to <b>Essential Health and Safety Requirements (EHSRs)</b>, has undergone a documented risk assessment, is accompanied by a <b>Technical File</b> and a <b>Declaration of Conformity</b>, bears the <b>CE mark</b>, and is delivered with instructions in the user's language. Manufacturers self-certify most machines; a small subset (\"Annex IV\" machines, e.g., presses, saws) require third-party notified-body approval. Enforcement is via market surveillance and complaints. In the <b>United States</b>, <b>OSHA</b> regulates workplace safety with performance-based standards (1910.212 general machine guarding, 1910.147 LOTO, 1910.219 mechanical power transmission). There is no equivalent to CE marking; manufacturers do not \"certify\" a machine to OSHA before sale, and the burden of a compliant installation falls largely on the user/employer. Voluntary consensus standards (ANSI B11 series for machine tools, RIA/R15.06 for robots, NFPA 79 for electrical, UL 508A for panels) fill in specifics and are commonly required by insurers and best-practice buyers. Global manufacturers typically design once to the stricter EU standard and use that for both markets. A technician working across regions must know which framework governs each site and where the compliance line runs."
+      },
+      {
+        "h": "Risk Assessment with ISO 12100",
+        "body": "Machine safety begins not with buying safety devices but with a structured <b>risk assessment</b> per <b>ISO 12100</b>. The process first defines the machine's limits (use, space, time, foreseeable misuse), then <b>identifies hazards</b> at every lifecycle phase &mdash; setup, operation, cleaning, maintenance &mdash; because many injuries occur during non-normal tasks. Each hazard's <b>risk is estimated</b> from the severity of possible harm, the frequency and duration of exposure, and the possibility of avoidance. Risks are then <b>evaluated</b> against acceptability, and where reduction is needed the <b>three-step method</b> applies in order: (1) inherently safe design (eliminate the hazard, reduce energy, remove pinch points), (2) safeguarding and complementary protective measures (guards, interlocks, light curtains, e-stops), and (3) information for use (warnings, training, procedures). The assessment is iterative &mdash; after adding measures you re-assess residual risk &mdash; and documented. This disciplined analysis prevents both under-protection (a missed hazard) and over-engineering, and it produces the record that justifies the required performance level of each safety function."
+      },
+      {
+        "h": "Safeguarding Distance and Minimum Safe Distance Calculations",
+        "body": "A safeguard like a light curtain only protects if it is far enough from the hazard that the machine stops before a hand reaches the danger &mdash; the <b>minimum safety distance</b>. The formula (ISO 13855 / ANSI B11.19) is S = K &times; T + C, where <b>S</b> is the distance, <b>K</b> is an approach speed constant (commonly 1600 or 2000 mm/s for hand approach), <b>T</b> is the total stopping time of the whole system (machine stop time plus the safety device and control response), and <b>C</b> is an intrusion/penetration factor that depends on the detection resolution (a coarse-resolution curtain lets fingers penetrate before detection, so C grows). The critical, often-overlooked point: <b>T must be the measured total system stopping time</b>, which increases as brakes and clutches wear, so a distance safe at commissioning can become unsafe years later &mdash; periodic stop-time measurement is a required maintenance task. Detection resolution also determines whether a curtain guards against finger, hand, or body access. Getting these calculations right, and re-verifying them, is the difference between a safeguard that protects and one that gives false confidence."
+      },
+      {
+        "h": "Two-Hand Control and Enabling Devices",
+        "body": "Some tasks put an operator's hands in the danger zone, needing special controls. <b>Two-hand control</b> requires both hands to press two buttons <b>concurrently</b> (within about 0.5 s of each other, per the standard) and hold them to run the hazardous motion, guaranteeing both hands are out of the point of operation &mdash; releasing either stops the machine. The buttons must be spaced and shielded so they cannot be defeated with one hand, an elbow, or a tied-down block, and the control category must match the risk. <b>Enabling devices</b> (three-position enable switches) protect a person who must be inside a hazard zone for teaching or setup: the switch permits motion only in the <b>center</b> position &mdash; fully released (position 1) or squeezed fully in a panic grip (position 3) both stop the machine, matching human reflexes to either let go or clench under startle. Enabling devices are standard on robot teach pendants. Both devices are protective measures for specific tasks, not general guards, and their correct dual-channel wiring and monitoring are essential to the safety function they provide."
+      },
+      {
+        "h": "Safe Speed and Safe-Limited-Speed Monitoring",
+        "body": "Traditional safety stops all motion when a guard opens, but many setup, teaching, and inspection tasks require the machine to move <b>slowly while a person is present</b>. Modern <b>safety-rated drive functions</b> enable this. <b>Safely-Limited Speed (SLS)</b> monitors motor speed with a safety-rated system and triggers a safe stop if speed exceeds a safe threshold, so an operator can jog a robot or axis at a safe crawl inside an open guard. <b>Safe Speed Monitoring (SSM)</b> provides a safe output indicating speed is below a limit. Related functions include <b>Safe Direction (SDI)</b>, <b>Safely-Limited Position (SLP)</b>, and <b>Safe Operating Stop (SOS)</b> which holds a stopped axis in position with power on so it resists disturbance without a full power removal. These functions, defined in IEC 61800-5-2, replace crude approaches (unplugging, mechanical stops) with monitored, certified limits, allowing productive setup work at genuinely safe speeds. Understanding them lets designers create machines that are both safe and practical to set up, rather than forcing operators to defeat guards to do necessary tasks."
+      },
+      {
+        "h": "Muting and Blanking of Light Curtains",
+        "body": "A light curtain guarding a machine's entry must let <b>material</b> pass while still stopping <b>people</b> &mdash; solved by muting and blanking, which must be applied carefully because they intentionally suspend protection. <b>Muting</b> temporarily and automatically disables the light curtain during a non-hazardous portion of the cycle, such as when a pallet passes out on a conveyor. It is validated by <b>muting sensors</b> (typically two or four) arranged so their sequence and timing can only be produced by the expected object, not a person &mdash; a person cannot replicate the pallet's specific sensor pattern and speed. Muting must be limited in time, indicated by a visible muting lamp, and fail-safe. <b>Blanking</b> (fixed or floating) permanently or dynamically ignores specific beams so a fixed fixture or a moving workpiece passing through the field does not trip the curtain, while the remaining beams still detect intrusion; floating blanking allows a defined object size to move anywhere in the field. Both features are powerful but reduce coverage, so their design and validation are safety-critical and a frequent audit finding when misapplied."
+      },
+      {
+        "h": "Safety PLC Architecture and Safety Programming",
+        "body": "A <b>safety PLC (or safety controller)</b> executes safety functions with the integrity ordinary control cannot provide, and its internal architecture is what earns that trust. It uses <b>redundant processors</b> that execute the logic independently and cross-check results, extensive <b>self-diagnostics</b> that test I/O and memory every cycle, and safety-rated I/O with dual channels and pulse testing that detects a shorted or stuck input. Programming uses <b>certified function blocks</b> (emergency stop, guard monitoring, two-hand control, muting) from a validated library rather than free-form logic, so the safety function is built from pre-approved, deterministic components. Safety and standard logic may run in one device but are strictly partitioned. The safety program is developed under a rigorous lifecycle (IEC 61508/62061): specified, reviewed, verified, and validated, with change control and documented functional tests. This architecture and discipline are why a safety PLC can achieve the required <b>SIL/PL</b> for a function, and why you cannot simply move a safety function into a standard PLC &mdash; the diagnostics, redundancy, and certified blocks are the whole point."
+      },
+      {
+        "h": "Validation and Proof Testing of Safety Functions",
+        "body": "Designing a safety function is not finished until it is <b>validated</b> and then periodically <b>proof tested</b>. Validation, done before the machine enters service, confirms every safety function actually performs as specified: each e-stop stops the right motion, every guard interlock works on both channels, light curtains trip and reset correctly, the stopping time meets the safety-distance calculation, and no function can be defeated by a single fault or a simple bypass. Validation is documented against the safety requirements specification &mdash; testing what the design claimed, not just that it 'seems to work'. Over the machine's life, safety devices and their diagnostics degrade, so <b>proof testing</b> at a defined interval re-verifies functions and exposes <b>dangerous undetected faults</b> that automatic diagnostics miss; the proof-test interval is a factor in the calculated PFD/PL of the function. Skipping proof tests silently erodes the achieved safety integrity. Records of validation and proof tests are both a legal requirement and the evidence that the machine remains as safe as it was designed to be, not just as safe as it appeared on day one."
+      },
+      {
+        "h": "Controlling Stored Energy: Pneumatic and Hydraulic Safety",
+        "body": "Removing electrical power does not make a machine safe if <b>stored energy</b> remains &mdash; a leading cause of maintenance injuries. Pneumatic and hydraulic systems hold energy in pressurized air, hydraulic fluid, accumulators, springs, and suspended loads that can move violently when a line is opened or a component is removed. Safe isolation requires more than an e-stop: an <b>energy-isolating device</b> (a lockable pneumatic/hydraulic disconnect valve) that both blocks supply and <b>vents (dumps) the trapped pressure</b> to atmosphere or tank. A <b>soft-start/dump valve</b> at the machine's air inlet, locked out, both isolates and exhausts downstream air. Accumulators must be bled through a dedicated bleed valve because they can hold lethal pressure long after the pump stops. Gravity loads (rams, presses, vertical axes) need mechanical <b>safety blocks</b> or pins because a leaking hold valve can let them drift down. A complete <b>lockout/tagout</b> procedure identifies every energy source, isolates and locks each, dissipates stored energy, and <b>verifies zero energy</b> before work begins. Understanding and controlling all forms of stored energy &mdash; not just electrical &mdash; is fundamental to maintenance safety."
       }
     ],
     "lab": {
@@ -4995,6 +5403,50 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Different sensing technologies do not share a common failure mechanism (e.g., dirt fouling both), lowering the beta-factor for common-cause failure."
+      },
+      {
+        "q": "In the minimum safety distance formula S = K x T + C, why must the stopping time T be re-measured periodically over the machine's life?",
+        "options": [
+          "The approach speed K changes daily",
+          "Brakes and clutches wear, increasing stopping time and making a once-safe distance unsafe",
+          "The intrusion factor C decreases over time",
+          "T is only relevant at commissioning"
+        ],
+        "answer": 1,
+        "explain": "T is the total system stopping time, which grows as brakes/clutches wear. A safeguarding distance safe at commissioning can become unsafe as stop time increases, so periodic stop-time measurement is required."
+      },
+      {
+        "q": "A three-position enabling device (teach-pendant enable switch) permits hazardous motion in which position?",
+        "options": [
+          "Fully released (position 1)",
+          "The center (partially pressed) position only",
+          "Fully squeezed/panic grip (position 3)",
+          "Any position"
+        ],
+        "answer": 1,
+        "explain": "Motion is permitted only in the center position. Both fully released and fully squeezed (panic grip) stop the machine, matching human reflexes to either let go or clench under startle."
+      },
+      {
+        "q": "Per ISO 12100, which risk-reduction measure should be applied FIRST?",
+        "options": [
+          "Personal protective equipment",
+          "Information for use (warnings and training)",
+          "Inherently safe design (eliminate or reduce the hazard)",
+          "Guarding and interlocks"
+        ],
+        "answer": 2,
+        "explain": "ISO 12100's three-step method applies inherently safe design first (eliminate the hazard, reduce energy, remove pinch points), then safeguarding, then information for use. Design-out is always the priority."
+      },
+      {
+        "q": "Why must an accumulator be bled through its dedicated bleed valve as part of lockout, even after the pump is stopped and electrical power is removed?",
+        "options": [
+          "To refill it with nitrogen",
+          "It stores hydraulic energy and can hold lethal pressure long after the pump stops",
+          "To calibrate the pressure gauge",
+          "Electrical lockout already removes all energy"
+        ],
+        "answer": 1,
+        "explain": "An accumulator stores pressurized energy and retains lethal pressure long after the pump stops and power is off. Complete lockout must dissipate this stored energy via the bleed valve and verify zero energy before work."
       }
     ],
     "resources": [
@@ -5205,6 +5657,38 @@ MODULES_2 = [
       {
         "h": "Building Your Personal Brand as an Automation Professional",
         "body": "Technical skill alone rarely determines an automation career: <b>professional visibility</b> and <b>reputation</b> do. A strong personal brand within a company means peers and managers know you as the person who solved the tricky drive-comms issue, the go-to for safety, or the one who introduced Git for PLC backups. Building that brand: <b>write things down</b> in shared spaces, quick documents on how you fixed a problem, comparison of two products you evaluated, a runbook for a routine task; over years these accumulate into a body of work colleagues use. <b>Mentor</b> junior technicians visibly; the ability to teach is the ability to lead. Present at internal <b>lunch-and-learns</b> or department reviews; even 15-minute talks build a track record. Outside the company, contribute to <b>industry forums</b> (PLCTalk, Reddit r/PLC, LinkedIn engineering groups), attend <b>trade shows</b> (Automate, Pack Expo, Hannover Messe), and pursue <b>certifications</b> (CAP, CFSE, CCST) that both learn and prove skill. A personal <b>portfolio</b>, a professional website or LinkedIn page showcasing projects (respecting employer IP), gives an interview or a promotion committee something concrete to review. None of this happens in one evening; it's a five- to ten-year investment. But the professional visible for solving hard problems ends up leading interesting projects, being pulled into promotions, and being the first name colleagues recommend when opportunities open elsewhere. Brand-building is the multiplier on top of technical skill."
+      },
+      {
+        "h": "Interpreting a Control Narrative and Sequence of Operations",
+        "body": "Before touching code or wiring, an integrator reads the <b>control narrative</b> (functional description) &mdash; a plain-language document describing how the system must behave in every mode. It specifies the <b>sequence of operations</b> step by step: startup permissives and interlocks, the normal running sequence, how the process transitions between states, shutdown (normal and emergency), fault responses, and manual/auto/maintenance modes. A good narrative also defines every alarm, its cause, and the required operator or system response, plus setpoints and their ranges. This document is the contract between what the customer wants and what the programmer builds; ambiguity here becomes bugs and disputes later. A technician troubleshooting an unfamiliar machine starts with the narrative to understand intended behavior, then compares it to actual behavior to localize the fault &mdash; a machine that will not start is diagnosed by walking the startup permissives the narrative lists. Learning to read, write, and verify a control narrative &mdash; translating between process requirements and control logic &mdash; is a defining skill of the integration engineer and the foundation of both commissioning and effective troubleshooting."
+      },
+      {
+        "h": "Loop Checks and Integration Testing",
+        "body": "Between building a system and running product comes methodical <b>testing</b>, and skipping it guarantees a chaotic startup. <b>Loop checks (point-to-point checks)</b> verify every I/O point end to end before the process runs: force or actuate each field device and confirm the correct signal appears at the right controller address and on the HMI, and that scaling is correct (a 4&ndash;20 mA transmitter reads the right engineering units at known inputs). This catches swapped wires, wrong addresses, reversed signals, and scaling errors while they are cheap to fix. <b>Integration testing</b> then verifies the pieces work together: sequences step correctly, interlocks block the right actions, alarms annunciate, mode changes behave, and communications between PLC, HMI, drives, and safety systems function. Testing progresses from components to subsystems to the whole, ideally with simulation where the real process is unavailable or hazardous. A disciplined test plan, checked off and documented, turns commissioning from firefighting into verification, and the loop-check records become a valuable baseline for future troubleshooting."
+      },
+      {
+        "h": "Management of Change (MOC)",
+        "body": "Uncontrolled changes are a leading cause of incidents and mysterious failures, so mature operations enforce <b>Management of Change (MOC)</b>. Any modification to equipment, controls, setpoints, procedures, or software goes through a defined process: the change is <b>proposed</b> and justified, its <b>risks and impacts assessed</b> (does it affect safety functions, other equipment, or the process?), <b>reviewed and approved</b> by the right people, <b>implemented</b> with updated documentation and drawings, and personnel are <b>informed and trained</b>. MOC prevents the classic disasters: a 'quick' logic tweak that defeats an interlock, a setpoint change nobody records, a component substitution with a different failure mode. It is a formal requirement under process-safety regulations (OSHA PSM) for covered facilities, but the discipline benefits any plant. For a technician, MOC means that even an obviously good improvement is documented and reviewed, not slipped in silently &mdash; because the next person must be able to trust that the drawings match reality and that safety functions have not been quietly compromised. The paperwork is the mechanism that keeps a system's actual state knowable over years of modifications."
+      },
+      {
+        "h": "Spare Parts Strategy and Criticality Analysis",
+        "body": "Downtime often hinges not on skill but on whether the right spare is on the shelf. A rational <b>spare-parts strategy</b> starts with <b>criticality analysis</b>: for each component, weigh the consequence of its failure (does it stop the line? affect safety?), its <b>lead time</b> (a six-month specialty drive versus a next-day contactor), failure rate, and cost. High-criticality, long-lead, failure-prone parts justify holding a spare even at high cost, because the carrying cost is trivial against days of lost production. Commodity, short-lead, cheap parts need not be stocked. The analysis produces a stocking list with min/max levels and reorder points, managed in a CMMS. Beyond individual parts, strategy addresses <b>obsolescence</b> (buying last-time spares before a discontinued controller vanishes, or planning migration), standardization (fewer part numbers across the plant simplifies stocking), and shared/consignment stock with vendors for very expensive items. For an integrator handing over a new system, providing a recommended spare-parts list with criticality rationale is a key deliverable that determines how quickly the customer can recover from the first failure."
+      },
+      {
+        "h": "Handover Documentation and O&M Manuals",
+        "body": "A commissioned system is only truly delivered when the <b>documentation</b> that lets others operate and maintain it is complete and accurate. A proper handover package includes <b>as-built drawings</b> (electrical, P&amp;ID, network, panel layouts) reflecting the real installation, the <b>control narrative</b>, annotated <b>PLC and HMI programs</b> with backups on external media, network and IP address documentation, the <b>safety file</b> (risk assessment, safety-function validation records, required performance levels), the recommended <b>spare-parts list</b>, calibration records, and <b>O&amp;M manuals</b> covering operation, routine maintenance tasks and intervals, and troubleshooting guides. Training records confirm operators and technicians were competent at handover. The value is realized years later: the technician at 3 a.m. facing a fault they have never seen depends entirely on whether the documentation is accurate and findable. Poor handover documentation is a hidden liability that quietly inflates every future repair. A disciplined integrator treats documentation as a deliverable equal to the working machine, and a wise customer withholds final acceptance until it is complete and verified."
+      },
+      {
+        "h": "Secure Remote Support and VPN Access",
+        "body": "Remote access lets integrators and vendors diagnose and update systems without a costly site visit, but it is also a prime cyberattack vector, so it must be done securely. The safe pattern uses a <b>VPN</b> that authenticates the remote user (ideally with multi-factor authentication) and encrypts the connection into a controlled DMZ, never exposing controllers directly to the internet. Access is <b>least-privilege and on-demand</b>: connections are enabled only when needed (a physical key-switch or an operator-granted session), logged, and time-limited, rather than a permanently open door. An <b>industrial secure remote-access gateway</b> brokers connections so the remote party reaches only specified devices, with session recording for accountability. Complementary controls include separate credentials per vendor (not a shared password), disabling access when a contract ends, and monitoring for unexpected connections. The infamous breaches of OT systems have repeatedly traced to insecure remote access &mdash; a modem left on, a default password, a flat network. Designing remote support to be convenient enough to use yet secure by default &mdash; authenticated, encrypted, segmented, logged, and revocable &mdash; is now an essential part of any system handover and ongoing operation."
+      },
+      {
+        "h": "Continuous Improvement and Kaizen on Automated Lines",
+        "body": "Commissioning a line is the beginning, not the end &mdash; sustained performance comes from <b>continuous improvement</b>. The data-rich nature of automated systems makes this powerful: OEE (availability &times; performance &times; quality), downtime reasons, cycle times, and fault frequencies are logged automatically, turning improvement from opinion into evidence. A <b>Pareto</b> of downtime causes reveals the vital few faults to attack first; a rising cycle time or a recurring minor stop (a chronic jam) is quantified and targeted. <b>Kaizen</b> &mdash; small, frequent, team-driven improvements &mdash; complements larger projects: operators and technicians who run the line daily spot the friction and propose fixes, from a tweaked sensor position to a logic change that recovers gracefully from a common upset. The <b>PDCA cycle</b> (Plan-Do-Check-Act) structures each improvement: measure the baseline, make one change, verify the effect with data, and standardize what works. Automation both enables and benefits from continuous improvement: better logic reduces minor stops, predictive analytics cut unplanned downtime, and each verified improvement compounds. For the technician, this reframes the role from reactive repair toward proactive, data-driven optimization of the line's reliability and throughput."
+      },
+      {
+        "h": "Certifications and a Professional Development Roadmap",
+        "body": "A career in automation is sustained by continuous learning, and recognized <b>certifications</b> both build and signal competence. Foundational skills can be validated through <b>SACA</b> (Smart Automation Certification Alliance) credentials that map to Industry 4.0 competencies, and vendor certifications from <b>Rockwell, Siemens, and FANUC</b> demonstrate platform-specific mastery valued by employers running those systems. The <b>ISA Certified Control Systems Technician (CCST)</b> and Certified Automation Professional (CAP) recognize broad instrumentation and control competence. Safety specialists pursue <b>TUV Functional Safety Engineer</b> certification for SIS/SIL work. Beyond certificates, a development roadmap layers skills: master the fundamentals (electrical, PLC, instrumentation), then broaden (networks, drives, HMI/SCADA, safety), then specialize or move toward integration, project management, or reliability engineering. Practical habits matter as much as credentials &mdash; building a home lab, contributing to documentation, learning from every troubleshooting call, and staying current with evolving standards and IIoT technologies. Mapping your current skills against a target role, then filling gaps deliberately with training, certification, and hands-on projects, turns a job into a deliberate career progression rather than accidental drift."
       }
     ],
     "lab": {
@@ -5835,6 +6319,50 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Repeated incidents in a category signal a design or procedural weakness; postmortems trended over time expose these patterns for higher-level intervention."
+      },
+      {
+        "q": "What is the primary purpose of a loop check (point-to-point check) during commissioning?",
+        "options": [
+          "To tune the PID controllers",
+          "To verify each I/O point end to end, catching swapped wires, wrong addresses, and scaling errors before the process runs",
+          "To calculate return on investment",
+          "To write the control narrative"
+        ],
+        "answer": 1,
+        "explain": "Loop checks actuate each field device and confirm the correct signal reaches the right controller address and HMI with correct scaling, catching wiring, addressing, and scaling errors while they are cheap to fix."
+      },
+      {
+        "q": "A technician wants to make a 'quick' logic change that would bypass an interlock to keep production running. What does a Management of Change (MOC) process require?",
+        "options": [
+          "Make the change immediately since it helps production",
+          "Assess the risk/impact, get review and approval, update documentation, and inform/train personnel before implementing",
+          "Only inform the operator verbally",
+          "MOC does not apply to software changes"
+        ],
+        "answer": 1,
+        "explain": "MOC requires proposing the change, assessing risks and impacts (especially to safety functions), review and approval, implementation with updated documentation, and training, preventing quietly defeated interlocks and undocumented changes."
+      },
+      {
+        "q": "In a spare-parts criticality analysis, which component most justifies holding a spare on the shelf despite high cost?",
+        "options": [
+          "A cheap, next-day-available contactor",
+          "A high-consequence, long-lead-time, failure-prone specialty drive",
+          "A standard fuse stocked plant-wide",
+          "A commodity terminal block"
+        ],
+        "answer": 1,
+        "explain": "A part whose failure stops the line, has a long lead time, and is failure-prone justifies stocking even at high cost, because the carrying cost is trivial against days of lost production waiting for delivery."
+      },
+      {
+        "q": "What is the recommended secure pattern for vendor remote support of a control system?",
+        "options": [
+          "Expose the PLC directly to the internet with a simple password",
+          "A shared permanent connection for all vendors",
+          "An authenticated, encrypted VPN into a controlled DMZ, least-privilege, on-demand, logged, and revocable",
+          "A dial-up modem left permanently connected"
+        ],
+        "answer": 2,
+        "explain": "Secure remote support uses an authenticated (ideally MFA), encrypted VPN into a DMZ, granting least-privilege on-demand access that is logged and revocable, never exposing controllers directly. Insecure remote access is a top OT breach vector."
       }
     ],
     "resources": [

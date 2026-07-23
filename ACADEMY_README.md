@@ -1,5 +1,8 @@
 # AET Academy - Build Changelog
 
+## v13.73 (2026-07-22) - Wave 7: FOURTH deepening pass on all 22 modules (DOUBLING COMPLETE)
+Content: sections 967 -> 1140 (+173), quiz 1211 -> 1299 (+88). Every module received a fourth +8 sec / +4 quiz deepening pass (3 dup sections auto-skipped in M10/M16/M18 -> those got +7). Doubling targets EXCEEDED: sections 1140 vs 1132 target (101%), quiz 1299 vs 1224 target (106%). The 7-wave curriculum-doubling effort is now COMPLETE (baseline 566 sec / 612 quiz -> 1140 / 1299). Audit ERRORS=0, ruff clean, py_compile clean. Build modules=22 glossary=131 flashcards+gloss=187 sims=11 ladderlabs=236. Ship zip v13.73 (5 members, testzip None).
+
 ## v13.72 (2026-07-22) - Wave 6: THIRD deepening pass on all 22 modules
 Content: sections 835 -> 967 (+132), quiz 1013 -> 1211 (+198). Every module received a third +6 sec / +9 quiz deepening pass. Doubling target 1132 sec / 1224 quiz: sections 85%, quiz 99%. Audit ERRORS=0, ruff clean, py_compile clean. Build modules=22 glossary=131 flashcards+gloss=187 sims=11 ladderlabs=236. Ship zip v13.72 (5 members, testzip None).
 
