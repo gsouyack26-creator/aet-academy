@@ -229,45 +229,45 @@ MODULES = [
       {
         "q": "What does AET stand for?",
         "options": [
-          "Automated Electrical Testing",
           "Automation Engineering Technology",
+          "Automated Electrical Testing",
           "Advanced Electronics Troubleshooting",
           "Applied Energy Transmission"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "AET = Automation Engineering Technology."
       },
       {
         "q": "At which levels do AET technicians primarily work?",
         "options": [
           "Levels 3-4",
-          "Levels 0-2 (Process/Control/Supervisory)",
           "Level 4 only",
+          "Levels 0-2 (Process/Control/Supervisory)",
           "Level 5 (Cloud)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "AET techs work at Levels 0-2."
       },
       {
         "q": "Most common 2-year AET entry credential?",
         "options": [
           "BSET",
-          "AAS (Associate of Applied Science)",
           "MBA",
-          "PhD"
+          "PhD",
+          "AAS (Associate of Applied Science)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The AAS is the standard 2-year entry credential."
       },
       {
         "q": "In the ISA-95 automation pyramid, which level houses PLCs?",
         "options": [
-          "L0 (field devices)",
           "L1 (control)",
+          "L0 (field devices)",
           "L2 (SCADA)",
           "L3 (MES)"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "L1 is the direct control layer: PLCs and DCS. L0 = sensors/actuators, L2 = SCADA/HMI, L3 = MES/historian."
       },
       {
@@ -285,22 +285,22 @@ MODULES = [
         "q": "Half-split troubleshooting on an 8-stage signal path first tests which stage?",
         "options": [
           "Stage 1",
-          "Stage 4 (middle)",
           "Stage 8 (last)",
+          "Stage 4 (middle)",
           "All in parallel"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Test the middle first. Good result = fault is downstream. Bad = upstream. Turns O(n) into O(log n)."
       },
       {
         "q": "Which IEC standard defines the five PLC programming languages (LD, FBD, ST, SFC, IL)?",
         "options": [
           "IEC 60204",
-          "IEC 61131-3",
           "IEC 61508",
-          "IEC 62443"
+          "IEC 62443",
+          "IEC 61131-3"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC 61131-3 standardizes the five PLC languages. IEC 61508 is functional safety, IEC 62443 is OT cybersecurity."
       },
       {
@@ -329,11 +329,11 @@ MODULES = [
         "q": "Which ISO standard defines Performance Levels (PL a-e) and Category 1-4 architectures?",
         "options": [
           "ISO 9001",
-          "ISO 13849-1",
           "ISO 14001",
+          "ISO 13849-1",
           "ISO 45001"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ISO 13849-1 defines machinery safety Performance Levels and Categories."
       },
       {
@@ -350,12 +350,12 @@ MODULES = [
       {
         "q": "The 5-whys technique is used to find the...",
         "options": [
-          "Fastest fix",
           "Root cause",
+          "Fastest fix",
           "Cheapest part",
           "Best vendor"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "5-whys drills through symptoms to the root cause so the FIX prevents recurrence."
       },
       {
@@ -373,33 +373,33 @@ MODULES = [
         "q": "EtherNet/IP uses which underlying industrial protocol for its data model?",
         "options": [
           "PROFIBUS DP",
-          "Common Industrial Protocol (CIP)",
           "Modbus TCP",
+          "Common Industrial Protocol (CIP)",
           "OPC-DA"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "EtherNet/IP is developed by ODVA and uses the Common Industrial Protocol (CIP) transported over standard IEEE 802.3 Ethernet. CIP is also used by DeviceNet and ControlNet."
       },
       {
         "q": "In V/Hz VFD control, if the motor is rated 460 V at 60 Hz, what output voltage should the drive produce at 45 Hz?",
         "options": [
           "460 V",
-          "345 V",
           "230 V",
-          "400 V"
+          "400 V",
+          "345 V"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "V/Hz = 460/60 = 7.67 V/Hz. At 45 Hz: 7.67 x 45 = 345 V. This maintains the constant V/f ratio to prevent magnetic saturation."
       },
       {
         "q": "For a low-frequency analog 4-20 mA signal cable, the cable shield should be terminated:",
         "options": [
+          "At the control panel end only, to prevent ground loops",
           "At both ends with 360-degree clamp connections",
           "At the field instrument end only",
-          "At the control panel end only, to prevent ground loops",
           "Left floating; shields on analog signals must never be grounded"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Single-end termination at the control panel (instrument ground) prevents ground loop currents from flowing through the shield and adding noise to the 4-20 mA signal. Both-end termination is correct only for high-frequency signals like encoder or Ethernet."
       },
       {
@@ -428,22 +428,22 @@ MODULES = [
         "q": "According to NEC Article 409, the Short-Circuit Current Rating (SCCR) of an industrial control panel must:",
         "options": [
           "Equal exactly the transformer kVA rating",
-          "Be at least equal to the available fault current at the supply terminals",
           "Be rated at 10,000 A minimum regardless of location",
-          "Only apply to panels over 600 V"
+          "Only apply to panels over 600 V",
+          "Be at least equal to the available fault current at the supply terminals"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "NEC 409.22 requires the SCCR of a listed industrial control panel to equal or exceed the available short-circuit current at the point of installation. This must be verified using utility data and transformer impedance calculations."
       },
       {
         "q": "In IEC 62443, what is the purpose of a 'conduit' between two security zones?",
         "options": [
-          "A physical cable tray used to separate OT from IT wiring",
           "A controlled communication path (such as a firewall or data diode) between zones",
+          "A physical cable tray used to separate OT from IT wiring",
           "An encrypted VPN tunnel used only for remote access",
           "A document describing all assets in a zone"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "In IEC 62443, a conduit is a logical grouping of communication channels connecting two or more zones. It is implemented as a controlled data path (firewall, data diode, DMZ) that enforces the security level boundary between zones."
       },
       {
@@ -460,34 +460,34 @@ MODULES = [
       {
         "q": "An FMEA worksheet shows: Severity = 8, Occurrence = 3, Detection = 7. What is the RPN and is action typically required?",
         "options": [
-          "RPN = 168; yes, action required (above 100 threshold)",
           "RPN = 18; no action required",
           "RPN = 56; borderline",
+          "RPN = 168; yes, action required (above 100 threshold)",
           "RPN = 336; critical emergency"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "RPN = S x O x D = 8 x 3 x 7 = 168. An RPN above 100 for safety-related functions typically triggers corrective action. The most impactful reduction is usually improving Detection (adding diagnostics) or reducing Occurrence (PM schedule)."
       },
       {
         "q": "During a Site Acceptance Test (SAT), a technician performs a 'loop check' on a 4-20 mA pressure transmitter. Which of the following actions is part of a proper loop check?",
         "options": [
           "Replacing the transmitter with a calibrated substitute and recording the HMI reading",
-          "Applying a known mA signal at the transmitter terminals and verifying the correct engineering-unit value appears in the PLC tag and HMI",
           "Shorting the transmitter output to 24 V and checking for a blown fuse",
-          "Performing a point-to-point continuity test with the PLC in program mode and outputs forced"
+          "Performing a point-to-point continuity test with the PLC in program mode and outputs forced",
+          "Applying a known mA signal at the transmitter terminals and verifying the correct engineering-unit value appears in the PLC tag and HMI"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A loop check involves simulating or injecting a known signal at the field device (or using a calibrator) and verifying the value propagates correctly through the wiring, I/O card, PLC tag scaling, and HMI display. This confirms the entire signal chain, not just wiring continuity."
       },
       {
         "q": "A facility has a 480 V bus with a 6-pulse VFD. Which harmonic orders will this drive predominantly inject?",
         "options": [
+          "5th, 7th, 11th, and 13th",
           "2nd and 4th",
           "3rd and 9th (triplen harmonics)",
-          "5th, 7th, 11th, and 13th",
           "60th harmonic only (fundamental reflection)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A 6-pulse VFD generates characteristic harmonics at orders 6n plus or minus 1: 5th, 7th, 11th, 13th, etc. The 5th (300 Hz) is typically largest at 25-35% of fundamental. Triplen harmonics (3rd, 9th) are generated by single-phase non-linear loads, not balanced 3-phase drives."
       },
       {
@@ -506,10 +506,10 @@ MODULES = [
         "options": [
           "Adding a 3% line reactor on the VFD input",
           "Using a 12-pulse drive with a phase-shifting transformer",
-          "Installing a K-4 rated transformer upstream",
-          "Using an Active Front-End (AFE) regenerative drive"
+          "Using an Active Front-End (AFE) regenerative drive",
+          "Installing a K-4 rated transformer upstream"
         ],
-        "answer": 3,
+        "answer": 2,
         "explain": "An Active Front-End (AFE) drive uses IGBT switching on the input rectifier to actively control input current waveform, achieving THD below 5% and enabling regenerative braking. A 12-pulse drive reduces THD to roughly 8-12%. A line reactor alone only reduces THD to about 30-35%. K-factor transformers tolerate harmonics but do not reduce them."
       },
       {
@@ -517,21 +517,21 @@ MODULES = [
         "options": [
           "Industry 1.0",
           "Industry 2.0",
-          "Industry 3.0",
-          "Industry 5.0"
+          "Industry 5.0",
+          "Industry 3.0"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Industry 3.0 (1970s) brought electronics and the PLC (Modicon 084, 1969); 4.0 is IIoT/cyber-physical, 5.0 re-centers the human."
       },
       {
         "q": "Industry 5.0 is best characterized by:",
         "options": [
-          "Steam power",
           "Re-centering the human alongside automation, plus sustainability and resilience",
+          "Steam power",
           "Eliminating all sensors",
           "Returning to relay logic"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Industry 5.0 emphasizes human-centric collaboration (cobots), sustainability, and resilience, building on 4.0's connectivity."
       },
       {
@@ -549,11 +549,11 @@ MODULES = [
         "q": "A $360,000 automation project saves $120,000 per year. Its simple payback is:",
         "options": [
           "1 year",
-          "3 years",
           "6 months",
+          "3 years",
           "30 years"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Simple payback = investment / annual savings = 360,000 / 120,000 = 3 years."
       },
       {
@@ -570,12 +570,12 @@ MODULES = [
       {
         "q": "Which standard body publishes IEC 61131-3, the PLC programming-languages standard?",
         "options": [
-          "OSHA",
           "IEC",
+          "OSHA",
           "NFPA",
           "UL"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The IEC publishes 61131-3 (PLC languages), 61508/61511 (functional safety), and 62443 (ICS cybersecurity)."
       },
       {
@@ -593,33 +593,33 @@ MODULES = [
         "q": "Why is 4-20 mA called a 'live zero' signal?",
         "options": [
           "It uses zero volts",
-          "A healthy signal never goes below 4 mA, so 0 mA unambiguously indicates a broken wire",
           "It only works at 0 degrees",
+          "A healthy signal never goes below 4 mA, so 0 mA unambiguously indicates a broken wire",
           "Zero means full scale"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Because the valid range starts at 4 mA, a reading of 0 mA can only mean a fault (open wire), giving built-in fault detection."
       },
       {
         "q": "In structured troubleshooting, after gathering symptoms the next best step is usually to:",
         "options": [
           "Replace the most expensive part first",
-          "Check the fundamentals - power, air, comms, and safety circuit",
           "Rewrite the PLC program",
-          "Blame the last person"
+          "Blame the last person",
+          "Check the fundamentals - power, air, comms, and safety circuit"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Verifying fundamentals (power, air, comms, safety made) resolves a large share of apparently complex faults before deeper diagnosis."
       },
       {
         "q": "The lean principle of poka-yoke refers to:",
         "options": [
-          "Speeding up the conveyor",
           "Mistake-proofing - making an error physically impossible (e.g. a one-way fixture)",
+          "Speeding up the conveyor",
           "Increasing inventory",
           "Running machines faster"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Poka-yoke is error/mistake-proofing; a sensor, interlock, or fixture design that prevents a defect from being created in the first place."
       },
       {
@@ -637,33 +637,33 @@ MODULES = [
         "q": "In the project V-model, a Factory Acceptance Test (FAT) verifies against which left-side document?",
         "options": [
           "The invoice",
-          "The functional/requirements specification",
           "The employee handbook",
+          "The functional/requirements specification",
           "The marketing brochure"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Each right-side verification stage validates against the spec written at the matching left-side level; FAT/SAT confirm the system meets the functional/user requirements."
       },
       {
         "q": "When troubleshooting, 'as-built' documentation is critical because:",
         "options": [
           "It is always the original drawing",
-          "It reflects field changes made during commissioning, unlike un-redlined originals",
           "It replaces the PLC program",
-          "It is only for the sales team"
+          "It is only for the sales team",
+          "It reflects field changes made during commissioning, unlike un-redlined originals"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "As-built docs are updated for field changes; troubleshooting from stale, un-redlined originals is a leading source of wasted time."
       },
       {
         "q": "Why do safety and real-time control functions remain on deterministic PLC/safety systems rather than ML?",
         "options": [
-          "ML is too cheap",
           "ML outputs are probabilistic and not certifiable to functional-safety standards",
+          "ML is too cheap",
           "PLCs cannot do control",
           "ML is faster at everything"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ML is probabilistic and can be confidently wrong on novel data; safety-rated deterministic systems handle hazardous control, with ML advising in analytics layers."
       },
       {
@@ -681,33 +681,33 @@ MODULES = [
         "q": "You cannot manage energy you do not measure - the automation tool that reveals where energy is consumed is:",
         "options": [
           "A single plant meter",
-          "Sub-metering by line/area/machine",
           "A louder alarm",
+          "Sub-metering by line/area/machine",
           "A bigger transformer"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Sub-metering breaks consumption down by line/area/machine, enabling accountability and targeted savings; ISO 50001 frames the management system."
       },
       {
         "q": "Compressed air is a prime energy-savings target because:",
         "options": [
           "It is free",
-          "Typically 20-30% is lost to leaks, and it is an expensive utility",
           "It cannot be measured",
-          "It never leaks"
+          "It never leaks",
+          "Typically 20-30% is lost to leaks, and it is an expensive utility"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Compressed air is one of the most expensive utilities and commonly loses 20-30% to leaks, so leak detection/repair yields strong savings."
       },
       {
         "q": "Automating a wasteful process without first improving it results in:",
         "options": [
-          "Guaranteed savings",
           "Making the waste happen faster",
+          "Guaranteed savings",
           "Lower energy use",
           "Perfect quality"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The lean caution: automation amplifies whatever process it serves, so eliminate waste first, then automate - otherwise you just produce waste faster."
       },
       {
@@ -725,55 +725,55 @@ MODULES = [
         "q": "In ladder logic, two normally-open contacts wired in series implement which Boolean function?",
         "options": [
           "OR",
-          "AND",
           "NOT",
+          "AND",
           "XOR"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Series contacts must all be closed (true) for power to pass, which is a logical AND. Parallel contacts form an OR."
       },
       {
         "q": "A 12-bit ADC spans 0-100 psi. What is the approximate resolution per count?",
         "options": [
-          "0.024 psi",
           "0.24 psi",
           "2.4 psi",
-          "0.0024 psi"
+          "0.0024 psi",
+          "0.024 psi"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "12 bits = 4096 counts; 100 psi / 4096 = about 0.024 psi per count."
       },
       {
         "q": "Which statement best distinguishes closed-loop from open-loop control?",
         "options": [
-          "Closed-loop is always cheaper",
           "Closed-loop uses feedback of the measured process variable to correct error",
+          "Closed-loop is always cheaper",
           "Open-loop always uses a sensor",
           "Open-loop cannot use a timer"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Closed-loop measures the actual result (PV), computes error = SP - PV, and adjusts output; open-loop issues a command with no confirming measurement."
       },
       {
         "q": "A process that refines crude oil around the clock for weeks without stopping is best described as:",
         "options": [
           "Discrete",
-          "Batch",
           "Continuous",
+          "Batch",
           "Job-shop"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Continuous processes run uninterrupted; unplanned shutdown is the main threat, and DCS platforms typically control them."
       },
       {
         "q": "A line is 90% available, runs at 95% performance, and yields 97% quality. What is its OEE?",
         "options": [
           "about 94%",
-          "about 83%",
           "about 76%",
+          "about 83%",
           "about 90%"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "OEE = 0.90 &times; 0.95 &times; 0.97 = 0.829, about 83%."
       },
       {
@@ -792,21 +792,21 @@ MODULES = [
         "options": [
           "10 times per second",
           "5 times per second",
-          "20 times per second",
-          "2 times per second"
+          "2 times per second",
+          "20 times per second"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Nyquist requires sampling at a minimum of twice the highest signal frequency, so 2 &times; 10 = 20 samples per second."
       },
       {
         "q": "On a closed-loop level system the output is wrong but the valve and pump test fine. What should you also suspect?",
         "options": [
-          "The setpoint units only",
           "The feedback level sensor lying to the controller",
+          "The setpoint units only",
           "The power supply fuse",
           "The HMI backlight"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "In closed-loop control a faulty feedback sensor makes the controller chase a phantom error, so the level transmitter is a prime suspect when actuators check out."
       },
       {
@@ -825,10 +825,10 @@ MODULES = [
         "options": [
           "Personal protective equipment",
           "Administrative procedures and training",
-          "Engineering controls such as guards",
-          "Elimination of the hazard"
+          "Elimination of the hazard",
+          "Engineering controls such as guards"
         ],
-        "answer": 3,
+        "answer": 2,
         "explain": "Elimination sits at the top of the hierarchy of controls &mdash; removing the hazard entirely is more effective than guarding it, training around it, or relying on PPE, which is the last line of defense."
       },
       {
@@ -836,21 +836,21 @@ MODULES = [
         "options": [
           "6 months",
           "1 year",
-          "2 years",
-          "4 years"
+          "4 years",
+          "2 years"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Simple payback = project cost / annual savings = $80,000 / $40,000 per year = 2 years, a typical threshold for approving factory automation projects."
       },
       {
         "q": "In the Purdue model, what is the primary purpose of the DMZ placed between Level 3 (site operations) and Level 4 (enterprise IT)?",
         "options": [
-          "To increase network bandwidth to the PLCs",
           "To prevent enterprise IT systems from directly touching the control network",
+          "To increase network bandwidth to the PLCs",
           "To store PLC backup programs",
           "To provide power to field devices"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The DMZ isolates the OT control network from enterprise IT, brokering data through controlled services so IT-side threats cannot reach controllers directly &mdash; a core IEC 62443 segmentation practice."
       }
     ],
@@ -1114,12 +1114,12 @@ MODULES = [
       {
         "q": "480V 3-phase: what is phase voltage?",
         "options": [
-          "480V",
           "277V",
+          "480V",
           "208V",
           "120V"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "V_phase = 480/sqrt(3) = 277V."
       },
       {
@@ -1148,33 +1148,33 @@ MODULES = [
         "q": "Approximately what body current is the 'let-go threshold' (muscles clamp, you cannot release)?",
         "options": [
           "1 mA",
-          "10-20 mA",
           "100 mA",
-          "1 A"
+          "1 A",
+          "10-20 mA"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "5 mA is the safe limit and roughly perception; 10-20 mA causes involuntary muscle contraction so you cannot let go. 100+ mA causes ventricular fibrillation."
       },
       {
         "q": "What must you do BEFORE trusting that a circuit is de-energized during LOTO?",
         "options": [
+          "Test-before-touch on a KNOWN LIVE source first, then verify the target is dead, then re-verify meter on known live",
           "Look at the meter for a moment",
           "Assume the disconnect is off",
-          "Test-before-touch on a KNOWN LIVE source first, then verify the target is dead, then re-verify meter on known live",
           "Wait 30 seconds"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Live-Dead-Live: prove the meter works on a known energized source, verify the target reads zero, then re-verify the meter still works. Catches a broken meter or a bad lead."
       },
       {
         "q": "A 480 V RMS three-phase line has what approximate peak voltage?",
         "options": [
           "339 V",
-          "480 V",
           "679 V",
+          "480 V",
           "960 V"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "V_peak = V_rms * sqrt(2) = 480 * 1.414 = ~679 V. This peak is what insulation must withstand."
       },
       {
@@ -1193,32 +1193,32 @@ MODULES = [
         "options": [
           "PF is exactly 1.0",
           "Current LEADS voltage; PF is capacitive",
-          "Current LAGS voltage; PF is ~0.8-0.9 lagging",
-          "PF does not apply to motors"
+          "PF does not apply to motors",
+          "Current LAGS voltage; PF is ~0.8-0.9 lagging"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Motor windings store energy in magnetic fields, so current lags voltage. Typical full-load PF is 0.8-0.9; correction capacitors bring it toward 1."
       },
       {
         "q": "For AWG (American Wire Gauge), which statement is correct?",
         "options": [
-          "Bigger AWG number = bigger wire",
           "Bigger AWG number = smaller wire (12 is smaller than 10)",
+          "Bigger AWG number = bigger wire",
           "AWG numbers do not indicate size",
           "AWG only applies to aluminum"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Counterintuitive but standard: as AWG number grows, wire cross-section shrinks. Beyond 1 AWG we go to 1/0, 2/0, 3/0, 4/0 (bigger)."
       },
       {
         "q": "The equipment grounding conductor (EGC) should normally carry:",
         "options": [
           "The same current as the neutral",
-          "Half the load current",
           "Zero current under normal operation",
+          "Half the load current",
           "Only DC current"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The EGC bonds metallic parts together and is a fault-return path only. Any steady current on the EGC means a wiring error or a fault."
       },
       {
@@ -1237,76 +1237,76 @@ MODULES = [
         "options": [
           "Steps down by the same 4:1 ratio",
           "Stays the same",
-          "Steps UP by ~4:1 (power in = power out, so lower voltage = higher current)",
-          "Doubles"
+          "Doubles",
+          "Steps UP by ~4:1 (power in = power out, so lower voltage = higher current)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Turns ratio 4:1 down for voltage means 1:4 up for current. Same real power in and out (minus small losses); that is why secondary conductors are heavier."
       },
       {
         "q": "Which class of overload relay is the common default for general-purpose motor protection?",
         "options": [
+          "Class 20",
           "Class 5",
           "Class 10",
-          "Class 20",
           "Class 30"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Class 20 = trip in ~20 s at 600% FLA - the workhorse. Class 10 for hermetic/submersible (fast trip), Class 30 for high-inertia loads."
       },
       {
         "q": "The signature feature of 3-wire (versus 2-wire) motor control is:",
         "options": [
           "It uses three phases",
-          "It has three pushbuttons",
           "Momentary Start + seal-in + Stop - power loss requires a deliberate Start press to restart, no auto-restart",
+          "It has three pushbuttons",
           "It uses three overloads"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "3-wire control uses a momentary Start with a seal-in auxiliary; loss of coil power drops the seal, so it does not auto-restart when power returns. 2-wire auto-restarts."
       },
       {
         "q": "Why must you NEVER megger (apply 500-1000 VDC insulation test) to a VFD or drive?",
         "options": [
           "It takes too long",
-          "The DC voltage will destroy the drive's internal electronics",
           "It always gives a false reading",
+          "The DC voltage will destroy the drive's internal electronics",
           "It only works on 60 Hz"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A megger's high DC test voltage far exceeds the ratings of the drive's semiconductors. Disconnect the drive from the motor leads before meggering the motor."
       },
       {
         "q": "A balanced 3-phase load receives constant instantaneous power. What is the primary mechanical benefit for conveyor drive motors compared to single-phase supply?",
         "options": [
           "Higher starting torque due to capacitive reactance",
-          "Constant power delivery eliminates pulsating torque, reducing shaft and bearing fatigue",
           "Lower line voltage reduces insulation stress",
-          "Automatic power factor correction to unity"
+          "Automatic power factor correction to unity",
+          "Constant power delivery eliminates pulsating torque, reducing shaft and bearing fatigue"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Three-phase instantaneous power sums to a constant value with no oscillating term, eliminating the 120 Hz torque ripple inherent in single-phase supply. Constant torque delivery reduces cyclic stress on conveyor drive shafts and bearings."
       },
       {
         "q": "A 75 kVA, 480 V secondary transformer has a nameplate impedance of 2.0%. Using the infinite-bus method, what is the approximate available short-circuit current at its secondary?",
         "options": [
+          "4,510 A",
           "180 A",
           "1,800 A",
-          "4,510 A",
           "90,200 A"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "FLA = 75,000 / (1.732 x 480) = 90.2 A. Isc = 90.2 / 0.02 = 4,510 A. Breakers on this panel must be rated &ge; 5 kAIC per NEC 110.9."
       },
       {
         "q": "For overcurrent devices to be selectively coordinated, what must be true of their TCC curves on the same log-log graph?",
         "options": [
           "The upstream and downstream curves must cross at the maximum load current",
-          "Both devices must have identical trip times at all fault currents",
           "The upstream curve must lie entirely above and to the right of the downstream curve with no overlap",
+          "Both devices must have identical trip times at all fault currents",
           "The downstream device must have a higher instantaneous trip current than the upstream device"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Selective coordination requires the downstream device to always operate before the upstream device. On a TCC plot, the upstream device curve must be entirely above (slower) and to the right (higher current for the same time) of the downstream curve - no overlap at any current level."
       },
       {
@@ -1324,33 +1324,33 @@ MODULES = [
         "q": "In the 3-phase voltage-drop formula VD = (1.732 x K x I x L) / CM, what does the factor 1.732 represent?",
         "options": [
           "Square root of 2, converting peak voltage to RMS",
-          "Square root of 3, reflecting 3-phase geometry relating line to phase quantities",
           "The power factor correction multiplier for inductive loads",
-          "The ratio of copper resistivity to aluminum resistivity"
+          "The ratio of copper resistivity to aluminum resistivity",
+          "Square root of 3, reflecting 3-phase geometry relating line to phase quantities"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "1.732 is the square root of 3, which appears in 3-phase power and voltage-drop formulas due to the geometric 120-degree phase relationship. For single-phase circuits the factor is 2 (current travels out and back on two conductors)."
       },
       {
         "q": "Per NEC 430.52, what is the maximum standard inverse-time breaker permitted for a 3-phase motor with FLC = 21 A before invoking the next-size-up exception?",
         "options": [
+          "50 A",
           "25 A",
           "40 A",
-          "50 A",
           "70 A"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "NEC 430.52 allows a maximum of 250% of FLC for inverse-time breakers: 21 x 2.5 = 52.5 A. Since 52.5 A is not a standard size, 50 A is selected (next standard size at or below 52.5 A). The next-size-up provision (to 60 A) applies only if the motor will not start."
       },
       {
         "q": "A six-pulse VFD (3-phase diode bridge) generates harmonic currents at which characteristic orders?",
         "options": [
           "2nd, 4th, 6th (all even orders)",
-          "3rd, 9th, 15th (triplen orders only)",
           "5th, 7th, 11th, 13th (pattern: 6n +/- 1)",
+          "3rd, 9th, 15th (triplen orders only)",
           "12th, 24th, 36th (multiples of 12)"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "A six-pulse rectifier produces harmonics at orders 6n +/- 1: 5th, 7th, 11th, 13th, 17th, 19th, etc. The 5th harmonic is typically dominant at 25-35% of fundamental. IEEE 519-2022 governs permissible harmonic distortion levels."
       },
       {
@@ -1369,21 +1369,21 @@ MODULES = [
         "options": [
           "Single 8-ft driven ground rod",
           "Metal underground water pipe alone",
-          "Concrete-encased electrode (Ufer ground)",
-          "Copper ground ring at 5 ft depth"
+          "Copper ground ring at 5 ft depth",
+          "Concrete-encased electrode (Ufer ground)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "The concrete-encased electrode (Ufer ground) - at least 20 ft of #4 AWG copper or 1/2 inch rebar encased in concrete footing - provides the most reliable, low-resistance earth connection due to the large concrete-to-soil interface, moisture retention, and chemical stability over time."
       },
       {
         "q": "NEC 230.95 requires Ground-Fault Protection of Equipment (GFPE) on solidly grounded 480Y/277 V services at what minimum disconnecting means rating?",
         "options": [
+          "1000 A",
           "400 A",
           "600 A",
-          "800 A",
-          "1000 A"
+          "800 A"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "NEC 230.95 mandates GFPE for solidly grounded 480Y/277 V services where the service disconnecting means is rated 1000 A or more. The maximum trip threshold is 1200 A ground-fault current with a maximum 1-second clearing time. Annual functional testing is required per NEC 230.95(C)."
       },
       {
@@ -1412,22 +1412,22 @@ MODULES = [
         "q": "What is the K-factor of a transformer, and why is a K-13 unit specified for a VFD-heavy conveyor MCC feeder?",
         "options": [
           "K-factor is the turns ratio; K-13 means 13:1 step-down for 480 V systems",
-          "K-factor = sum(Ih^2 x h^2) / sum(Ih^2); K-13 transformers have reinforced windings rated to handle harmonic heating 13 times greater than a standard K-1 unit",
           "K-factor is the short-circuit impedance multiplier; K-13 means 13% impedance",
-          "K-factor is a power factor correction multiplier defined by IEEE 519"
+          "K-factor is a power factor correction multiplier defined by IEEE 519",
+          "K-factor = sum(Ih^2 x h^2) / sum(Ih^2); K-13 transformers have reinforced windings rated to handle harmonic heating 13 times greater than a standard K-1 unit"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "K-factor quantifies the additional eddy-current heating a transformer experiences from harmonic currents: K = sum(Ih^2 x h^2) / sum(Ih^2). VFD-heavy loads with significant 5th and 7th harmonics produce K-factors of 4-20. K-13 transformers have reinforced windings and magnetic core materials designed to handle this harmonic heating without exceeding rated temperature."
       },
       {
         "q": "Why do NEMA MG1 Part 31 and IEC 60034-17 define special insulation requirements for inverter-duty motors used with VFDs on cable runs over 50 ft?",
         "options": [
-          "Long cables reduce motor speed, requiring higher voltage to maintain rated torque",
           "PWM switching creates high dV/dt pulses that reflect at the motor terminals due to impedance mismatch, potentially doubling DC bus voltage at the motor windings",
+          "Long cables reduce motor speed, requiring higher voltage to maintain rated torque",
           "Cable capacitance causes low-frequency resonance that destroys the drive input rectifier",
           "Longer cables increase motor slip, requiring thicker winding insulation for thermal protection"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "High-frequency PWM pulses (dV/dt up to 10,000 V/microsecond) travel down the cable and reflect at the motor terminal impedance mismatch. This reflected wave can approach twice the DC bus voltage (~1,400 V on a 480 V drive) at the motor windings. NEMA MG1 Part 31 inverter-duty motors are rated for 1,600 V peak; standard motors on long runs require output dV/dt filters or load reactors."
       },
       {
@@ -1445,77 +1445,77 @@ MODULES = [
         "q": "Why can a plain fuse be a poor choice for protecting a shorted 24 VDC control branch?",
         "options": [
           "Fuses never work on DC",
-          "It may not clear a low-level DC fault fast enough, so electronic protectors are preferred",
           "DC cannot be fused",
+          "It may not clear a low-level DC fault fast enough, so electronic protectors are preferred",
           "Fuses cost too much"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Low-level DC faults may not blow a fuse quickly; electronic circuit protectors trip the faulted branch fast without collapsing the whole 24 V bus."
       },
       {
         "q": "A relay seal-in (latch) circuit holds itself energized after the start button releases by:",
         "options": [
           "Using a timer only",
-          "Wiring one of the relay's own contacts in parallel with the start button",
           "Increasing the coil voltage",
-          "Removing the stop button"
+          "Removing the stop button",
+          "Wiring one of the relay's own contacts in parallel with the start button"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The relay's own N.O. contact in parallel with the momentary start button maintains the coil after release - the electromechanical ancestor of a PLC latch."
       },
       {
         "q": "A loose terminal tends to get worse over time because:",
         "options": [
-          "Copper shrinks",
           "Resistance causes heating (I squared R), which further loosens the connection",
+          "Copper shrinks",
           "It tightens itself",
           "DC reverses polarity"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Resistance at a loose joint dissipates heat (P = I^2 R), which expands/oxidizes and loosens it further - a runaway ending in a burned lug."
       },
       {
         "q": "Which NEMA enclosure rating is appropriate for a corrosion-resistant washdown environment?",
         "options": [
           "NEMA 1",
-          "NEMA 12",
           "NEMA 4X",
+          "NEMA 12",
           "NEMA 7"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "NEMA 4X adds corrosion resistance (stainless/nonmetallic) to the hosedown/washdown protection of NEMA 4; NEMA 1 is indoor general, 7 is hazardous locations."
       },
       {
         "q": "A 24 V source is across a 100-ohm and a 200-ohm resistor in series. The current is:",
         "options": [
-          "0.08 A",
           "0.24 A",
           "0.12 A",
+          "0.08 A",
           "0.36 A"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Series Rt = 300 ohm; I = V/R = 24/300 = 0.08 A. The drops are 8 V and 16 V, summing to 24 V per KVL."
       },
       {
         "q": "Kirchhoff's Current Law states that at any node:",
         "options": [
           "Voltage drops sum to zero",
-          "Current in equals current out",
           "Resistance always adds",
-          "Power is constant"
+          "Power is constant",
+          "Current in equals current out"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "KCL: the current entering a node equals the current leaving it. KVL addresses voltage sums around a loop."
       },
       {
         "q": "A 20 A, 120 V branch circuit requires a minimum copper conductor of:",
         "options": [
-          "14 AWG",
           "12 AWG",
+          "14 AWG",
           "16 AWG",
           "10 AWG"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "12 AWG copper is rated for 20 A; the breaker protects the wire, so a 20 A breaker needs at least 12 AWG (14 AWG is only good for 15 A)."
       },
       {
@@ -1533,33 +1533,33 @@ MODULES = [
         "q": "Per IEEE 1584, incident energy at a working point is reduced most directly by:",
         "options": [
           "A slower-clearing protective device",
-          "A faster-clearing (well-coordinated) protective device",
           "A larger enclosure",
+          "A faster-clearing (well-coordinated) protective device",
           "A higher available fault current"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Incident energy scales with arcing time, so faster protective-device clearing lowers arc-flash energy - making fast, coordinated protection a safety issue."
       },
       {
         "q": "The arc-flash boundary is defined as the distance at which incident energy equals:",
         "options": [
           "0 cal/cm2",
-          "1.2 cal/cm2 (onset of second-degree burn)",
           "40 cal/cm2",
-          "100 cal/cm2"
+          "100 cal/cm2",
+          "1.2 cal/cm2 (onset of second-degree burn)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The arc-flash boundary is where incident energy falls to 1.2 cal/cm2, the threshold for a second-degree skin burn."
       },
       {
         "q": "Ordinary THHN in conduit used for VFD output leads commonly causes:",
         "options": [
-          "Better efficiency",
           "Drive EMI, nuisance tripping, and premature motor/bearing failure",
+          "Better efficiency",
           "Lower cost with no downside",
           "Higher torque"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "VFD PWM output needs symmetrical shielded VFD cable to contain EMI and shaft currents; plain THHN is a frequent source of EMI, tripping, and bearing damage."
       },
       {
@@ -1577,33 +1577,33 @@ MODULES = [
         "q": "An MCC (Motor Control Center) is best described as:",
         "options": [
           "A single branch breaker",
-          "Standardized vertical sections grouping motor starters, VFDs, and protection in pluggable buckets",
           "A backup generator",
+          "Standardized vertical sections grouping motor starters, VFDs, and protection in pluggable buckets",
           "A surge protector"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An MCC groups motor starters/VFDs and their protection into standardized sections with pluggable 'buckets' for organized motor distribution."
       },
       {
         "q": "Distribution equipment must have an interrupting/withstand rating (AIC) that:",
         "options": [
           "Is as low as possible",
-          "Exceeds the available fault current at its location",
           "Equals the load current",
-          "Does not matter indoors"
+          "Does not matter indoors",
+          "Exceeds the available fault current at its location"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "AIC must exceed available fault current or the device can fail catastrophically when trying to interrupt a fault beyond its rating."
       },
       {
         "q": "For a PLC that cannot tolerate even a few seconds of power gap during an outage, the correct backup is:",
         "options": [
-          "A standby generator alone",
           "A UPS (bridging instantly from batteries), often paired with a generator",
+          "A standby generator alone",
           "A larger breaker",
           "An ATS alone"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A UPS carries the load instantly from batteries with no gap; it commonly bridges until a generator (which takes seconds to start) picks up."
       },
       {
@@ -1621,33 +1621,33 @@ MODULES = [
         "q": "A surge protective device's ground lead should be:",
         "options": [
           "As long as possible",
-          "Short and low-impedance to avoid added inductance defeating the SPD",
           "Undersized",
+          "Short and low-impedance to avoid added inductance defeating the SPD",
           "Left disconnected"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Long ground leads add inductance that raises let-through voltage; SPDs need short, low-impedance bonding to be effective."
       },
       {
         "q": "A series RLC circuit at 60 Hz has R=10 &Omega;, X_L=15 &Omega;, X_C=7 &Omega;. What is the impedance magnitude?",
         "options": [
-          "about 12.8 &Omega;",
           "about 32 &Omega;",
           "about 8 &Omega;",
-          "about 10 &Omega;"
+          "about 10 &Omega;",
+          "about 12.8 &Omega;"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Net reactance = 15 - 7 = 8 &Omega;; |Z| = sqrt(10&sup2; + 8&sup2;) = sqrt(164) = 12.8 &Omega;."
       },
       {
         "q": "Inductive reactance X_L as frequency increases will:",
         "options": [
+          "Increase",
           "Decrease",
           "Stay constant",
-          "Increase",
           "Become negative"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "X_L = 2&pi;fL rises directly with frequency; capacitive reactance X_C = 1/(2&pi;fC) instead falls with frequency."
       },
       {
@@ -1676,22 +1676,22 @@ MODULES = [
         "q": "In a DC power supply, the filter capacitor's main job is to:",
         "options": [
           "Increase the voltage",
-          "Reduce ripple by filling the valleys between rectified peaks",
           "Rectify the AC",
-          "Provide overcurrent protection"
+          "Provide overcurrent protection",
+          "Reduce ripple by filling the valleys between rectified peaks"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The capacitor stores charge and supplies the load during the gaps between peaks, smoothing ripple; larger caps mean less ripple but higher inrush."
       },
       {
         "q": "A NEMA Design C motor is chosen primarily for:",
         "options": [
-          "Lowest cost",
           "High starting torque for hard-to-start loads",
+          "Lowest cost",
           "Highest running speed",
           "Variable-frequency operation only"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Design C provides high locked-rotor (starting) torque suited to loaded conveyors and compressors; Design B is the general-purpose default."
       },
       {
@@ -1709,33 +1709,33 @@ MODULES = [
         "q": "General NEC conduit fill for three or more conductors is limited to about:",
         "options": [
           "20%",
-          "40%",
           "60%",
+          "40%",
           "100%"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The 40% fill limit for three or more conductors allows heat dissipation and room to pull without damaging insulation."
       },
       {
         "q": "At resonance in a series RLC circuit, the impedance:",
         "options": [
           "Rises to a maximum",
-          "Drops to just the resistance R",
           "Becomes infinite",
-          "Equals X_L + X_C"
+          "Equals X_L + X_C",
+          "Drops to just the resistance R"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "At resonance X_L = X_C, the reactances cancel, so impedance equals R alone and current is maximum."
       },
       {
         "q": "For three or more current-carrying conductors in a conduit, NEC generally limits the conductor fill to what percentage of the raceway's interior cross-sectional area?",
         "options": [
-          "25%",
           "40%",
+          "25%",
           "53%",
           "80%"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NEC Chapter 9 limits conduit fill to 40% for three or more conductors, allowing heat dissipation and safe pulling. One conductor allows 53%, two allow 31%."
       },
       {
@@ -1752,23 +1752,23 @@ MODULES = [
       {
         "q": "In an RC charging circuit with R = 10 k&Omega; and C = 100 &micro;F, approximately what is the time constant, and what percent of final voltage is reached after one time constant?",
         "options": [
-          "1 second, 63%",
           "1 millisecond, 37%",
           "10 seconds, 95%",
+          "1 second, 63%",
           "0.1 second, 100%"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "&tau; = R&times;C = 10,000 &Omega; &times; 0.0001 F = 1 second. After one time constant a capacitor charges to about 63% of its final voltage; it is nearly full after five time constants."
       },
       {
         "q": "What is the primary safety function of the equipment grounding conductor (EGC), as distinct from the grounding electrode (earth) system?",
         "options": [
           "It stabilizes voltage against lightning surges",
-          "It provides a low-impedance path so a ground fault trips the breaker quickly",
           "It carries normal load current back to the source",
-          "It connects the neutral to earth at every panel"
+          "It connects the neutral to earth at every panel",
+          "It provides a low-impedance path so a ground fault trips the breaker quickly"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The EGC is a low-impedance metallic fault-return path that lets a ground fault draw enough current to trip protection fast. Earth is too resistive to clear faults; the electrode system handles surge/voltage stabilization."
       }
     ],
@@ -2025,22 +2025,22 @@ MODULES = [
         "q": "When does the PLC read physical inputs?",
         "options": [
           "Program scan",
-          "Output scan",
           "Input scan (beginning)",
+          "Output scan",
           "Housekeeping"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Inputs read at start of each scan."
       },
       {
         "q": "XIO is TRUE when bit is:",
         "options": [
           "1 (ON)",
-          "0 (OFF)",
           "Floating",
+          "0 (OFF)",
           "Pulsing"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "XIO = TRUE when bit is 0 (OFF)."
       },
       {
@@ -2048,21 +2048,21 @@ MODULES = [
         "options": [
           "Ladder",
           "FBD",
-          "Structured Text",
-          "SFC"
+          "SFC",
+          "Structured Text"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Structured Text is the text-based language."
       },
       {
         "q": "Which PLC component reads/writes physical signals to sensors and actuators?",
         "options": [
+          "I/O modules (discrete input, discrete output, analog)",
           "The CPU",
           "The Power Supply",
-          "I/O modules (discrete input, discrete output, analog)",
           "The Ethernet port"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "The CPU runs the program; I/O modules interface it to the physical world - discrete DI/DO and analog AI/AO plus specialty (motion, weigh, thermocouple)."
       },
       {
@@ -2080,77 +2080,77 @@ MODULES = [
         "q": "Why is 4-20 mA preferred over 0-10 V for long field runs?",
         "options": [
           "mA reads faster",
-          "Current is the same in every series element (no voltage-drop error) and 0 mA detects broken-wire fault",
           "10 V is illegal",
+          "Current is the same in every series element (no voltage-drop error) and 0 mA detects broken-wire fault",
           "4-20 mA works better in AC"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Current-loop signals are immune to conductor voltage drop, and 4 mA at zero PSI lets you distinguish a real zero reading from a broken cable (0 mA)."
       },
       {
         "q": "A 12-bit analog module has how many discrete counts across its range?",
         "options": [
           "1024",
-          "4096",
           "16384",
-          "65536"
+          "65536",
+          "4096"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "2^12 = 4096 counts. 16-bit = 65536."
       },
       {
         "q": "Where should the shield of a shielded twisted-pair analog cable be grounded?",
         "options": [
+          "At ONE end only, typically the panel/PLC end - both-ends creates a ground loop",
           "At both ends",
           "At the sensor end only",
-          "At ONE end only, typically the panel/PLC end - both-ends creates a ground loop",
           "It does not matter"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Both-ends grounding of the shield lets 60 Hz circulate through it, injecting hum into the signal. One-end grounding drains induced noise without a loop."
       },
       {
         "q": "A rung reads bit A that is written by a rung ABOVE it. What value does it see this scan?",
         "options": [
           "Always FALSE",
-          "Always TRUE",
           "The newly-updated value written by the earlier rung THIS scan",
+          "Always TRUE",
           "Last scan's value"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Because rungs solve top-down and share the same output image table, later rungs see writes made earlier in the same scan. Reading a bit written LATER gives last-scan value."
       },
       {
         "q": "A Studio 5000 Type 6 major fault indicates:",
         "options": [
           "Bad module",
-          "Watchdog timer expired (a scan took too long)",
           "Battery low",
+          "Watchdog timer expired (a scan took too long)",
           "Force enabled"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Type 6 = user watchdog. Usually caused by an unbounded loop or recursion. Type 4 = I/O; Type 11 = program error (div-by-zero, array bounds)."
       },
       {
         "q": "Why must comparing two REAL (float) values NOT use exact equality (A = B)?",
         "options": [
           "The instruction does not exist",
-          "REAL is 32-bit floating point and cannot exactly represent most decimals; use ABS(A-B) &lt; tolerance",
           "Studio 5000 forbids it",
-          "It always returns TRUE"
+          "It always returns TRUE",
+          "REAL is 32-bit floating point and cannot exactly represent most decimals; use ABS(A-B) &lt; tolerance"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEEE-754 REAL has ~7 digits precision and cannot exactly store 0.1, 0.2, etc. Direct equality often fails; use a tolerance band."
       },
       {
         "q": "What is a Program-scope tag in Studio 5000?",
         "options": [
-          "A tag visible to all controllers",
           "A tag local to one Program, invisible to routines outside that program",
+          "A tag visible to all controllers",
           "Only for HMI use",
           "A tag that logs to disk"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Program-scope tags exist inside one Program folder and cannot be referenced from other programs. Great for scratchpads. Controller-scope tags are global."
       },
       {
@@ -2168,22 +2168,22 @@ MODULES = [
         "q": "The half-split troubleshooting method saves time because it turns an O(n) search into:",
         "options": [
           "O(1)",
-          "O(log n)",
           "O(n^2)",
+          "O(log n)",
           "O(n * log n)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Cutting the remaining suspect region in half each measurement makes the search logarithmic - a 128-device path takes ~7 measurements instead of up to 128."
       },
       {
         "q": "Which network is the dominant real-time I/O protocol on Allen-Bradley systems?",
         "options": [
           "Modbus TCP",
-          "EtherNet/IP with CIP",
           "PROFINET",
-          "OPC UA"
+          "OPC UA",
+          "EtherNet/IP with CIP"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "EtherNet/IP (an ODVA/Rockwell standard) carries CIP messages over standard Ethernet. PROFINET is the Siemens-dominant equivalent."
       },
       {
@@ -2200,34 +2200,34 @@ MODULES = [
       {
         "q": "A 16-bit analog input is configured for 0-500 PSI full scale. What is the engineering-unit value of 1 LSB?",
         "options": [
-          "0.00763 PSI",
           "0.122 PSI",
+          "0.00763 PSI",
           "1.953 PSI",
           "0.061 PSI"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "LSB = (EU_high - EU_low) / (2^n - 1) = 500 / 65535 = 0.00763 PSI. A 12-bit module gives 500 / 4095 = 0.122 PSI - 16 times coarser."
       },
       {
         "q": "A 12-bit, 4-20 mA analog input maps raw counts 0-4095 to 0-200 bar. A raw count of 2048 is read. What is the EU value?",
         "options": [
-          "99.95 bar",
           "100.00 bar",
           "102.4 bar",
+          "99.95 bar",
           "50.0 bar"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "EU = 0 + (2048 - 0) x 200 / (4095 - 0) = 409600 / 4095 = 99.95 bar. Exactly 100 bar would require raw = 4095/2 = 2047.5, which is not an integer; the nearest integer (2048) gives 99.95 bar."
       },
       {
         "q": "A conveyor encoder is rated 512 PPR. The shaft rotates at 450 RPM. What frequency must the HSC module accept?",
         "options": [
-          "3840 Hz",
           "512 Hz",
           "7680 Hz",
-          "230400 Hz"
+          "230400 Hz",
+          "3840 Hz"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Pulse frequency = PPR x RPM / 60 = 512 x 450 / 60 = 3840 Hz. In quadrature mode the edge rate is 4x (15360 edges/s), but the module's input frequency spec applies to each individual channel."
       },
       {
@@ -2255,34 +2255,34 @@ MODULES = [
       {
         "q": "Which isolation method provides the highest common-mode rejection ratio (CMRR) for a millivolt-level analog signal in a noisy motor-control panel?",
         "options": [
-          "Transformer isolation (galvanic, CMRR &ge; 80 dB)",
           "Opto-coupler isolation",
+          "Transformer isolation (galvanic, CMRR &ge; 80 dB)",
           "Relay contact isolation",
           "No isolation; 4-20 mA signals are immune to common-mode noise"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "Transformer isolation provides galvanic separation with CMRR typically &ge; 80 dB, optimal for low-level analog signals in high-noise environments. Opto-couplers are designed for discrete (digital) signals and have limited CMRR for analog use."
       },
       {
         "q": "When terminating shielded analog cable from a field transmitter to a PLC, where should the shield drain wire be grounded?",
         "options": [
-          "At the PLC/panel cabinet end only, with the field end floating",
           "At both ends simultaneously for maximum rejection",
           "At the field transmitter end only",
+          "At the PLC/panel cabinet end only, with the field end floating",
           "Shields on analog cable must never be grounded"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Grounding the shield at one end only - typically the PLC/panel - prevents a ground loop. If both ends are grounded at different potentials (common in industrial plants), current flows through the shield and inductively couples noise into the signal conductors."
       },
       {
         "q": "In a Rockwell SLC 500 program, what does the address T4:2.ACC represent?",
         "options": [
-          "Accumulated value word of the third timer (element 2) in timer file 4",
           "Bit 2 of word 4 in the status file",
           "Preset value of counter element 2 in file 4",
-          "Integer in N7 file 4, sub-element ACC"
+          "Integer in N7 file 4, sub-element ACC",
+          "Accumulated value word of the third timer (element 2) in timer file 4"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "T4 = timer file (type T, number 4). :2 = element index 2 (third timer, zero-based). .ACC = accumulated value sub-element. T4:2.PRE is the preset value; T4:2/DN is the done bit."
       },
       {
@@ -2299,34 +2299,34 @@ MODULES = [
       {
         "q": "A ControlLogix periodic task is configured for a 10 ms period with a 500 ms watchdog. The task takes 14 ms to execute. What is the immediate result?",
         "options": [
-          "A task overrun is logged; repeated overruns can eventually trigger a major fault",
           "The controller immediately declares a major fault and halts",
+          "A task overrun is logged; repeated overruns can eventually trigger a major fault",
           "The 500 ms watchdog expires and all outputs de-energize",
           "No fault occurs because 14 ms is within the 500 ms watchdog"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "When a periodic task exceeds its configured period, the OS logs a task overrun as a recoverable event. The 500 ms watchdog is a separate catastrophic-runaway guard. A single overrun only logs an entry; repeated overruns accumulate into a major fault."
       },
       {
         "q": "In a Rockwell SLC 500 program, which status file bit identifies the first-scan (first-pass) condition?",
         "options": [
-          "S:1/15",
           "S:0/0",
           "S:2/0",
+          "S:1/15",
           "B3/0"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "S:1/15 is the SLC 500 First Pass bit in the processor status file S:. It is asserted for exactly one scan on power-up or after a program download, then cleared. Use XIC S:1/15 to gate initialization rungs that must execute only once."
       },
       {
         "q": "In ControlLogix ladder logic, a JSR instruction passes a REAL tag as an input parameter. Inside the subroutine that tag is modified. What is the effect on the caller's original tag?",
         "options": [
-          "No effect; parameters are passed by value and the caller tag is unchanged unless an output parameter is mapped",
           "The caller tag is immediately updated in the same scan",
           "A fault is generated because REAL parameters cannot be modified inside a subroutine",
-          "The caller tag is updated at the start of the next scan"
+          "The caller tag is updated at the start of the next scan",
+          "No effect; parameters are passed by value and the caller tag is unchanged unless an output parameter is mapped"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "ControlLogix JSR passes parameters by value: a copy is written into the subroutine's local parameter tag. Modifications there do not propagate back to the caller's source tag unless the programmer explicitly uses a return (output) parameter in the paired JSR/RET instruction."
       },
       {
@@ -2366,22 +2366,22 @@ MODULES = [
         "q": "In a hot-standby redundant PLC system, the secondary controller:",
         "options": [
           "Runs a different program",
-          "Continuously mirrors the primary and takes over bumplessly on a fault",
           "Only powers up after the primary is repaired",
-          "Controls half the I/O normally"
+          "Controls half the I/O normally",
+          "Continuously mirrors the primary and takes over bumplessly on a fault"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The standby mirrors the primary's state and assumes control within milliseconds on a primary fault, holding outputs for a bumpless switchover."
       },
       {
         "q": "After a brief power loss, a retentive timer will:",
         "options": [
-          "Reset its accumulated value to zero",
           "Hold its accumulated value",
+          "Reset its accumulated value to zero",
           "Delete the program",
           "Switch to the standby PLC"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Retentive data (retentive timers, latches, retentive tags) survives a power cycle; non-retentive data resets on power-up."
       },
       {
@@ -2399,11 +2399,11 @@ MODULES = [
         "q": "A robust HMI-to-PLC critical write (e.g. start a batch) should use:",
         "options": [
           "A single write with no confirmation",
-          "A handshake: command bit plus PLC acknowledge",
           "The fastest possible polling only",
+          "A handshake: command bit plus PLC acknowledge",
           "Two copies of the setpoint"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A command/acknowledge handshake confirms the PLC received the write, guarding against lost commands - far safer than a fire-and-forget single write."
       },
       {
@@ -2411,65 +2411,65 @@ MODULES = [
         "options": [
           "16",
           "100",
-          "255",
-          "512"
+          "512",
+          "255"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "FF hex = 1111 1111 binary = 255 decimal; each hex digit maps to exactly 4 bits."
       },
       {
         "q": "The decimal number 1234 read from a BCD thumbwheel is stored as:",
         "options": [
-          "Binary 10011010010",
           "0001 0010 0011 0100 (each digit in 4 bits)",
+          "Binary 10011010010",
           "The same as binary 1234",
           "A floating-point value"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "BCD encodes each decimal digit in 4 bits (1-2-3-4 = 0001 0010 0011 0100), which differs from binary 1234 - hence a BCD conversion is needed."
       },
       {
         "q": "To toggle a single bit in a status word, the bitwise operation is:",
         "options": [
           "AND with 0",
-          "OR with 0",
           "XOR with 1",
+          "OR with 0",
           "Shift left"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "XOR with 1 flips (toggles) a bit; AND masks/clears, OR sets, and shifts move bit positions."
       },
       {
         "q": "An output is unexpectedly de-energized. The fastest software tool to find what controls it is:",
         "options": [
           "Deleting the rung",
-          "The cross-reference (showing where the tag is written)",
           "Rebooting the PLC",
+          "The cross-reference (showing where the tag is written)",
           "Changing the IP address"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The cross-reference lists every use of a tag and distinguishes writes from reads, taking you straight to the logic controlling the output."
       },
       {
         "q": "Uploading versus downloading a PLC program means:",
         "options": [
           "They are the same",
-          "Upload pulls from the PLC to your PC; download pushes from PC to the PLC",
           "Both erase the program",
-          "Upload runs the program"
+          "Upload runs the program",
+          "Upload pulls from the PLC to your PC; download pushes from PC to the PLC"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Upload reads the controller's program into your PC; download writes your PC project into the controller - confusing them can overwrite the wrong version."
       },
       {
         "q": "A basic, high-value PLC cybersecurity control a technician can apply is:",
         "options": [
-          "Putting the PLC directly on the internet",
           "Changing default passwords and using the RUN/PROG lock plus role-based access",
+          "Putting the PLC directly on the internet",
           "Sharing one admin password with everyone",
           "Disabling all backups"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Default-password changes, controller run/program locking, role-based access, and network segmentation are foundational defense-in-depth per IEC 62443."
       },
       {
@@ -2487,33 +2487,33 @@ MODULES = [
         "q": "A PID loop that must execute at a precise, consistent interval regardless of program size should run in a:",
         "options": [
           "Continuous task only",
-          "Periodic task on a fixed timebase",
           "Event task on a rare trigger",
+          "Periodic task on a fixed timebase",
           "The output-write phase"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A periodic task fires on a fixed timebase (e.g. every 50 ms) for consistent PID timing, independent of the continuous scan length."
       },
       {
         "q": "Too many high-frequency high-priority tasks can cause:",
         "options": [
           "Faster continuous scanning",
-          "A scan overrun fault by starving the continuous task",
           "Lower power use",
-          "More I/O points"
+          "More I/O points",
+          "A scan overrun fault by starving the continuous task"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "High-priority tasks preempt the continuous task; overload starves it and triggers a scan-overrun/watchdog fault."
       },
       {
         "q": "A mechanical limit switch producing multiple false counts per actuation is best addressed by:",
         "options": [
-          "Ignoring it",
           "Debounce - a hardware input filter or software stability timer",
+          "Ignoring it",
           "A larger power supply",
           "Reversing sinking/sourcing"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Contact bounce makes/breaks several times in milliseconds; an input-filter time or a software debounce timer requires the signal to settle before acting."
       },
       {
@@ -2531,66 +2531,66 @@ MODULES = [
         "q": "When an input does not turn on in the program, checking the module's per-point input LED first tells you:",
         "options": [
           "Nothing useful",
-          "Whether the signal is reaching the module (field-side) vs a logic problem",
           "The IP address",
+          "Whether the signal is reaching the module (field-side) vs a logic problem",
           "The firmware version"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "If the point LED does not light when the field device actuates, the fault is field-side (wiring/device); if it lights but logic ignores it, the issue is in the program."
       },
       {
         "q": "When the PLC solves a rung, an examine-if-open (XIO) instruction passes logical power when its bit is:",
         "options": [
           "1 (true)",
-          "0 (false)",
           "toggling",
-          "forced"
+          "forced",
+          "0 (false)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "XIO passes power when its bit is 0 (open/false); XIC passes power when its bit is 1."
       },
       {
         "q": "Why is double-coil programming (same OTE address on two rungs) dangerous?",
         "options": [
-          "It uses too much memory",
           "The last rung solved each scan overrides the earlier one, masking it",
+          "It uses too much memory",
           "It slows the scan below the watchdog",
           "It cannot be forced"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Because rungs solve top to bottom each scan, the last write to a duplicated output wins, hiding the earlier rung's effect."
       },
       {
         "q": "Which architecture is a supervisory software layer that gathers data from many PLCs/RTUs over a wide area but does not itself execute the control logic?",
         "options": [
           "PLC",
-          "DCS",
           "SCADA",
+          "DCS",
           "PAC"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "SCADA supervises, displays, logs, and issues setpoints across dispersed controllers; the actual logic runs in the field PLCs or RTUs."
       },
       {
         "q": "To run time-critical logic on a fixed interval independent of main-scan load, you should use a:",
         "options": [
           "Longer continuous task",
-          "Periodic or event task",
           "Double coil",
+          "Periodic or event task",
           "Larger data table"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A periodic (or event) task executes at a defined interval regardless of the continuous scan's length, giving deterministic timing for critical logic."
       },
       {
         "q": "Which output pattern is preferred for a safety-relevant motor stop so that loss of power drops the output?",
         "options": [
           "Latch/unlatch (OTL/OTU)",
-          "Seal-in with a series NC stop and OTE",
           "Retentive timer",
-          "Double coil"
+          "Double coil",
+          "Seal-in with a series NC stop and OTE"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A seal-in OTE de-energises on power loss and when the NC stop opens; latched bits can remain set (retained) and are less fail-safe for stops."
       },
       {
@@ -2608,77 +2608,77 @@ MODULES = [
         "q": "Which instruction type typically costs the MOST scan time?",
         "options": [
           "Bit examine (XIC)",
-          "Output energise (OTE)",
           "Message (MSG) and floating-point math",
+          "Output energise (OTE)",
           "Normally-closed contact"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Communication (MSG) and floating-point/block operations are far more expensive than simple bit instructions, and heavy use can stretch scan time significantly."
       },
       {
         "q": "A software emulator like PLCSIM or Emulate lets you:",
         "options": [
           "Replace the field wiring permanently",
-          "Run the actual program on a PC and test logic without hardware",
           "Increase motor torque",
+          "Run the actual program on a PC and test logic without hardware",
           "Bypass the watchdog"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Emulators execute the real program on a PC so you can toggle inputs and verify outputs and sequences safely before touching hardware."
       },
       {
         "q": "During PLC commissioning, before running the program you should:",
         "options": [
           "Skip continuity checks to save time",
-          "Ring out each conductor against the diagram and force each I/O point to verify wiring",
           "Set all outputs on permanently",
-          "Disable the ground"
+          "Disable the ground",
+          "Ring out each conductor against the diagram and force each I/O point to verify wiring"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Verifying wiring by continuity and forcing each input/output proves the field connections before the program runs, catching faults cheaply."
       },
       {
         "q": "When sizing a PLC chassis, why must you sum each module's backplane current draw rather than only its field-switching current?",
         "options": [
-          "Field current is always zero",
           "The backplane supply has a limited current budget that all modules share, and exceeding it causes faults",
+          "Field current is always zero",
           "Backplane current is only relevant for analog modules",
           "The two currents are always equal"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The chassis power supply provides a limited current on the backplane rails shared by all modules. Field-switching current comes from external supplies; overloading the backplane budget causes brownouts and random faults."
       },
       {
         "q": "A 4-20 mA transmitter measures 0-100 psi. The PLC reads 4 mA. What is the interpreted pressure, and why is the 4 mA live-zero useful?",
         "options": [
-          "0 psi; a broken wire (0 mA) can be distinguished from a true 0 psi reading",
           "50 psi; it marks mid-scale",
+          "0 psi; a broken wire (0 mA) can be distinguished from a true 0 psi reading",
           "100 psi; full scale",
           "Undefined; 4 mA is a fault"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "4 mA maps to 0 psi. The live-zero (4 mA at bottom of range) lets the PLC detect a broken loop, which reads 0 mA, as a distinct fault versus a genuine 0 psi process value."
       },
       {
         "q": "Why is forcing an output during commissioning considered dangerous?",
         "options": [
           "It permanently damages the output module",
-          "It overrides interlocks and safety logic, so machinery can move unexpectedly",
           "It erases the PLC program",
+          "It overrides interlocks and safety logic, so machinery can move unexpectedly",
           "It can only be done offline"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A forced output ignores all interlocks and permissives and can energize actuators unexpectedly. Forces must be applied knowingly with the area clear, tracked via the force-active indicator, and removed before returning to production."
       },
       {
         "q": "After a power cycle, a retentive timer in a PLC will:",
         "options": [
           "Reset its accumulated value to zero",
-          "Resume from its previously accumulated value",
           "Fault the processor",
-          "Double its preset"
+          "Double its preset",
+          "Resume from its previously accumulated value"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Retentive memory keeps its value through a power cycle, so a retentive timer resumes from its stored accumulated time. Non-retentive data resets to zero on restart."
       }
     ],
@@ -2931,34 +2931,34 @@ MODULES = [
       {
         "q": "TON PRE=3000ms, input TRUE for 2s then FALSE. Final ACC?",
         "options": [
+          "0",
           "3000",
           "2000",
-          "0",
           "5000"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "TON resets ACC to 0 when input goes FALSE."
       },
       {
         "q": "Which timer retains ACC when input drops?",
         "options": [
           "TON",
-          "TOF",
           "RTO",
+          "TOF",
           "CTU"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "RTO is retentive - keeps ACC, needs separate RES."
       },
       {
         "q": "Scale raw 6553-32767 to 0-100:",
         "options": [
           "EU = Raw x 100",
-          "EU = ((Raw-6553) x 100) / 26214",
           "EU = Raw / 327.67",
+          "EU = ((Raw-6553) x 100) / 26214",
           "EU = Raw - 6553"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Subtract offset, multiply by EU span, divide by raw span."
       },
       {
@@ -2966,21 +2966,21 @@ MODULES = [
         "options": [
           "Retains its value",
           "Continues counting",
-          "Resets to 0 immediately",
-          "Faults the CPU"
+          "Faults the CPU",
+          "Resets to 0 immediately"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "TON is non-retentive - rung false zeros .ACC. RTO is the retentive variant that requires an explicit RES."
       },
       {
         "q": "A counter's .DN bit becomes TRUE at ACC&gt;=PRE. Does the counter STOP counting?",
         "options": [
-          "Yes, it stops at PRE",
           "No - it keeps counting; you must RES to clear",
+          "Yes, it stops at PRE",
           "Only if the rung is false",
           "Only if OV is set"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "DN just indicates 'reached target.' The counter continues incrementing past PRE. Add a RES rung to zero it on target or shift boundary."
       },
       {
@@ -3010,43 +3010,43 @@ MODULES = [
         "options": [
           "3.5",
           "4",
-          "3 (integer truncation)",
-          "Fault"
+          "Fault",
+          "3 (integer truncation)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Integer division truncates toward zero. To get 3.5 the destination must be REAL. Promote before dividing when fractional precision matters."
       },
       {
         "q": "What is the difference between MOV and COP?",
         "options": [
-          "Nothing",
           "MOV moves one value; COP copies a block of N consecutive array elements",
+          "Nothing",
           "COP is only for BOOLs",
           "MOV works only in ST"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "MOV = single-value copy. COP = block move used to copy Recipe[0..N-1] into ActiveRecipe[0..N-1] or similar array-to-array moves."
       },
       {
         "q": "Which instruction produces a single-scan TRUE pulse on a rising rung transition?",
         "options": [
           "OTE",
-          "OTL",
           "ONS / OSR",
+          "OTL",
           "MOV"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "ONS/OSR one-shots fire for exactly one scan on false-&gt;true. Use them so a latch, counter increment, or MSG fires ONCE per event instead of every scan."
       },
       {
         "q": "A BSL (Bit Shift Left) is best used for which task?",
         "options": [
           "Complex math",
-          "Tracking package positions along a conveyor by shifting a bit each index pulse",
           "Storing recipes",
+          "Tracking package positions along a conveyor by shifting a bit each index pulse",
           "Reading analog inputs"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "BSL/BSR maintain a bitmap of an ordered array (conveyor positions, palletizer rows). Each index event shifts and a fresh source bit enters at one end."
       },
       {
@@ -3054,21 +3054,21 @@ MODULES = [
         "options": [
           "OTE output",
           "XIC bit",
-          "RTO timer accumulator",
-          "MOV destination"
+          "MOV destination",
+          "RTO timer accumulator"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "RTO .ACC, CTU/CTD .ACC, and OTL latched bits are retentive. OTE follows rung logic each scan; XIC just examines a bit."
       },
       {
         "q": "An SCP instruction is used for:",
         "options": [
-          "Scanning inputs",
           "Scaling a raw analog value into engineering units with configured min/max",
+          "Scanning inputs",
           "Sending communication messages",
           "Sequencing outputs"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "SCP = Scale with Parameters. Handles the raw-to-EU linear transform in one box and clamps to the EU range. Siemens equivalent: NORM_X + SCALE_X."
       },
       {
@@ -3098,32 +3098,32 @@ MODULES = [
         "options": [
           "500 counts/rev",
           "1,000 counts/rev",
-          "2,000 counts/rev",
-          "4,000 counts/rev"
+          "4,000 counts/rev",
+          "2,000 counts/rev"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "In AB quadrature 4x mode the module counts all four signal edges per encoder cycle (A-rise, A-fall, B-rise, B-fall). Counts/rev = 4 x PPR = 4 x 500 = 2,000. This increased resolution is why quadrature encoders are preferred for precise belt positioning on induction sorters."
       },
       {
         "q": "In Logix5000, accessing an array with an index that exceeds the declared array bounds at runtime generates which fault?",
         "options": [
-          "Minor fault Type 4, Code 16 - I/O module connection lost",
           "Major fault Type 7, Code 42 - array subscript out of range",
+          "Minor fault Type 4, Code 16 - I/O module connection lost",
           "Major fault Type 6, Code 1 - watchdog timeout",
           "Minor fault Type 3, Code 22 - data type mismatch"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Type 7 is the program execution fault category. Code 42 specifically indicates an array subscript out of range, triggered by indirect addressing with an out-of-bounds index. Type 4/Code 16 is an I/O connection loss. Always add bounds checking before indirect array access to prevent this on live equipment."
       },
       {
         "q": "Using the Ziegler-Nichols closed-loop method, a process reaches sustained oscillation at Ku = 5.0 with ultimate period Pu = 10 s. What is the calculated integral time Ti?",
         "options": [
           "10.0 s",
-          "6.25 s",
           "5.0 s",
+          "6.25 s",
           "2.5 s"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Z-N closed-loop formula: Ti = 0.5 x Pu = 0.5 x 10 = 5.0 s. The full set is Kp = 0.6 x Ku = 3.0, Ti = 5.0 s, Td = 0.125 x Pu = 1.25 s. Z-N tends to be aggressive - consider Lambda tuning for gentler response on conveyor tension loops."
       },
       {
@@ -3141,22 +3141,22 @@ MODULES = [
         "q": "In a Logix5000 UDT, a single standalone BOOL member (not part of a BOOL array) occupies how much memory?",
         "options": [
           "1 bit",
-          "1 byte (8 bits)",
           "2 bytes",
-          "4 bytes"
+          "4 bytes",
+          "1 byte (8 bits)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A standalone BOOL in a Logix UDT is padded to 1 byte by the compiler due to alignment requirements. Only BOOL arrays within a UDT pack to 1 bit per element. This overhead matters when allocating large UDT arrays in controllers with limited memory - group BOOLs together when minimizing size."
       },
       {
         "q": "After an EtherNet/IP implicit connection drops for a produced/consumed tag pair, which property of the consumed tag indicates the connection failure?",
         "options": [
-          ".Quality flag",
           ".status member",
+          ".Quality flag",
           ".ERR bit",
           ".DN bit"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The .status member of a consumed tag reflects the CIP Class 1 connection state. When the EtherNet/IP connection fails, .status goes false (0). Monitor this bit in a periodic health-check rung to generate a maintenance alarm rather than silently using stale data from the last good scan."
       },
       {
@@ -3185,44 +3185,44 @@ MODULES = [
         "q": "In a Logix FBD routine, a feedback wire (output of one block feeding back to an earlier block) is drawn as a dashed line. What value does this wire carry during the current scan?",
         "options": [
           "The current-scan value calculated in real time",
-          "The value from the previous scan cycle",
           "Zero, until the feedback loop stabilizes after several scans",
-          "The last latched value before the controller fault"
+          "The last latched value before the controller fault",
+          "The value from the previous scan cycle"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A feedback wire in Logix FBD uses the previous scan cycle value, breaking the algebraic loop. This introduces exactly one scan cycle of latency on the feedback path. Designers must account for this delay, especially in fast control loops where a single scan represents several milliseconds of process time."
       },
       {
         "q": "When programming a MSG instruction to read a parameter from a PowerFlex 755 VFD using CIP Generic service, what hexadecimal service code specifies Get_Attribute_Single?",
         "options": [
-          "0x0A (Multiple_Service_Packet)",
           "0x0E (Get_Attribute_Single)",
+          "0x0A (Multiple_Service_Packet)",
           "0x10 (Set_Attribute_Single)",
           "0x52 (Read_Tag_Fragmented)"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "CIP service code 0x0E is Get_Attribute_Single, used to read a single attribute from a CIP object. 0x10 is Set_Attribute_Single (write). 0x52 is Read Tag Fragmented for large Logix tag block transfers. Verify class and instance numbers for the specific VFD parameter against the device EDS file or drive user manual."
       },
       {
         "q": "In the Logix User Fault Handler routine, which instruction clears a minor fault register to prevent escalation to a major fault?",
         "options": [
           "GSV on MinorFaultBits (Get System Value)",
-          "CLR instruction applied to the fault word",
           "SSV on MinorFaultBits with a zero source tag (Set System Value)",
+          "CLR instruction applied to the fault word",
           "RES applied to the controller status file"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "SSV (Set System Value) with attribute MinorFaultBits and a zero source clears the minor fault register. GSV only reads it (diagnostic). CLR and RES do not interact with the controller fault register object. If SSV is not executed before the handler ends, the minor fault escalates to a major fault that halts the controller."
       },
       {
         "q": "An SQO instruction has Length = 8. After executing Step 8, what step does it advance to on the next false-to-true rung transition?",
         "options": [
           "Step 0 (resets to SQL preload position)",
-          "Step 1 (first active sequence step)",
           "Step 8 (holds at last step indefinitely)",
+          "Step 1 (first active sequence step)",
           "Step 9 (generates an out-of-range minor fault)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "SQO wraps to Step 1 after reaching Step = Length. Step 0 is reserved as the SQL preload/home position and is not part of the normal cycle. The active sequence runs steps 1 through Length and then repeats. Design the reference array with index 0 holding the safe home output pattern for SQL initialization."
       },
       {
@@ -3230,21 +3230,21 @@ MODULES = [
         "options": [
           "MC_MoveAbsolute",
           "MC_MoveRelative",
-          "MC_MoveVelocity",
-          "MC_Jog"
+          "MC_Jog",
+          "MC_MoveVelocity"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "MC_MoveVelocity commands an axis to accelerate to and maintain a specified velocity until MC_Stop or another motion command is issued. MC_MoveAbsolute and MC_MoveRelative target a specific position. MC_Jog is not a standard PLCopen TC2 block - it is a vendor-specific extension. MC_MoveVelocity is commonly used for continuously running conveyor belt axes."
       },
       {
         "q": "In Lambda (IMC) tuning for a first-order plus dead-time process, the integral time Ti is set equal to which parameter?",
         "options": [
+          "The process time constant tau",
           "The dead time theta",
           "The desired closed-loop time constant lambda",
-          "The process time constant tau",
           "Half the ultimate period (0.5 Pu)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "In Lambda/IMC tuning, Ti = tau (process time constant). This cancels the process pole and gives a well-behaved closed-loop response. Lambda only affects Kp: Kp = tau / [Kproc x (lambda + theta)]. Setting Ti = 0.5 Pu is the Ziegler-Nichols formula, not Lambda tuning."
       },
       {
@@ -3262,33 +3262,33 @@ MODULES = [
         "q": "A good recipe system keeps recipe data separate from control logic so that:",
         "options": [
           "Recipes cannot be changed",
-          "Adding a new product is a data entry, not a code change",
           "The PLC runs faster",
+          "Adding a new product is a data entry, not a code change",
           "No validation is needed"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Separating recipe data from logic means the logic reads whatever the active recipe provides, so new products are added as data - no reprogramming."
       },
       {
         "q": "First-out (first-fault) detection is valuable because:",
         "options": [
           "It logs every fault equally",
-          "It latches and flags the first tripping condition, cutting through a cascade of downstream faults",
           "It disables alarms",
-          "It speeds the scan"
+          "It speeds the scan",
+          "It latches and flags the first tripping condition, cutting through a cascade of downstream faults"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "When one trip cascades into many alarms, first-out isolates the true initiating cause (e.g. low air pressure) instead of a wall of consequential faults."
       },
       {
         "q": "An analog input reading below the sensor's valid scale most likely indicates:",
         "options": [
-          "A perfect measurement",
           "An open/broken sensor caught by a range/plausibility check",
+          "A perfect measurement",
           "Too much power",
           "A recipe change"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Range/plausibility checks flag out-of-scale readings; a value below the live-zero range typically means an open sensor or broken wire."
       },
       {
@@ -3306,33 +3306,33 @@ MODULES = [
         "q": "PLC emulation tools (Studio 5000 Emulate, PLCSIM) let engineers:",
         "options": [
           "Skip all on-site checkout",
-          "Run the real program on a virtual controller to test logic without hardware",
           "Replace field wiring",
+          "Run the real program on a virtual controller to test logic without hardware",
           "Eliminate the HMI"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Emulation runs the actual program on a PC-based virtual PLC for offline logic testing; real I/O timing and wiring still need on-site verification."
       },
       {
         "q": "Structuring a sequential machine as an explicit state machine primarily improves:",
         "options": [
           "Motor efficiency",
-          "Readability, debugging, and clear troubleshooting of where a sequence is stuck",
           "Network bandwidth",
-          "Power factor"
+          "Power factor",
+          "Readability, debugging, and clear troubleshooting of where a sequence is stuck"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "An explicit current-state variable makes the machine's step obvious, easing debug and extension, and maps cleanly to SFC."
       },
       {
         "q": "A key rule when writing a state machine is that states must be:",
         "options": [
-          "Overlapping",
           "Mutually exclusive - the machine is in exactly one state",
+          "Overlapping",
           "Driven by random numbers",
           "Retentive only"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "States should be mutually exclusive (exactly one active), each with defined actions, exit conditions, and a fault/abort path."
       },
       {
@@ -3350,33 +3350,33 @@ MODULES = [
         "q": "Incoming ASCII messages from a barcode scanner are typically framed by:",
         "options": [
           "A checksum only",
-          "Delimiters such as a start character and a CR/LF terminator",
           "Random spacing",
+          "Delimiters such as a start character and a CR/LF terminator",
           "Analog voltage levels"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Serial/ASCII messages use framing delimiters (e.g. CR/LF, ASCII 13/10); the receive handler assembles characters until the terminator, then parses."
       },
       {
         "q": "Integer division of 7/2 in a PLC yields:",
         "options": [
           "3.5",
-          "3 (truncated, remainder lost)",
           "4",
-          "A fault"
+          "A fault",
+          "3 (truncated, remainder lost)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Integer division truncates the fractional part (7/2 = 3); this is why scaling must multiply before dividing and often use REAL where fractions matter."
       },
       {
         "q": "Why should you never test a floating-point (REAL) value for exact equality?",
         "options": [
-          "Floats are always integers",
           "Limited precision means values like 0.1 are not exactly representable; use a tolerance band",
+          "Floats are always integers",
           "REAL cannot be compared",
           "It faults the PLC"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "32-bit REAL has ~7 significant digits and cannot represent many decimals exactly, so exact-equality tests fail unpredictably - compare within a tolerance."
       },
       {
@@ -3394,33 +3394,33 @@ MODULES = [
         "q": "Indexing an array beyond its defined size typically causes:",
         "options": [
           "Automatic resizing",
-          "A fault or corruption of adjacent memory",
           "Faster execution",
+          "A fault or corruption of adjacent memory",
           "Nothing"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Out-of-bounds array access faults or corrupts neighboring memory; the index must be validated against the array size."
       },
       {
         "q": "A bit-shift register on a conveyor is used to:",
         "options": [
           "Store the PLC firmware",
-          "Track a decision (e.g. reject) with the physical part as it moves downstream",
           "Filter analog noise",
-          "Set the IP address"
+          "Set the IP address",
+          "Track a decision (e.g. reject) with the physical part as it moves downstream"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Shifting the register in step with conveyor movement carries each part's status to its position, firing the reject/divert at the right station."
       },
       {
         "q": "The difference between a permissive and an interlock is best stated as:",
         "options": [
-          "They are identical",
           "A permissive must be true to START; an interlock STOPS/prevents action when a condition goes wrong",
+          "They are identical",
           "Permissives are only for motors",
           "Interlocks only apply at startup"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Permissives are ANDed start conditions; interlocks override the run command when something goes wrong during operation."
       },
       {
@@ -3438,33 +3438,33 @@ MODULES = [
         "q": "To diagnose an intermittent control-loop oscillation, the most useful online tool is:",
         "options": [
           "Deleting rungs",
-          "A trend charting the command and response over time",
           "Changing the IP address",
+          "A trend charting the command and response over time",
           "A louder alarm"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Trends chart tag values over time, revealing the command-vs-response relationship and capturing intermittent/elusive events like oscillation."
       },
       {
         "q": "In step-logic programming, only one step's actions run at a time because each step rung is guarded by:",
         "options": [
           "A timer preset",
-          "An equality comparison against the step register",
           "A counter overflow bit",
-          "A watchdog"
+          "A watchdog",
+          "An equality comparison against the step register"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "EQU StepNum N gates each step's rung so only the current step executes; transitions advance StepNum to the next step."
       },
       {
         "q": "A totalizer stored in a 16-bit signed integer will roll over at:",
         "options": [
-          "255",
           "32767",
+          "255",
           "65535",
           "2147483647"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A 16-bit signed integer maxes at 32767; use a DINT (max 2,147,483,647) for high-volume production counting to avoid rollover."
       },
       {
@@ -3482,33 +3482,33 @@ MODULES = [
         "q": "In the first-order lag filter Filtered_new = Filtered_old + K &times; (Raw - Filtered_old), setting K to a very small value like 0.05 will:",
         "options": [
           "Provide no filtering",
-          "Smooth heavily with more phase lag",
           "Amplify the raw signal",
+          "Smooth heavily with more phase lag",
           "Cause overflow"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Small K weights the old value strongly, giving strong smoothing but more phase lag; large K approaches raw pass-through."
       },
       {
         "q": "A retentive timer (RTO) is used for runtime tracking because it:",
         "options": [
           "Runs faster than TON",
-          "Holds its accumulator through power loss and when enable drops",
           "Never resets",
-          "Uses less memory"
+          "Uses less memory",
+          "Holds its accumulator through power loss and when enable drops"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Retentive timers preserve accumulated time across power cycles and when the enable is broken, essential for a total-hours counter."
       },
       {
         "q": "In a REQUEST/NEW_DATA/ACK handshake, why is a timeout on each wait state important?",
         "options": [
-          "To make the code shorter",
           "To prevent the master from hanging forever if the slave never responds",
+          "To make the code shorter",
           "To skip the handshake entirely",
           "To increase throughput automatically"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A timeout converts a stuck partner into an alarmable fault; without it the sequence would wait indefinitely and appear frozen."
       },
       {
@@ -3526,33 +3526,33 @@ MODULES = [
         "q": "Why is filtering usually applied to an analog input before its PID loop?",
         "options": [
           "To reduce accuracy",
-          "So noise does not drive the derivative term into oscillation",
           "To increase scan time",
+          "So noise does not drive the derivative term into oscillation",
           "Because PID cannot use analog values"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Noise on the PV especially inflates the derivative term; a light lag filter tames noise-driven output kicks and improves stability."
       },
       {
         "q": "When integrating a scale that updates registers over 20 ms, the PLC should:",
         "options": [
           "Read the registers every scan and use whatever it sees",
-          "Handshake so the scale signals when a fresh reading is ready",
           "Ignore the scale",
-          "Read only after power-up"
+          "Read only after power-up",
+          "Handshake so the scale signals when a fresh reading is ready"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Without handshaking the PLC can catch the scale mid-update and read half-old data; a NEW_DATA/ACK sequence ensures consistent samples."
       },
       {
         "q": "Why must a conveyor encoder pulse train be counted by a dedicated high-speed counter (HSC) input rather than a standard counter instruction?",
         "options": [
-          "Standard counters cannot count up",
           "Pulses faster than the program scan time would be missed by a standard counter",
+          "Standard counters cannot count up",
           "HSC inputs use less memory",
           "Encoders output analog signals"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A standard counter only sees transitions during the program scan, so pulses faster than the scan are missed. An HSC counts in hardware, asynchronous to the scan, and supports quadrature encoders for direction/position."
       },
       {
@@ -3570,22 +3570,22 @@ MODULES = [
         "q": "A one-shot (ONS/OSR) instruction is used when you need an action to occur:",
         "options": [
           "Continuously while an input is true",
-          "Exactly once on a false-to-true transition",
           "Only after a time delay",
+          "Exactly once on a false-to-true transition",
           "Once per power cycle"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A one-shot produces a true output for a single scan on a false-to-true transition, so actions like incrementing a total or latching an alarm happen exactly once regardless of how long the input stays on."
       },
       {
         "q": "What is the main risk of using indirect (indexed) addressing without validating the index?",
         "options": [
           "The program runs slower",
-          "Going out of bounds can fault the processor or corrupt unintended memory",
           "Timers stop working",
-          "It disables the HMI"
+          "It disables the HMI",
+          "Going out of bounds can fault the processor or corrupt unintended memory"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "If the index exceeds the array size, the controller may fault or read/write unintended memory, corrupting other data. Robust code clamps or validates the index before using it."
       }
     ],
@@ -3841,78 +3841,78 @@ MODULES = [
       {
         "q": "4-20 mA reads 0 mA. What does this mean?",
         "options": [
+          "Wire break / transmitter failure",
           "Zero process value",
           "Full scale",
-          "Wire break / transmitter failure",
           "Normal at 0%"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "4mA = live zero. 0mA = broken loop."
       },
       {
         "q": "PNP sensor switches which voltage when active?",
         "options": [
-          "+V (supply)",
           "0V (ground)",
           "AC line",
-          "4-20 mA"
+          "4-20 mA",
+          "+V (supply)"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "PNP = sourcing = connects output to +V."
       },
       {
         "q": "500 PPR encoder with x4 decoding:",
         "options": [
+          "2000",
           "500",
           "1000",
-          "2000",
           "4000"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "500 x 4 = 2000 counts/rev."
       },
       {
         "q": "Which photoelectric mode uses a corner-cube reflector and requires a polarizing filter when detecting shiny packages on a sorter?",
         "options": [
           "Through-beam with dark-on logic",
-          "Polarized retroreflective",
           "Background-suppression diffuse",
+          "Polarized retroreflective",
           "Diffuse with excess-gain adjustment"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Retroreflective sensors use a corner-cube reflector. The polarized version adds a filter rotated 90 deg so specular reflection from shiny packages (which does not rotate polarization) is rejected, while true retro-reflection (which rotates polarization 90 deg) passes and is detected."
       },
       {
         "q": "An inductive proximity sensor has Sn = 10 mm for a steel target. What is the maximum assured operating distance Su for installation?",
         "options": [
           "10.0 mm",
-          "8.1 mm",
           "6.5 mm",
-          "12.0 mm"
+          "12.0 mm",
+          "8.1 mm"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Per IEC 60947-5-2, Su = 0 to 0.81 x Sn. For Sn = 10 mm: Su = 8.1 mm. Using Sn directly risks unreliable switching due to production tolerances and environmental drift."
       },
       {
         "q": "A sensor rated Sn = 8 mm for steel is accidentally aimed at an aluminum conveyor bracket. At approximately what distance will it falsely trigger?",
         "options": [
+          "3.2 mm",
           "8.0 mm",
           "6.8 mm",
-          "3.2 mm",
           "4.0 mm"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "The correction factor for aluminum is ~0.40. Effective detection distance = 0.40 x 8 mm = 3.2 mm. If the bracket is within 3.2 mm of the sensor face, a nuisance trip will occur."
       },
       {
         "q": "ACY1 uses PNP sensors with Allen-Bradley 1734-IB8 sinking input cards. When the PNP sensor output is active, what is the electrical state of the signal wire?",
         "options": [
           "Signal wire is pulled to 0 V by the sensor transistor",
-          "Signal wire is driven to +24 V and current flows into the PLC card toward 0 V",
           "Signal wire floats at approximately half-supply voltage",
+          "Signal wire is driven to +24 V and current flows into the PLC card toward 0 V",
           "Signal wire connects 24 V to the Blue (0 V) wire through the sensor"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A PNP sourcing sensor's transistor connects the Black signal wire to +24 VDC when active. Current flows out of the sensor, through the signal wire, into the PLC sinking input card, and out to the 0 V common - the card sinks the current."
       },
       {
@@ -3920,21 +3920,21 @@ MODULES = [
         "options": [
           "Pin 1",
           "Pin 2",
-          "Pin 3",
-          "Pin 4"
+          "Pin 4",
+          "Pin 3"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "M12 A-coded pinout: Pin 1 = Brown (+V), Pin 2 = White (2nd output), Pin 3 = Blue (0 V common), Pin 4 = Black (signal output). Knowing this prevents miswiring during field sensor replacement."
       },
       {
         "q": "A 4-20 mA transmitter feeds a 250-ohm sense resistor on a PLC analog input. The input reads 3.5 V. What is the process variable as a percentage of span?",
         "options": [
-          "70%",
           "62.5%",
+          "70%",
           "87.5%",
           "75%"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Current = 3.5 V / 250 ohm = 14 mA. Span = 20 - 4 = 16 mA. Percent = (14 - 4) / 16 = 10 / 16 = 62.5%."
       },
       {
@@ -3952,33 +3952,33 @@ MODULES = [
         "q": "A 3-wire Pt100 RTD replaces a 2-wire connection. What primary source of measurement error does the 3-wire configuration reduce?",
         "options": [
           "Thermoelectric EMF generated at the terminal block",
-          "Lead-wire resistance adding to the measured sensor resistance",
           "Drift in the platinum alpha temperature coefficient",
-          "Cold-junction temperature variation at the transmitter"
+          "Cold-junction temperature variation at the transmitter",
+          "Lead-wire resistance adding to the measured sensor resistance"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "In a 2-wire RTD circuit, lead wire resistance adds directly to the Pt100 reading (~2.6 deg C per ohm of lead R). The 3-wire arrangement places one lead on each arm of the Wheatstone bridge to cancel equal lead resistances, significantly reducing this error."
       },
       {
         "q": "Which thermocouple type is best suited for ACY1 freezer-zone measurement down to -200 deg C?",
         "options": [
+          "Type T (Copper/Constantan)",
           "Type J (Iron/Constantan)",
           "Type K (Chromel/Alumel)",
-          "Type T (Copper/Constantan)",
           "Type N (Nicrosil/Nisil)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Type T (Copper/Constantan) covers -200 to +350 deg C and is the standard choice for refrigeration and freezer applications. Type J is susceptible to moisture and has a practical lower limit near 0 deg C. Types K and N work at low temperatures but Type T is preferred for cryogenic ranges."
       },
       {
         "q": "An IO-Link master has stored parameter data for the ACY1 sorter gap sensors. A technician replaces a failed sensor overnight. What happens to sensor parameters during commissioning?",
         "options": [
           "The master generates a fault alarm until a technician manually re-teaches the sensor via laptop",
-          "The master automatically downloads the stored parameter set to the replacement device at port startup",
           "The sensor runs on factory defaults until the IODD file is manually reloaded",
+          "The master automatically downloads the stored parameter set to the replacement device at port startup",
           "The PLC halts and requires operator acknowledgment at the HMI before resuming"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "IO-Link Data Storage (auto-configuration) stores the parameter set in the master. When a replacement device is connected, the master automatically downloads all stored parameters (sensitivity, output logic, thresholds) during port initialization - eliminating manual re-teach and reducing MTTR."
       },
       {
@@ -3986,21 +3986,21 @@ MODULES = [
         "options": [
           "1024",
           "2048",
-          "4096",
-          "512"
+          "512",
+          "4096"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Quadrature x4 decoding counts all four signal edges: A-rise, A-fall, B-rise, B-fall. For a 1024 PPR encoder: 1024 x 4 = 4096 counts per revolution, quadrupling effective position resolution at no additional hardware cost."
       },
       {
         "q": "During troubleshooting on an ACY1 conveyor, a photoelectric sensor yellow output LED is ON but the Allen-Bradley PLC discrete input reads 0. What is the FIRST suspect?",
         "options": [
-          "The sensor has failed internally - replace it immediately",
           "The wiring or PLC input card channel between sensor and controller",
+          "The sensor has failed internally - replace it immediately",
           "Retroreflective reflector misalignment causing intermittent signal loss",
           "Lens contamination has reduced excess gain below the switching threshold"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The yellow LED confirms the sensor transistor has switched ON correctly - the sensor is working. Since the PLC input still reads 0, the fault is downstream: a broken signal wire, wrong output type (NPN on PNP input card), or a failed input card channel. Investigate wiring and the input card before replacing the sensor."
       },
       {
@@ -4041,10 +4041,10 @@ MODULES = [
         "options": [
           "Zone A - acceptable for new machines",
           "Zone B - acceptable for long-term operation",
-          "Zone C - alarm; corrective action within weeks",
-          "Zone D - danger; stop immediately"
+          "Zone D - danger; stop immediately",
+          "Zone C - alarm; corrective action within weeks"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "ISO 10816-3 Zone C threshold is &gt;4.5 mm/s up to 7.1 mm/s. At 5.2 mm/s the machine is in Zone C: operation is tolerable short-term but corrective action (balance, alignment, bearing inspection) should be scheduled within weeks."
       },
       {
@@ -4061,12 +4061,12 @@ MODULES = [
       {
         "q": "When mounting a fiber-optic sensor amplifier, the bright-level reading is 8200 counts and the dark-level is 1400 counts. Where should the threshold be set for maximum noise margin?",
         "options": [
-          "7000 counts (near the bright level)",
           "4800 counts (midpoint between bright and dark)",
+          "7000 counts (near the bright level)",
           "2000 counts (near the dark level)",
           "9000 counts (above the bright level)"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Best practice is to set the threshold at the midpoint: (8200 + 1400) / 2 = 4800 counts. This maximizes the margin to both signal states and is most robust against drift from contamination or alignment shifts."
       },
       {
@@ -4117,22 +4117,22 @@ MODULES = [
         "q": "In a vision-based barcode tunnel at Amazon induction, the target no-read rate is less than 0.5%. Which action BEST reduces no-reads caused by labels on the side of a package?",
         "options": [
           "Increase belt speed to reduce motion blur",
-          "Add side-facing cameras to the tunnel to cover all four vertical faces",
           "Switch from 2-D imager to 1-D linear CCD",
-          "Reduce lighting intensity to prevent sensor saturation"
+          "Reduce lighting intensity to prevent sensor saturation",
+          "Add side-facing cameras to the tunnel to cover all four vertical faces"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Side-mounted cameras in a 5-camera tunnel (top + 4 sides) ensure labels on any face are decoded. Increasing belt speed worsens motion blur. 1-D CCDs cannot read 2-D codes. Reducing lighting degrades decode performance."
       },
       {
         "q": "A sensor is rated IP67. Which environmental exposure is it NOT rated to withstand?",
         "options": [
+          "High-pressure steam jet washdown at 80 bar",
           "Complete dust immersion",
           "Temporary immersion in water to 1 m depth for 30 minutes",
-          "High-pressure steam jet washdown at 80 bar",
           "Water spray from any direction"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "IP67 provides dust-tight protection (6) and protection against immersion to 1 m for 30 min (7). High-pressure steam washdown requires IP69K (derived from DIN 40050-9), which involves 80 bar, 80 deg C steam jets at close range - far beyond IP67."
       },
       {
@@ -4150,44 +4150,44 @@ MODULES = [
         "q": "When using a piezoelectric accelerometer with a magnet mount versus a stud mount, what is the primary performance trade-off?",
         "options": [
           "Magnet mount extends the usable frequency range above 15 kHz",
-          "Stud mount lowers sensitivity at low frequencies below 10 Hz",
           "Magnet mount reduces the usable frequency range to approximately 5 kHz vs 15+ kHz for stud mount",
+          "Stud mount lowers sensitivity at low frequencies below 10 Hz",
           "There is no significant difference; mounting method only affects convenience"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Magnet mount introduces mechanical resonance in the mount itself, effectively limiting flat frequency response to approximately 5 kHz. Stud mounting (torqued to manufacturer spec) achieves the full transducer bandwidth of 15 kHz or more. For gearbox mesh frequencies above 5 kHz, stud mounting is required."
       },
       {
         "q": "A magnetic switch clamped in a groove on a pneumatic cylinder barrel senses:",
         "options": [
           "Air pressure",
-          "A magnet on the piston at end of travel",
           "Temperature",
+          "A magnet on the piston at end of travel",
           "Flow rate"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A piston-mounted magnet triggers the barrel-mounted switch (reed or Hall-effect) to confirm the cylinder's extended/retracted position."
       },
       {
         "q": "Compared to a reed switch, a solid-state Hall-effect cylinder sensor offers:",
         "options": [
           "Lower cost only",
-          "No moving parts and longer life at high cycle rates",
           "Contact welding immunity is worse",
-          "It senses pressure not position"
+          "It senses pressure not position",
+          "No moving parts and longer life at high cycle rates"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Hall-effect/magneto-resistive switches have no mechanical contacts, giving longer life and better tolerance of high cycling and inductive noise than reeds."
       },
       {
         "q": "An infrared pyrometer reads a shiny metal target poorly primarily because of:",
         "options": [
-          "Too much distance only",
           "The metal's low, unpredictable emissivity",
+          "Too much distance only",
           "The metal being cold",
           "Network noise"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Low/variable emissivity of shiny metals corrupts IR readings unless corrected; accuracy depends heavily on the emissivity setting and target surface."
       },
       {
@@ -4205,33 +4205,33 @@ MODULES = [
         "q": "A differential pressure sensor across a filter is used to:",
         "options": [
           "Measure temperature",
-          "Detect filter clogging by the pressure drop across it",
           "Weigh a package",
+          "Detect filter clogging by the pressure drop across it",
           "Sense color"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Differential pressure across a filter rises as it clogs, so DP measurement flags a filter needing service (also used for orifice flow)."
       },
       {
         "q": "A platform scale using several load cells needs corner/shift adjustment so that:",
         "options": [
           "It weighs faster",
-          "The same weight reads the same regardless of position on the platform",
           "It never needs calibration",
-          "It ignores vibration"
+          "It ignores vibration",
+          "The same weight reads the same regardless of position on the platform"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Corner adjustment equalizes the load cells so placement on the platform does not change the indicated weight; span/zero calibration uses certified weights."
       },
       {
         "q": "A contrast (registration mark) sensor keys on:",
         "options": [
-          "The absolute color",
           "The reflectance difference between a print mark and its background",
+          "The absolute color",
           "Temperature difference",
           "Magnetic field"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A contrast sensor detects the transition between mark and background reflectance, triggering high-speed packaging operations on registration marks."
       },
       {
@@ -4271,22 +4271,22 @@ MODULES = [
         "q": "Which flowmeter directly measures true mass flow and density with very high accuracy?",
         "options": [
           "Orifice plate",
-          "Coriolis",
           "Ultrasonic level",
-          "Float"
+          "Float",
+          "Coriolis"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A Coriolis meter measures mass flow and density directly via the phase shift of a vibrating tube - ideal for custody transfer and precise dosing."
       },
       {
         "q": "A differential-pressure (orifice) flowmeter relates flow to DP by:",
         "options": [
-          "Flow proportional to DP",
           "Flow proportional to the square root of DP",
+          "Flow proportional to DP",
           "Flow inversely proportional to DP",
           "No relationship"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Across a restriction, flow is proportional to the square root of the differential pressure - hence reduced low-flow accuracy and square-root extraction."
       },
       {
@@ -4304,33 +4304,33 @@ MODULES = [
         "q": "In confined-space entry, an oxygen sensor is critical primarily to detect:",
         "options": [
           "Only oxygen enrichment",
-          "Dangerous oxygen depletion (displacement by another gas)",
           "Humidity",
+          "Dangerous oxygen depletion (displacement by another gas)",
           "Combustible dust"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "O2 sensors detect both enrichment and life-threatening depletion; displacement by another gas in a confined space can be fatal without warning."
       },
       {
         "q": "Portable and fixed gas detectors require bump testing to:",
         "options": [
           "Charge the battery",
-          "Quickly confirm the sensor actually responds to its target gas",
           "Increase the range",
-          "Change the units"
+          "Change the units",
+          "Quickly confirm the sensor actually responds to its target gas"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A bump test briefly exposes the sensor to confirm it responds and alarms; periodic span-gas calibration corrects drift, since cells age and have limited life."
       },
       {
         "q": "Relative humidity changes with temperature even at constant moisture content because:",
         "options": [
-          "Water is created by heat",
           "RH is the ratio of actual vapor to the maximum air can hold, which rises with temperature",
+          "Water is created by heat",
           "Sensors are inaccurate",
           "Dew point is fixed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Warmer air holds more vapor, so the same absolute moisture is a lower RH; dew point is the more temperature-independent measure of moisture content."
       },
       {
@@ -4348,33 +4348,33 @@ MODULES = [
         "q": "A proximity sensor whose output flickers on and off right at the trigger threshold most likely has:",
         "options": [
           "Too much hysteresis",
-          "Too little hysteresis (insufficient on/off gap)",
           "Wrong color",
+          "Too little hysteresis (insufficient on/off gap)",
           "No supply voltage"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Hysteresis is the deliberate gap between on-point and off-point; too little lets the output chatter at the threshold - a datasheet-explained fault."
       },
       {
         "q": "A thermowell's insertion length is generally chosen so the tip:",
         "options": [
           "Touches only the pipe wall",
-          "Sits near the centreline of the flowing stream",
           "Extends past the far pipe wall",
-          "Stays outside the pipe entirely"
+          "Stays outside the pipe entirely",
+          "Sits near the centreline of the flowing stream"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Locating the tip in the bulk flow reads representative fluid temperature; wall measurement lags and reads low."
       },
       {
         "q": "Which voting architecture is standard for a highly critical safety trip where BOTH nuisance trips and missed demands must be minimised?",
         "options": [
+          "2oo3",
           "1oo1",
           "1oo2",
-          "2oo2",
-          "2oo3"
+          "2oo2"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "2oo3 requires two of three sensors to agree, tolerating a single failure of any kind, giving high safety availability AND high process availability."
       },
       {
@@ -4392,33 +4392,33 @@ MODULES = [
         "q": "A draw-wire (cable-extension) transducer measures linear position by:",
         "options": [
           "Emitting ultrasound",
-          "Coupling a spring-loaded cable to a rotary encoder or potentiometer",
           "Using capacitance to a plate",
+          "Coupling a spring-loaded cable to a rotary encoder or potentiometer",
           "Sending an eddy current"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The cable pays out from a spring-loaded drum whose rotation is measured by an encoder or precision pot, giving linear-to-rotary conversion."
       },
       {
         "q": "Strain gauges bonded on a shaft measure torque by detecting:",
         "options": [
           "Shaft temperature",
-          "Torsional strain converted to resistance change in a Wheatstone bridge",
           "Air pressure",
-          "Magnetic field only"
+          "Magnetic field only",
+          "Torsional strain converted to resistance change in a Wheatstone bridge"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Gauges oriented at 45 deg to the axis convert torsional strain to differential resistance; a bridge yields a millivolt signal proportional to torque."
       },
       {
         "q": "For measuring dissolved oxygen in water with the LOWEST ongoing maintenance, which sensor should you specify?",
         "options": [
+          "Optical (luminescent) DO sensor",
           "Galvanic membrane cell",
           "Polarographic membrane cell",
-          "Optical (luminescent) DO sensor",
           "Bare platinum electrode"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Optical DO sensors have no membrane or electrolyte to service; their luminescent film lasts much longer and needs less frequent calibration than membrane cells."
       },
       {
@@ -4436,66 +4436,66 @@ MODULES = [
         "q": "When specifying a sensor, the correct order of trade-offs is best summarised as:",
         "options": [
           "Cheapest first, then everything else",
-          "Measurand and range, environment, target, interface, response, accuracy, lifecycle",
           "Only accuracy matters",
+          "Measurand and range, environment, target, interface, response, accuracy, lifecycle",
           "Only the connector matters"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A structured framework prevents over- or under-specifying by making each dimension an explicit choice rather than defaulting to catalog convenience."
       },
       {
         "q": "A conductivity sensor for a heavily fouling stream is best implemented as:",
         "options": [
           "A bare two-electrode contacting cell",
-          "A toroidal (inductive) sensor",
           "A pH probe",
-          "A thermocouple"
+          "A thermocouple",
+          "A toroidal (inductive) sensor"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Toroidal sensors have no exposed electrodes to foul; contacting cells suit clean, low-conductivity streams like ultrapure water."
       },
       {
         "q": "Which flowmeter measures MASS flow directly and can also report fluid density?",
         "options": [
+          "Coriolis flowmeter",
           "Orifice-plate differential-pressure meter",
           "Magnetic flowmeter",
-          "Coriolis flowmeter",
           "Vortex-shedding meter"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A Coriolis meter senses the twist of a vibrating tube to measure mass flow directly and also derives fluid density. Magnetic and DP meters give volumetric flow; magnetic requires a conductive fluid."
       },
       {
         "q": "A magnetic flowmeter will NOT work on which fluid?",
         "options": [
           "Water with dissolved minerals",
-          "A conductive acid solution",
           "Non-conductive oil",
+          "A conductive acid solution",
           "Wastewater slurry"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Magnetic flowmeters rely on Faraday's law, requiring a conductive fluid to generate a voltage. Non-conductive fluids like oils and gases produce no signal, so another technology (e.g., Coriolis or vortex) is used."
       },
       {
         "q": "For high-accuracy, stable temperature measurement over a moderate range where repeatability matters most, which sensor is generally preferred?",
         "options": [
           "Type K thermocouple",
-          "Pt100 RTD",
           "NTC thermistor",
+          "Pt100 RTD",
           "Infrared pyrometer"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An RTD (Pt100) offers high accuracy and long-term stability over a moderate range. Thermocouples handle higher temperatures ruggedly but less accurately; thermistors are sensitive only over a narrow range."
       },
       {
         "q": "What key advantage does HART provide over a plain 4-20 mA loop?",
         "options": [
           "It doubles the loop current for more power",
-          "It adds a digital channel for extra variables, diagnostics, and configuration on the same wires",
           "It eliminates the need for a power supply",
-          "It converts the signal to pneumatic"
+          "It converts the signal to pneumatic",
+          "It adds a digital channel for extra variables, diagnostics, and configuration on the same wires"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "HART superimposes a digital signal on the 4-20 mA loop, carrying additional process variables, diagnostics, and configuration without disturbing the analog value, enabling remote re-ranging and predictive maintenance."
       }
     ],
@@ -4783,22 +4783,22 @@ MODULES = [
         "q": "Why maintain constant V/Hz?",
         "options": [
           "Save energy",
-          "Maintain motor flux (torque capability)",
           "Reduce harmonics",
+          "Maintain motor flux (torque capability)",
           "OSHA requirement"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Constant V/Hz = constant flux = rated torque at any speed."
       },
       {
         "q": "A dual-voltage motor nameplate shows 230/460 V with two FLA values. Which FLA goes with 460 V?",
         "options": [
           "The higher FLA",
-          "The lower FLA",
           "They are identical",
-          "FLA does not change with voltage"
+          "FLA does not change with voltage",
+          "The lower FLA"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Power is roughly constant, so at the higher voltage the motor draws the LOWER current. Size overloads/conductors from the FLA that matches your actual supply."
       },
       {
@@ -4815,12 +4815,12 @@ MODULES = [
       {
         "q": "A motor hums, will not start, and draws very high current on two legs. Most likely cause?",
         "options": [
-          "Single-phasing (lost one of three phases)",
           "Bearing failure",
+          "Single-phasing (lost one of three phases)",
           "Wrong V/Hz ratio",
           "Encoder fault"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "Losing one phase leaves the motor unable to develop a rotating field; it draws heavy current on the remaining phases and overheats fast - classic single-phasing."
       },
       {
@@ -4837,12 +4837,12 @@ MODULES = [
       {
         "q": "Before touching the internals of a VFD after power-off you must:",
         "options": [
-          "Wait the bus-discharge time and meter the DC bus below 50 V",
           "Immediately open the cover - caps self-discharge instantly",
           "Only turn off the disconnect",
-          "Spray the caps with contact cleaner"
+          "Spray the caps with contact cleaner",
+          "Wait the bus-discharge time and meter the DC bus below 50 V"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "DC bus capacitors hold a lethal charge after power removal. Wait the rated discharge time and prove the bus is below ~50 V with a meter first."
       },
       {
@@ -4859,34 +4859,34 @@ MODULES = [
       {
         "q": "A conveyor VFD trips OV (overvoltage) every time it stops. Best fix?",
         "options": [
-          "Lengthen the decel time or add a dynamic-braking resistor",
           "Shorten the accel time",
+          "Lengthen the decel time or add a dynamic-braking resistor",
           "Raise the carrier frequency",
           "Lower the motor FLA parameter"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "Fast decel/overhauling loads pump energy back into the DC bus. Slow the decel or dump the energy in a DB resistor."
       },
       {
         "q": "A drive shows a GF (ground fault). The smartest first step is to:",
         "options": [
-          "Disconnect the motor leads and megger the motor and output cable",
           "Replace the drive",
           "Increase the current limit",
+          "Disconnect the motor leads and megger the motor and output cable",
           "Lower the carrier frequency"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Ground faults usually come from damaged motor/cable insulation. Megger the motor and cable before condemning the drive."
       },
       {
         "q": "Why use shielded VFD cable with a 360-degree shield termination?",
         "options": [
-          "To give high-frequency PWM noise a low-impedance return path",
           "To increase the cable ampacity",
           "To reduce voltage drop",
-          "To allow longer accel times"
+          "To allow longer accel times",
+          "To give high-frequency PWM noise a low-impedance return path"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Fast IGBT switching radiates noise; a properly bonded shield returns common-mode current and prevents comms/encoder disturbance and nuisance faults."
       },
       {
@@ -4903,23 +4903,23 @@ MODULES = [
       {
         "q": "A stepper motor differs from a servo mainly in that it:",
         "options": [
-          "Moves in fixed open-loop steps and can lose position if overloaded",
           "Always uses an encoder for closed-loop control",
+          "Moves in fixed open-loop steps and can lose position if overloaded",
           "Requires a VFD",
           "Cannot hold position at standstill"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "Steppers index in fixed steps open-loop (e.g. 1.8 deg = 200/rev); overload causes missed steps. Servos are closed-loop with feedback."
       },
       {
         "q": "Insulation life of motor windings roughly halves for every:",
         "options": [
-          "10 C of sustained temperature over the insulation rating",
           "1% voltage sag",
           "100 RPM of overspeed",
+          "10 C of sustained temperature over the insulation rating",
           "10 starts per hour"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "The 10-degree rule: each 10 C above the insulation class rating approximately halves winding life - which is why cooling and correct loading matter."
       },
       {
@@ -4927,65 +4927,65 @@ MODULES = [
         "options": [
           "2nd, 4th, 6th, 8th",
           "3rd, 5th, 7th, 9th",
-          "5th, 7th, 11th, 13th",
-          "2nd, 3rd, 5th, 7th"
+          "2nd, 3rd, 5th, 7th",
+          "5th, 7th, 11th, 13th"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "A 6-pulse rectifier produces harmonics at orders 6k+/-1 (k=1,2,3...), yielding 5th, 7th, 11th, 13th. The 5th harmonic (300 Hz on 60 Hz) is dominant and rotates in the negative sequence, causing motor heating and torque ripple."
       },
       {
         "q": "Per IEEE 519-2014, what is the maximum Total Demand Distortion (TDD) at the PCC for a typical industrial facility with Isc/IL &lt; 20?",
         "options": [
-          "3%",
           "5%",
+          "3%",
           "8%",
           "10%"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "IEEE 519-2014 limits TDD to 5% at the PCC for systems where the short-circuit ratio is less than 20. This covers most industrial facility service entrances."
       },
       {
         "q": "IEC 60034-30-1 IE3 efficiency class is equivalent to which NEMA designation?",
         "options": [
           "NEMA Standard Efficiency",
+          "NEMA Premium",
           "NEMA High Efficiency",
-          "NEMA Energy Efficient",
-          "NEMA Premium"
+          "NEMA Energy Efficient"
         ],
-        "answer": 3,
+        "answer": 1,
         "explain": "IEC IE3 (Premium Efficiency) corresponds to NEMA Premium efficiency, the level mandated by DOE EISA 2007 for most motors rated 1-500 hp sold in the US."
       },
       {
         "q": "Per IEC 60034-1, how should a motor be derated for operation at 2000 m altitude, given the standard reference altitude is 1000 m?",
         "options": [
           "1% per 100 m above sea level = 20% reduction",
-          "1% per 100 m above 1000 m = 10% reduction",
           "5% per 1000 m above 1000 m = 5% reduction",
+          "1% per 100 m above 1000 m = 10% reduction",
           "No derating required below 3000 m"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "IEC 60034-1 requires 1% derating per 100 m above 1000 m. From 1000 m to 2000 m spans 10 intervals of 100 m, so derate by 10%."
       },
       {
         "q": "A 10 hp, 460 V, 3-phase motor has FLA = 14 A per NEC Table 430.250. Per NEC 430.52, what is the maximum inverse-time circuit breaker for branch-circuit protection?",
         "options": [
           "25 A",
-          "35 A",
           "60 A",
-          "70 A"
+          "70 A",
+          "35 A"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "NEC 430.52 allows up to 250% x FLA for inverse-time breakers: 250% x 14 A = 35 A. Since 35 A is a standard breaker size, use 35 A directly."
       },
       {
         "q": "Safe Torque Off (STO) per IEC 61800-5-2 removes inverter gate signals. What critical condition does STO NOT guarantee?",
         "options": [
-          "The motor cannot generate electromagnetic torque",
           "The motor shaft is at zero speed",
+          "The motor cannot generate electromagnetic torque",
           "Both STO channels are de-energized",
           "SIL 2 dual-channel architecture is active"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "STO guarantees no torque generation but does NOT guarantee zero speed. A coasting or externally-driven load can still rotate after STO activates. Zero-speed assurance requires additional monitoring such as SOS or SS2 with speed feedback."
       },
       {
@@ -5015,21 +5015,21 @@ MODULES = [
         "options": [
           "355 J",
           "3,553 J",
-          "7,106 J",
-          "14,212 J"
+          "14,212 J",
+          "7,106 J"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "omega = 2*pi*1800/60 = 188.5 rad/s. KE = 0.5 * 0.4 * 188.5^2 = 0.2 * 35,532 = 7,106 J. The DB resistor must dissipate approximately 7.1 kJ during this deceleration."
       },
       {
         "q": "In a dual-motor drive system sharing a conveyor belt, what control strategy prevents the drives from fighting each other and causing overcurrent faults?",
         "options": [
-          "Both drives set to identical tight speed regulation",
           "Torque follower mode on the secondary drive with programmed speed droop (2-5%)",
+          "Both drives set to identical tight speed regulation",
           "V/Hz open-loop mode on both drives with different frequency references",
           "Position control mode with shared encoder feedback"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Torque follower mode with droop allows the follower to naturally share load. If both drives regulate speed tightly to the same setpoint, small mechanical differences cause one to motor while the other regenerates, producing overcurrent trips."
       },
       {
@@ -5047,33 +5047,33 @@ MODULES = [
         "q": "Per EASA ANSI/EASA AR100, what maximum efficiency reduction is acceptable from a properly executed motor rewind?",
         "options": [
           "Zero - no reduction is acceptable",
-          "0.5 to 1 percentage point",
           "2 to 3 percentage points",
+          "0.5 to 1 percentage point",
           "Up to 5 percentage points"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "AR100 establishes that a proper rewind maintaining original wire gauge and turn count should not reduce efficiency by more than 0.5-1 percentage point. Greater losses indicate improper practice such as reduced conductor cross-section."
       },
       {
         "q": "What rotor characteristic of an Interior PM (IPM) motor enables MTPA control to achieve higher efficiency than a surface PM motor?",
         "options": [
           "Higher magnet flux density compared to SPM",
-          "Rotor saliency (Ld not equal to Lq) generates reluctance torque that MTPA exploits",
           "Lower copper losses at all operating speeds",
-          "IPM motors do not require field weakening above base speed"
+          "IPM motors do not require field weakening above base speed",
+          "Rotor saliency (Ld not equal to Lq) generates reluctance torque that MTPA exploits"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IPM embedded magnets create unequal d-axis and q-axis reluctance (saliency: Ld not equal to Lq), producing reluctance torque in addition to magnet torque. MTPA control optimally angles the stator current vector to maximize total torque per amp, improving efficiency 5-10% vs SPM."
       },
       {
         "q": "A TEFC motor runs below 30 Hz on a VFD at rated torque for extended periods without a separate cooling blower. What is the primary thermal hazard?",
         "options": [
-          "Increased bearing loading from shaft flexibility at low speed",
           "Reduced shaft-fan airflow causing winding overtemperature",
+          "Increased bearing loading from shaft flexibility at low speed",
           "Increased harmonic heating from elevated slip frequency",
           "Rotor cage cracking from low-frequency torque pulsations"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "TEFC motors rely on a shaft-mounted fan. Below ~30 Hz that fan moves far less air, reducing cooling capacity significantly. Running at rated torque under these conditions overheats the windings. The solution is an inverter-duty (NEMA MG1 Part 31) motor with a separately powered constant-speed blower."
       },
       {
@@ -5091,33 +5091,33 @@ MODULES = [
         "q": "A stepper motor driving a load that briefly exceeds its available torque will:",
         "options": [
           "Speed up",
-          "Lose/skip steps silently, since it is open-loop",
           "Draw zero current",
+          "Lose/skip steps silently, since it is open-loop",
           "Reverse direction"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Being open-loop, a stalled/step-skipping stepper does not report the error - position is silently wrong until a home/reference cycle corrects it."
       },
       {
         "q": "Why are stepper-driven axes homed to a reference switch at startup?",
         "options": [
           "To charge the motor",
-          "Because open-loop steppers have no absolute position feedback and may have lost steps",
           "To reverse the field",
-          "To measure temperature"
+          "To measure temperature",
+          "Because open-loop steppers have no absolute position feedback and may have lost steps"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "With no feedback, the controller cannot know if steps were lost, so a home cycle re-establishes a known reference position."
       },
       {
         "q": "Across-the-line (DOL) starting of an induction motor typically draws inrush current of about:",
         "options": [
+          "6-8x rated (locked-rotor)",
           "1x rated",
           "2x rated",
-          "6-8x rated (locked-rotor)",
           "0.5x rated"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "DOL applies full voltage instantly, drawing 6-8x locked-rotor current and a torque shock - hence soft starters or VFDs where that is a problem."
       },
       {
@@ -5135,33 +5135,33 @@ MODULES = [
         "q": "A 20:1 gear reducer driven at 1750 rpm outputs approximately:",
         "options": [
           "35,000 rpm",
-          "87.5 rpm",
           "1750 rpm",
+          "87.5 rpm",
           "20 rpm"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Output speed = input / ratio = 1750 / 20 = 87.5 rpm, while output torque is multiplied roughly 20x (minus efficiency losses)."
       },
       {
         "q": "The single leading cause of electric motor failure is:",
         "options": [
           "Painted housings",
-          "Bearing failure",
           "Nameplate wear",
-          "Excess efficiency"
+          "Excess efficiency",
+          "Bearing failure"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Bearings account for roughly 40-50% of motor failures - from bad lubrication, contamination, misalignment, or VFD bearing currents."
       },
       {
         "q": "Over-greasing a motor bearing is harmful because it:",
         "options": [
-          "Improves cooling",
           "Blows out seals and overheats the bearing",
+          "Improves cooling",
           "Lowers vibration",
           "Adds holding torque"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Too much grease raises churning friction/heat and can blow out seals - lubrication must be the right grease, amount, and interval."
       },
       {
@@ -5179,33 +5179,33 @@ MODULES = [
         "q": "The key capability a servo system has that a basic VFD does not is:",
         "options": [
           "Spinning a motor",
-          "Precise closed-loop position control with high-resolution feedback",
           "Using three-phase power",
+          "Precise closed-loop position control with high-resolution feedback",
           "Having a DC bus"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A servo closes tight position/velocity/torque loops with encoder/resolver feedback for precise, dynamic positioning; a basic VFD only regulates speed."
       },
       {
         "q": "A rule of thumb for minimum acceptable motor insulation resistance is:",
         "options": [
           "At least 1 kil-ohm total",
-          "At least 1 M-ohm plus 1 M-ohm per kV of rating, trended over time",
           "Exactly 0 ohms",
-          "Any value is fine"
+          "Any value is fine",
+          "At least 1 M-ohm plus 1 M-ohm per kV of rating, trended over time"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The common guideline is 1 M-ohm plus 1 M-ohm/kV; trending a falling reading warns of insulation degradation before failure."
       },
       {
         "q": "Why must you never megger a motor through its VFD?",
         "options": [
-          "It is too slow",
           "The high test voltage destroys the drive's electronics - disconnect the motor leads",
+          "It is too slow",
           "Meggers only work on DC motors",
           "It improves the reading"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Megger/hi-pot test voltage will damage the VFD's semiconductors; always isolate the motor leads from the drive before insulation testing."
       },
       {
@@ -5223,33 +5223,33 @@ MODULES = [
         "q": "A TEFC motor driven by a VFD at low speed for long periods may overheat because:",
         "options": [
           "The DC bus is too high",
-          "Its shaft-mounted fan moves too little air at low rpm - it may need a separate blower",
           "VFDs cannot run TEFC motors",
+          "Its shaft-mounted fan moves too little air at low rpm - it may need a separate blower",
           "Slip disappears"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A shaft fan's airflow falls with speed; sustained low-speed VFD operation often requires a separate constant-speed blower (TEBC) or derating."
       },
       {
         "q": "The synchronous speed of a 4-pole motor on 60 Hz is:",
         "options": [
           "3600 rpm",
-          "1800 rpm",
           "1200 rpm",
-          "900 rpm"
+          "900 rpm",
+          "1800 rpm"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Ns = 120 x f / poles = 120 x 60 / 4 = 1800 rpm; the loaded rotor runs slightly slower (~1750 rpm) due to slip."
       },
       {
         "q": "Slip in an induction motor is necessary because:",
         "options": [
-          "It wastes energy for no reason",
           "The rotor must run slower than the field to induce rotor current and produce torque",
+          "It wastes energy for no reason",
           "It increases synchronous speed",
           "It eliminates heat"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Relative motion (slip) between the rotating field and rotor induces the rotor current that creates torque; a truly synchronous rotor would produce none."
       },
       {
@@ -5267,11 +5267,11 @@ MODULES = [
         "q": "By the affinity laws, a centrifugal pump is a variable-torque load, meaning at low speed it:",
         "options": [
           "Needs full torque",
-          "Needs little torque (torque rises with speed squared)",
           "Draws maximum current",
+          "Needs little torque (torque rises with speed squared)",
           "Cannot be driven by a VFD"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Variable-torque loads need torque proportional to speed squared, so they demand little torque at low speed - allowing a standard drive and large energy savings."
       },
       {
@@ -5279,21 +5279,21 @@ MODULES = [
         "options": [
           "about 100%",
           "about 58%",
-          "about 33%",
-          "about 10%"
+          "about 10%",
+          "about 33%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Wye connection places 58% of line voltage across each winding; both current and torque drop to about 33% of DOL values."
       },
       {
         "q": "After commissioning a VFD, the SINGLE most important operational discipline is to:",
         "options": [
-          "Reset the fault history daily",
           "Save (backup/clone) the parameter set offline so replacement is fast",
+          "Reset the fault history daily",
           "Disable all protection to prevent nuisance trips",
           "Set accel and decel to zero"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A saved parameter set turns a failed drive into a copy-and-run swap; without a backup you re-enter dozens or hundreds of settings under pressure."
       },
       {
@@ -5311,33 +5311,33 @@ MODULES = [
         "q": "A VFD sitting on a shelf for 3+ years should have its DC-bus capacitors what before energising?",
         "options": [
           "Discarded",
-          "Reformed by applying reduced voltage for several hours",
           "Replaced with new immediately",
+          "Reformed by applying reduced voltage for several hours",
           "Frozen"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Capacitor oxide layers degrade in storage; reforming with reduced voltage rebuilds them and prevents catastrophic first-power failure."
       },
       {
         "q": "To select one of 4 preset frequencies with digital inputs you need at least how many binary-select inputs?",
         "options": [
           "1",
-          "2",
           "3",
-          "4"
+          "4",
+          "2"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Two binary bits give 2&sup2; = 4 combinations (00, 01, 10, 11), enough to select four presets."
       },
       {
         "q": "In MCSA, broken rotor bars produce sidebands around f_s at:",
         "options": [
-          "f_s only",
           "f_s &plusmn; 2sf_s (twice slip frequency)",
+          "f_s only",
           "10 &times; f_s",
           "DC"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The signature sidebands sit at f_s &plusmn; 2sf_s; magnitude relative to the fundamental indicates fault severity (rise from -45 dB to -30 dB is significant)."
       },
       {
@@ -5355,33 +5355,33 @@ MODULES = [
         "q": "The typical service life of a VFD's DC bus electrolytic capacitors at rated ambient is about:",
         "options": [
           "6 months",
-          "5-10 years",
           "30 years",
+          "5-10 years",
           "1 week"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Rated life is commonly 5-10 years and roughly halves for every 10 deg C above rated ambient; drives often estimate remaining life on the display."
       },
       {
         "q": "Compared to DOL, a soft starter (SCR-based) primarily reduces:",
         "options": [
           "Motor efficiency at running speed",
-          "Inrush current and mechanical shock during starting",
           "Motor top speed",
-          "The number of contactors permanently"
+          "The number of contactors permanently",
+          "Inrush current and mechanical shock during starting"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "SCRs ramp voltage from a reduced start value to full over a set time, cutting inrush and mechanical shock; a bypass contactor typically closes at speed."
       },
       {
         "q": "A loaded conveyor is hard to start and requires high breakaway torque. Which NEMA design letter is best suited?",
         "options": [
+          "Design C",
           "Design A",
           "Design B",
-          "Design C",
           "Design D"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "NEMA Design C uses a double-cage rotor to deliver high starting torque (about 200% of full-load) for hard-to-start loads like loaded conveyors and compressors, while keeping reasonable slip."
       },
       {
@@ -5399,22 +5399,22 @@ MODULES = [
         "q": "Which test can detect an incipient turn-to-turn winding insulation weakness that a standard insulation-resistance (megger) test to ground cannot?",
         "options": [
           "Polarization index",
-          "Surge comparison test",
           "No-load current test",
+          "Surge comparison test",
           "Bearing temperature check"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Surge comparison testing applies matched high-voltage pulses to phase pairs and compares waveforms; a divergence reveals weak turn-to-turn insulation. A megger only checks insulation to ground, missing turn-insulation faults."
       },
       {
         "q": "Why are motor space heaters energized while a motor is idle?",
         "options": [
           "To keep the bearings lubricated",
-          "To prevent condensation on the windings that would lower insulation resistance",
           "To pre-magnetize the rotor",
-          "To reduce starting current"
+          "To reduce starting current",
+          "To prevent condensation on the windings that would lower insulation resistance"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Space heaters keep the windings slightly above ambient so humid air does not condense inside as the motor cools. Condensation lowers insulation resistance and can cause ground faults on the next start."
       }
     ],

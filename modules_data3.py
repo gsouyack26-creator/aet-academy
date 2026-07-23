@@ -231,22 +231,22 @@ MODULES_3 = [
         "q": "FAULT state in a state machine should:",
         "options": [
           "Continue running",
-          "Turn off outputs, wait for fault clear + operator reset",
           "Power cycle PLC",
+          "Turn off outputs, wait for fault clear + operator reset",
           "Delete program"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Fault = safe state (outputs off) + require both fault cleared AND operator acknowledge before restart."
       },
       {
         "q": "AB Major Fault Type 4 indicates:",
         "options": [
-          "Math overflow",
           "I/O communication failure",
+          "Math overflow",
           "Power supply issue",
           "Download needed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Type 4 = I/O fault (module not responding, rack power loss, RPI timeout)."
       },
       {
@@ -264,11 +264,11 @@ MODULES_3 = [
         "q": "A TON function-block instance in ST exposes which two outputs?",
         "options": [
           ".DN and .ACC",
-          ".Q (done) and .ET (elapsed time)",
           ".EN and .PRE",
+          ".Q (done) and .ET (elapsed time)",
           ".CV and .RESET"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "IEC timers output .Q (the done bit) and .ET (elapsed TIME). .CV/.Q are for counters; .ACC/.PRE/.DN are the Studio 5000 ladder-tag names."
       },
       {
@@ -276,21 +276,21 @@ MODULES_3 = [
         "options": [
           "TON (on-delay)",
           "TOF (off-delay)",
-          "RTO (retentive on-delay)",
-          "TP (pulse)"
+          "TP (pulse)",
+          "RTO (retentive on-delay)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "RTO accumulates true-time and retains it until a RES instruction zeroes it - ideal for total runtime / maintenance-hour tracking."
       },
       {
         "q": "What is the danger of an unbounded WHILE loop driven by a live signal in scan-based ST?",
         "options": [
-          "It uses too much memory",
           "It can overrun the scan watchdog and fault the processor",
+          "It uses too much memory",
           "It runs slower than a FOR loop",
           "Nothing, it is perfectly safe"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A loop that never exits within one scan trips the watchdog timer and faults the controller. Keep every loop bounded to a fixed max iteration count."
       },
       {
@@ -319,66 +319,66 @@ MODULES_3 = [
         "q": "A CONVEYOR_ZONE UDT contains a member Drive of type VFD_DATA. Which syntax correctly reads the fault code from zone index 5?",
         "options": [
           "Zone.Drive[5].FaultCode",
-          "Zone[5].Drive.FaultCode",
           "Zone[5][Drive].FaultCode",
-          "Drive.Zone[5].FaultCode"
+          "Drive.Zone[5].FaultCode",
+          "Zone[5].Drive.FaultCode"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Nested UDT access uses the array index on the outer UDT first, then dot-notation for each nested member: Zone[5].Drive.FaultCode. The index brackets apply to the array of CONVEYOR_ZONE, not to the sub-member."
       },
       {
         "q": "In Logix 5000 Structured Text, a FOR loop uses a variable index to write into an array. If the index exceeds the declared array bounds, which fault is raised?",
         "options": [
+          "Minor Fault Type 4, Code 20 (Array subscript out of range)",
           "Major Fault Type 6 (Watchdog timeout)",
           "Major Fault Type 7 (Program execution fault)",
-          "Minor Fault Type 4, Code 20 (Array subscript out of range)",
           "Minor Fault Type 1, Code 16 (Power fault)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "An out-of-bounds array subscript in Logix 5000 generates a Minor Fault Type 4, Code 20. The controller continues executing but logs the fault. Always guard variable indexes with a bounds check to prevent this."
       },
       {
         "q": "You modify the parameter list of an existing AOI by adding a new InOut parameter and increment the Major version. What happens to all existing instances of that AOI?",
         "options": [
           "They automatically adopt the new parameter with a default value",
-          "They continue working unchanged because AOI updates are backward-compatible",
           "They show a signature mismatch and must be updated before the program will verify",
+          "They continue working unchanged because AOI updates are backward-compatible",
           "They are deleted and must be re-placed on every rung"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Changing an AOI interface (adding/removing parameters) and incrementing the Major version creates a signature mismatch on all existing instances. Logix will not verify the project until every instance is updated to match the new interface."
       },
       {
         "q": "When splitting a large FOR loop across multiple PLC scans to limit per-scan CPU impact, what persistent data must be retained between scans?",
         "options": [
           "The loop accumulator variable only",
-          "The current loop index counter and any partial result accumulator",
           "The watchdog timer reset value",
+          "The current loop index counter and any partial result accumulator",
           "The FFL FIFO control structure"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "To resume a split loop correctly, the controller must remember where it left off (index counter) and any partial results accumulated so far (e.g., running sum). Both must be stored in retentive or controller-scope tags."
       },
       {
         "q": "A barcode scanner returns the string 'ASIN:B07XYZ;QTY:02'. Which Logix string function returns the starting character position of the substring 'ASIN:'?",
         "options": [
           "MID(RawScan, 5, 1)",
-          "FIND(RawScan, 'ASIN:')",
           "CONCAT(RawScan, 'ASIN:')",
-          "LEN('ASIN:')"
+          "LEN('ASIN:')",
+          "FIND(RawScan, 'ASIN:')"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "FIND(source, target) searches source for the first occurrence of target and returns its 1-based position. MID extracts characters; CONCAT appends strings; LEN returns length. FIND is the correct tool for locating a field delimiter."
       },
       {
         "q": "The Logix 5000 GSV instruction is used to read the controller real-time clock into a DINT array. Which array index holds the current hour-of-day value?",
         "options": [
-          "ClockArr[2]",
           "ClockArr[3]",
+          "ClockArr[2]",
           "ClockArr[4]",
           "ClockArr[6]"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The WALLCLOCKTIME array is indexed: [0]=year, [1]=month, [2]=day, [3]=hour, [4]=minute, [5]=second, [6]=millisecond. Index 3 holds the hour."
       },
       {
@@ -418,22 +418,22 @@ MODULES_3 = [
         "q": "You trigger a MSG (read) instruction every scan without a one-shot. What is the most likely result?",
         "options": [
           "Faster data refresh because more requests are sent per second",
-          "Overlapping requests leading to repeated .ER faults and network congestion",
           "The instruction self-throttles, executing only when the previous completes",
-          "The MSG instruction ignores re-triggers automatically and has no side effects"
+          "The MSG instruction ignores re-triggers automatically and has no side effects",
+          "Overlapping requests leading to repeated .ER faults and network congestion"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "MSG.EN stays TRUE while the transfer is pending. Re-triggering before .DN causes a new request to be queued before the previous completes, leading to overlapping requests, .ER faults, and unnecessary CIP network load. Always use a one-shot (ONS) to trigger MSG instructions."
       },
       {
         "q": "Controller A produces a tag; Controller B consumes it. The EtherNet/IP cable between them is unplugged. What value does the consumed tag in Controller B hold immediately after the connection drops?",
         "options": [
-          "Zero (all bits cleared to a safe state)",
           "Its last valid value before the connection failed",
+          "Zero (all bits cleared to a safe state)",
           "An undefined/garbage value from memory",
           "The tag's initial value from the program download"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Produced/Consumed tag behaviour on connection loss is to hold the last received value, not default to zero. This is a critical design consideration: the consumer logic must monitor connection status (via GSV) and implement a safety response rather than assuming last-value is safe."
       },
       {
@@ -462,33 +462,33 @@ MODULES_3 = [
         "q": "A Major Fault occurs and the assigned Fault Routine executes. The routine identifies an unknown fault type. What is the safest action?",
         "options": [
           "Clear S:FLT and set S:FS to resume scanning immediately",
-          "Allow the fault to remain uncleared so the controller stays in Program mode (outputs off)",
           "Write 0 to S:MAJOR to force the controller back to Run mode",
+          "Allow the fault to remain uncleared so the controller stays in Program mode (outputs off)",
           "Cycle power to the controller chassis to reset the fault"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "If a fault routine encounters an unknown fault type it should NOT clear the fault. Allowing the fault to remain uncleared keeps the controller in Program mode with outputs de-energised, which is the safe state. Only faults that are fully understood and recoverable should be cleared programmatically."
       },
       {
         "q": "What does an Add-On Instruction (AOI) InOut parameter do?",
         "options": [
           "Copies the value in at scan start only",
-          "Passes the caller's tag by reference so the AOI reads and writes it directly",
           "Is read-only inside the AOI",
-          "Creates a new backing tag each scan"
+          "Creates a new backing tag each scan",
+          "Passes the caller's tag by reference so the AOI reads and writes it directly"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "InOut parameters pass by reference - the AOI operates directly on the caller's tag (used for large UDTs/arrays to avoid copying), meaning the AOI can change caller data during the scan."
       },
       {
         "q": "Why use a UDT (User-Defined Data Type) for equipment like conveyor zones?",
         "options": [
-          "It runs faster than any other logic",
           "It groups related members into one self-documenting structure that can be arrayed and reused",
+          "It runs faster than any other logic",
           "It eliminates the need for I/O modules",
           "It disables fault handling"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A UDT bundles related tags (Run, Fault, Speed, Hours...) into one named structure that can be arrayed (Zone[0..23]) and passed to AOIs - making code scalable and self-documenting."
       },
       {
@@ -517,22 +517,22 @@ MODULES_3 = [
         "q": "An unbounded WHILE loop in Structured Text runs on a live input that stays true. What is the risk?",
         "options": [
           "It improves scan time",
-          "It can fail to complete within the scan and trip the watchdog, faulting the controller",
           "It automatically becomes a FOR loop",
-          "Nothing - ST loops run in the background"
+          "Nothing - ST loops run in the background",
+          "It can fail to complete within the scan and trip the watchdog, faulting the controller"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ST executes within the scan; an unbounded loop that never exits prevents the scan from completing and trips the watchdog timer, majoring the controller. Always bound loops."
       },
       {
         "q": "What is the recommended way to structure a machine that runs home-index-clamp-process-release?",
         "options": [
-          "Many independent latched coils across scattered rungs",
           "A state variable with a CASE structure, one active state at a time, plus a fault/abort state",
+          "Many independent latched coils across scattered rungs",
           "A single giant IF statement with no states",
           "An unbounded WHILE loop"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A state-machine (state variable + CASE, one active state, defined transitions, fault/abort state, step timers) is maintainable and makes troubleshooting a matter of 'which step is stuck and why'."
       },
       {
@@ -550,33 +550,33 @@ MODULES_3 = [
         "q": "When you edit an AOI definition, what is the effect?",
         "options": [
           "Only the first instance changes",
-          "Every instance of that AOI in the project uses the new logic",
           "Nothing until you reboot",
+          "Every instance of that AOI in the project uses the new logic",
           "It creates a copy and leaves instances alone"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An AOI is defined once and shared; editing the definition changes behavior for every instance - powerful for fixing bugs in one place, but requires care since it affects all uses."
       },
       {
         "q": "Which task type should host time-critical PID or motion logic?",
         "options": [
           "The continuous task",
-          "A periodic task at a fixed fast interval",
           "A one-shot event that never repeats",
-          "The fault handler"
+          "The fault handler",
+          "A periodic task at a fixed fast interval"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Time-critical control belongs in a periodic task running at a fixed, fast interval so it executes deterministically; slow/non-critical logic goes in the continuous task."
       },
       {
         "q": "What is the purpose of a step timer in a sequencer state machine?",
         "options": [
-          "To make the machine run faster",
           "To time out a stuck step to an alarm instead of hanging forever",
+          "To make the machine run faster",
           "To disable the fault state",
           "To skip states randomly"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A per-step timer detects a step that never satisfies its transition (e.g. a clamp that never confirms) and forces an alarm/abort rather than hanging the sequence indefinitely."
       },
       {
@@ -594,33 +594,33 @@ MODULES_3 = [
         "q": "In Structured Text, why does 7 / 2 yield 3 instead of 3.5?",
         "options": [
           "The PLC is broken",
-          "Integer division truncates; one operand must be REAL to force floating-point math",
           "ST cannot divide",
+          "Integer division truncates; one operand must be REAL to force floating-point math",
           "2 is invalid"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "With two integer operands ST performs integer division (truncating the remainder); making an operand REAL forces floating-point and yields 3.5."
       },
       {
         "q": "Why use CPS (Synchronous Copy) instead of COP for a multi-element recipe structure?",
         "options": [
           "CPS is faster always",
-          "CPS copies atomically without interruption by a higher-priority task, so the structure is never read half-updated",
           "COP does not exist",
-          "CPS uses less memory"
+          "CPS uses less memory",
+          "CPS copies atomically without interruption by a higher-priority task, so the structure is never read half-updated"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "CPS guarantees an uninterrupted (atomic) copy, preventing a higher-priority task from reading a partially-updated multi-element structure - critical for data integrity."
       },
       {
         "q": "What is the recommended data structure for a machine that must store parameters for 100 products?",
         "options": [
-          "100 separate programs",
           "An array of a Recipe UDT indexed by a recipe-number tag",
+          "100 separate programs",
           "One BOOL per product",
           "Nothing - retype parameters each changeover"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "An indexed array of a Recipe UDT lets a single recipe-number select the active parameter set; adding a product becomes data entry, not reprogramming."
       },
       {
@@ -638,33 +638,33 @@ MODULES_3 = [
         "q": "What is the classic disaster that disciplined online-edit archiving prevents?",
         "options": [
           "Slow scan time",
-          "A controller dying with months of undocumented online changes that exist nowhere else",
           "Too many alarms",
+          "A controller dying with months of undocumented online changes that exist nowhere else",
           "High SCCR"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "If online edits are never uploaded/archived, the only copy of the changes is in the running controller; when it fails, that work is lost - hence upload-and-archive after edits."
       },
       {
         "q": "What advantage do ALMD/ALMA alarm instructions have over hand-built latch/compare alarm rungs?",
         "options": [
           "They need no memory",
-          "They manage the full alarm state model internally with source-timestamping and ISA-18.2 shelving/suppression, reducing maintenance",
           "They eliminate the HMI",
-          "They increase scan time to zero"
+          "They increase scan time to zero",
+          "They manage the full alarm state model internally with source-timestamping and ISA-18.2 shelving/suppression, reducing maintenance"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ALMD/ALMA handle In-Alarm/Ack/RTN states, millisecond source timestamps, priority, and shelving/suppression automatically, with far less ladder to maintain."
       },
       {
         "q": "Accumulating exact integer counts in a REAL tag is risky because:",
         "options": [
-          "REAL is always slower",
           "REAL cannot exactly represent every decimal, so values drift; use DINT for exact counts",
+          "REAL is always slower",
           "REAL cannot store numbers",
           "DINT overflows first"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Floating-point cannot exactly represent many decimals (e.g. 0.1), so accumulating counts/money in REAL drifts; exact integer quantities belong in DINT."
       },
       {
@@ -682,11 +682,11 @@ MODULES_3 = [
         "q": "Prefixing a BOOL variable name with \"b\" (e.g., bReady) and a REAL with \"r\" is an example of:",
         "options": [
           "Random naming",
-          "Hungarian-style type prefixes that communicate the variable's type at a glance",
           "A vendor requirement",
+          "Hungarian-style type prefixes that communicate the variable's type at a glance",
           "A compiler error"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Type prefixes are one convention that improves readability; the specific rules matter less than consistency across a project."
       },
       {
@@ -694,21 +694,21 @@ MODULES_3 = [
         "options": [
           "IN parameter (copy in only)",
           "OUT parameter (copy out only)",
-          "IN_OUT parameter passed by reference",
-          "Global tag"
+          "Global tag",
+          "IN_OUT parameter passed by reference"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "IN_OUT gives the AOI direct access to the caller's structure without copy overhead and preserves updates across the call."
       },
       {
         "q": "A PID loop that must sample at a consistent 10 ms interval regardless of scan load is best placed in a:",
         "options": [
-          "Continuous task",
           "10 ms periodic task",
+          "Continuous task",
           "Event task on input transition",
           "One-shot subroutine"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Periodic tasks run at a fixed rate independent of continuous scan length, giving the deterministic sample time PID needs."
       },
       {
@@ -725,34 +725,34 @@ MODULES_3 = [
       {
         "q": "A generic AOI achieves reuse across many instances by:",
         "options": [
-          "Coding the invariant pattern once and parametrising via IN_OUT UDT plus inputs/outputs",
           "Copying the logic into every rung",
           "Using different AOIs for every motor",
+          "Coding the invariant pattern once and parametrising via IN_OUT UDT plus inputs/outputs",
           "Avoiding parameters"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Encapsulating the pattern and moving instance-specific data into a UDT parameter lets one AOI serve many instances consistently."
       },
       {
         "q": "A PLC unit test routine typically:",
         "options": [
           "Runs on a laptop only",
-          "Lives alongside production logic, sets known inputs, calls the AOI, and checks outputs against expected values",
           "Replaces the runtime",
-          "Modifies field wiring"
+          "Modifies field wiring",
+          "Lives alongside production logic, sets known inputs, calls the AOI, and checks outputs against expected values"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Self-testing routines can run during development or on demand, giving pass/fail feedback and preventing regressions when logic changes."
       },
       {
         "q": "The MAIN scan-time cost of IN vs IN_OUT for a large UDT is that IN:",
         "options": [
-          "Is faster",
           "Copies the whole UDT on entry AND on exit each call, unlike IN_OUT which passes by reference",
+          "Is faster",
           "Skips the AOI",
           "Fails to compile"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Copy semantics on large UDTs waste scan time and memory; IN_OUT passes by reference for zero-copy access."
       },
       {
@@ -770,33 +770,33 @@ MODULES_3 = [
         "q": "AOI versioning (v1, v2) is important because:",
         "options": [
           "It slows the code down",
-          "It documents changes so plants running multiple versions can be understood and instances upgraded predictably",
           "It removes all functionality",
+          "It documents changes so plants running multiple versions can be understood and instances upgraded predictably",
           "It is required by NEC"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Version markers let engineers know which behaviour an instance has; upgrades happen per instance with clear tracking of what changed."
       },
       {
         "q": "Why is an unbounded WHILE loop in Structured Text dangerous on a PLC?",
         "options": [
           "It uses too much memory",
-          "A loop that cannot exit hangs the scan and trips the watchdog timer, faulting the processor",
           "WHILE loops are not supported",
-          "It runs only once"
+          "It runs only once",
+          "A loop that cannot exit hangs the scan and trips the watchdog timer, faulting the processor"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The PLC must complete its scan within the watchdog time. A WHILE loop that never satisfies its exit condition hangs the scan and trips the watchdog, faulting the processor, so loop bounds must be guaranteed."
       },
       {
         "q": "What is the primary maintainability benefit of an Add-On Instruction (AOI)?",
         "options": [
-          "It runs faster than built-in instructions",
           "Logic is written and debugged once, reused across many instances, and a fix propagates to all",
+          "It runs faster than built-in instructions",
           "It eliminates the need for tags",
           "It only works in Structured Text"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "An AOI packages logic into a reusable custom instruction: write/debug once, instantiate many times each with its own data, and a correction in the definition propagates to every instance, enforcing consistency."
       },
       {
@@ -814,11 +814,11 @@ MODULES_3 = [
         "q": "After making an online edit to a running PLC, what discipline prevents the archived program from silently diverging from what is actually running?",
         "options": [
           "Nothing is needed; online edits save automatically everywhere",
-          "Update the master offline copy and document the change (MOC)",
           "Delete the old backup",
+          "Update the master offline copy and document the change (MOC)",
           "Reboot the controller"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Online edits change the running controller but not necessarily the archived offline copy. The change must be saved to the master offline program and documented, or a future download of an outdated backup will lose it, sometimes disastrously."
       }
     ],
@@ -1089,44 +1089,44 @@ MODULES_3 = [
         "q": "MQTT uses what messaging pattern?",
         "options": [
           "Request/Response",
-          "Publish/Subscribe via broker",
           "Peer-to-peer",
+          "Publish/Subscribe via broker",
           "Polling"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "MQTT = pub/sub through a broker. Publishers send to topics, subscribers receive from topics. Decoupled and lightweight."
       },
       {
         "q": "IEC 62443 addresses:",
         "options": [
           "Motor wiring",
-          "Industrial cybersecurity for automation",
           "PLC languages",
-          "Hydraulic sizing"
+          "Hydraulic sizing",
+          "Industrial cybersecurity for automation"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC 62443 = THE standard for OT/industrial automation cybersecurity."
       },
       {
         "q": "Which of the nine Industry 4.0 pillars specifically addresses connecting physical sensors, actuators, and field devices over IP networks for real-time monitoring?",
         "options": [
-          "Autonomous Robots",
           "Industrial Internet of Things (IIoT)",
+          "Autonomous Robots",
           "Augmented Reality",
           "Additive Manufacturing"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The IIoT pillar is defined as IP-connected sensors, actuators, and edge devices enabling real-time data exchange. Autonomous Robots, AR, and additive manufacturing are separate pillars addressing different capabilities."
       },
       {
         "q": "In the Purdue Reference Model, at which level do SCADA/HMI supervisory systems reside?",
         "options": [
           "Level 0 - Physical process",
-          "Level 1 - Basic control",
           "Level 2 - Supervisory control",
+          "Level 1 - Basic control",
           "Level 4 - Business logistics"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Level 2 is the supervisory control layer containing SCADA and HMI systems. (A conveyor Warehouse Control System is a Level 3 operations application - see Module 12.) Level 0 is the physical process; Level 1 is basic control (PLCs); Level 4 is business logistics (ERP/EAM)."
       },
       {
@@ -1144,33 +1144,33 @@ MODULES_3 = [
         "q": "MQTT QoS 2 guarantees exactly-once delivery using a four-way handshake. What is the correct sequence of control packets?",
         "options": [
           "PUBLISH -&gt; PUBACK -&gt; PUBREL -&gt; PUBCOMP",
-          "PUBLISH -&gt; PUBREC -&gt; PUBREL -&gt; PUBCOMP",
           "PUBLISH -&gt; PUBACK -&gt; PUBREC -&gt; PUBCOMP",
+          "PUBLISH -&gt; PUBREC -&gt; PUBREL -&gt; PUBCOMP",
           "CONNECT -&gt; PUBLISH -&gt; PUBACK -&gt; DISCONNECT"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "QoS 2 sequence: PUBLISH (sender to broker), PUBREC (broker acknowledges receipt), PUBREL (sender releases), PUBCOMP (broker confirms delivery complete). PUBACK is the QoS 1 acknowledgment and is not used in QoS 2."
       },
       {
         "q": "A motor current spectrum shows symmetric sidebands at 56.4 Hz and 63.6 Hz on a 60 Hz, 3% slip induction motor. According to MCSA, what fault does this indicate?",
         "options": [
           "Outer-race spalling detected by vibration FFT",
-          "Broken rotor bar (sidebands at f +/- 2sf)",
           "Phase voltage imbalance causing harmonic distortion",
-          "Belt misalignment at the tail pulley"
+          "Belt misalignment at the tail pulley",
+          "Broken rotor bar (sidebands at f +/- 2sf)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Broken rotor bars produce current sidebands at f +/- 2sf. At f=60 Hz and s=0.03: 60 +/- 2(0.03)(60) = 60 +/- 3.6 Hz = 56.4 Hz and 63.6 Hz. Outer-race spalling appears at BPFO in the vibration spectrum, not as symmetric current sidebands."
       },
       {
         "q": "Which IEC 62443 sub-standard specifically defines security zones, conduits, and security levels through a risk assessment process?",
         "options": [
-          "IEC 62443-2-1: Security management system",
           "IEC 62443-3-2: Security risk assessment for system design",
+          "IEC 62443-2-1: Security management system",
           "IEC 62443-3-3: System security requirements",
           "IEC 62443-4-1: Secure product development lifecycle"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "IEC 62443-3-2 covers security risk assessment for IACS system design, defining the zone and conduit model with Security Levels 1-4. Part 2-1 addresses the security management system; Part 3-3 defines foundational system requirements; Part 4-1 covers product development lifecycle security."
       },
       {
@@ -1199,33 +1199,33 @@ MODULES_3 = [
         "q": "Edge FFT processing reduces 50 vibration sensors (25,600 Sa/s, 16-bit) to 128 spectral bins reported at 1 Hz each. Approximately how much bandwidth is saved versus sending raw data to the fog tier?",
         "options": [
           "No savings - FFT is lossless and bandwidth is unchanged",
-          "Approximately 200:1 reduction, from ~20 Mb/s raw to ~100 kb/s",
           "Approximately 10:1 reduction, from ~20 Mb/s to ~2 Mb/s",
-          "Approximately 1000:1 reduction, from ~20 Mb/s to ~20 kb/s"
+          "Approximately 1000:1 reduction, from ~20 Mb/s to ~20 kb/s",
+          "Approximately 200:1 reduction, from ~20 Mb/s raw to ~100 kb/s"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Raw: 50 x 25,600 x 16 bits = ~20 Mb/s. After FFT: 50 x 128 bins x 16 bits x 1 Hz = ~102 kb/s. That is approximately 200:1 reduction, making fog-tier transmission practical without WAN bandwidth constraints."
       },
       {
         "q": "Which wireless protocol uses Time-Synchronized Channel Hopping (TSCH) over IEEE 802.15.4 at 2.4 GHz, is standardized as IEC 62591, and is designed for deterministic industrial sensor communication?",
         "options": [
-          "LoRaWAN (LoRa Alliance sub-GHz)",
           "WirelessHART (IEC 62591)",
+          "LoRaWAN (LoRa Alliance sub-GHz)",
           "Zigbee (802.15.4 without TSCH)",
           "CBRS Private LTE (3.5 GHz)"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "WirelessHART (IEC 62591) extends HART over 802.15.4 using TSCH for deterministic sub-10 ms latency and &gt;99.9% reliability in metal environments. LoRaWAN is sub-GHz LPWAN; Zigbee uses 802.15.4 without the same TSCH approach; CBRS is a cellular technology."
       },
       {
         "q": "A bearing housing IR thermography reading is 68 degrees C against a 50 degrees C ambient-adjusted baseline. According to NFPA 70B thermographic practice, how should this be classified?",
         "options": [
           "Normal - within the acceptable 20 degrees C window",
-          "Minor - flag for next scheduled PM only",
           "Significant - a rise greater than 10 degrees C above baseline indicates potential lubrication failure or overload",
+          "Minor - flag for next scheduled PM only",
           "Catastrophic - immediately de-energize without further assessment"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "NFPA 70B and standard thermographic guidelines treat a temperature rise greater than 10 degrees C above the established baseline as significant, warranting investigation for lubrication failure, overload, or alignment issues. 68 - 50 = 18 degrees C clearly exceeds this threshold. Immediate shutdown depends on additional symptoms and asset criticality, not the temperature alone."
       },
       {
@@ -1243,55 +1243,55 @@ MODULES_3 = [
         "q": "Which IEEE 802.1 amendment defines the Time-Aware Shaper (TAS), enabling scheduled traffic slots for TSN determinism?",
         "options": [
           "IEEE 802.1AS",
-          "IEEE 802.1Qbv",
           "IEEE 802.1CB",
-          "IEEE 802.1Qbu"
+          "IEEE 802.1Qbu",
+          "IEEE 802.1Qbv"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEEE 802.1Qbv defines the Time-Aware Shaper, dividing the Ethernet cycle into time slots with guard bands so high-priority control frames are never delayed by bulk traffic."
       },
       {
         "q": "An OPC-UA session uses Security Mode 'SignAndEncrypt' with policy 'Basic256Sha256'. What does this mode guarantee beyond 'Sign' mode?",
         "options": [
-          "Integrity only; no encryption of message content",
           "Both integrity (signing) and confidentiality (encryption) of message content",
+          "Integrity only; no encryption of message content",
           "Only transport-level TLS encryption of the TCP socket",
           "Certificate revocation checking via OCSP"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "SignAndEncrypt applies both a digital signature (integrity and authenticity) and encryption (confidentiality) to OPC-UA message payloads, using the negotiated security policy algorithm suite. 'Sign' mode provides only integrity."
       },
       {
         "q": "In the ISA-95 equipment hierarchy, which level best represents a single conveyor induction line containing multiple belt drives and sensors?",
         "options": [
           "Site",
-          "Area",
           "WorkCenter",
+          "Area",
           "Enterprise"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "ISA-95 WorkCenter represents a grouping of equipment performing a production function. A conveyor induction line with its drives maps to WorkCenter; individual belt drives are WorkUnits below it. Area is one level above WorkCenter."
       },
       {
         "q": "MCSA (Motor Current Signature Analysis) detects bearing inner-race defects as sidebands in the stator current spectrum. For a motor supply of 60 Hz, where do these sidebands typically appear?",
         "options": [
           "At the exact bearing defect frequency (e.g., 180 Hz)",
-          "As sidebands around the 60 Hz supply frequency (e.g., 57 Hz and 63 Hz)",
           "At twice the slip frequency (e.g., 3.6 Hz)",
+          "As sidebands around the 60 Hz supply frequency (e.g., 57 Hz and 63 Hz)",
           "At 120 Hz (second harmonic of supply only)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Bearing defect frequencies modulate onto the supply frequency in the stator current, appearing as sidebands at f_supply +/- f_defect_mechanical. For a worked example with a 3 Hz mechanical defect frequency, sidebands appear at 60 +/- 3 Hz, i.e., approximately 57 Hz and 63 Hz."
       },
       {
         "q": "INT8 static quantization of an ONNX model requires a step not needed for dynamic quantization. What is it?",
         "options": [
           "Retraining the model from scratch with integer-aware layers",
-          "A calibration dataset to compute per-layer activation scale factors",
           "Converting the model to TensorFlow SavedModel format first",
-          "Increasing the number of hidden layers to maintain accuracy"
+          "Increasing the number of hidden layers to maintain accuracy",
+          "A calibration dataset to compute per-layer activation scale factors"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Static quantization requires a representative calibration dataset (100-500 samples) to measure activation ranges and derive per-layer scale/zero-point factors. Dynamic quantization quantizes only weights at load time, requiring no calibration data."
       },
       {
@@ -1309,88 +1309,88 @@ MODULES_3 = [
         "q": "An HMS Anybus Communicator is polling a DeviceNet device configured with a 10 ms RPI. What is the maximum recommended gateway poll rate to avoid connection timeout faults?",
         "options": [
           "10 ms - match the device RPI exactly",
-          "5 ms - twice the RPI for Nyquist compliance",
           "20 ms or slower - at most 50% of RPI",
+          "5 ms - twice the RPI for Nyquist compliance",
           "1 ms - faster polling improves data freshness"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The gateway should poll at 50% or less of the device RPI (Requested Packet Interval). Polling at or faster than the RPI risks connection timeout faults because the device may not respond within the expected window."
       },
       {
         "q": "K3s is described as 'lightweight Kubernetes' primarily because it:",
         "options": [
           "Supports only Docker runtime and not containerd",
-          "Replaces etcd with SQLite and removes cloud-provider plugins, reducing RAM to ~512 MB",
           "Requires a minimum of 3 control-plane nodes for HA",
+          "Replaces etcd with SQLite and removes cloud-provider plugins, reducing RAM to ~512 MB",
           "Does not support Helm chart deployments"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "K3s substitutes SQLite for etcd and drops cloud-provider integrations, reducing the minimum RAM footprint to approximately 512 MB. It is CNCF-certified Kubernetes and fully supports Helm and containerd."
       },
       {
         "q": "A LoRaWAN sensor is switched from Spreading Factor 7 (SF7) to Spreading Factor 12 (SF12). What is the result?",
         "options": [
           "Higher data rate (~5.5 kbps) and shorter range (~2 km)",
-          "Lower data rate (~0.3 kbps) and greater range (~15 km open terrain)",
           "Same data rate with improved co-channel interference rejection only",
-          "Increased transmit power consumption, halving battery life"
+          "Increased transmit power consumption, halving battery life",
+          "Lower data rate (~0.3 kbps) and greater range (~15 km open terrain)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Higher LoRa spreading factors increase the processing gain (chirp time), extending range at the cost of lower data rate and longer time-on-air. SF12 achieves ~0.3 kbps and ~15 km range versus SF7 at ~5.5 kbps and ~2 km."
       },
       {
         "q": "A digital twin operating at ISO 23247 fidelity Level 5 is best characterized as:",
         "options": [
+          "A physics-based predictive model that simulates future asset states",
           "A 3D geometric model used for layout planning",
           "A live mirror displaying synchronized real-time sensor telemetry",
-          "A static datasheet replica with nameplate parameters only",
-          "A physics-based predictive model that simulates future asset states"
+          "A static datasheet replica with nameplate parameters only"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "Level 5 (Predictive/Prognostic) uses physics equations and learned parameters to forecast future conditions - for example, predicting belt stretch over the next 30 days based on current wear-rate trends. Lower levels are static, nominal, or live-mirror only."
       },
       {
         "q": "Using the fan affinity law, a 30 kW conveyor fan is slowed from 100% to 70% speed via VFD. What is the new power draw?",
         "options": [
           "21.0 kW (linear scaling with speed)",
-          "14.7 kW (square-law scaling)",
           "10.3 kW (cube-law scaling)",
+          "14.7 kW (square-law scaling)",
           "25.2 kW (90% efficiency factor applied)"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Fan power follows the affinity law: P scales as (speed ratio)^3. P_new = 30 kW x (0.7)^3 = 30 x 0.343 = 10.3 kW. This cube relationship means even modest speed reductions yield dramatic energy savings."
       },
       {
         "q": "For a safety relay with dangerous undetected failure rate lambda_DU = 1x10^-7 /hour and proof-test interval T1 = 8760 hours, PFD_avg is approximately:",
         "options": [
           "8.76 x 10^-4",
-          "4.38 x 10^-4",
           "1.0 x 10^-7",
+          "4.38 x 10^-4",
           "1.75 x 10^-3"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "For a single-channel system, PFD_avg is approximately lambda_DU x T1 / 2 = 1e-7 x 8760 / 2 = 4.38e-4. This PFD_avg falls within the SIL 3 range (1e-4 to 1e-3 PFD), confirming SIL 3 capability for this single channel."
       },
       {
         "q": "During an OT cybersecurity incident, an analyst needs to capture EtherNet/IP traffic from a suspect PLC without disrupting production. The correct technique is:",
         "options": [
           "Connect a laptop directly to the PLC Ethernet port and run Wireshark",
-          "Configure a SPAN (mirror) port on the managed switch and capture passively",
           "Run an Nmap SYN scan to enumerate PLC open ports",
-          "Reboot the PLC and capture its startup broadcast traffic"
+          "Reboot the PLC and capture its startup broadcast traffic",
+          "Configure a SPAN (mirror) port on the managed switch and capture passively"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A SPAN (port mirror) on the managed switch passively copies traffic to the analyst laptop without affecting the live network. Active scanning (Nmap) can crash or lock up PLCs. Physical cable changes disrupt production."
       },
       {
         "q": "Which IEC standard specifically addresses the functional safety of safety-related control systems (SCS) on industrial machinery, serving as the machinery-sector application standard derived from IEC 61508?",
         "options": [
+          "IEC 62061 (functional safety of machinery SCS)",
           "IEC 62443-3-3 (OT network security levels)",
           "IEC 61511 (process industry safety instrumented systems)",
-          "IEC 62061 (functional safety of machinery SCS)",
           "IEC 60204-1 (electrical equipment of machines - general)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "IEC 62061 governs functional safety of Safety-related Control Systems (SCS) on machinery, defining SILCL (SIL Claim Limit) and systematic capability. IEC 61511 covers process SIS; IEC 62443 covers OT cybersecurity; IEC 60204-1 covers general electrical equipment requirements."
       },
       {
@@ -1408,33 +1408,33 @@ MODULES_3 = [
         "q": "What networking pattern does MQTT use?",
         "options": [
           "Request/response polling only",
-          "Publish/subscribe via a broker with topics",
           "Point-to-point serial only",
+          "Publish/subscribe via a broker with topics",
           "Broadcast to every device"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "MQTT is publish/subscribe: publishers send to topics on a broker and subscribers receive topics of interest, decoupling producers from consumers and scaling well for many sensors."
       },
       {
         "q": "What is 'report-by-exception' and why is it used?",
         "options": [
           "Reporting only during faults",
-          "Publishing a value only when it changes beyond a deadband, cutting network traffic vs constant polling",
           "Reporting all tags every millisecond",
-          "A type of fault code"
+          "A type of fault code",
+          "Publishing a value only when it changes beyond a deadband, cutting network traffic vs constant polling"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Report-by-exception sends data only when a value changes beyond a deadband, dramatically reducing traffic compared to continuously polling every tag."
       },
       {
         "q": "What is a key advantage of OPC UA over the older OPC DA?",
         "options": [
-          "It only runs on Windows",
           "It is platform-independent with a rich self-describing information model and built-in security",
+          "It only runs on Windows",
           "It has no security",
           "It cannot browse tags"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "OPC UA is platform-independent, carries data plus metadata (units, ranges, structure) in an information model, and includes authentication/encryption/signing - unlike the Windows-only, less-secure OPC DA."
       },
       {
@@ -1452,11 +1452,11 @@ MODULES_3 = [
         "q": "What is a digital twin?",
         "options": [
           "A backup PLC",
-          "A live virtual model of a physical asset fed by its real sensor data, used to monitor/predict/optimize",
           "A second HMI screen",
+          "A live virtual model of a physical asset fed by its real sensor data, used to monitor/predict/optimize",
           "A duplicate barcode"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A digital twin is a continuously data-fed virtual model of an asset used to monitor current state, predict failures, and test changes virtually (including virtual commissioning)."
       },
       {
@@ -1464,21 +1464,21 @@ MODULES_3 = [
         "options": [
           "Plugging found USB drives into the HMI to check them",
           "Connecting personal laptops to the control network",
-          "Never plugging unknown USBs into HMIs/workstations and keeping offline PLC/HMI backups",
-          "Sharing one admin password on sticky notes"
+          "Sharing one admin password on sticky notes",
+          "Never plugging unknown USBs into HMIs/workstations and keeping offline PLC/HMI backups"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Avoiding unknown USBs and personal devices on the control network, plus keeping offline known-good backups of PLC/HMI programs, are core OT-security hygiene practices for technicians."
       },
       {
         "q": "Which standard defines the industrial (OT) cybersecurity framework?",
         "options": [
-          "IEC 61131-3",
           "IEC 62443",
+          "IEC 61131-3",
           "NEC 430",
           "ISA-5.1"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "IEC 62443 is the standard framework for industrial automation and control system (OT) cybersecurity; IEC 61131-3 is PLC languages and NEC 430 is motor circuits."
       },
       {
@@ -1496,33 +1496,33 @@ MODULES_3 = [
         "q": "What problem does a Unified Namespace (UNS) primarily solve?",
         "options": [
           "It speeds up motors",
-          "It replaces brittle point-to-point integrations with one central broker where all systems publish/subscribe, decoupling producers from consumers",
           "It eliminates the need for sensors",
+          "It replaces brittle point-to-point integrations with one central broker where all systems publish/subscribe, decoupling producers from consumers",
           "It is a type of PLC"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The UNS centralizes all plant data in one semantically organized broker (usually MQTT); systems publish/subscribe to it, decoupling producers from consumers so changes do not ripple."
       },
       {
         "q": "How does a webhook differ from polling a REST API?",
         "options": [
           "Webhooks are slower",
-          "The server pushes an HTTP callback the instant an event occurs, instead of the client repeatedly asking 'anything new?'",
           "They are identical",
-          "Webhooks require no network"
+          "Webhooks require no network",
+          "The server pushes an HTTP callback the instant an event occurs, instead of the client repeatedly asking 'anything new?'"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A webhook is server-initiated: it POSTs to a registered URL when an event happens, far more efficient than a client constantly polling for changes."
       },
       {
         "q": "OEE is the product of which three factors?",
         "options": [
-          "Voltage x Current x Power",
           "Availability x Performance x Quality",
+          "Voltage x Current x Power",
           "Speed x Torque x Time",
           "Cost x Count x Cycle"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "OEE = Availability (uptime) x Performance (speed) x Quality (good parts); ~85% is a common world-class benchmark (about 90% x 95% x 99%)."
       },
       {
@@ -1540,33 +1540,33 @@ MODULES_3 = [
         "q": "In a time-series database, what does a retention policy combined with downsampling do?",
         "options": [
           "Encrypts the data",
-          "Rolls up aging high-resolution data into lower-resolution aggregates and deletes the raw data after a window, keeping summaries long-term",
           "Deletes all data daily",
+          "Rolls up aging high-resolution data into lower-resolution aggregates and deletes the raw data after a window, keeping summaries long-term",
           "Speeds up the PLC scan"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Downsampling aggregates old raw data (1s to 1min to 1hr) and retention deletes the raw after a window, keeping trend-preserving summaries - balancing detail vs storage."
       },
       {
         "q": "Why are most retrofit wireless vibration sensors periodic/report-by-exception rather than continuously streaming?",
         "options": [
           "Streaming is illegal",
-          "Continuous transmission drains the battery fast; periodic sampling extends battery life to years",
           "They cannot sense vibration",
-          "Gateways reject streams"
+          "Gateways reject streams",
+          "Continuous transmission drains the battery fast; periodic sampling extends battery life to years"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Battery life (often 3-5 years) trades against transmit frequency; periodic or exception-based reporting conserves the battery while still catching developing faults."
       },
       {
         "q": "Why is a raw value like '73.4' useless without contextualization?",
         "options": [
-          "It is the wrong number",
           "Without units, asset/location (ISA-95 hierarchy), timestamp, and relationships, it cannot be interpreted or correlated",
+          "It is the wrong number",
           "73.4 is always an error",
           "Context slows analytics"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Contextualization attaches units, ISA-95 location, accurate timestamp, and relationships, turning a bare number into information that means the same thing enterprise-wide."
       },
       {
@@ -1584,33 +1584,33 @@ MODULES_3 = [
         "q": "In the OEE Availability calculation, what data must the machine report?",
         "options": [
           "Only the product name",
-          "Its run/stop/fault state (and ideally downtime reason codes) versus planned production time",
           "Only the temperature",
+          "Its run/stop/fault state (and ideally downtime reason codes) versus planned production time",
           "The operator's name"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Availability = run time / planned production time, so the machine must report its running/stopped/faulted state, with reason codes enabling loss attribution."
       },
       {
         "q": "Data lineage in an IIoT pipeline records:",
         "options": [
           "Only the final dashboard value",
-          "The full history of each data point through every transformation from sensor to display",
           "Only the total cost",
-          "Only the color of the panel"
+          "Only the color of the panel",
+          "The full history of each data point through every transformation from sensor to display"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Lineage lets you trace a KPI back through every stage; provenance adds metadata (calibration date, script version) for full accountability."
       },
       {
         "q": "The MOST commonly-underestimated cloud cost bucket for IIoT projects is:",
         "options": [
+          "Egress (moving data OUT of the cloud)",
           "Ingestion",
           "Storage",
-          "Egress (moving data OUT of the cloud)",
           "Nothing"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Egress can dwarf ingestion and storage; moving 1 TB out of AWS can cost $90+ and pipelines that move data between regions or vendors compound this."
       },
       {
@@ -1628,33 +1628,33 @@ MODULES_3 = [
         "q": "Apache Kafka's role in streaming analytics is to:",
         "options": [
           "Replace the PLC",
-          "Provide a scalable, partitioned pub/sub message bus that producers write to and consumers subscribe to",
           "Design panels",
+          "Provide a scalable, partitioned pub/sub message bus that producers write to and consumers subscribe to",
           "Send email"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Kafka topics fan-out streams to many consumers at industrial scale; downstream engines like Flink and Kafka Streams do the windowed computation."
       },
       {
         "q": "Which of these is PII commonly found in industrial data streams?",
         "options": [
           "Motor torque values",
-          "Operator badge IDs logged with setpoint changes and alarm acknowledgements",
           "Ambient temperature",
-          "Line frequency"
+          "Line frequency",
+          "Operator badge IDs logged with setpoint changes and alarm acknowledgements"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Badge IDs, biometric access, video with people, and PPE-tag locations are personal data subject to GDPR/CCPA and require pseudonymisation, encryption, and retention limits."
       },
       {
         "q": "Store-and-forward at the edge is essential because:",
         "options": [
-          "Networks always work perfectly",
           "Networks fail, and buffered local storage plus in-order replay preserves data across outages",
+          "Networks always work perfectly",
           "Cloud storage is cheaper",
           "Sensors need extra power"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Edge buffering with persistent storage and in-order replay ensures no data is lost during WAN or cloud outages, which is essential for production data."
       },
       {
@@ -1672,33 +1672,33 @@ MODULES_3 = [
         "q": "A 10,000-tag plant sampled at 1 second produces roughly what data volume per day?",
         "options": [
           "A few MB",
-          "Around 100 MB uncompressed / 26 GB per month or roughly 900 MB per day",
           "5 TB per day",
+          "Around 100 MB uncompressed / 26 GB per month or roughly 900 MB per day",
           "Zero"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Order-of-magnitude estimates like this guide cloud cost modeling; compression, deadband, and aggregation can cut it 5-10x."
       },
       {
         "q": "When exporting industrial data containing PII to a third-party analytics vendor, the essential step is:",
         "options": [
           "Ignore governance",
-          "Verify the contract covers PII processing under applicable regulations (GDPR, CCPA) and pseudonymise/encrypt as required",
           "Send raw names",
-          "Skip encryption"
+          "Skip encryption",
+          "Verify the contract covers PII processing under applicable regulations (GDPR, CCPA) and pseudonymise/encrypt as required"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Contract terms plus pseudonymisation, encryption, and retention limits reduce regulatory and reputational risk when PII leaves the plant."
       },
       {
         "q": "In MQTT, what is the role of the retained message?",
         "options": [
-          "It stores all historical values forever",
           "It gives a newly connecting subscriber the last published value on a topic immediately",
+          "It stores all historical values forever",
           "It encrypts the payload",
           "It increases the polling rate"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A retained message is held by the broker so any new subscriber to that topic immediately receives the most recent value without waiting for the next publish, useful for current-state topics."
       },
       {
@@ -1716,22 +1716,22 @@ MODULES_3 = [
         "q": "A machine decision must be made within milliseconds and must keep working if the internet connection drops. Where should this logic run?",
         "options": [
           "Only in the cloud",
-          "At the edge (local device/gateway)",
           "On a remote corporate server",
+          "At the edge (local device/gateway)",
           "It cannot be automated"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Edge computing provides low latency and continued operation without connectivity, suited to real-time decisions. Cloud is better for large-scale storage, cross-site aggregation, and training ML models."
       },
       {
         "q": "What core principle does a zero-trust approach apply to OT/IIoT security?",
         "options": [
           "Trust any device once it is on the plant network",
-          "Never implicitly trust based on network location; authenticate and authorize every connection with least privilege",
           "Disable all encryption for speed",
-          "Give every user administrator rights"
+          "Give every user administrator rights",
+          "Never implicitly trust based on network location; authenticate and authorize every connection with least privilege"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Zero-trust never assumes trust from network location; it authenticates and authorizes every device and user, granting least privilege, with micro-segmentation and monitoring, so a compromised node cannot freely reach controllers."
       }
     ],
@@ -1988,34 +1988,34 @@ MODULES_3 = [
       {
         "q": "Before measuring resistance with DMM:",
         "options": [
-          "Set AC mode",
           "De-energize and isolate the component",
+          "Set AC mode",
           "Use highest range only",
           "Measure voltage on same leads"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NEVER measure ohms on energized circuits. De-energize, lock out, verify dead, THEN measure."
       },
       {
         "q": "Motor insulation 3 Megohms on 480V motor:",
         "options": [
           "Excellent",
-          "Caution - marginal, monitor/schedule replacement",
           "Perfect per IEEE",
+          "Caution - marginal, monitor/schedule replacement",
           "Failed immediately"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Min = ~2M. 3M is above minimum but in caution zone (&lt;100M). Monitor trend; if declining, plan replacement."
       },
       {
         "q": "Half-split troubleshooting:",
         "options": [
-          "Replace half the parts",
           "Test midpoint to find which half has the fault, repeat",
+          "Replace half the parts",
           "Split the team",
           "Run at half speed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Each test eliminates half the circuit. Logarithmically efficient for long signal chains."
       },
       {
@@ -2033,55 +2033,55 @@ MODULES_3 = [
         "q": "You measure 45 VAC on an unloaded conductor you believe is de-energized. What is the most likely cause and the correct tool setting to confirm?",
         "options": [
           "A real 45 V source; use VAC range to confirm",
-          "Ghost voltage from capacitive coupling; switch meter to LoZ (low-impedance) mode",
           "Inductive kick from a nearby relay; use a clamp meter instead",
+          "Ghost voltage from capacitive coupling; switch meter to LoZ (low-impedance) mode",
           "Meter fuse is blown; replace the fuse"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A 10 Mohm input impedance meter can display ghost voltages (typically 10-60 VAC) on de-energized conductors capacitively coupled to adjacent live wires. Low-impedance mode (approx 3 kohm) bleeds the capacitive charge and reads near zero if the conductor is truly dead."
       },
       {
         "q": "A 480 VAC conveyor drive motor megger test at 1000 VDC returns a 1-minute reading of 0.9 Mohm. Per IEEE Std 43-2013, this motor should be:",
         "options": [
           "Returned to service; 0.9 Mohm exceeds the 0.5 Mohm minimum",
-          "Tagged out; it fails the 1 Mohm-per-kV+1 rule (minimum 1.48 Mohm for 480 V)",
           "Tested again at 500 VDC; 1000 VDC is too high for 480 V motors",
-          "Accepted if Polarization Index exceeds 4.0"
+          "Accepted if Polarization Index exceeds 4.0",
+          "Tagged out; it fails the 1 Mohm-per-kV+1 rule (minimum 1.48 Mohm for 480 V)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEEE 43-2013 minimum = 1 Mohm per kV of rated voltage + 1 Mohm. For a 480 V (0.48 kV) motor: 0.48 + 1 = 1.48 Mohm minimum. A reading of 0.9 Mohm falls below this threshold regardless of PI, indicating insulation degradation."
       },
       {
         "q": "When using a clamp meter to check three-phase load balance on a conveyor motor, Phases A, B, and C read 18 A, 18 A, and 26 A respectively. What does this indicate?",
         "options": [
-          "Normal variation; all phases within 50% is acceptable per NEMA MG-1",
           "Phase C has a high-resistance connection upstream; trace back to the panel",
+          "Normal variation; all phases within 50% is acceptable per NEMA MG-1",
           "The motor has an open winding on Phase C",
           "The clamp is positioned incorrectly; re-clamp around all three conductors"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Phase C draws 44% more current than phases A and B (18 A), which far exceeds the roughly 10% tolerance for load imbalance. An open or high-resistance connection on the Phase C feed causes lower voltage on that phase, increasing current drawn. An open winding would show near-zero current, not elevated current. Re-clamping around all three conductors would cancel and read near zero."
       },
       {
         "q": "You are working on an energized 480 VAC MCC in ACY1. Which CAT rating is the minimum acceptable for your digital multimeter?",
         "options": [
           "CAT I 600 V",
-          "CAT II 600 V",
           "CAT III 600 V",
+          "CAT II 600 V",
           "CAT IV 300 V"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "IEC 61010-1 CAT III covers fixed building wiring and motor control centers at 480 VAC three-phase distribution. CAT II is for branch-circuit outlets. CAT I is for electronic equipment only. CAT IV 300 V has lower absolute voltage rating than needed. CAT III 600 V or 1000 V is correct for MCC work."
       },
       {
         "q": "A voltage-drop test across a closed contactor main contact under full motor load reads 480 mV. What does this indicate?",
         "options": [
           "Normal; less than 500 mV is acceptable for contactors",
-          "High resistance in the contact; healthy contacts should drop less than 100 mV",
           "The contactor is de-energized; a closed contact cannot have voltage across it",
+          "High resistance in the contact; healthy contacts should drop less than 100 mV",
           "Meter leads are connected backwards; reverse polarity"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A healthy bolted contactor main contact should drop less than 100 mV at rated current. A 480 mV drop indicates contact pitting or loose contact pressure, creating a high-resistance joint that generates heat and could lead to arc damage or nuisance trips. This fault would not be caught by a continuity check when de-energized."
       },
       {
@@ -2089,21 +2089,21 @@ MODULES_3 = [
         "options": [
           "No action; less than 40 deg C delta-T is acceptable",
           "Monitor; possible deficiency but within normal range",
-          "Schedule prompt repair within the next maintenance window",
-          "Immediate repair; greater than 40 deg C delta-T indicates imminent failure"
+          "Immediate repair; greater than 40 deg C delta-T indicates imminent failure",
+          "Schedule prompt repair within the next maintenance window"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "NETA MTS-2019 Table 1 delta-T thresholds: 1-10 deg C = monitor; 11-20 deg C = investigate; 21-40 deg C = schedule prompt repair; greater than 40 deg C = repair immediately. A 24 deg C delta-T falls in the 21-40 deg C band, requiring scheduled prompt repair."
       },
       {
         "q": "On an ACY1 Allen-Bradley AutoCAD Electrical print, wire number 4033 is encountered. Without seeing the circuit, what voltage level does this wire carry by the ACY1 wire-numbering convention?",
         "options": [
+          "24 VDC",
           "480 VAC",
           "120 VAC control",
-          "24 VDC",
           "Signal/analog level"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "ACY1 wire-numbering convention assigns the first digit to voltage level: 1xxx = 480 VAC, 2xxx = 120 VAC control, 4xxx = 24 VDC. Wire 4033 begins with 4, indicating 24 VDC. This allows technicians to predict the voltage on any wire before contact, a critical safety practice."
       },
       {
@@ -2132,33 +2132,33 @@ MODULES_3 = [
         "q": "During the Live-Dead-Live verification procedure, after testing a suspected dead circuit you re-test the meter on a known live source and get no reading. What must you conclude?",
         "options": [
           "The target circuit is confirmed dead",
-          "The meter failed between measurements; the dead reading on the target circuit is unreliable",
           "The known live source has also de-energized",
+          "The meter failed between measurements; the dead reading on the target circuit is unreliable",
           "The meter fuse is intact; proceed with work on the circuit"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Live-Dead-Live requires the meter to function correctly on a known source before AND after testing the target. If the meter fails the post-test live check, it means the meter malfunctioned (blown fuse, failed lead, dropped meter) at some point during the test. The dead reading on the target cannot be trusted. A failed post-test is the scenario that prevents contact with an energized conductor."
       },
       {
         "q": "In the ACY1 BC-047 troubleshooting example, voltage was present at the PLC output terminal but absent at terminal TS-4/22. The E-stop string runs between these two points with three E-stops in series. Using half-split, which E-stop should be measured first?",
         "options": [
           "ES-1 (first in series from the PLC output)",
-          "ES-2 (midpoint of the three-E-stop string)",
           "ES-3 (last before TS-4/22)",
-          "All three simultaneously by measuring phase-to-neutral"
+          "All three simultaneously by measuring phase-to-neutral",
+          "ES-2 (midpoint of the three-E-stop string)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "With three E-stops in series (ES-1, ES-2, ES-3), the midpoint is between ES-1 and ES-2. Measuring the junction between ES-1 and ES-2 first eliminates half the string: if voltage is present, fault is downstream (ES-2 or ES-3); if absent, fault is at ES-1. This finds the fault in 2 measurements instead of up to 3 sequential measurements from one end."
       },
       {
         "q": "A 480 V sortation conveyor has 18 VFDs on one feeder. A power quality analyzer measures THD-I of 36% at the panel. Per IEEE 519-2022, this reading at the point of common coupling:",
         "options": [
-          "Meets the 40% limit established for drive-heavy industrial panels",
           "Exceeds the 5% limit and requires mitigation such as line reactors or filters",
+          "Meets the 40% limit established for drive-heavy industrial panels",
           "Is acceptable because individual drives each contribute less than 5%",
           "Only requires action if neutral current exceeds 200% of phase current"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "IEEE 519-2022 limits THD-I to 5% at the point of common coupling for most industrial feeders. 36% far exceeds this limit. Each drive does not get its own 5% allowance; the aggregate distortion at the PCC is what must comply. Mitigation options include 5% AC line reactors, passive LC filters, or active front-end (AFE) drives."
       },
       {
@@ -2176,33 +2176,33 @@ MODULES_3 = [
         "q": "A motor winding DC resistance test yields Ra = 1.20 Ohm, Rb = 1.19 Ohm, Rc = 1.41 Ohm. The resistance unbalance percentage is closest to:",
         "options": [
           "1.7%",
-          "17.4%",
           "5.0%",
+          "17.4%",
           "10.2%"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "R_avg = (1.20 + 1.19 + 1.41) / 3 = 1.267 Ohm. Unbalance = (R_max - R_min) / R_avg x 100% = (1.41 - 1.19) / 1.267 x 100% = 0.22 / 1.267 x 100% = 17.4%. This far exceeds the 2% guideline per EASA AR100, indicating a likely shorted turn or high-resistance terminal connection. Check terminal tightness before condemning the winding."
       },
       {
         "q": "A VFD driving a belt conveyor trips on Overcurrent every time the belt starts from rest but runs normally once at full speed. The most likely cause is:",
         "options": [
           "A shorted turn in the motor winding",
-          "The acceleration ramp time is too short, producing excessive dI/dt at startup",
           "A ground fault on the output cable",
-          "DC bus undervoltage from a failing precharge resistor"
+          "DC bus undervoltage from a failing precharge resistor",
+          "The acceleration ramp time is too short, producing excessive dI/dt at startup"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "If the drive trips only during acceleration and runs without fault at speed, the inrush current spike during startup exceeds the drive overcurrent trip threshold. Extending the acceleration ramp time reduces dI/dt and the peak current drawn. Shorted windings and ground faults typically trip the drive at all operating points, not exclusively during acceleration."
       },
       {
         "q": "A 24 V DC PLC input card is configured for sourcing (PNP) logic. An NPN (sinking) proximity sensor is connected without a pull-up resistor. The most likely symptom is:",
         "options": [
+          "The input sits in the IEC 61131-2 undefined voltage zone and chatters unpredictably",
           "The input terminal burns out immediately due to reverse polarity current",
           "The input reads logic 1 constantly because the sensor pulls the input to 0 V",
-          "The input sits in the IEC 61131-2 undefined voltage zone and chatters unpredictably",
           "The input reads correctly because NPN and PNP are electrically interchangeable"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A sourcing (PNP) card expects +24 V at its terminal for logic 1. An NPN sensor pulls to 0 V when active but leaves the input floating when inactive. The floating input sits in the IEC 61131-2 Type 1 undefined zone (5 to 15 V), causing erratic or chattering behavior. The card is not damaged, but the circuit does not operate reliably."
       },
       {
@@ -2220,11 +2220,11 @@ MODULES_3 = [
         "q": "A TDR test on a conveyor control cable (VF = 0.67, v_p = 2.01 x 10^8 m/s) shows a negative-polarity reflected pulse at a round-trip delay of 100 ns. The fault distance and type are:",
         "options": [
           "20.1 m, open circuit",
-          "10.05 m, short circuit",
           "10.05 m, open circuit",
+          "10.05 m, short circuit",
           "20.1 m, short circuit"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Distance d = (v_p x t_r) / 2 = (2.01 x 10^8 x 100 x 10^-9) / 2 = 20.1 / 2 = 10.05 m. Negative-polarity reflection indicates an impedance decrease - a short circuit. A positive-polarity reflection indicates an open circuit."
       },
       {
@@ -2242,22 +2242,22 @@ MODULES_3 = [
         "q": "A sourcing 4-20 mA transmitter loop uses a 250 Ohm input resistor at the PLC. The process variable is at 50% of span. The voltage across the PLC input resistor is:",
         "options": [
           "2.0 V",
-          "3.0 V",
           "2.5 V",
-          "5.0 V"
+          "5.0 V",
+          "3.0 V"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "At 50% span: I = 4 mA + (20 - 4) x 0.50 = 12 mA. V = I x R = 12 x 10^-3 x 250 = 3.0 V. The 4-20 mA range maps linearly to 1 to 5 V across 250 Ohm (4 mA = 1 V, 20 mA = 5 V), confirming 12 mA = 3.0 V at 50% of span."
       },
       {
         "q": "HART protocol (IEC 61158-2) superimposes a digital signal on the 4-20 mA loop. The two FSK carrier frequencies used are:",
         "options": [
-          "60 Hz and 120 Hz",
           "1200 Hz and 2200 Hz",
+          "60 Hz and 120 Hz",
           "4800 Hz and 9600 Hz",
           "31.25 kHz and 62.5 kHz"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "HART uses Bell 202 FSK modulation at 1200 Hz for logic 1 and 2200 Hz for logic 0. The AC HART signal averages to zero DC and does not affect the 4-20 mA analog measurement. 31.25 kHz is Foundation Fieldbus H1; 60/120 Hz and 4800/9600 Hz are not HART frequencies."
       },
       {
@@ -2275,33 +2275,33 @@ MODULES_3 = [
         "q": "A 480 V VFD has a 2000 microfarad DC bus capacitor bank. After power-down, the technician measures the DC bus at 677 V before opening the enclosure. The stored energy is approximately:",
         "options": [
           "46 J",
-          "458 J",
           "1.35 kJ",
+          "458 J",
           "677 J"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "E = 0.5 x C x V^2 = 0.5 x 2000 x 10^-6 x 677^2 = 0.001 x 458329 = 458 J. This is a significant hazard. Per NFPA 70E and OSHA 1910.147, always verify DC bus voltage at 0 V with a CAT III/IV rated DMM before contacting internal drive components. Manufacturer bleed-down time is typically 5 to 10 minutes."
       },
       {
         "q": "A conveyor contactor L3 pole measures 6.1 milliohm contact resistance (limit is 5 milliohm). At 25 A running current, the power dissipated at that contact pole is:",
         "options": [
           "0.15 W",
-          "3.8 W",
           "152 mW",
-          "61 mW"
+          "61 mW",
+          "3.8 W"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "P = I^2 x R = 25^2 x 0.0061 = 625 x 0.0061 = 3.8 W. This localized heat is concentrated at one contact tip and will produce a detectable hot spot with a thermal camera. The 5 milliohm limit exists because I^2*R heating becomes thermally significant at typical motor currents above this resistance, accelerating oxidation and tip degradation."
       },
       {
         "q": "During a HART calibration trim on a pressure transmitter, the field communicator activates Fixed Loop Current mode and sets the output to 4 mA. The risk to the process control system is:",
         "options": [
-          "No risk; fixed mode improves HART communication reliability during the trim procedure",
           "The 4-20 mA output is frozen at 4 mA so the PLC reads a constant value and cannot respond to actual process changes",
+          "No risk; fixed mode improves HART communication reliability during the trim procedure",
           "The transmitter continuously outputs 20 mA causing a high-process alarm only",
           "Fixed loop mode affects only the HART digital channel, not the analog 4-20 mA output"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "In Fixed Loop Current mode, the transmitter locks its 4-20 mA analog output at the specified value regardless of the actual measured process variable. Any PLC control loop using this signal operates on a false constant input. Always coordinate with operators before entering Fixed Loop mode and restore the transmitter to measurement mode immediately after the trim is complete."
       },
       {
@@ -2319,33 +2319,33 @@ MODULES_3 = [
         "q": "Why must you use a True-RMS meter on a VFD output or other non-sinusoidal signal?",
         "options": [
           "It looks more professional",
-          "An averaging meter reads non-sinusoidal/PWM waveforms incorrectly; True-RMS reads them correctly",
           "True-RMS meters are cheaper",
+          "An averaging meter reads non-sinusoidal/PWM waveforms incorrectly; True-RMS reads them correctly",
           "It prevents fuse blowing"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Averaging meters assume a pure sine and misread distorted/PWM waveforms; a True-RMS meter computes actual RMS and reads VFD outputs and non-sinusoidal signals correctly."
       },
       {
         "q": "You clamp a clamp meter around a single motor phase conductor. One of three phases reads near zero amps while the others read normal FLA. What does this indicate?",
         "options": [
           "Normal balanced operation",
-          "A lost phase (single-phasing) - dangerous for the motor",
           "The clamp is around all three conductors",
-          "A ground fault only"
+          "A ground fault only",
+          "A lost phase (single-phasing) - dangerous for the motor"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Near-zero on one phase while others carry current means that phase is lost (single-phasing), which overheats the motor and must be corrected immediately."
       },
       {
         "q": "Why must you NEVER perform a megger (insulation resistance) test through a connected VFD?",
         "options": [
-          "It gives a low reading",
           "The high DC test voltage destroys the drive's semiconductors/electronics",
+          "It gives a low reading",
           "It is too slow",
           "The megger will not turn on"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A megger applies hundreds of volts DC; sent through a drive it destroys the sensitive power semiconductors. Always isolate/disconnect the motor from the VFD before meggering."
       },
       {
@@ -2363,33 +2363,33 @@ MODULES_3 = [
         "q": "When measuring current with a standard clamp meter, how many conductors should be inside the jaw?",
         "options": [
           "All three phases together",
-          "Exactly one conductor",
           "Two conductors",
+          "Exactly one conductor",
           "The ground and one phase"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A clamp reads the net magnetic field; clamping one conductor gives that conductor's current. Multiple conductors' fields partially cancel, giving a wrong (often near-zero) reading."
       },
       {
         "q": "What is the safe sequence for verifying a circuit is de-energized before work?",
         "options": [
           "Test dead only",
-          "Live-dead-live: prove the meter works on a known live source, test the target dead, then re-prove the meter live",
           "Assume it is off if the breaker is open",
-          "Dead-live-dead"
+          "Dead-live-dead",
+          "Live-dead-live: prove the meter works on a known live source, test the target dead, then re-prove the meter live"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Live-dead-live confirms your meter is actually working before and after the zero-energy test, so a dead reading truly means de-energized and not a failed meter."
       },
       {
         "q": "Which meter function best catches an intermittent voltage dropout you cannot watch continuously?",
         "options": [
-          "Diode test",
           "Min/Max / record mode",
+          "Diode test",
           "Capacitance",
           "Continuity beep"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Min/Max/record captures the lowest and highest values (and transients) over time, revealing intermittent dropouts you would miss watching the live display."
       },
       {
@@ -2407,33 +2407,33 @@ MODULES_3 = [
         "q": "A photoeye works when clean but drops out once its lens fouls with dust. What concept explains this and how is it prevented?",
         "options": [
           "The IP address changed",
-          "Low operating margin (excess gain); install for a margin of at least 2-3x so contamination is tolerated before dropout",
           "The PLC is too fast",
+          "Low operating margin (excess gain); install for a margin of at least 2-3x so contamination is tolerated before dropout",
           "Photoeyes never foul"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Excess gain/operating margin is the ratio of received to minimum signal; a healthy install targets 2-3x or more so lens contamination does not push it below switching threshold."
       },
       {
         "q": "A PNP (sourcing) proximity sensor is wired to a sinking input card and reads nothing. The fault is:",
         "options": [
           "A dead PLC",
-          "An output-type mismatch - sourcing sensor on a sinking input; they must match",
           "A blown fuse",
-          "Wrong IP address"
+          "Wrong IP address",
+          "An output-type mismatch - sourcing sensor on a sinking input; they must match"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Sensor output type (PNP/sourcing vs NPN/sinking) must match the input card's expectation; a mismatch means the input never sees the signal despite a working sensor."
       },
       {
         "q": "A drive faults on excessive following error while the motor physically tries to move. What should you suspect?",
         "options": [
-          "A mechanical coupling slip",
           "A feedback (encoder/resolver) problem - lost counts or a dead channel",
+          "A mechanical coupling slip",
           "The wrong recipe",
           "A dirty lens"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Following error with the motor attempting motion points to feedback loss (noise, dead channel, wiring); smooth motion ending in the wrong place points to coupling slip or homing error."
       },
       {
@@ -2451,33 +2451,33 @@ MODULES_3 = [
         "q": "On an ungrounded (or high-resistance-grounded) system, why is a single ground fault dangerous even though the system keeps running?",
         "options": [
           "It trips instantly",
-          "A second fault on another phase becomes a phase-to-phase short, and healthy phases sit at elevated voltage to ground",
           "It cannot happen",
+          "A second fault on another phase becomes a phase-to-phase short, and healthy phases sit at elevated voltage to ground",
           "It speeds up motors"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The first ground fault draws little current so service continues, but it elevates the other phases and a second fault elsewhere completes a phase-to-phase short - hence ground-detection alarms."
       },
       {
         "q": "A UPS front panel reports 'online', yet the batteries are 5 years old in a hot enclosure. What is the risk?",
         "options": [
           "No risk - the icon is definitive",
-          "Battery capacity has faded; actual runtime may be minutes, so a load/runtime test is needed, not trust in the icon",
           "The UPS is too new",
-          "It will overcharge"
+          "It will overcharge",
+          "Battery capacity has faded; actual runtime may be minutes, so a load/runtime test is needed, not trust in the icon"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "VRLA capacity fades with age/heat; an 'online' indicator does not prove runtime. A load or runtime test (or self-test) gives the true remaining capacity."
       },
       {
         "q": "Why must a failure report distinguish the failed component from the root cause?",
         "options": [
-          "Paperwork rules",
           "Replacing the failed part without finding WHY it failed (e.g. a seal let coolant into a bearing) guarantees a repeat failure",
+          "Paperwork rules",
           "They are the same thing",
           "Root cause is optional"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The failed component is a symptom; unless the root cause (why it failed) is found and corrected, the same failure recurs - the core discipline of reliability troubleshooting."
       },
       {
@@ -2495,33 +2495,33 @@ MODULES_3 = [
         "q": "A VFD trips on DC bus OVERVOLTAGE (OV) during a fast stop. The most likely cause is:",
         "options": [
           "A jammed conveyor",
-          "Decelerating too fast without a brake resistor - regenerated energy pumps up the DC bus",
           "Low line voltage",
+          "Decelerating too fast without a brake resistor - regenerated energy pumps up the DC bus",
           "A dirty photoeye"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Rapid deceleration regenerates energy into the DC bus; without a brake resistor or regen unit the bus voltage rises and trips OV. Overcurrent (not OV) signals a mechanical jam."
       },
       {
         "q": "An averaging multimeter reading AC voltage on a distorted VFD output typically reads:",
         "options": [
           "Correct because averaging is universal",
-          "Low by 10-40% because averaging assumes a pure sine wave",
           "Zero",
-          "Higher than the drive display"
+          "Higher than the drive display",
+          "Low by 10-40% because averaging assumes a pure sine wave"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Distorted waveforms violate the sine assumption; a true-RMS meter samples the actual waveform and computes correct RMS."
       },
       {
         "q": "A non-contact voltage tester should NEVER be used as the sole verification for:",
         "options": [
-          "Screening a suspect wire",
           "LOTO zero-energy verification (must use contact meter with live-dead-live procedure)",
+          "Screening a suspect wire",
           "Finding a live receptacle",
           "Educational demonstrations"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NCVTs can miss shielded live wires and give false positives; life-safety LOTO verification requires a contact meter proven on a known live source before and after."
       },
       {
@@ -2539,33 +2539,33 @@ MODULES_3 = [
         "q": "Before pulling out a meter on a chronic problem, the most efficient first step is:",
         "options": [
           "Replace the largest component",
-          "Structured interview and site walk to form a hypothesis",
           "Turn off all power",
+          "Structured interview and site walk to form a hypothesis",
           "Order new parts blindly"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Interviews and walk-throughs surface the story (what changed, when, patterns) that guide the meter to the right place, saving hours."
       },
       {
         "q": "Which is a required rating for a DMM used in industrial electrical panels?",
         "options": [
           "No rating needed",
-          "CAT III (600 V or 1000 V) or CAT IV depending on location",
           "CAT I only",
-          "CAT 5 wiring only"
+          "CAT 5 wiring only",
+          "CAT III (600 V or 1000 V) or CAT IV depending on location"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "CAT ratings define the meter's ability to safely interrupt transients at various points in the distribution system; industrial panels typically need CAT III or IV."
       },
       {
         "q": "A failure report should always capture the ROOT CAUSE and not just:",
         "options": [
-          "The color of the panel",
           "The immediate fix, because without root cause the failure is likely to recur",
+          "The color of the panel",
           "The operator's name only",
           "The weather"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Preventive action requires root cause; documenting only the immediate fix leads to repeated occurrences and no systemic improvement."
       },
       {
@@ -2583,33 +2583,33 @@ MODULES_3 = [
         "q": "A load profile that shows voltage sags coinciding with a large motor start suggests:",
         "options": [
           "The motor is fine",
-          "The supply feeder or transformer is undersized for the inrush, or protection is coordinated wrong",
           "The meter is bad",
+          "The supply feeder or transformer is undersized for the inrush, or protection is coordinated wrong",
           "No relationship"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Voltage sag during start indicates the source impedance cannot support inrush without droop; corrective options include soft start, feeder upgrade, or generator sizing."
       },
       {
         "q": "The three-step live-dead-live LOTO verification means:",
         "options": [
           "Test only the target",
-          "Verify the meter on a known live source, test the de-energised target, verify the meter on the known live source again",
           "Only test after energising",
-          "Skip if in a hurry"
+          "Skip if in a hurry",
+          "Verify the meter on a known live source, test the de-energised target, verify the meter on the known live source again"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Live-dead-live proves the meter itself is working before and after the target test, catching a broken meter that would otherwise read \"safe\" wrongly."
       },
       {
         "q": "A wire connection reads good on an ohmmeter but the circuit fails intermittently under load. Which test best reveals a high-resistance connection?",
         "options": [
-          "Continuity beep with the circuit off",
           "Voltage-drop test across the connection while it carries normal load current",
+          "Continuity beep with the circuit off",
           "Insulation resistance to ground",
           "Measuring supply voltage only"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A voltage-drop test energized and under load reveals high-resistance connections that an ohmmeter's tiny test current misses. A good connection drops near zero volts; a corroded or loose one drops a telling amount."
       },
       {
@@ -2627,22 +2627,22 @@ MODULES_3 = [
         "q": "A VFD trips on OVERVOLTAGE. Which cause should you investigate first?",
         "options": [
           "Supply voltage too low",
-          "Regeneration from a load decelerating too fast, pumping up the DC bus",
           "Clogged heatsink",
+          "Regeneration from a load decelerating too fast, pumping up the DC bus",
           "A blown control fuse"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Overvoltage typically comes from regenerative energy when a load decelerates too fast, pumping the DC bus above its limit. Fixes include extending deceleration time or adding a braking resistor/regenerative unit."
       },
       {
         "q": "Why must a multimeter's CAT (measurement category) rating match the point being measured, not just its voltage rating?",
         "options": [
           "CAT rating only affects display resolution",
-          "The CAT rating sets the transient energy the meter can safely contain; using an under-rated meter risks it exploding during a transient",
           "Higher CAT meters read faster",
-          "CAT rating is unrelated to safety"
+          "CAT rating is unrelated to safety",
+          "The CAT rating sets the transient energy the meter can safely contain; using an under-rated meter risks it exploding during a transient"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "CAT ratings reflect the available transient energy at different points in the distribution system. A meter under-rated for the category can fail catastrophically during a transient even if its voltage rating seems adequate."
       }
     ],
@@ -2896,23 +2896,23 @@ MODULES_3 = [
       {
         "q": "1x RPM vibration on a motor indicates:",
         "options": [
-          "Bearing failure",
           "Imbalance (most common)",
+          "Bearing failure",
           "Electrical fault",
           "Cavitation"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "1x RPM = shaft speed frequency = rotor imbalance. Most common vibration problem. Fix by balancing."
       },
       {
         "q": "MTBF=500hr, MTTR=5hr. Availability?",
         "options": [
-          "99.0%",
           "90.0%",
+          "99.0%",
           "50.0%",
           "95.0%"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "500/(500+5) = 500/505 = 99.0%."
       },
       {
@@ -2952,11 +2952,11 @@ MODULES_3 = [
         "q": "The P-F interval on a sorter drive bearing is determined to be 6 weeks. To ensure detection before functional failure, the PdM inspection interval should be no greater than:",
         "options": [
           "6 weeks",
-          "4 weeks",
           "3 weeks",
+          "4 weeks",
           "1 week"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The sampling interval must be less than P-F/2 to guarantee at least one detection opportunity between point P and point F. P-F/2 = 6/2 = 3 weeks, so inspections every 3 weeks or less are required."
       },
       {
@@ -2984,12 +2984,12 @@ MODULES_3 = [
       {
         "q": "An IR scan of an ACY1 MCC bucket reveals a delta-T of 25 degrees C between one motor starter lug and the reference phase lug under full load. Per NETA severity guidelines, this requires:",
         "options": [
+          "Immediate action - remove from service or repair before next shift",
           "No action; monitor at next annual survey",
           "Repair within 30 days",
-          "Repair within 90 days at next planned outage",
-          "Immediate action - remove from service or repair before next shift"
+          "Repair within 90 days at next planned outage"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "Because this delta-T is measured between two similar components under the same load (the faulted lug vs. the reference-phase lug), NETA's component-to-component criteria apply, which are stricter than the delta-T-over-ambient table: a delta-T &gt;15 deg C between similar components under similar load is a major discrepancy requiring immediate corrective action. At 25 deg C this current-carrying connection poses a fire/failure risk and must be repaired before the next shift."
       },
       {
@@ -3006,23 +3006,23 @@ MODULES_3 = [
       {
         "q": "Per IEEE Std 43-2013, the minimum acceptable insulation resistance for a 460 V (0.46 kV) motor winding tested at 500 V DC is:",
         "options": [
-          "1 M-ohm",
           "5 M-ohm",
           "100 M-ohm",
+          "1 M-ohm",
           "1000 M-ohm"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "IEEE 43-2013 minimum IR = (kV + 1) M-ohm = (0.46 + 1) = ~1.5 M-ohm, rounded to 1 M-ohm minimum. However, for motors &gt;1 kV, 100 M-ohm is the minimum. A 460 V motor minimum is approximately 1 M-ohm by this formula."
       },
       {
         "q": "A Motor Circuit Analysis (MCA) test on a 460 V conveyor motor shows inductance values of 12.1 mH, 12.0 mH, and 15.4 mH across the three phases. What does this indicate?",
         "options": [
           "Normal - all values are within 5% balance",
-          "Possible turn-to-turn winding fault on the high-inductance phase; imbalance exceeds 5% limit",
           "Open circuit on one phase; measurement is too high",
-          "Capacitive imbalance from a failed power-factor correction capacitor"
+          "Capacitive imbalance from a failed power-factor correction capacitor",
+          "Possible turn-to-turn winding fault on the high-inductance phase; imbalance exceeds 5% limit"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "MCA inductance balance limit is within 5% between phases. The third phase at 15.4 mH vs ~12.0 mH average shows ~28% deviation, strongly indicating a developing inter-turn short or winding fault requiring further investigation."
       },
       {
@@ -3039,23 +3039,23 @@ MODULES_3 = [
       {
         "q": "An ACY1 sorter line has Availability = 0.91, Performance = 0.94, and Quality = 0.98. What is the OEE, and does it meet world-class threshold?",
         "options": [
-          "OEE = 83.8%; below world-class threshold of 85%",
           "OEE = 91.0%; meets world-class threshold",
+          "OEE = 83.8%; below world-class threshold of 85%",
           "OEE = 94.0%; meets world-class threshold",
           "OEE = 78.2%; far below world-class threshold"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "OEE = 0.91 x 0.94 x 0.98 = 0.838 = 83.8%. World-class OEE benchmark is &gt;=85%, so 83.8% is below threshold and would trigger a reliability review in ACY1's APM system."
       },
       {
         "q": "ACY1 RME's target for PM compliance (work orders completed on time vs. scheduled) is at least 90%. If compliance falls below 80%, the most direct consequence tracked in EAM/APM metrics is:",
         "options": [
           "Increased MTBF for critical assets",
-          "Higher reactive (unplanned) maintenance rate and increased downtime",
           "Reduced spare-parts consumption",
+          "Higher reactive (unplanned) maintenance rate and increased downtime",
           "Improved OEE through fewer planned interruptions"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "PM compliance below 80% means scheduled maintenance tasks are being skipped or delayed. This allows preventable failures to develop, directly increasing unplanned (reactive) maintenance events, downtime, and MTTR. EAM data correlates low PM compliance with higher reactive-WO rates."
       },
       {
@@ -3063,10 +3063,10 @@ MODULES_3 = [
         "options": [
           "Wear-out: failure rate increases with age",
           "Random: constant failure rate independent of age",
-          "Infant mortality: failure rate decreases over time",
-          "Bimodal: two competing failure mechanisms present"
+          "Bimodal: two competing failure mechanisms present",
+          "Infant mortality: failure rate decreases over time"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Beta &lt; 1 indicates a decreasing hazard rate (infant mortality pattern). Beta = 1 is exponential/random. Beta &gt; 1 is wear-out. A value of 0.6 suggests early-life failures from installation defects or material defects. Corrective action is improved installation practice or incoming inspection, not time-based replacement intervals."
       },
       {
@@ -3095,33 +3095,33 @@ MODULES_3 = [
         "q": "A soft-foot check reveals 0.08 mm shaft deflection when one motor foot bolt is loosened. The correct next step is:",
         "options": [
           "Proceed with laser alignment - 0.08 mm is within typical shaft alignment tolerance",
-          "Correct soft foot with precision shims before beginning alignment",
           "Re-torque the bolt to a higher value and re-check deflection",
+          "Correct soft foot with precision shims before beginning alignment",
           "Rotate the motor 90 degrees on the baseplate and re-check"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The soft-foot deflection threshold is 0.05 mm (2 mil). At 0.08 mm, soft foot must be corrected with precision stainless steel shims before any alignment work. Aligning over soft foot causes the shaft position to shift when bolts are re-torqued, invalidating all alignment corrections made."
       },
       {
         "q": "Envelope (demodulation) analysis detects early rolling element bearing defects by:",
         "options": [
           "Measuring RMS velocity in the 10-1,000 Hz band and comparing to ISO 10816 severity zones",
-          "Band-pass filtering around a high-frequency resonance, rectifying, then FFT-ing the amplitude envelope to reveal defect frequencies",
           "Comparing the DC offset of the vibration signal to a stored baseline waveform",
-          "Measuring shaft displacement with an eddy-current proximity probe at operating speed"
+          "Measuring shaft displacement with an eddy-current proximity probe at operating speed",
+          "Band-pass filtering around a high-frequency resonance, rectifying, then FFT-ing the amplitude envelope to reveal defect frequencies"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Envelope analysis exploits bearing impacts exciting structural resonances at 1-20 kHz. By band-passing around a resonance, rectifying, and taking the FFT of the envelope, defect frequencies (BPFO, BPFI, BSF, FTF) are revealed in early Stage 2 - long before broadband RMS velocity levels rise to ISO alarm thresholds."
       },
       {
         "q": "A VFD DC bus capacitor measured 0.08 ohms ESR at commissioning. At what ESR value should it be scheduled for replacement?",
         "options": [
-          "0.10 ohms (25% above baseline)",
           "0.16 ohms (2x baseline)",
+          "0.10 ohms (25% above baseline)",
           "1.0 ohm",
           "Only replace after an actual drive failure event"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The accepted replacement criterion for electrolytic bus capacitors is ESR &gt; 2x as-commissioned baseline, or capacitance &lt; 80% of rated value. At baseline 0.08 ohm, replace at 0.16 ohm. At this point capacitance has degraded enough to cause excessive DC bus ripple, increasing risk of nuisance overvoltage trips and eventual drive failure."
       },
       {
@@ -3150,22 +3150,22 @@ MODULES_3 = [
         "q": "In RCM decision logic per SAE JA1011, a hidden functional failure (e.g., a backup PLC battery that has silently discharged) requires which maintenance task type?",
         "options": [
           "Scheduled discard at the component half-life interval",
-          "A proof-test (functional test) at an interval derived from the required protective function availability",
           "Run-to-failure, since hidden failures have no direct operational consequence",
-          "Continuous condition monitoring only - no scheduled task needed"
+          "Continuous condition monitoring only - no scheduled task needed",
+          "A proof-test (functional test) at an interval derived from the required protective function availability"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "SAE JA1011 specifies that hidden failures require a scheduled functional test (proof test) at an interval calculated from the desired unavailability of the protective function. RTF is never acceptable for hidden failures that protect safety functions. Continuous monitoring may complement but does not replace the scheduled functional test requirement."
       },
       {
         "q": "Using the EOQ formula EOQ = sqrt(2DS/H), with D = 30 belts/year, S = 50 per order, H = 20 per belt per year, what is the optimal order quantity?",
         "options": [
-          "5 belts",
           "12 belts",
+          "5 belts",
           "30 belts",
           "87 belts"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "EOQ = sqrt(2 x 30 x 50 / 20) = sqrt(3000/20) = sqrt(150) = 12.25, rounded to 12 belts per order. This minimizes the total of annual ordering cost (decreases with larger orders) and annual holding cost (increases with larger orders). For critical items with long lead times, strategic stock above EOQ may be justified by consequence of stockout."
       },
       {
@@ -3183,77 +3183,77 @@ MODULES_3 = [
         "q": "In an IIoT condition monitoring architecture, OPC-UA (IEC 62541) is preferred over MQTT for plant-floor PLC/SCADA integration primarily because:",
         "options": [
           "OPC-UA has lower power consumption for battery-operated wireless sensors",
-          "OPC-UA provides a structured, semantically rich, secure information model suited to industrial automation interoperability",
           "OPC-UA operates at higher sample rates than MQTT for continuous waveform streaming",
+          "OPC-UA provides a structured, semantically rich, secure information model suited to industrial automation interoperability",
           "MQTT requires a licensed server while OPC-UA is open-source and free to deploy"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "OPC-UA (IEC 62541) provides a secure, structured information model with namespaces, data types, and built-in security (authentication, encryption), making it the preferred standard for integrating PLCs, SCADA, historians, and CMMS in industrial environments. MQTT is lightweight and suited for cloud transport but lacks OPC-UA native industrial information model and security framework."
       },
       {
         "q": "In a 5-Why root cause analysis, the analysis should stop when:",
         "options": [
           "Exactly five Why iterations have been completed",
-          "A corrective action that can be implemented and sustained has been identified",
           "The physical failure mode (e.g., bearing spalling) has been confirmed by lab analysis",
-          "Two independent team members agree on the probable cause"
+          "Two independent team members agree on the probable cause",
+          "A corrective action that can be implemented and sustained has been identified"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The 5-Why method is not literally limited to five iterations. It continues until a systemic, organizational, or latent root cause is reached for which a sustainable corrective action exists. Stopping at the physical cause (bearing spalled) without asking why the bearing was allowed to reach that condition misses the latent organizational root cause and allows recurrence."
       },
       {
         "q": "A bearing has Z = 8 rolling elements, shaft speed n = 1,200 RPM, and geometry factor (1 - (d/D)cos(alpha)) = 0.60. Using BPFO = (Z/2) x (n/60) x geometry factor, what is the outer race defect frequency?",
         "options": [
-          "24.0 Hz",
           "48.0 Hz",
+          "24.0 Hz",
           "96.0 Hz",
           "4.8 Hz"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "BPFO = (Z/2) x (n/60) x geometry factor = (8/2) x (1200/60) x 0.60 = 4 x 20 x 0.60 = 48.0 Hz. Setting a spectral alarm line at exactly 48 Hz in the vibration analyzer triggers detection only when an outer race defect is present, providing much greater specificity than a broadband RMS alarm threshold."
       },
       {
         "q": "Which maintenance strategy uses condition data plus trending/models to forecast a failure and act just in time?",
         "options": [
           "Reactive (run-to-failure)",
-          "Time-based preventive",
           "Predictive (PdM)",
+          "Time-based preventive",
           "Breakdown maintenance"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Predictive maintenance uses measured condition data and trending/models to forecast when failure will occur and intervene just in time, minimizing both breakdowns and unnecessary work."
       },
       {
         "q": "On the P-F curve, what does the P-F interval represent?",
         "options": [
           "The total life of the asset",
-          "The warning/lead time between detectable potential failure (P) and functional failure (F)",
           "The time to order parts",
+          "The warning/lead time between detectable potential failure (P) and functional failure (F)",
           "The calendar PM frequency"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The P-F interval is the time from when a defect first becomes detectable (P) to functional failure (F) - the window in which you can plan and act. Inspections must be more frequent than this interval."
       },
       {
         "q": "A vibration spectrum shows a dominant peak at 1x running speed in the radial direction. What fault does this most likely indicate?",
         "options": [
           "Bearing defect",
-          "Imbalance",
           "Electrical noise",
-          "Cavitation"
+          "Cavitation",
+          "Imbalance"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A high 1x radial peak is the classic signature of imbalance; misalignment shows strong 2x, looseness shows many harmonics, and bearing defects show non-synchronous high-frequency peaks."
       },
       {
         "q": "Why can over-greasing a bearing cause failure?",
         "options": [
-          "It cannot - more grease is always better",
           "Excess grease blows out seals and overheats/cooks the bearing",
+          "It cannot - more grease is always better",
           "It lowers the oil viscosity",
           "It reduces vibration to zero"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Too much grease over-pressurizes the housing, blows out seals, and churns/overheats, damaging the bearing. Correct lubrication is right amount, interval, type, and cleanliness."
       },
       {
@@ -3271,11 +3271,11 @@ MODULES_3 = [
         "q": "If MTBF = 200 hours and MTTR = 5 hours, what is the availability?",
         "options": [
           "About 80%",
-          "About 97.6%",
           "About 40%",
+          "About 97.6%",
           "About 100%"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Availability = MTBF / (MTBF + MTTR) = 200 / 205 = 0.976, about 97.6%. Raising MTBF or lowering MTTR both improve availability."
       },
       {
@@ -3283,21 +3283,21 @@ MODULES_3 = [
         "options": [
           "Hot-to-touch by hand",
           "Audible noise",
-          "Vibration/ultrasonic analysis",
-          "Visible smoke"
+          "Visible smoke",
+          "Vibration/ultrasonic analysis"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Vibration and ultrasonic detect bearing defects earliest (weeks-months of lead time); heat, then audible noise, then hot-to-touch appear progressively later as failure nears."
       },
       {
         "q": "Why is applying one blanket maintenance policy to every asset a poor practice?",
         "options": [
-          "It is too cheap",
           "Strategy should match each asset's criticality and failure behavior - critical assets need PdM, low-consequence redundant ones may run-to-failure",
+          "It is too cheap",
           "Blanket policies always over-maintain",
           "Regulations forbid it"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "RCM matches strategy to consequence and failure mode; a critical sorter drive warrants PdM while a redundant fan may justifiably run to failure. One policy for all wastes effort or courts breakdowns."
       },
       {
@@ -3315,33 +3315,33 @@ MODULES_3 = [
         "q": "Mass unbalance shows as a dominant vibration peak at which frequency, and its force rises with what?",
         "options": [
           "2x speed, rising linearly",
-          "1x running speed, with force rising as the square of speed",
           "Belt frequency, constant with speed",
+          "1x running speed, with force rising as the square of speed",
           "Line frequency, independent of speed"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Unbalance produces a dominant 1x running-speed peak; centrifugal force scales with the square of rotational speed, so it worsens rapidly at higher RPM."
       },
       {
         "q": "Why is a baseline signature taken on a known-good (new or rebuilt) machine so valuable?",
         "options": [
           "It looks good in reports",
-          "Later measurements are compared against that machine's own normal, since every machine has a unique signature",
           "It replaces all future measurements",
-          "It sets the IP address"
+          "It sets the IP address",
+          "Later measurements are compared against that machine's own normal, since every machine has a unique signature"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Each machine has unique inherent characteristics; comparing against its own known-good baseline (not a generic table) makes trend deviations meaningful."
       },
       {
         "q": "A misalignment or failing coupling classically shows elevated vibration at which frequency?",
         "options": [
-          "1x only",
           "2x running speed",
+          "1x only",
           "Belt frequency",
           "0.5x"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Misalignment and coupling problems characteristically raise the 2x running-speed component (often with axial vibration), distinguishing them from 1x unbalance."
       },
       {
@@ -3359,33 +3359,33 @@ MODULES_3 = [
         "q": "Why must you never mix greases with different thickeners without verifying compatibility?",
         "options": [
           "It changes the color",
-          "The mixture can soften and run out or harden and stop feeding the bearing, causing failure",
           "It is always fine to mix",
+          "The mixture can soften and run out or harden and stop feeding the bearing, causing failure",
           "It only affects cost"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Incompatible thickeners (lithium, polyurea, calcium-sulfonate) can react so the grease softens and leaks or hardens and starves the bearing; purge fully when switching."
       },
       {
         "q": "What does structured failure coding (per ISO 14224) enable that free-text notes cannot?",
         "options": [
           "Faster typing",
-          "Consistent, analyzable data for Pareto/bad-actor analysis, MTBF trending, and Weibull interval-setting",
           "A prettier work order",
-          "Nothing"
+          "Nothing",
+          "Consistent, analyzable data for Pareto/bad-actor analysis, MTBF trending, and Weibull interval-setting"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Coded failure mode/cause/action data is consistent across technicians and assets, enabling the analytics (Pareto, MTBF, Weibull) that drive reliability decisions; free text cannot be analyzed."
       },
       {
         "q": "A chain drive has elongated (stretched) about 3% from pin/bushing wear. What is the correct action?",
         "options": [
-          "Add a link",
           "Replace the chain WITH its sprockets, since a worn chain rides high and wears sprockets",
+          "Add a link",
           "Ignore it",
           "Tighten it more"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Chain elongation beyond ~2-3% means the chain rides high on the sprocket teeth; the worn chain and its sprockets are replaced together to avoid rapid re-wear."
       },
       {
@@ -3403,11 +3403,11 @@ MODULES_3 = [
         "q": "Why should new oil be filtered before use?",
         "options": [
           "New oil is always perfectly clean",
-          "New oil is often NOT clean - as delivered it can exceed target cleanliness codes with particulate",
           "Filtering adds additives",
+          "New oil is often NOT clean - as delivered it can exceed target cleanliness codes with particulate",
           "To change its viscosity"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "'New' does not mean 'clean' - delivered oil frequently exceeds target ISO cleanliness codes, so filtering (and clean, sealed storage) protects the machine from contamination."
       },
       {
@@ -3415,21 +3415,21 @@ MODULES_3 = [
         "options": [
           "50%",
           "70%",
-          "95%",
-          "20%"
+          "20%",
+          "95%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "World-class organisations sustain PM compliance of 95% or higher; below 90% indicates the PM program is not actually happening as designed."
       },
       {
         "q": "A part with turn rate 0.3 (annual usage 0.3 x on-hand quantity) suggests:",
         "options": [
-          "Under-stocking",
           "Over-stocking (sits 3+ years without moving) OR a legitimate A-critical spare where redundancy is the point",
+          "Under-stocking",
           "Perfect stocking",
           "Data error"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Low turn typically indicates over-stocking, unless the part is A-critical where holding despite low turn is intentional; criticality plus turn together guide the call."
       },
       {
@@ -3447,33 +3447,33 @@ MODULES_3 = [
         "q": "A reliability dashboard is only as good as:",
         "options": [
           "The colour of its widgets",
-          "The quality of the underlying data (fault codes, closure notes, hours captured) in the CMMS",
           "The size of the TV displaying it",
+          "The quality of the underlying data (fault codes, closure notes, hours captured) in the CMMS",
           "The number of charts"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Bad data equals meaningless charts; front-line data-entry discipline is the constraint on any reliability dashboard's value."
       },
       {
         "q": "In TPM, the core insight of Autonomous Maintenance is that:",
         "options": [
           "Only specialists can maintain equipment",
-          "Operators, who are with the equipment every shift, catch early problems that visiting maintenance cannot",
           "Cleaning is pointless",
-          "No one maintains anything"
+          "No one maintains anything",
+          "Operators, who are with the equipment every shift, catch early problems that visiting maintenance cannot"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Cleaning is inspection; operators daily attention catches small issues before they escalate, freeing maintenance for higher-skill work."
       },
       {
         "q": "Introducing a predictive-maintenance program most commonly FAILS because:",
         "options": [
-          "The sensors are broken",
           "Technology is deployed without a champion, first-save documentation, and gradual scaling; adoption stalls",
+          "The sensors are broken",
           "No one buys sensors",
           "The plant is too small"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Culture and process changes must accompany the technology; without a visible early win and a documented process, sensors accumulate on shelves."
       },
       {
@@ -3490,34 +3490,34 @@ MODULES_3 = [
       {
         "q": "MTBF-since-last-fix as a metric helps detect:",
         "options": [
-          "Whether repairs are actually holding, or the same asset keeps failing",
           "How much a technician gets paid",
           "Weather patterns",
+          "Whether repairs are actually holding, or the same asset keeps failing",
           "The colour of the machine"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "If MTBF-since-repair keeps dropping on an asset, the fixes are not addressing root cause and reliability is degrading despite maintenance effort."
       },
       {
         "q": "A backlog of corrective work orders aging past 90 days is typically:",
         "options": [
           "Fine, just leave them",
-          "A signal to either delete stale/unneeded items or re-schedule and execute, revealing whether the plant is losing the reliability battle",
           "A sign of over-staffing",
-          "A cost saving"
+          "A cost saving",
+          "A signal to either delete stale/unneeded items or re-schedule and execute, revealing whether the plant is losing the reliability battle"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Aged backlog either represents work no longer needed (cleanup) or work that should have been done (falling behind); either way it should not be ignored."
       },
       {
         "q": "In vibration analysis, a dominant spectral peak at exactly 1x running speed most commonly indicates:",
         "options": [
-          "A bearing outer-race defect",
           "Imbalance",
+          "A bearing outer-race defect",
           "Gear-mesh wear",
           "Electrical noise"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Imbalance produces a dominant peak at 1x running speed. Misalignment typically shows 2x with axial vibration, looseness shows multiple harmonics, and bearing defects appear at specific non-synchronous frequencies."
       },
       {
@@ -3535,22 +3535,22 @@ MODULES_3 = [
         "q": "A key insight from RCM failure-pattern studies is that for most components:",
         "options": [
           "Failures always follow a predictable wear-out age curve",
-          "Most failures do NOT follow an age-related pattern, so time-based overhauls often add no value",
           "Run-to-failure is never acceptable",
+          "Most failures do NOT follow an age-related pattern, so time-based overhauls often add no value",
           "Only lubrication causes failures"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "RCM studies found most components fail in random or infant-mortality patterns, not age-related wear-out. This means scheduled time-based overhauls frequently add no value and can even introduce infant-mortality faults."
       },
       {
         "q": "Which predictive technique best detects the EARLIEST stage of bearing distress and helps avoid over-greasing?",
         "options": [
           "Vibration spectrum defect frequencies",
-          "Ultrasonic inspection",
           "Annual visual inspection",
-          "Oil level check"
+          "Oil level check",
+          "Ultrasonic inspection"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Ultrasound detects the friction and micro-impacts of inadequate lubrication and incipient bearing defects before classic vibration defect frequencies appear, and listening while greasing prevents over-greasing."
       }
     ],
@@ -3808,12 +3808,12 @@ MODULES_3 = [
       {
         "q": "Power and signal wiring should be:",
         "options": [
-          "Same wireway for convenience",
           "Separate wireways to prevent noise",
+          "Same wireway for convenience",
           "Only signal needs ducts",
           "Mix freely"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Separation prevents noise coupling. 480V next to 24VDC = false readings, erratic PLC, potential damage."
       },
       {
@@ -3831,44 +3831,44 @@ MODULES_3 = [
         "q": "First power-up sequence:",
         "options": [
           "Full power immediately",
-          "Control circuit first, then main power motors off, then jog each motor",
           "Only if customer watches",
-          "Skip verification"
+          "Skip verification",
+          "Control circuit first, then main power motors off, then jog each motor"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Staged power-up catches wiring errors before damage."
       },
       {
         "q": "A UL 508A-listed industrial control panel must include which of the following on its nameplate?",
         "options": [
-          "Manufacturer's serial number and paint color code",
           "Supply voltage, full-load current, and short-circuit current rating (SCCR)",
+          "Manufacturer's serial number and paint color code",
           "Wire gauge schedule and conduit fill percentages",
           "PLC model number and firmware revision"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NEC Article 409.110 and UL 508A require the panel nameplate to show supply voltage, phase, frequency, full-load current, and SCCR. Serial numbers and component details are not NEC/UL 508A nameplate mandates."
       },
       {
         "q": "A control panel installed in a conveyor zone subject to periodic hose-down cleaning should carry which NEMA/UL enclosure type rating at minimum?",
         "options": [
           "Type 1",
+          "Type 4",
           "Type 3R",
-          "Type 12",
-          "Type 4"
+          "Type 12"
         ],
-        "answer": 3,
+        "answer": 1,
         "explain": "NEMA/UL Type 4 is rated watertight and dust-tight, and specifically tested against hose-directed water. Type 1 is general purpose indoor only; Type 3R is rain-tight but not hose-directed water; Type 12 is drip-tight but not hose-directed."
       },
       {
         "q": "A 600x600x175 mm sealed steel enclosure (surface area ~1.14 m2, k = 5.5 W/m2-degC) contains components dissipating 88 W total. What is the approximate internal temperature rise above ambient?",
         "options": [
           "7 degC",
-          "14 degC",
           "22 degC",
+          "14 degC",
           "40 degC"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Using deltaT = P / (k x A): deltaT = 88 / (5.5 x 1.14) = 88 / 6.27 = approx 14 degC. This is the steady-state rise above ambient in still air with no active cooling."
       },
       {
@@ -3876,21 +3876,21 @@ MODULES_3 = [
         "options": [
           "A DC positive rail at 24 VDC",
           "An AC control circuit energized from the main control transformer",
-          "A conductor that remains energized even when the main disconnect is opened",
-          "A high-voltage (480 V) power feeder to a motor branch"
+          "A high-voltage (480 V) power feeder to a motor branch",
+          "A conductor that remains energized even when the main disconnect is opened"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "NFPA 79 Section 12.4 designates orange for ungrounded conductors of circuits that stay energized when the main disconnect is opened (foreign-voltage maintained circuits). This color is a critical safety warning to technicians performing LOTO."
       },
       {
         "q": "In a UL 508A panel, a branch circuit contains: a 65 kA-rated breaker, a 65 kA-rated disconnect, and a contactor with a listed Iq (short-circuit rating) of 10 kA. What is the SCCR of this branch without additional protective devices?",
         "options": [
+          "10 kA, set by the lowest-rated component",
           "65 kA, set by the breaker",
           "130 kA, the sum of both breaker ratings",
-          "10 kA, set by the lowest-rated component",
           "42 kA, the RMS average of the three components"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "The SCCR of any branch is limited to the lowest individual component rating in that branch. The contactor at 10 kA is the weakest link; therefore the branch SCCR is 10 kA regardless of the higher-rated upstream devices."
       },
       {
@@ -3908,22 +3908,22 @@ MODULES_3 = [
         "q": "Per NEC Article 250 and NFPA 79, what is required to ensure reliable bonding of a panel door to the enclosure frame?",
         "options": [
           "The door hinges alone provide sufficient bonding",
-          "A braided copper bonding jumper (minimum 6 AWG) from door to frame",
           "A 14 AWG insulated green wire routed through the wireway",
+          "A braided copper bonding jumper (minimum 6 AWG) from door to frame",
           "No bonding is required if the door has a metallic latch"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Door hinges are not rated as reliable bonding paths because they rely on metal-to-metal contact that can corrode or have paint between surfaces. NFPA 79 requires a dedicated braided copper bonding jumper (minimum 6 AWG) between the door and the enclosure frame to ensure a low-impedance fault-return path."
       },
       {
         "q": "A control panel wireway (slotted duct) must not exceed what fill percentage per NEC 376.22?",
         "options": [
           "20%",
-          "40%",
           "60%",
-          "80%"
+          "80%",
+          "40%"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "NEC 376.22 limits the total cross-sectional area of all conductors in a surface metal raceway / wireway to 40% of the interior cross-sectional area. This preserves heat dissipation and allows wire to be pulled or added without damage."
       },
       {
@@ -3940,67 +3940,67 @@ MODULES_3 = [
       {
         "q": "During a megger (insulation resistance) test on a completed panel, what minimum resistance value is generally required between each phase conductor and ground per NEC guidelines?",
         "options": [
+          "1 M-ohm",
           "100 k-ohm",
           "500 k-ohm",
-          "1 M-ohm",
           "10 M-ohm"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "NEC and general industry practice (supported by NEMA and IEEE 43) require a minimum insulation resistance of 1 M-ohm (megohm) when testing with 500 VDC for panel wiring at rated voltages up to 600 V. Values below 1 M-ohm indicate degraded insulation that could lead to ground faults."
       },
       {
         "q": "NFPA 79 and NFPA 70E require an arc-flash hazard warning label on electrical equipment. Which standard defines the methodology for calculating incident energy and arc-flash boundaries used to generate that label?",
         "options": [
           "NFPA 79 Section 17.4",
-          "UL 508A Appendix SB",
           "IEEE 1584-2018",
+          "UL 508A Appendix SB",
           "NEC Article 409.110"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "IEEE 1584-2018 is the industry-standard methodology for arc-flash incident energy analysis and boundary calculations. NFPA 70E Article 130.5 requires arc-flash studies to be performed; the standard method referenced is IEEE 1584. The label content requirements are in NFPA 70E 130.5(H), but the calculation methodology is IEEE 1584."
       },
       {
         "q": "When routing VFD encoder feedback cables inside a control panel, the preferred practice to prevent ground loops is to terminate the cable shield:",
         "options": [
           "At both ends - panel ground bus and encoder housing",
-          "At the drive end only (single-point grounding)",
           "To the AC neutral bar at the panel",
+          "At the drive end only (single-point grounding)",
           "Shields should never be grounded on encoder cables"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Single-point grounding of the cable shield at the drive end (one end only) prevents ground loops, which occur when a shield is grounded at both ends and a potential difference exists between the two ground points. This potential difference would drive a current through the shield, inducing noise into the signal. Grounding at one end (typically the drive/receiver end) is standard practice for encoder and analog signal cables."
       },
       {
         "q": "A copper bus bar measures 1/4 inch by 2 inches. Using the 1000 A/in<sup>2</sup> design rule, what is its approximate continuous current rating before any derating?",
         "options": [
           "250 A",
-          "500 A",
           "1000 A",
-          "2000 A"
+          "2000 A",
+          "500 A"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Cross-section = 0.25 &times; 2 = 0.5 in<sup>2</sup>. At 1000 A/in<sup>2</sup>, the rating is 0.5 &times; 1000 = 500 A before orientation or enclosure derating."
       },
       {
         "q": "A 24 VDC solenoid valve draws 500 mA and is connected via 200 m of 18 AWG (0.82 mm<sup>2</sup>) cable. Using Vdrop = 2LI/(56A), what is the approximate voltage drop?",
         "options": [
+          "4.4 V",
           "0.22 V",
           "1.1 V",
-          "4.4 V",
           "8.8 V"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Vdrop = (2 &times; 200 &times; 0.5) / (56 &times; 0.82) = 200 / 45.9 &asymp; 4.4 V. The solenoid sees only 19.6 V, which may cause unreliable operation."
       },
       {
         "q": "A conveyor motor contactor is used for plugging and jogging duty. Which IEC 60947-4-1 utilization category applies?",
         "options": [
           "AC-1",
+          "AC-4",
           "AC-2",
-          "AC-3",
-          "AC-4"
+          "AC-3"
         ],
-        "answer": 3,
+        "answer": 1,
         "explain": "AC-4 covers plugging and jogging of squirrel-cage motors. Both make and break ratings are 6&times;Ie. Using an AC-3 rated contactor for AC-4 duty causes premature contact erosion."
       },
       {
@@ -4018,22 +4018,22 @@ MODULES_3 = [
         "q": "A PLC input module has a sinking (NPN-compatible) configuration. Which type of sensor is compatible without any additional wiring changes?",
         "options": [
           "PNP (sourcing) proximity sensor",
-          "NPN (sinking) proximity sensor",
           "2-wire AC proximity sensor",
-          "Normally-open dry contact only"
+          "Normally-open dry contact only",
+          "NPN (sinking) proximity sensor"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "NPN (sinking) sensors pull the signal line to 0 V, which matches sinking input modules whose common is connected to 0 V. PNP sensors supply 24 V to the signal line and require a sourcing input card."
       },
       {
         "q": "Per IEC 61800-3, a VFD installed in an industrial facility must comply with conducted emission limits. Which accessory most effectively reduces high-frequency conducted emissions on the AC supply side?",
         "options": [
+          "An EMC RFI filter (Class C2) on the supply side",
           "An output dV/dt filter",
           "A 3% AC line reactor on the input",
-          "An EMC RFI filter (Class C2) on the supply side",
           "A sinewave filter on the motor cable"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "An EMC RFI filter on the supply side directly attenuates conducted common-mode and differential-mode emissions back onto the utility. A line reactor helps with harmonic current but has limited HF attenuation. Output filters protect the motor and cable but do not address supply-side emissions."
       },
       {
@@ -4051,11 +4051,11 @@ MODULES_3 = [
         "q": "In selective coordination analysis, full selectivity between an upstream MCCB and a downstream fuse is confirmed when:",
         "options": [
           "Both devices have the same ampere rating",
-          "The downstream device total clearing curve falls entirely to the left of the upstream device minimum trip curve",
           "The upstream device trips faster than the downstream device at all current levels",
+          "The downstream device total clearing curve falls entirely to the left of the upstream device minimum trip curve",
           "The two time-current curves intersect only in the overload region"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Selective coordination means only the downstream device operates. Its total clearing curve (including tolerance band) must fall entirely to the left of the upstream device minimum trip curve, with adequate margin (typically 0.1-0.2 s) throughout the overcurrent region."
       },
       {
@@ -4063,21 +4063,21 @@ MODULES_3 = [
         "options": [
           "30 A",
           "27 A",
-          "24 A",
-          "21 A"
+          "21 A",
+          "24 A"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Temperature rise above 40&deg;C = 10&deg;C. Derating = 10 &times; 2% = 20%. Effective limit = 30 &times; (1 - 0.20) = 24 A."
       },
       {
         "q": "A metallic conduit hub installed in a NEMA 4 enclosure must provide which additional function beyond IP sealing?",
         "options": [
-          "Strain relief for conductors only",
           "Equipment grounding continuity through the hub body to the enclosure",
+          "Strain relief for conductors only",
           "Preventing vibration from loosening the conduit",
           "Filtering conducted EMI from entering the enclosure"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Per NEC 250.92, metallic conduit hubs (Myers-type) must maintain grounding continuity through the hub body. Plastic/nylon hubs do not provide this and require a separate bonding locknut or jumper."
       },
       {
@@ -4106,33 +4106,33 @@ MODULES_3 = [
         "q": "During a megger (insulation resistance) test on a 480 VAC motor branch circuit per IEC 60204-1, what test voltage and minimum acceptable result apply?",
         "options": [
           "250 VDC; &ge; 0.5 M&Omega;",
-          "500 VDC; &ge; 1 M&Omega;",
           "1000 VDC; &ge; 1 M&Omega;",
-          "1000 VDC; &ge; 10 M&Omega;"
+          "1000 VDC; &ge; 10 M&Omega;",
+          "500 VDC; &ge; 1 M&Omega;"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC 60204-1 clause 18.3 specifies a 500 VDC test voltage applied between the power-circuit conductors and the protective bonding circuit, with a minimum acceptable insulation resistance of 1 M&Omega;. (NFPA 79 uses the same 500 VDC / 1 M&Omega; criterion.) Sensitive electronics - PLC I/O cards and VFD control boards - must be disconnected first, since 500 VDC will damage them."
       },
       {
         "q": "NFPA 79 requires that schematic and connection diagrams be available at the machine. What additional documentation best practice speeds up field troubleshooting?",
         "options": [
-          "Storing only digital copies in a remote server",
           "Laminating a pocket drawing and mounting it inside the panel door",
+          "Storing only digital copies in a remote server",
           "Keeping drawings solely in the engineering office",
           "Using the original manufacturer datasheet as the only reference"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NFPA 79 section 6.1 requires drawings to be available at the machine. A laminated pocket drawing inside the panel door ensures technicians have immediate access without leaving the work area, satisfying the requirement and accelerating troubleshooting."
       },
       {
         "q": "A control panel will be mounted in a washdown food-processing area. Which enclosure rating is appropriate?",
         "options": [
           "NEMA Type 1",
-          "NEMA Type 12",
           "NEMA Type 4X",
+          "NEMA Type 12",
           "NEMA Type 7"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Type 4X is watertight AND corrosion-resistant (stainless), suited to washdown/food areas. Type 1 is general indoor, Type 12 is dust/drip, Type 7 is hazardous-location."
       },
       {
@@ -4150,66 +4150,66 @@ MODULES_3 = [
         "q": "Recommended wire-duct (Panduit) fill is approximately what, and why?",
         "options": [
           "100% to maximize wire count",
-          "40-60% so wires can be added and heat can escape",
           "10% to look neat",
-          "Fill does not matter"
+          "Fill does not matter",
+          "40-60% so wires can be added and heat can escape"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Keeping duct fill around 40-60% leaves room for future wires and lets heat dissipate; overfilled duct traps heat and makes modifications nearly impossible."
       },
       {
         "q": "A panel's SCCR (Short-Circuit Current Rating) is determined by...",
         "options": [
-          "The largest motor it controls",
           "Its weakest-rated component in the power path",
+          "The largest motor it controls",
           "The enclosure color",
           "The PLC scan time"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The panel SCCR is limited by the lowest-rated component in the power path (often a transformer, contactor, or terminal block). The site's available fault current must not exceed this rating."
       },
       {
         "q": "A sealed NEMA 4X enclosure runs hot in a dusty area. Which cooling method is appropriate?",
         "options": [
           "Add louvers/vents",
-          "A filtered exhaust fan",
           "A sealed air-to-air heat exchanger or air conditioner",
+          "A filtered exhaust fan",
           "Leave the door open"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "A sealed 4/4X enclosure cannot use louvers or open fans without losing its rating; a sealed air-to-air heat exchanger (or A/C) removes heat without letting dust/moisture in."
       },
       {
         "q": "Why must a hinged panel door with pilot devices be bonded to the enclosure ground?",
         "options": [
           "To make it look finished",
-          "Because the door carries live-device wiring and is a shock path if a fault is not given a low-impedance ground return",
           "To reduce weight",
+          "Because the door carries live-device wiring and is a shock path if a fault is not given a low-impedance ground return",
           "It is only for aesthetics"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A door with pilot devices/displays has energized wiring; bonding it to ground ensures a fault trips protection instead of leaving the door energized as a shock hazard."
       },
       {
         "q": "Roughly how does elevated temperature affect electronic component life?",
         "options": [
           "No effect",
-          "Life approximately halves for every ~10 deg C rise",
           "Life doubles when hotter",
-          "Only fans are affected"
+          "Only fans are affected",
+          "Life approximately halves for every ~10 deg C rise"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A common rule of thumb is that component life roughly halves for every 10 deg C temperature increase, which is why thermal management and clean fan filters matter."
       },
       {
         "q": "Why should high-voltage power wiring be separated from low-voltage signal/analog wiring in a panel?",
         "options": [
-          "To use less wire",
           "To limit electrical noise coupling into sensitive signals and improve safety/serviceability",
+          "To use less wire",
           "It is required to be the same color",
           "Signal wires carry more current"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Separating power from signal (different ducts, right-angle crossings) limits capacitive/inductive coupling that corrupts analog and communication signals, and keeps the layout safer and easier to service."
       },
       {
@@ -4227,33 +4227,33 @@ MODULES_3 = [
         "q": "When sizing a 24 VDC control supply, why add roughly 25% headroom over the summed steady-state load?",
         "options": [
           "To waste power",
-          "For inrush current and future additions, so the supply does not sag or fold back under a surge",
           "It is a legal requirement",
+          "For inrush current and future additions, so the supply does not sag or fold back under a surge",
           "To reduce voltage"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Capacitive/lamp/relay inrush spikes far above steady-state, and loads grow over time; ~25% headroom prevents the supply sagging or folding back and browning out the PLC."
       },
       {
         "q": "What does a redundancy (diode-OR) module accomplish for dual 24 VDC supplies?",
         "options": [
           "It doubles the voltage",
-          "Each supply feeds the bus through a blocking diode so either carries the load and a failed supply cannot drag the bus down",
           "It combines them into 48 V",
-          "It disables one supply"
+          "It disables one supply",
+          "Each supply feeds the bus through a blocking diode so either carries the load and a failed supply cannot drag the bus down"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Diode-OR/redundancy modules decouple the two supplies so a failure of one is isolated and the healthy one carries the load without interruption, with a diagnostic alarm."
       },
       {
         "q": "Why is an interposing relay used between a PLC output and a solenoid or contactor coil?",
         "options": [
-          "To slow the machine",
           "To protect the PLC output (which is low-rated), provide voltage isolation/level translation, and put field faults on a cheap replaceable relay",
+          "To slow the machine",
           "It is decorative",
           "To increase scan time"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The PLC output drives a small relay coil; the relay's heavier contacts switch the load, protecting the output card, translating voltage, and absorbing field faults cheaply."
       },
       {
@@ -4271,33 +4271,33 @@ MODULES_3 = [
         "q": "In a motor branch circuit, what is the distinct job of the OVERLOAD relay versus the fuse/MCP?",
         "options": [
           "They do the same thing",
-          "The overload protects the motor windings against sustained overcurrent (~115-125% FLA); the fuse/MCP protects conductors against a fault and must ride through inrush",
           "The overload trips on short circuits only",
+          "The overload protects the motor windings against sustained overcurrent (~115-125% FLA); the fuse/MCP protects conductors against a fault and must ride through inrush",
           "The fuse protects the windings"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Overload = slow, motor-winding protection near FLA x SF; short-circuit/ground-fault device = fast, conductor/equipment protection sized high to not trip on ~6x inrush."
       },
       {
         "q": "Why is a power terminal marked with torque-seal paint after tightening to spec?",
         "options": [
           "Decoration",
-          "So a later inspection can see at a glance whether the connection has loosened/moved",
           "To insulate it",
-          "To increase its rating"
+          "To increase its rating",
+          "So a later inspection can see at a glance whether the connection has loosened/moved"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Torque-seal provides visual evidence a connection was torqued and reveals if it has since moved; loose joints are the top cause of connection failure and thermography findings."
       },
       {
         "q": "Before first energization, why is an insulation-resistance (megger) test of the panel's power circuits performed?",
         "options": [
-          "To charge the batteries",
           "To confirm no wiring fault or pinched conductor to ground before applying power",
+          "To charge the batteries",
           "To set the IP address",
           "To test the PLC program"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Meggering power circuits before energizing catches a wiring-to-ground fault or pinched conductor that would otherwise cause a short or arc-flash on first power-up."
       },
       {
@@ -4315,33 +4315,33 @@ MODULES_3 = [
         "q": "An E-stop pushbutton uses which contact type, and why?",
         "options": [
           "NO, to energize on press",
-          "Positive-opening NC, so it opens the safety circuit on press and any contact failure fails safe",
           "NO, because it is faster",
+          "Positive-opening NC, so it opens the safety circuit on press and any contact failure fails safe",
           "Either type works equally"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "E-stops use direct/positive-opening NC contacts so pressing opens the circuit and a welded/failed contact is forced open - the fail-safe requirement for emergency stops."
       },
       {
         "q": "A rule-of-thumb estimate of labour hours per I/O point in a well-organised control panel is:",
         "options": [
           "10 minutes",
-          "1.5-2.5 hours (mount, wire both sides, label, test)",
           "24 hours",
-          "No labour"
+          "No labour",
+          "1.5-2.5 hours (mount, wire both sides, label, test)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "1.5-2.5 hours per I/O captures mount, wire both sides, label, and test; overhead and specialist components (drives, HMI) add separately."
       },
       {
         "q": "The primary benefit of standardised panel templates is:",
         "options": [
-          "Every panel is unique",
           "Shorter engineering time, consistent quality, easier fault diagnosis, and simpler spares",
+          "Every panel is unique",
           "Higher costs",
           "No documentation needed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Reusing proven layouts speeds engineering and eliminates one-off errors; the trade-off is occasional over-specification but the productivity gain is large."
       },
       {
@@ -4359,33 +4359,33 @@ MODULES_3 = [
         "q": "When receiving a shipped panel, the SINGLE most important step BEFORE signing:",
         "options": [
           "Immediately connect to power",
-          "Inspect for shipping damage and photograph everything against the packing list",
           "Open all doors",
+          "Inspect for shipping damage and photograph everything against the packing list",
           "Discard the drawings"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Damage claims are hard once the delivery is signed for; photograph and document any concerns before accepting responsibility."
       },
       {
         "q": "Retrofitting a live control panel is typically justified only when:",
         "options": [
           "It saves money",
-          "De-energising creates greater hazard, or specific testing must occur on live equipment; otherwise LOTO/shutdown is required",
           "The technician is confident",
-          "The paperwork is done"
+          "The paperwork is done",
+          "De-energising creates greater hazard, or specific testing must occur on live equipment; otherwise LOTO/shutdown is required"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "NFPA 70E restricts live work to specific conditions; parallel-install with brief cutover is often the best trade-off between safety and downtime."
       },
       {
         "q": "Which is a mandatory test result documented on a UL 508A panel test report?",
         "options": [
-          "Panel color",
           "Continuity, insulation resistance, hi-pot dielectric withstand, ground continuity, functional and SCCR",
+          "Panel color",
           "Weight only",
           "Vendor logo"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "These tests are required by UL 508A section 43 and general good practice; results with instrument serial numbers become permanent records."
       },
       {
@@ -4403,66 +4403,66 @@ MODULES_3 = [
         "q": "A Method of Procedure (MOP) for a retrofit should always include:",
         "options": [
           "The invoice",
-          "Step-by-step written plan with rollback points, safety approvals, and two-person execution",
           "Only the parts list",
+          "Step-by-step written plan with rollback points, safety approvals, and two-person execution",
           "Nothing formal"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "MOPs document exactly how the change will be executed, how to abort, and who verifies each step; they prevent freelancing and speed recovery when something surprises."
       },
       {
         "q": "A panel BOM should typically add:",
         "options": [
           "Nothing",
-          "5-10% overage for cut waste and small items, plus freight, plus markup for handling",
           "50% markup",
-          "Only the smallest quantity"
+          "Only the smallest quantity",
+          "5-10% overage for cut waste and small items, plus freight, plus markup for handling"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Overage and markup account for actual usage variation and business overhead; a raw component count under-estimates real material cost."
       },
       {
         "q": "Within a control enclosure, where are heat-generating components like VFDs and transformers best placed relative to heat-sensitive electronics?",
         "options": [
-          "Directly touching the PLC to share a heatsink",
           "Positioned with airflow clearance and away from heat-sensitive electronics, accounting for heat rising",
+          "Directly touching the PLC to share a heatsink",
           "In the most sealed corner",
           "It does not matter"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Heat rises and stratifies, so heat generators are placed with airflow clearance and separated from sensitive electronics (PLCs, relays). Total heat load is calculated to size any active cooling."
       },
       {
         "q": "An enclosure in a hot, dusty environment must cool electronics BELOW ambient temperature while staying sealed. Which cooling method fits?",
         "options": [
           "Filtered fans",
-          "Air-to-air heat exchanger",
           "Panel air conditioner",
+          "Air-to-air heat exchanger",
           "Open louvers"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Only a panel air conditioner refrigerates to cool below ambient while keeping the enclosure sealed against dust. Fans and air-to-air exchangers cannot go below ambient, and fans breach the seal and admit dust."
       },
       {
         "q": "Why must a control panel be marked with a short-circuit current rating (SCCR) under UL 508A?",
         "options": [
           "To indicate the normal operating current",
-          "So the installation's available fault current does not exceed what the panel can safely withstand",
           "To set the wire color code",
+          "So the installation's available fault current does not exceed what the panel can safely withstand",
           "To rate the cooling capacity"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The marked SCCR tells installers the maximum fault current the panel can safely withstand. If the site's available fault current exceeds it, components could rupture during a short circuit, so it must meet or exceed the available fault current."
       },
       {
         "q": "Why is a bonding strap added across an enclosure door hinge?",
         "options": [
           "To make the door open smoothly",
-          "Hinges are not a reliable ground path, so the strap ensures the door metal is properly bonded for fault safety",
           "To reduce door weight",
-          "To improve appearance"
+          "To improve appearance",
+          "Hinges are not a reliable ground path, so the strap ensures the door metal is properly bonded for fault safety"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Hinges do not provide a reliable low-impedance ground connection. A bonding strap ensures the door (with mounted devices) is properly bonded so a fault trips protection instead of energizing the door metal."
       }
     ],
@@ -4717,12 +4717,12 @@ MODULES_3 = [
       {
         "q": "ISA CCST is valuable because:",
         "options": [
-          "Cheapest",
           "Most widely recognized control systems technician credential with 3 levels",
+          "Cheapest",
           "Amazon requires it",
           "Replaces degree"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ISA CCST = THE benchmark for automation/controls technicians. Levels I-II-III. Recognized industry-wide."
       },
       {
@@ -4740,33 +4740,33 @@ MODULES_3 = [
         "q": "Portfolio should emphasize:",
         "options": [
           "Only certs",
-          "The PROCESS (how you diagnosed/designed/built)",
           "Page quantity",
-          "Opinions"
+          "Opinions",
+          "The PROCESS (how you diagnosed/designed/built)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Process &gt; product. Show HOW you think and solve problems."
       },
       {
         "q": "Which of the following best describes the primary benefit of earning an NFPA 70E awareness certification for an RME controls technician?",
         "options": [
-          "It is a federal license required by OSHA before any electrical work",
           "It demonstrates knowledge of arc flash PPE categories, shock boundaries, and energized-work permit requirements",
+          "It is a federal license required by OSHA before any electrical work",
           "It automatically qualifies the holder to design electrical distribution systems",
           "It replaces the need for LOTO procedures when working inside MCC panels"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "NFPA 70E is a voluntary standard (not a federal license) issued by the NFPA that defines arc flash PPE categories, incident energy calculations, approach boundaries, and energized-work permit requirements. It does not replace LOTO; OSHA 29 CFR 1910.147 still governs lockout/tagout procedures."
       },
       {
         "q": "The ISA CCST credential has three progressive levels. Which experience requirement is typically associated with CCST Level II?",
         "options": [
           "No experience required - it is an entry-level certification",
-          "Approximately 2 years of documented experience in instrumentation and controls",
           "Approximately 5 years of experience with advanced calibration and troubleshooting competencies",
+          "Approximately 2 years of documented experience in instrumentation and controls",
           "Approximately 10 years of experience plus a bachelor's degree in engineering"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "ISA CCST Level I typically requires about 2 years of experience. Level II requires approximately 5 years and validates advanced calibration, loop troubleshooting, and system maintenance skills. Level III requires approximately 10 years and is oriented toward system design and specification."
       },
       {
@@ -4784,22 +4784,22 @@ MODULES_3 = [
         "q": "In the STAR behavioral interview method, what does the 'A' step specifically require the candidate to emphasize?",
         "options": [
           "The overall team achievement and who else contributed",
-          "The specific actions the individual personally took, using 'I' rather than 'we'",
           "The alternative solutions that were considered but rejected",
-          "The approval from management before any action was taken"
+          "The approval from management before any action was taken",
+          "The specific actions the individual personally took, using 'I' rather than 'we'"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The Action step in STAR requires the candidate to describe what they personally did - using 'I' not 'we' - so the interviewer can assess individual contribution. A common mistake is describing team actions without clarifying personal responsibility. The Result step then ties those individual actions to measurable outcomes."
       },
       {
         "q": "A conveyor drive motor trips its thermal overload relay repeatedly under normal load conditions. Which sequence of diagnostic steps best reflects systematic troubleshooting practice?",
         "options": [
+          "Verify overload setpoint vs. motor nameplate FLA, measure actual running current with a clamp meter, check motor temperature, test winding insulation resistance, and inspect for mechanical drag",
           "Replace the motor immediately since repeated tripping always means winding failure",
           "Reset the overload and observe whether it trips again; if so, call the OEM",
-          "Verify overload setpoint vs. motor nameplate FLA, measure actual running current with a clamp meter, check motor temperature, test winding insulation resistance, and inspect for mechanical drag",
           "Increase the overload relay trip threshold by 20% to stop nuisance tripping"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Systematic troubleshooting starts with verifying the setpoint is correct (overload set to motor FLA per NEMA guidelines), then measuring actual conditions (clamp meter current, IR thermometer temp), then testing the motor itself (megger per NEMA MG-1 - greater than 1 megohm to ground), and checking for mechanical causes. Arbitrarily increasing the trip threshold is dangerous and does not address root cause."
       },
       {
@@ -4828,22 +4828,22 @@ MODULES_3 = [
         "q": "When building a technical portfolio entry for a troubleshooting project, which structure provides the most compelling evidence to a hiring manager or promotion panel?",
         "options": [
           "A list of every tool used during the shift with part numbers",
-          "A problem-action-result narrative with specific diagnostic readings, root cause identified, and quantified outcome (downtime avoided, cost saved, MTBF improvement)",
           "A copy of the work order with the OEM manual page attached",
-          "A paragraph describing your feelings about the challenge and what you learned personally"
+          "A paragraph describing your feelings about the challenge and what you learned personally",
+          "A problem-action-result narrative with specific diagnostic readings, root cause identified, and quantified outcome (downtime avoided, cost saved, MTBF improvement)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Portfolio entries are most impactful when they follow the Problem-Action-Result structure with specific technical detail (measured values, fault codes, test results) and a quantified outcome. This proves analytical thinking and business impact. Raw work orders lack narrative context; tool lists without outcomes show activity not results; personal reflections are appropriate for different contexts."
       },
       {
         "q": "A technician is preparing a 12-month skills development plan targeting a controls technician role. They identify 'Studio 5000 PLC programming' as a high-frequency gap appearing in 8 of 10 target job postings. What is the recommended first step in closing this gap?",
         "options": [
+          "Prioritize this gap based on posting frequency, identify low-cost resources (trial software, community college lab, Rockwell eLearning), and schedule a concrete 90-day learning sprint with a deliverable portfolio project",
           "Apply for the controls role immediately and learn on the job after being hired",
           "Wait until the employer offers formal training as part of a new assignment",
-          "Prioritize this gap based on posting frequency, identify low-cost resources (trial software, community college lab, Rockwell eLearning), and schedule a concrete 90-day learning sprint with a deliverable portfolio project",
           "Purchase the most expensive Rockwell training package available to signal commitment"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Skills gap analysis prioritizes gaps by frequency in target postings, then identifies the highest ROI path to close them. For Studio 5000, a free software trial, community college automation lab courses, and Rockwell's own eLearning catalog (some free, some low-cost) provide structured learning. A concrete 90-day sprint with a portfolio deliverable is more effective than waiting or unstructured self-study."
       },
       {
@@ -4861,11 +4861,11 @@ MODULES_3 = [
         "q": "During a technical interview, you are asked to describe your LOTO process for a belt conveyor drive. Which answer correctly identifies the OSHA standard governing lockout/tagout procedures?",
         "options": [
           "OSHA 29 CFR 1910.303 - General wiring requirements",
-          "OSHA 29 CFR 1910.147 - The Control of Hazardous Energy (lockout/tagout)",
           "NFPA 72 - National Fire Alarm and Signaling Code",
+          "OSHA 29 CFR 1910.147 - The Control of Hazardous Energy (lockout/tagout)",
           "IEC 60204-1 - Safety of Machinery, electrical equipment"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "OSHA 29 CFR 1910.147 is the Control of Hazardous Energy standard governing lockout/tagout procedures for general industry in the US. It defines energy control program requirements, authorized employee roles, and the sequence: notify affected employees, identify all energy sources, isolate, lock/tag, release stored energy, verify zero-energy state. NFPA 72 is fire alarm; IEC 60204-1 is a machine safety standard used in equipment design."
       },
       {
@@ -4873,21 +4873,21 @@ MODULES_3 = [
         "options": [
           "Accept the first offer immediately to show enthusiasm and avoid seeming greedy",
           "State a specific salary demand with no justification and refuse to discuss other compensation elements",
-          "Counter with market data (BLS OES, LinkedIn Salary) and specific credentials as anchors, ask professionally if there is flexibility, and consider total compensation including shift premiums and benefits",
-          "Negotiate only after the first 90-day probationary period once you have proven yourself"
+          "Negotiate only after the first 90-day probationary period once you have proven yourself",
+          "Counter with market data (BLS OES, LinkedIn Salary) and specific credentials as anchors, ask professionally if there is flexibility, and consider total compensation including shift premiums and benefits"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Effective salary negotiation uses objective market data as an anchor, references specific qualifications (certifications, quantified wins) to justify the ask, and frames the conversation professionally. Considering total compensation (shift differentials, tuition assistance, overtime) is important because base pay is only one element. The worst likely outcome of a professional counter-offer is a 'no' - most employers expect some negotiation."
       },
       {
         "q": "When comparing two job offers, Offer A pays $34/hr straight time with no OT guarantee. Offer B pays $31/hr with 10 hrs/week guaranteed OT at 1.5x. Assuming 2080 regular hours, which has higher annual W2 earnings?",
         "options": [
-          "Offer A: $70,720 vs. Offer B: $64,480",
           "Offer A: $70,720 vs. Offer B: $88,660",
+          "Offer A: $70,720 vs. Offer B: $64,480",
           "Offer A: $70,720 vs. Offer B: $76,440",
           "They are equal at $70,720"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Offer B: base = $31 x 2080 = $64,480; OT = $31 x 1.5 x 520 hrs (10 hrs x 52 wks) = $46.50 x 520 = $24,180; total = $88,660. Offer A = $70,720. Offer B wins significantly despite lower base rate."
       },
       {
@@ -4905,44 +4905,44 @@ MODULES_3 = [
         "q": "When building a GitHub portfolio repository, which artifact is INAPPROPRIATE to upload?",
         "options": [
           "An anonymized PLC ladder logic screenshot with serial numbers removed",
-          "A Python script you wrote to analyze PM compliance data using synthetic sample data",
           "Live production PLC code exported directly from a client site controller",
+          "A Python script you wrote to analyze PM compliance data using synthetic sample data",
           "A wiring diagram template you created as a training reference"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Live production PLC code from a client site is proprietary and may contain confidential network configurations, IP addresses, and vendor agreements. Uploading it publicly violates IP and confidentiality obligations. All other options are anonymized or synthetic."
       },
       {
         "q": "Amazon Career Choice is most accurately described as:",
         "options": [
           "A government apprenticeship program requiring union membership",
-          "An employer-funded education benefit supporting certificate and associate-degree programs",
           "A mandatory training program for all new RME hires",
+          "An employer-funded education benefit supporting certificate and associate-degree programs",
           "A tuition loan that must be repaid if you leave within 2 years"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Amazon Career Choice has historically been a pre-paid tuition benefit (not a loan) for eligible associates pursuing in-demand certifications and degrees. Always verify current terms with your HR Business Partner as program details can change."
       },
       {
         "q": "The SMRP CMRT exam covers four domains. Which combination correctly represents the domain weighting?",
         "options": [
           "Safety 40%, Electrical 30%, Mechanical 20%, Planning 10%",
-          "Equipment Reliability 30%, Process Reliability 22%, People/Organization 24%, Work Management 24%",
           "Predictive Maintenance 50%, Preventive Maintenance 30%, Corrective Maintenance 20%",
-          "Lubrication 25%, Vibration 25%, Thermography 25%, Ultrasound 25%"
+          "Lubrication 25%, Vibration 25%, Thermography 25%, Ultrasound 25%",
+          "Equipment Reliability 30%, Process Reliability 22%, People/Organization 24%, Work Management 24%"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The SMRP CMRT exam is divided into four domains: Equipment Reliability (30%), Manufacturing Process Reliability (22%), People and Organization (24%), and Work Management (24%). The exam does not follow a pure discipline (electrical/mechanical) breakdown."
       },
       {
         "q": "A technician has a 2-year AAS in Industrial Electronics and wants to earn a BS in EET. The most cost-effective pathway is typically:",
         "options": [
-          "Re-take all courses from scratch at a 4-year university",
           "Use a 2+2 articulation agreement to transfer AAS credits into an ABET-accredited EET program",
+          "Re-take all courses from scratch at a 4-year university",
           "Enroll in a non-ABET online program for faster completion",
           "Wait until earning a CPMM certification which substitutes for the BS degree"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A 2+2 articulation agreement allows AAS graduates to transfer approximately 60 credits and complete the remaining upper-division BS coursework (another ~60 credits) at a 4-year institution. ABET accreditation is important for employer recognition. CPMM does not substitute for a degree."
       },
       {
@@ -4971,22 +4971,22 @@ MODULES_3 = [
         "q": "When developing a cross-training competency sign-off sheet, what is the standard three-stage progression before a task is considered fully qualified?",
         "options": [
           "Read procedure, shadow once, sign off",
-          "Observe (performed by trainer), assist (guided), independently perform (observed and signed off by qualified evaluator)",
           "Complete online training, pass written test, receive badge",
-          "One month on the job, supervisor recommendation, HR approval"
+          "One month on the job, supervisor recommendation, HR approval",
+          "Observe (performed by trainer), assist (guided), independently perform (observed and signed off by qualified evaluator)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The standard competency progression in industrial training (aligned with OSHA and ANSI qualification frameworks) is: observe the task performed by a qualified person, perform with guidance, then perform independently while observed by an evaluator who documents and signs off. Reading and online training alone do not establish task qualification."
       },
       {
         "q": "An OEM field service engineer role at a major MHE vendor typically requires which combination of attributes?",
         "options": [
-          "OSHA 30, forklift license, and warehouse management experience",
           "3+ years hands-on with the vendor's specific equipment, strong documentation skills, and travel availability",
+          "OSHA 30, forklift license, and warehouse management experience",
           "A PE license, 10 years experience, and fluency in AutoCAD",
           "Six Sigma Black Belt and PMP certification"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "FSE roles prioritize depth with the OEM's specific platform, ability to self-manage troubleshooting with remote support only, strong field documentation habits, and travel flexibility (often 50-100%). A PE license and Six Sigma are not typical requirements for field service technician/engineer roles."
       },
       {
@@ -5004,33 +5004,33 @@ MODULES_3 = [
         "q": "A 3-phase motor has a nameplate rating of 10 HP, 460V, 0.88 PF, 91% efficiency. Approximate full-load current using I = P / (V x PF x efficiency x 1.732) is closest to:",
         "options": [
           "7.4 A",
-          "12.1 A",
           "15.8 A",
+          "12.1 A",
           "19.3 A"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "P = 10 HP x 746 W/HP = 7460 W. I = 7460 / (460 x 0.88 x 0.91 x 1.732) = 7460 / (460 x 1.385) = 7460 / 637.1 = 11.7 A, closest to 12.1 A. This is a common whiteboard calculation in technical RME interviews."
       },
       {
         "q": "When evaluating a counter-offer from a current employer after receiving an external offer, research literature most commonly suggests:",
         "options": [
           "Counter-offers always result in long-term satisfaction when the salary increase is above 15%",
-          "Accepting a counter-offer rarely resolves the underlying reasons for wanting to leave, and most accepting employees depart within 18 months",
           "Counter-offers should always be declined as a matter of professional integrity",
-          "Counter-offers are only effective if combined with a formal title change"
+          "Counter-offers are only effective if combined with a formal title change",
+          "Accepting a counter-offer rarely resolves the underlying reasons for wanting to leave, and most accepting employees depart within 18 months"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "HR research consistently finds that 70-80% of employees who accept counter-offers leave within 12-18 months. The counter-offer addresses compensation but rarely resolves growth trajectory, manager quality, culture, or schedule issues that drove the original desire to leave."
       },
       {
         "q": "A mentor relationship is most likely to remain productive long-term when the mentee:",
         "options": [
+          "Offers specific value back (teaching a new tool, sharing relevant content) and arrives with prepared, specific questions",
           "Contacts the mentor only when facing a crisis or urgent problem",
           "Asks broad, open-ended questions like 'What should I do with my career?'",
-          "Offers specific value back (teaching a new tool, sharing relevant content) and arrives with prepared, specific questions",
           "Limits meetings to annual performance review season"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Reverse mentorship - where the mentee also brings value to the relationship - converts a one-directional relationship into a productive exchange. Specific, prepared questions signal respect for the mentor's time and produce actionable guidance. Vague questions and crisis-only contact are the most common reasons mentor relationships dissolve."
       },
       {
@@ -5048,33 +5048,33 @@ MODULES_3 = [
         "q": "In the STAR interview method, what does the 'A' stand for?",
         "options": [
           "Analysis",
-          "Action - what YOU specifically did",
           "Availability",
+          "Action - what YOU specifically did",
           "Assessment"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "STAR = Situation, Task, Action, Result. 'Action' is the specific steps you personally took, which showcases your troubleshooting method and contribution."
       },
       {
         "q": "Which certification is a vendor-neutral credential specifically for control systems technicians (instrumentation/controls)?",
         "options": [
           "FANUC robotics certification",
-          "ISA CCST (Certified Control Systems Technician)",
           "A Rockwell-only PLC course",
-          "OSHA 10"
+          "OSHA 10",
+          "ISA CCST (Certified Control Systems Technician)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISA CCST is a vendor-neutral, multi-level certification for control systems technicians. FANUC is robotics-specific and Rockwell courses are vendor platform training."
       },
       {
         "q": "What is the best way to make a certification most powerful to an employer?",
         "options": [
-          "Collect as many unrelated certs as possible",
           "Combine it with hands-on evidence (a portfolio project) demonstrating the same skill",
+          "Collect as many unrelated certs as possible",
           "Hide it until after hiring",
           "List only the cert name with no context"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A certification plus a portfolio project demonstrating that same skill is far stronger than either alone - it pairs validated knowledge with proven application."
       },
       {
@@ -5092,33 +5092,33 @@ MODULES_3 = [
         "q": "During a technical interview, why do interviewers care about HOW you approach an unknown fault?",
         "options": [
           "They do not - only the final answer matters",
-          "Your troubleshooting method predicts how you will perform on real, novel problems",
           "To trick candidates",
+          "Your troubleshooting method predicts how you will perform on real, novel problems",
           "Method is irrelevant in maintenance"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Real faults are often novel; a sound, systematic troubleshooting method (define, gather, half-split, verify) predicts on-the-job success better than memorized answers."
       },
       {
         "q": "What is a smart practice before discussing salary for a role?",
         "options": [
           "Name the lowest number so you seem cheap",
-          "Research the market range for the role/region and know your quantified value",
           "Refuse to discuss compensation",
-          "Demand double the posted range immediately"
+          "Demand double the posted range immediately",
+          "Research the market range for the role/region and know your quantified value"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Researching the market range and knowing your value (certs, results, flexibility) lets you negotiate the total package professionally and evidence-based rather than guessing."
       },
       {
         "q": "On a maintenance resume, which achievement statement is strongest?",
         "options": [
+          "Reduced sorter jams 30% by re-tuning gapping and replacing worn photoeyes",
           "Worked on conveyors",
           "Responsible for equipment",
-          "Reduced sorter jams 30% by re-tuning gapping and replacing worn photoeyes",
           "Did various tasks daily"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Quantified, specific, action-and-result statements ('reduced jams 30% by...') prove impact and pass keyword screening, unlike vague duty descriptions."
       },
       {
@@ -5136,33 +5136,33 @@ MODULES_3 = [
         "q": "What is the most cost-effective way to start building hands-on controls skill without employer equipment?",
         "options": [
           "Wait for on-the-job training only",
-          "Use free software simulators (CODESYS, PLCSIM, Studio 5000 Emulate, Ignition Maker) plus a cheap used micro-PLC and practice projects",
           "Read theory books exclusively",
+          "Use free software simulators (CODESYS, PLCSIM, Studio 5000 Emulate, Ignition Maker) plus a cheap used micro-PLC and practice projects",
           "Buy an industrial robot"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Free simulators let you write and run real logic against simulated I/O; adding a low-cost micro-PLC and practice projects builds tactile wiring/troubleshooting skill and portfolio evidence."
       },
       {
         "q": "What makes a documented troubleshooting case study persuasive career evidence?",
         "options": [
           "It lists parts numbers",
-          "It shows the systematic diagnostic reasoning (what was ruled out and why) and quantifies the business result, proving you can diagnose",
           "It is very long",
-          "It hides the root cause"
+          "It hides the root cause",
+          "It shows the systematic diagnostic reasoning (what was ruled out and why) and quantifies the business result, proving you can diagnose"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The value is demonstrating HOW you think under pressure - structured diagnosis, root cause, and a quantified outcome - not just the final answer; it also doubles as a STAR interview story."
       },
       {
         "q": "On the urgent/important matrix, how should a due PM on a critical asset be handled?",
         "options": [
-          "Ignore it - it is not urgent",
           "Schedule and protect the time - it is important-but-not-yet-urgent, and skipping it creates tomorrow's emergency",
+          "Ignore it - it is not urgent",
           "Do it only if someone complains",
           "Delegate it away permanently"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Important-but-not-urgent proactive work (PMs) must be scheduled and protected; deferring it for constant urgent interruptions is what traps a plant in reactive firefighting."
       },
       {
@@ -5180,33 +5180,33 @@ MODULES_3 = [
         "q": "What is the key communication skill for technical advancement?",
         "options": [
           "Using the most jargon possible",
-          "Audience adaptation - framing the same event differently for a technician, operator, supervisor, and management",
           "Always speaking at length",
+          "Audience adaptation - framing the same event differently for a technician, operator, supervisor, and management",
           "Avoiding written communication"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Adapting level and vocabulary to the audience (detailed for peers, impact/cost for management) - plus bottom-line-up-front and active listening - is what makes technical communication effective."
       },
       {
         "q": "What is the core mindset shift moving from technician to team lead/supervisor?",
         "options": [
           "Do all the hard jobs yourself",
-          "From doing the work to enabling others - delegating, developing people, and being measured by the team's results",
           "Stop caring about safety",
-          "Avoid talking to the crew"
+          "Avoid talking to the crew",
+          "From doing the work to enabling others - delegating, developing people, and being measured by the team's results"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A leader's output is the team's output; success comes from delegating, coaching, and removing obstacles - not from personally doing every tough job (the hero trap)."
       },
       {
         "q": "Why document a troubleshooting win within ten minutes of solving it?",
         "options": [
-          "It is required by law",
           "While it is fresh you capture the reasoning and numbers accurately, accumulating quantified proof of capability over time",
+          "It is required by law",
           "To slow down",
           "Managers demand it hourly"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Capturing the win fresh preserves the diagnostic detail and impact numbers; over a year these become a dozen concrete, quantified proofs that outclass generalities."
       },
       {
@@ -5224,33 +5224,33 @@ MODULES_3 = [
         "q": "Why is staging parts and tools before starting a job a key time-management habit?",
         "options": [
           "It looks professional",
-          "It is the planning step that avoids walking to the crib mid-repair, keeping the job efficient and reducing downtime",
           "It is required by OSHA",
+          "It is the planning step that avoids walking to the crib mid-repair, keeping the job efficient and reducing downtime",
           "It wastes time"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Planning (staging parts, tools, permits, procedure before starting) prevents mid-job interruptions and rework, directly shortening repair time - a core efficiency discipline."
       },
       {
         "q": "What is the best posture in the first two weeks of a new maintenance role?",
         "options": [
           "Announce a KPI overhaul immediately",
-          "Listen, observe, and ride shifts before proposing changes",
           "Criticise the current culture to establish credibility",
-          "Rewrite all PM procedures based on your last plant"
+          "Rewrite all PM procedures based on your last plant",
+          "Listen, observe, and ride shifts before proposing changes"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Weeks 1-2 are for listening and observing. Proposing changes before you understand the plant destroys trust."
       },
       {
         "q": "When bringing a problem to your boss, what should you include?",
         "options": [
-          "Just the problem so they can decide fresh",
           "Context, cost, recommendation, and what you need from them",
+          "Just the problem so they can decide fresh",
           "A long history of every past incident",
           "Blame for whoever caused it"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Managing up means reducing your boss's information gap: what, cost, recommendation, ask. It gives them a decision to make."
       },
       {
@@ -5268,11 +5268,11 @@ MODULES_3 = [
         "q": "For a technician receiving critical feedback, the best immediate response is:",
         "options": [
           "Explain and defend your decision on the spot",
-          "Say 'tell me more' and thank them; sit with it before deciding what to change",
           "Escalate to HR",
+          "Say 'tell me more' and thank them; sit with it before deciding what to change",
           "Interrupt to correct their facts"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Suppress the defence instinct. Ask for detail, thank them, sit with it, then decide. Even bad feedback has ~10% signal."
       },
       {
@@ -5280,21 +5280,21 @@ MODULES_3 = [
         "options": [
           "Day-trading",
           "Buying dividend stocks",
-          "Compounding: monthly index-fund investing over decades",
-          "Whole-life insurance"
+          "Whole-life insurance",
+          "Compounding: monthly index-fund investing over decades"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Compounding over decades: $500/month for 40 years at 7% real is roughly $1.2M. Time in market beats timing the market."
       },
       {
         "q": "Employer 401(k) match should be treated as:",
         "options": [
-          "A nice-to-have",
           "Free money and captured before any other investing (after emergency fund)",
+          "A nice-to-have",
           "Taxable income to avoid",
           "Only used if you are over 50"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "An employer match is instant 100% return on the matched portion. Skipping it leaves guaranteed money on the table."
       },
       {
@@ -5323,22 +5323,22 @@ MODULES_3 = [
         "q": "A $30k VFD replacement classified as CapEx instead of OpEx means:",
         "options": [
           "It is free",
-          "It is depreciated over multiple years and does not hit this year's P&amp;L in full",
           "It cannot be approved",
-          "It must come out of the technician's pay"
+          "It must come out of the technician's pay",
+          "It is depreciated over multiple years and does not hit this year's P&amp;L in full"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "CapEx is capitalised and depreciated over the asset life; OpEx hits this year's expense line. The classification changes budget impact and approval path."
       },
       {
         "q": "For someone breaking into automation without much job experience, what is an especially effective portfolio element?",
         "options": [
-          "A list of hobbies",
           "Documented home-lab or personal projects (a PLC trainer, simulated process) showing hands-on skill",
+          "A list of hobbies",
           "References only",
           "A long objective statement"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Documented home-lab and personal projects demonstrate initiative and real hands-on capability, providing concrete proof of skill when formal work experience is limited. Be ready to discuss them in technical detail."
       },
       {
@@ -5356,22 +5356,22 @@ MODULES_3 = [
         "q": "When making the case to management for a machine upgrade, how should a technician frame it?",
         "options": [
           "In detailed technical jargon",
-          "In terms of downtime, cost, and risk (the business impact)",
           "By listing every component's part number",
+          "In terms of downtime, cost, and risk (the business impact)",
           "By emphasizing personal preference"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Management responds to business impact. Framing the upgrade in terms of reduced downtime, cost savings, and risk (ideally with data and payback) is far more persuasive than technical detail, which suits a fellow technician."
       },
       {
         "q": "Why is deeply mastering fundamentals emphasized for a durable automation career, given how fast products change?",
         "options": [
           "Fundamentals are never tested",
-          "Product knowledge has a short half-life, but fundamentals endure and transfer across platforms and technologies",
           "Only certifications matter",
-          "Fundamentals are only for beginners"
+          "Fundamentals are only for beginners",
+          "Product knowledge has a short half-life, but fundamentals endure and transfer across platforms and technologies"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Specific product knowledge quickly becomes outdated, but fundamentals (electrical theory, control principles, troubleshooting method) endure and transfer to any new platform, so building on them while refreshing current tools sustains a long career."
       }
     ],
@@ -5612,56 +5612,56 @@ MODULES_3 = [
       {
         "q": "How many languages does IEC 61131-3 define?",
         "options": [
+          "Five",
           "Two",
           "Three",
-          "Five",
           "Ten"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Five: Ladder Diagram (LD), Structured Text (ST), Function Block Diagram (FBD), Sequential Function Chart (SFC), and Instruction List (IL, now deprecated)."
       },
       {
         "q": "In Structured Text, which operator is ASSIGNMENT (not comparison)?",
         "options": [
-          ":=",
           "==",
+          ":=",
           "=",
           "&lt;&gt;"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "ST uses := to assign and = to compare. &lt;&gt; means not-equal. Mixing up := and = is the classic ST beginner bug."
       },
       {
         "q": "Which Ladder instruction is true when its bit is 0 (OFF)?",
         "options": [
           "XIC -| |-",
-          "XIO -|/|-",
           "OTE -( )-",
+          "XIO -|/|-",
           "OTL"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "XIO (Examine If Open) is true when the bit is 0. XIC (Examine If Closed) is true when the bit is 1."
       },
       {
         "q": "For safety interlocks and permissives, which language is generally preferred?",
         "options": [
           "Structured Text",
-          "Ladder",
           "Instruction List",
-          "REPEAT loops"
+          "REPEAT loops",
+          "Ladder"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Ladder is auditable and shows live power flow, so verifying the DENY condition of an interlock is straightforward - the reason AWCS keeps this logic in ladder."
       },
       {
         "q": "AWCS conveyor logic is primarily written in which language, and how is zone logic packaged?",
         "options": [
-          "Pure ST, one big routine",
           "Ladder with one AOI per conveyor-zone type",
+          "Pure ST, one big routine",
           "FBD only",
           "SFC with no reuse"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "AWCS is ladder that uses Add-On Instructions extensively - one AOI per zone type. Always open the AOI definition when troubleshooting an unfamiliar zone."
       },
       {
@@ -5679,11 +5679,11 @@ MODULES_3 = [
         "q": "Which task is best suited to Structured Text rather than Ladder?",
         "options": [
           "A single start/stop seal-in rung",
-          "Totalizing throughput across a 50-element array",
           "An E-stop drop-out",
+          "Totalizing throughput across a 50-element array",
           "A guard-door permissive"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Array math, totalizing, scaling, and recipes are compact in ST but sprawling in ladder. Discrete safety logic stays in ladder."
       },
       {
@@ -5691,76 +5691,76 @@ MODULES_3 = [
         "options": [
           "ControlLogix",
           "CompactLogix",
-          "Legacy MicroLogix / SLC-500",
-          "Micro800 (CCW)"
+          "Micro800 (CCW)",
+          "Legacy MicroLogix / SLC-500"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Studio 5000 supports ST on ControlLogix, CompactLogix, and Micro800 (via CCW), but legacy MicroLogix / SLC-500 do not support Structured Text."
       },
       {
         "q": "In a ladder seal-in (latch) rung, what keeps the motor coil energized after the Start button is released?",
         "options": [
-          "A retentive timer",
           "The Motor contact wired in parallel with Start holds the rung true",
+          "A retentive timer",
           "The Stop button",
           "The scan cycle automatically re-energizes it"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The output's own contact placed in parallel with the momentary Start forms the seal-in; it maintains the true path until a series Stop (XIO) breaks it."
       },
       {
         "q": "Writing to the same output coil on two different rungs (a 'double-coil') causes what?",
         "options": [
           "Both rungs energize the output",
-          "A compile error every time",
           "Only the LAST rung solved each scan controls the output; the earlier one is effectively ignored",
+          "A compile error every time",
           "The output toggles rapidly"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Because rungs solve top-to-bottom and outputs write once per scan, the last coil solved wins - the classic double-coil bug that hides intermittent behavior."
       },
       {
         "q": "For a Studio 5000 TON timer, which pair correctly names the elapsed value and the done bit?",
         "options": [
           ".ET and .Q",
-          ".ACC (accumulator) and .DN (done)",
           ".CV and .PT",
+          ".ACC (accumulator) and .DN (done)",
           ".PRE and .EN"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "In ladder/Studio 5000 the timer tag uses .ACC for elapsed ms and .DN for done. (In IEC Structured Text the same block instead exposes .ET and .Q.)"
       },
       {
         "q": "In Structured Text, how do you use a TON on-delay timer?",
         "options": [
           "Drop a TON box on a rung",
-          "Declare a TON instance, then call it each scan with named params (IN, PT) and read .Q/.ET",
           "Write TON = TRUE in a loop",
-          "Timers are not available in ST"
+          "Timers are not available in ST",
+          "Declare a TON instance, then call it each scan with named params (IN, PT) and read .Q/.ET"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC timers are function blocks: declare an instance (JamTmr : TON;), call JamTmr(IN:=cond, PT:=T#3s) every scan, then read JamTmr.Q and JamTmr.ET."
       },
       {
         "q": "In FBD, what is the purpose of a FEEDBACK wire (dashed line) between block outputs and inputs?",
         "options": [
-          "It indicates a wire that carries analog signals rather than Boolean values",
           "It breaks a cyclic data dependency by using the previous scan value for the looped signal",
+          "It indicates a wire that carries analog signals rather than Boolean values",
           "It marks a wire that is electrically isolated from the PLC bus",
           "It signals the compiler to skip that connection during optimization"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "FBD executes in data-flow order; a circular graph has no valid execution order. A FEEDBACK wire tells the compiler to use the value computed in the previous scan for that connection, resolving the cycle. Without it the compiler rejects the network."
       },
       {
         "q": "An SFC step has action qualifier 'D T#3s'. What does this mean?",
         "options": [
           "The action runs for exactly 3 seconds then stops",
-          "The action is disabled for 3 seconds after the step becomes active",
           "The action output is set TRUE 3 seconds after step entry and stays TRUE while the step is active",
+          "The action is disabled for 3 seconds after the step becomes active",
           "The step automatically transitions after 3 seconds regardless of the guard condition"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Action qualifier D (Delay) activates the action after the specified delay following step entry. It remains active while the step is active. It does NOT force a transition - transitions are still guard-condition driven."
       },
       {
@@ -5779,43 +5779,43 @@ MODULES_3 = [
         "options": [
           "Function Block Diagram (FBD)",
           "Sequential Function Chart (SFC)",
-          "Instruction List (IL)",
-          "Ladder Diagram (LD)"
+          "Ladder Diagram (LD)",
+          "Instruction List (IL)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "IL was officially deprecated in IEC 61131-3 Edition 3 due to poor readability and no tooling advantage over Structured Text. Vendors like Siemens and Rockwell have since removed or discouraged its use in new development."
       },
       {
         "q": "A FUNCTION in IEC 61131-3 differs from a FUNCTION_BLOCK primarily because:",
         "options": [
-          "A FUNCTION can be called from Ladder; a FUNCTION_BLOCK cannot",
           "A FUNCTION is stateless and returns exactly one value; a FUNCTION_BLOCK has persistent internal memory across calls",
+          "A FUNCTION can be called from Ladder; a FUNCTION_BLOCK cannot",
           "A FUNCTION_BLOCK can only be used in Structured Text; a FUNCTION works in all five languages",
           "A FUNCTION supports timer and counter blocks internally; a FUNCTION_BLOCK does not"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A FUNCTION has no retained state - identical inputs always produce identical outputs. A FUNCTION_BLOCK has a VAR section whose values persist between calls (e.g., a TON timer remembers its accumulated time). FBs must be instantiated; FUNs are called directly in expressions."
       },
       {
         "q": "In a CASE state machine in ST, why is the ELSE clause considered mandatory for safety?",
         "options": [
           "IEC 61131-3 syntax requires ELSE; code without it will not compile on any vendor tool",
-          "Without ELSE the machine cannot transition back to the IDLE state",
           "An undefined or corrupted state variable would leave outputs indeterminate; ELSE forces a safe fallback state",
+          "Without ELSE the machine cannot transition back to the IDLE state",
           "ELSE is required to reset all timers used inside the CASE statement"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "If the state variable holds an uninitialized or corrupted value not covered by any CASE branch, the ELSE clause executes a safe default (e.g., transition to IDLE or FAULT). Without it, no code executes for that scan and outputs may retain stale values - a dangerous condition on conveyor or sorter drives."
       },
       {
         "q": "What is the maximum value range of an INT data type in IEC 61131-3?",
         "options": [
           "0 to 65535",
-          "-32768 to 32767",
           "-2147483648 to 2147483647",
+          "-32768 to 32767",
           "-128 to 127"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "INT is a 16-bit signed integer: range -32768 to 32767. SINT is 8-bit (-128 to 127), DINT is 32-bit, LINT is 64-bit. Overflowing an INT wraps around silently, which can cause negative counter values - use DINT for production counters."
       },
       {
@@ -5823,43 +5823,43 @@ MODULES_3 = [
         "options": [
           "A PLC fault is generated and the controller goes to fault mode",
           "The string is stored normally; STRING length declarations are advisory only",
-          "The string is silently truncated to 32 characters, potentially corrupting the barcode data",
-          "The assignment is rejected and the variable retains its previous value"
+          "The assignment is rejected and the variable retains its previous value",
+          "The string is silently truncated to 32 characters, potentially corrupting the barcode data"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "IEC 61131-3 STRING types silently truncate assignments that exceed the declared length. No error or fault is raised. Assigning a 40-char barcode to STRING[32] loses the last 8 characters - which may include the check digit or zone code. Always validate LEN() before assigning or parsing."
       },
       {
         "q": "During a PLC program download while a conveyor is running, what happens to VAR RETAIN variables according to IEC 61131-3?",
         "options": [
-          "RETAIN variables keep their last runtime value; only non-retain vars re-initialize",
           "All variables including RETAIN re-initialize to their declared initial values on any download",
+          "RETAIN variables keep their last runtime value; only non-retain vars re-initialize",
           "RETAIN variables retain values on warm restart but re-initialize only on download",
           "Download behavior for RETAIN is entirely vendor-defined with no IEC guidance"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Per IEC 61131-3 clause 2.5.3, a program download (cold start equivalent) re-initializes ALL variables including RETAIN to their declared initial values. Only a power-cycle warm restart preserves RETAIN values. This is a critical live-maintenance hazard - state machine variables resetting to 0 can abruptly stop a running conveyor."
       },
       {
         "q": "Which specification provides portable motion control Function Blocks such as MC_MoveAbsolute and MC_Home across PLC vendors?",
         "options": [
           "IEC 61131-3 Annex A",
-          "IEC 62061",
           "PLCopen Motion Control (IEC 61131-3 companion specification)",
+          "IEC 62061",
           "ANSI/ISA-88 PackML"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "PLCopen Motion Control is a companion specification to IEC 61131-3 that defines standardized FBs (MC_Power, MC_Home, MC_MoveAbsolute, MC_MoveVelocity, etc.) enabling motion code portability across vendors. The axis parameter mapping is still vendor-specific but the FB interface is standardized."
       },
       {
         "q": "In an ENUM type E_State, what advantage does using E_State.RUNNING over the integer constant 2 provide?",
         "options": [
           "ENUM values are stored as REAL internally, allowing decimal sub-states",
-          "The compiler enforces valid value assignments, preventing magic-number bugs and undefined state values",
           "ENUM variables execute faster than INT comparisons at runtime",
+          "The compiler enforces valid value assignments, preventing magic-number bugs and undefined state values",
           "ENUM types are automatically retained across power cycles without VAR RETAIN"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ENUM types are stored as INT internally but the compiler rejects any assignment not in the declared enumeration. This eliminates magic number bugs (e.g., accidentally assigning state 99) and makes code self-documenting. Using E_State.RUNNING is also refactor-safe if state numbering changes."
       },
       {
@@ -5867,65 +5867,65 @@ MODULES_3 = [
         "options": [
           "Series XIC contacts forming AND logic",
           "Parallel XIC branches forming OR logic",
-          "A branch with OTL on one path and OTU on a separate parallel path",
-          "TON timer coils and their .DN output bit"
+          "TON timer coils and their .DN output bit",
+          "A branch with OTL on one path and OTU on a separate parallel path"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "A Ladder rung with OTL (latch) on one branch and OTU (unlatch) on a separate branch has an implicit scan-order priority: the branch evaluated last wins if both conditions are TRUE simultaneously. ST must replicate this with explicit IF/ELSIF ordering. Missing this creates intermittent output state errors that are very hard to trace in production."
       },
       {
         "q": "What is the internal storage size and approximate maximum value of the IEC 61131-3 TIME data type?",
         "options": [
-          "16-bit unsigned integer; maximum approximately 65 seconds",
           "32-bit signed integer storing milliseconds; maximum approximately 24.86 days",
+          "16-bit unsigned integer; maximum approximately 65 seconds",
           "64-bit float storing seconds; maximum effectively unlimited",
           "32-bit unsigned integer storing microseconds; maximum approximately 1.19 hours"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Per IEC 61131-3 clause 2.3.1, TIME is stored as a 32-bit signed DINT in milliseconds. Maximum positive value is 2,147,483,647 ms which equals approximately 24.86 days. Exceeding this wraps to a negative value - a potential timer overflow in very long sequences."
       },
       {
         "q": "A Rockwell Add-On Instruction (AOI) version lock and encryption most directly supports which standard requirement?",
         "options": [
           "IEC 61131-3 namespace collision prevention between libraries",
-          "ANSI/ISA-88 recipe management for batch processes",
           "IEC 62061 / ISO 13849 - preventing unauthorized modification of safety-reviewed code",
+          "ANSI/ISA-88 recipe management for batch processes",
           "PLCopen Motion Control axis parameter standardization"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "IEC 62061 (functional safety of machinery) and ISO 13849 both require that safety-related software be protected from unauthorized modification and that any change triggers re-validation. AOI version locking with encryption enforces this at the tool level, supporting the documented safety lifecycle required by these standards."
       },
       {
         "q": "Which IEC 61131-3 language is best suited to a batch/sequential machine like fill-heat-mix-drain?",
         "options": [
           "Instruction List (IL)",
-          "Sequential Function Chart (SFC)",
           "Ladder Diagram for the whole thing",
+          "Sequential Function Chart (SFC)",
           "Function Block Diagram only"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "SFC models steps and transitions, directly mirroring a process sequence and showing which step is active - ideal for batch/sequential machines."
       },
       {
         "q": "Function Block Diagram (FBD) is most naturally suited to what?",
         "options": [
           "Discrete relay interlocks only",
-          "Signal-flow and continuous/process control (scaling, filtering, PID)",
           "Replacing all ladder logic",
-          "Writing string-manipulation code"
+          "Writing string-manipulation code",
+          "Signal-flow and continuous/process control (scaling, filtering, PID)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "FBD wires blocks in a left-to-right signal flow, making it natural for analog conditioning and process/PID control; discrete interlocks are usually clearer in ladder."
       },
       {
         "q": "Which IEC 61131-3 language is deprecated in the 3rd edition and rarely used today?",
         "options": [
+          "Instruction List (IL)",
           "Ladder Diagram",
           "Structured Text",
-          "Instruction List (IL)",
           "Sequential Function Chart"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Instruction List, a low-level assembler-style language, was deprecated in the 3rd edition of IEC 61131-3 and is rarely used in new work."
       },
       {
@@ -5943,33 +5943,33 @@ MODULES_3 = [
         "q": "In Studio 5000, an unconditional JSR (Jump to Subroutine) in the main routine executes...",
         "options": [
           "Only once at power-up",
-          "Every scan",
           "Only when a fault occurs",
+          "Every scan",
           "Never unless forced"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An unconditional JSR runs every scan; a conditional JSR (preceded by contacts) runs only when its rung is true. Routines execute in call order, top to bottom."
       },
       {
         "q": "What is the key advantage of tag-based addressing (e.g. Conveyor01.Run) over address-based (e.g. I:1/0)?",
         "options": [
           "It runs at a higher clock speed",
-          "It is self-documenting and decoupled from physical I/O layout, supporting UDTs and aliases",
           "It uses less memory always",
-          "It cannot be aliased"
+          "It cannot be aliased",
+          "It is self-documenting and decoupled from physical I/O layout, supporting UDTs and aliases"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Named tags describe the device and data type, decouple logic from I/O slot layout, and support UDTs/arrays/aliases - far more maintainable than physical file addresses."
       },
       {
         "q": "Why break a large PLC program into multiple routines called by JSR rather than one giant routine?",
         "options": [
-          "It is required by the watchdog",
           "For navigability, parallel teamwork, isolation of safety logic, and easier troubleshooting",
+          "It is required by the watchdog",
           "To slow the scan intentionally",
           "To avoid using tags"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Modular routines organized by function keep code navigable, let teams work in parallel, isolate safety logic, and make troubleshooting far easier than one unsearchable giant routine."
       },
       {
@@ -5987,33 +5987,33 @@ MODULES_3 = [
         "q": "A real project uses ladder for interlocks, ST for calculations, and SFC for the machine sequence in one controller. Is this valid under IEC 61131-3?",
         "options": [
           "No, only one language per controller is allowed",
-          "Yes, mixing languages per task is standard and encouraged for clarity",
           "Only if all code is Instruction List",
+          "Yes, mixing languages per task is standard and encouraged for clarity",
           "Only on legacy PLC-5 systems"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "IEC 61131-3 explicitly supports mixing languages; choosing the best language per task (ladder for interlocks, ST for math, SFC for sequence, FBD for loops) improves clarity and maintainability."
       },
       {
         "q": "What is the classic scan-time danger with a WHILE loop in Structured Text?",
         "options": [
           "It runs too slowly",
-          "If its exit condition is never satisfied, it becomes an infinite loop that hangs the scan and faults the processor on watchdog",
           "It cannot use variables",
-          "It only runs once"
+          "It only runs once",
+          "If its exit condition is never satisfied, it becomes an infinite loop that hangs the scan and faults the processor on watchdog"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A PLC executes the whole loop in one scan; a WHILE whose condition never becomes false (e.g. waiting on I/O that does not update mid-scan) hangs the scan and trips the watchdog fault."
       },
       {
         "q": "What is distinctive about a Latch (OTL/SET) output instruction?",
         "options": [
-          "It clears every scan",
           "It is retentive - stays on even when the rung goes false (and can survive a power cycle) until an Unlatch turns it off",
+          "It clears every scan",
           "It is the same as a normal coil",
           "It can only be used once"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "OTL is retentive: the bit stays on after the rung goes false and can persist through a power cycle, requiring an explicit OTU and careful first-scan handling."
       },
       {
@@ -6031,33 +6031,33 @@ MODULES_3 = [
         "q": "For a datasheet scaling/linearization calculation, why is Structured Text preferred over ladder?",
         "options": [
           "Ladder cannot do math",
-          "One readable ST expression captures the formula directly, versus an unreadable chain of CPT/MUL/SUB ladder blocks",
           "ST runs on different hardware",
+          "One readable ST expression captures the formula directly, versus an unreadable chain of CPT/MUL/SUB ladder blocks",
           "Ladder is always faster"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ST expresses arithmetic formulas compactly and readably; the same math in ladder becomes a hard-to-maintain sprawl of compute blocks. (Ladder still wins for boolean interlocks.)"
       },
       {
         "q": "What is the single most powerful form of self-documenting code?",
         "options": [
           "Long file names",
-          "Descriptive tag naming (e.g. Sorter3_DivertSol_Extend) that makes logic self-explaining",
           "Removing all comments",
-          "Using addresses like O:5/2"
+          "Using addresses like O:5/2",
+          "Descriptive tag naming (e.g. Sorter3_DivertSol_Extend) that makes logic self-explaining"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A descriptive tag name conveys function at a glance and removes the need for many comments; opaque addresses force the reader to look everything up."
       },
       {
         "q": "Which debugging tool best finds a double-write (two places writing one output) bug?",
         "options": [
-          "Live rung view alone",
           "The cross-reference, which lists everywhere a tag is written",
+          "Live rung view alone",
           "A voltmeter",
           "The HMI trend"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The cross-reference lists all reads/writes of a tag, exposing duplicate destructive writes where the last-executed instruction wins - a common, confusing fault."
       },
       {
@@ -6075,33 +6075,33 @@ MODULES_3 = [
         "q": "For debugging Structured Text or an analog value (no power-flow view), what is the key technique?",
         "options": [
           "Guessing",
-          "Watch tables/tag monitors and especially trends, which chart the value over time to reveal oscillation, drift, or brief spikes",
           "Forcing every output",
+          "Watch tables/tag monitors and especially trends, which chart the value over time to reveal oscillation, drift, or brief spikes",
           "Rewriting in Instruction List"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Without ladder's live rung view, ST/analog debugging relies on watch tables and time trends; trending reveals dynamic behavior (oscillation, spikes) a static value view misses."
       },
       {
         "q": "What is the mature approach to language selection in a mixed IEC 61131-3 program?",
         "options": [
           "Force everything into one language",
-          "ST for math/analog/data-heavy routines, ladder for boolean interlocks and machine I/O that techs troubleshoot, SFC for sequences",
           "Only use Instruction List",
-          "Always use FBD"
+          "Always use FBD",
+          "ST for math/analog/data-heavy routines, ladder for boolean interlocks and machine I/O that techs troubleshoot, SFC for sequences"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Each language fits certain tasks: ST for calculations/data, ladder for troubleshootable boolean I/O logic, FBD for signal chains, SFC for sequences - forcing one language is inexperienced."
       },
       {
         "q": "A well-commented ladder rung typically has:",
         "options": [
-          "Just the instruction addresses",
           "A one-line header describing purpose, plus meaningful tag names and references to the schematic",
+          "Just the instruction addresses",
           "A joke and the programmer's initials",
           "Nothing; code speaks for itself"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Good ladder comments describe purpose, use meaningful tag names, and reference the physical schematic sheet number so a technician can trace between print and PLC."
       },
       {
@@ -6119,33 +6119,33 @@ MODULES_3 = [
         "q": "Why does IEC 61131-3 forbid recursion in POUs?",
         "options": [
           "It is too hard to compile",
-          "It requires a dynamic call stack whose depth is unknown; violates the deterministic scan-time and bounded-memory contract",
           "Vendors chose not to support it",
+          "It requires a dynamic call stack whose depth is unknown; violates the deterministic scan-time and bounded-memory contract",
           "Only C compilers can do recursion"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Recursion needs an unbounded call stack. PLCs must guarantee deterministic scan and bounded memory, so recursion is forbidden by the standard."
       },
       {
         "q": "Which is the recommended idiomatic pairing?",
         "options": [
           "Safety interlocks written in Structured Text",
-          "Sequences in SFC, math in ST, safety interlocks in LD",
           "All logic in Instruction List",
-          "Ladder for math, ST for interlocks"
+          "Ladder for math, ST for interlocks",
+          "Sequences in SFC, math in ST, safety interlocks in LD"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Safety interlocks in LD (easy for technicians and auditors to read), sequences in SFC, and math/data in ST plays each language to its strengths."
       },
       {
         "q": "When migrating legacy ladder to structured text, the best approach is:",
         "options": [
-          "Translate rung-by-rung to preserve behaviour",
           "Understand what the ladder does at the requirement level and rewrite from that, keeping safety interlocks in LD",
+          "Translate rung-by-rung to preserve behaviour",
           "Delete the old code and start fresh with no reference",
           "Convert only safety-critical rungs first"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Line-by-line translation produces poor ST. Understand intent and rewrite; keep safety interlocks in LD where they are easy to verify."
       },
       {
@@ -6163,77 +6163,77 @@ MODULES_3 = [
         "q": "Which IEC 61131-3 language is officially deprecated in Edition 3?",
         "options": [
           "Ladder Diagram (LD)",
-          "Instruction List (IL)",
           "Structured Text (ST)",
+          "Instruction List (IL)",
           "Sequential Function Chart (SFC)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Instruction List (IL) is deprecated in Ed 3. The other four languages remain standard."
       },
       {
         "q": "A parallel (simultaneous) SFC divergence requires:",
         "options": [
           "A single-line convergence",
-          "A double-line convergence where all branches must complete before continuing",
           "No convergence",
-          "Only one branch to complete"
+          "Only one branch to complete",
+          "A double-line convergence where all branches must complete before continuing"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Parallel divergence (double horizontal line) requires a parallel convergence (double line); all branches must reach the convergence step before the sequence moves on."
       },
       {
         "q": "If your ST algorithm genuinely needs unbounded recursion, the correct architectural response is:",
         "options": [
-          "Force it into the PLC anyway",
           "Move that work to an edge PC or SCADA server where non-deterministic timing is acceptable",
+          "Force it into the PLC anyway",
           "Skip the check",
           "Use a bigger PLC"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Keep the PLC deterministic. Push non-deterministic or unbounded work to a subordinate device (edge PC, SCADA) that can afford variable timing."
       },
       {
         "q": "Which IEC 61131-3 language has been deprecated due to poor readability and maintainability?",
         "options": [
           "Ladder Diagram",
-          "Structured Text",
           "Instruction List",
+          "Structured Text",
           "Function Block Diagram"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Instruction List (IL), a low-level assembly-like language, has been deprecated. Its terse, stepwise nature makes programs hard to read and maintain; Structured Text fills the textual-language role with far better clarity."
       },
       {
         "q": "Even when Structured Text could express machine interlock logic more compactly, why is ladder often still chosen for it?",
         "options": [
           "Ladder executes faster",
-          "Ladder is universally readable by maintenance electricians who must troubleshoot it live, so maintainability wins",
           "ST cannot do boolean logic",
+          "Ladder is universally readable by maintenance electricians who must troubleshoot it live, so maintainability wins",
           "Ladder uses less memory"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "PLC code is read far more than written, usually by maintenance staff during faults. Ladder's universal readability to electricians often outweighs ST's compactness because maintainability over the system's life is paramount."
       },
       {
         "q": "An application is best described as a defined series of steps with transition conditions (fill, heat, mix, drain). Which language most naturally expresses it?",
         "options": [
           "Instruction List",
-          "Sequential Function Chart (SFC)",
           "Function Block Diagram",
-          "Ladder only"
+          "Ladder only",
+          "Sequential Function Chart (SFC)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "SFC directly expresses steps and transitions, making sequential processes explicit and highly diagnosable, showing which step is active and which transition is unmet during a stall. FBD suits continuous analog flow."
       },
       {
         "q": "Comments in PLC code are most valuable when they explain:",
         "options": [
-          "What each instruction does (which the code already shows)",
           "Why the logic exists and any non-obvious reasoning",
+          "What each instruction does (which the code already shows)",
           "The programmer's name only",
           "Nothing; code is self-explanatory"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The code already shows what it does; effective comments explain the intent and non-obvious reasoning (why an interlock exists, what a transition waits for), which is what a future maintainer needs to modify it safely."
       }
     ],
@@ -6466,12 +6466,12 @@ MODULES_3 = [
       {
         "q": "What does ZPA (Zero-Pressure Accumulation) mean for an MDR conveyor?",
         "options": [
-          "All zones run at zero speed",
           "Each zone releases its item only when the downstream zone is clear",
+          "All zones run at zero speed",
           "Zones apply constant pressure to pack boxes tightly",
           "The conveyor has no photoeyes"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ZPA releases one item per zone only when the downstream zone is clear, so boxes never pile up and push against each other - creating clean gaps for scanning/sortation."
       },
       {
@@ -6489,33 +6489,33 @@ MODULES_3 = [
         "q": "A belt is drifting off-center to the right. Per the ACY1 rule, you adjust the take-up on which side?",
         "options": [
           "The right side (same as drift)",
-          "The side OPPOSITE the drift, in small increments",
           "Both sides one full turn",
+          "The side OPPOSITE the drift, in small increments",
           "Loosen the belt completely"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Adjust the take-up on the side OPPOSITE the direction of drift, in small increments - run and recheck before adjusting again."
       },
       {
         "q": "Screw-type take-ups should be adjusted:",
         "options": [
           "One side only, several turns",
-          "Both sides equally, in 1/4-turn increments, rechecking each cycle",
           "As tight as possible in one pass",
-          "Only when the belt breaks"
+          "Only when the belt breaks",
+          "Both sides equally, in 1/4-turn increments, rechecking each cycle"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Adjust both sides equally in 1/4-turn increments only, running briefly and re-checking tracking after each cycle."
       },
       {
         "q": "A sliding-shoe sorter diverts packages by:",
         "options": [
-          "Tilting trays",
           "Polyurethane shoes sliding diagonally across a slat bed into angled lanes",
+          "Tilting trays",
           "Air jets",
           "Robot arms"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Sliding-shoe sorters use individual polyurethane shoes that slide diagonally across a moving slat bed; shoe wear and guide-mechanism alignment are the primary PM items."
       },
       {
@@ -6533,44 +6533,44 @@ MODULES_3 = [
         "q": "On an ADTA zone with an 'E-stop open' fault, the correct approach is:",
         "options": [
           "Pull-test each e-stop until the zone starts",
-          "Use the HMI zone map to find the open device; reset ALL e-stops in the zone before it restarts",
           "Bypass the e-stop circuit",
+          "Use the HMI zone map to find the open device; reset ALL e-stops in the zone before it restarts",
           "Reset only the nearest button"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ADTA requires ALL e-stops in the zone to be reset; use the HMI zone map to identify the open device - do NOT pull-test e-stops to find it."
       },
       {
         "q": "The ADTA gapper's job is to:",
         "options": [
           "Sort packages by size",
-          "Create gaps between packages by progressively increasing section speed",
           "Weigh packages",
-          "Print labels"
+          "Print labels",
+          "Create gaps between packages by progressively increasing section speed"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The gapper accelerates through a 4-stage speed progression (~85-&gt;115-&gt;170-&gt;200 ft/min), dynamically adjusting section speed to open consistent gaps for downstream scanning/sortation."
       },
       {
         "q": "A flat belt conveyor has Te = 120 lb and runs at 180 ft/min. What is the required drive motor HP before applying any service factor?",
         "options": [
-          "0.55 HP",
           "0.65 HP",
+          "0.55 HP",
           "0.72 HP",
           "1.20 HP"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "HP = (Te x V) / 33,000 = (120 x 180) / 33,000 = 21,600 / 33,000 = 0.655 HP, which rounds to 0.65 HP. The formula HP = Te x V / 33,000 is standard CEMA belt drive sizing."
       },
       {
         "q": "A gravity take-up counterweight must maintain T2 = 200 lb. What counterweight mass is required?",
         "options": [
           "100 lb",
-          "200 lb",
           "400 lb",
+          "200 lb",
           "800 lb"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The gravity take-up carriage pulley is supported by two belt strands, so W_cw = 2 x T2 = 2 x 200 = 400 lb. Using only 200 lb would provide only 100 lb of slack-side tension, causing belt slip."
       },
       {
@@ -6589,21 +6589,21 @@ MODULES_3 = [
         "options": [
           "1.8",
           "2.6",
-          "3.5",
-          "5.0"
+          "5.0",
+          "3.5"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "By the Euler belt-friction equation: T1/T2 = e^(mu x theta) = e^(0.40 x pi) = e^1.257 = approximately 3.5. This ratio must not be exceeded or the belt will slip on the drive pulley."
       },
       {
         "q": "A conveyor chain sprocket has 17 teeth instead of 7. This primarily reduces which phenomenon?",
         "options": [
+          "Chordal velocity variation (speed pulsation).",
           "Catenary sag on the return strand.",
           "Chain elongation due to pin wear.",
-          "Chordal velocity variation (speed pulsation).",
           "Lubrication interval requirements."
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Chordal velocity variation = 1 - cos(180 deg / N). For N=7 this is about 9.9%; for N=17 it drops to about 1.7%. ANSI B29.1 recommends a minimum of 17 teeth on conveyor drive sprockets to keep pulsation low and reduce vibration."
       },
       {
@@ -6632,22 +6632,22 @@ MODULES_3 = [
         "q": "A gapping system targets 18-inch gaps at 300 ft/min belt speed. A package exits with only a 9-inch gap. How long must the release gate hold the next package?",
         "options": [
           "0.075 s",
-          "0.150 s",
           "0.225 s",
-          "0.300 s"
+          "0.300 s",
+          "0.150 s"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Belt speed = 300 ft/min = 60 in/s. Additional gap needed = 18 - 9 = 9 in. Delay = 9 in / 60 in/s = 0.150 s. The release gate holds the next package an extra 0.15 s to grow the gap to the 18-inch target."
       },
       {
         "q": "Per ANSI B29.1, at what percentage of elongation should roller chain be replaced?",
         "options": [
+          "3%",
           "1%",
           "2%",
-          "3%",
           "5%"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "ANSI B29.1 specifies replacement when chain elongation exceeds 3% of nominal length, measured over a 20-link span. Beyond 3%, continued use rapidly accelerates sprocket tooth wear and risks skipping or derailment."
       },
       {
@@ -6665,11 +6665,11 @@ MODULES_3 = [
         "q": "How is continuous electrical power typically delivered to moving carrier units on a cross-belt sorter?",
         "options": [
           "Onboard lithium battery packs swapped at maintenance stations.",
-          "Conductor rail (bus bar) along the track with sliding contact shoes on each carrier.",
           "Wireless inductive charging pads embedded in the floor track.",
+          "Conductor rail (bus bar) along the track with sliding contact shoes on each carrier.",
           "Compressed-air turbines on each carrier driven by a track-mounted air main."
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Cross-belt sorters use a conductor rail (bus bar) mounted along the track loop; each carrier has spring-loaded contact shoes supplying continuous 24-48 VDC. Control data is transmitted via a separate optical or RF link on the carrier."
       },
       {
@@ -6677,109 +6677,109 @@ MODULES_3 = [
         "options": [
           "208 ft-lb",
           "346 ft-lb",
-          "416 ft-lb",
-          "520 ft-lb"
+          "520 ft-lb",
+          "416 ft-lb"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Lift torque = W x sin(theta) x R = 800 x sin(12 deg) x 2.5 = 800 x 0.2079 x 2.5 = 416 ft-lb. The 520 ft-lb option already includes a 1.25 service factor; the question asks for the value before that factor."
       },
       {
         "q": "Which NFPA standard governs E-stop deceleration requirements for industrial conveyor and machinery electrical systems?",
         "options": [
+          "NFPA 79 (Electrical Standard for Industrial Machinery)",
           "NFPA 70 (National Electrical Code)",
           "NFPA 72 (Fire Alarm Code)",
-          "NFPA 79 (Electrical Standard for Industrial Machinery)",
           "NFPA 101 (Life Safety Code)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "NFPA 79 Section 9.3 covers stop categories and E-stop deceleration requirements for industrial machinery. NFPA 70 covers building wiring, NFPA 72 covers fire alarms, and NFPA 101 covers life-safety egress requirements."
       },
       {
         "q": "Ceramic lagging offers the highest friction coefficient but carries a key operational risk. What is it?",
         "options": [
           "Ceramic tiles are electrically conductive and create shock hazards.",
-          "Ceramic adds excessive pulley weight, overloading shaft bearings.",
           "Ceramic aggressively abrades the belt cover, especially on worn or spliced belts.",
+          "Ceramic adds excessive pulley weight, overloading shaft bearings.",
           "Ceramic lagging cannot bond to steel and requires mechanical fasteners that reduce wrap angle."
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Ceramic lagging (alumina tile) has a very abrasive surface. On worn, thin, or mechanically-laced belts it cuts aggressively into the belt cover, causing premature belt failure. It is best reserved for new or thick-cover belts in high-tension applications where slip is a serious operational risk."
       },
       {
         "q": "In a ZPA (Zero-Pressure Accumulation) conveyor, when will a zone release its carton to the next zone downstream?",
         "options": [
           "Immediately, on a fixed timer regardless of downstream status",
-          "Only when the downstream zone reports it is clear",
           "Only when an operator presses release",
+          "Only when the downstream zone reports it is clear",
           "Never - ZPA zones do not transfer product"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ZPA logic holds a carton until the downstream zone sensor reports clear, so product accumulates with gaps and no line pressure, preventing crushing."
       },
       {
         "q": "A retroreflective photoeye keeps reporting BLOCKED with no package present. What is the most likely cause?",
         "options": [
           "The motor overload tripped",
-          "A dirty or misaligned reflector / dirty lens",
           "The VFD is in overvoltage",
-          "The belt splice failed"
+          "The belt splice failed",
+          "A dirty or misaligned reflector / dirty lens"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A dirty lens or dirty/misaligned reflector drops the received light below threshold, so the eye reads blocked (dark) even with nothing in the beam."
       },
       {
         "q": "A slider-bed belt is drifting toward the right side of the frame. Which adjustment corrects the tracking?",
         "options": [
-          "Adjust the drive pulley only",
           "Adjust the tail/take-up pulley in small increments",
+          "Adjust the drive pulley only",
           "Increase the VFD accel time",
           "Replace the belt immediately"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Belt tracking is corrected at the tail/take-up pulley in small (quarter-turn) steps, letting the belt run several revolutions between adjustments. The belt steers toward the end of the roller it contacts first."
       },
       {
         "q": "Which statement about belt splices is correct?",
         "options": [
           "Mechanical laced splices are stronger than vulcanized",
-          "Vulcanized splices can be quickly removed by pulling a pin",
           "A vulcanized (endless) splice is stronger and smoother but not quickly removable",
+          "Vulcanized splices can be quickly removed by pulling a pin",
           "Splice squareness has no effect on tracking"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Vulcanized/endless splices are stronger, smoother, and quieter but cannot be undone quickly; laced splices are field-repairable but weaker. A non-square splice always mistracks."
       },
       {
         "q": "What is the primary purpose of singulation/gapping before a sorter induction?",
         "options": [
           "To speed up the whole line",
-          "To present packages one at a time with a consistent gap so each is scanned and diverted correctly",
           "To reduce motor current",
+          "To present packages one at a time with a consistent gap so each is scanned and diverted correctly",
           "To eliminate the need for photoeyes"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Singulation creates a consistent one-at-a-time gap so the scanner reads each package individually and the sorter diverts it to the correct destination without double-diverts or mis-sorts."
       },
       {
         "q": "Which sorter type uses a small individually-powered belt on each carrier to fire items sideways into a chute, making it ideal for polybags and irregular small items?",
         "options": [
           "Sliding-shoe sorter",
-          "Cross-belt sorter",
           "Pop-up wheel diverter",
-          "Pusher/paddle diverter"
+          "Pusher/paddle diverter",
+          "Cross-belt sorter"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A cross-belt sorter has a short powered belt on each carrier that runs sideways to eject the item precisely, handling polybags and small/irregular items well."
       },
       {
         "q": "No-read rates at a scan tunnel suddenly climb across all package types. Which is the LEAST likely single root cause?",
         "options": [
+          "One package having a torn label",
           "A dirty scanner window or failed scanner",
           "A tracking encoder/photoeye fault mis-assigning reads",
-          "Poor gapping putting two packages in one window",
-          "One package having a torn label"
+          "Poor gapping putting two packages in one window"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "A single torn label causes one no-read, not a system-wide rise. A dirty/failed scanner, a tracking fault, or bad gapping affect many packages and explain a climbing rate."
       },
       {
@@ -6797,33 +6797,33 @@ MODULES_3 = [
         "q": "A conveyor VFD trips on DC bus OVERVOLTAGE (OV) each time the loaded belt stops. What is the correct fix?",
         "options": [
           "Shorten the deceleration time",
-          "Lengthen the deceleration time or add a braking resistor",
           "Lower the motor nameplate FLA setting",
+          "Lengthen the deceleration time or add a braking resistor",
           "Switch to dark-operate photoeyes"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Overvoltage on stop is regenerative energy from the decelerating load pumping the DC bus. Lengthening decel time or adding a braking resistor dissipates it and clears the OV trip."
       },
       {
         "q": "A VFD reports OVERCURRENT (OC) the instant a loaded belt tries to start. Before resetting, what should you check first?",
         "options": [
           "The reflector alignment",
-          "For a mechanical jam or bind, or too-fast accel setting",
           "The label ribbon",
-          "The scan tunnel focus"
+          "The scan tunnel focus",
+          "For a mechanical jam or bind, or too-fast accel setting"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Instant OC on start indicates a mechanical bind/jam or an accel ramp too fast for the load. Clear the mechanical cause (or lengthen accel) before resetting to avoid damaging the drive/motor."
       },
       {
         "q": "Why is a polarized retroreflective photoeye often chosen over a standard one on a conveyor handling shrink-wrapped totes?",
         "options": [
-          "It uses less power",
           "It rejects glare/shine from glossy surfaces that would otherwise falsely satisfy the beam",
+          "It uses less power",
           "It has a longer cable",
           "It does not need a reflector"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Polarizing filters make the eye respond only to light returned from its dedicated reflector, rejecting shine off glossy shrink-wrap that could otherwise mimic the reflector and cause missed detections."
       },
       {
@@ -6841,33 +6841,33 @@ MODULES_3 = [
         "q": "What is the leading cause of conveyor fatalities that LOTO is meant to prevent?",
         "options": [
           "Slow belts",
-          "Reaching into a running or 'stopped-but-not-locked-out' conveyor that then restarts by sequence, remote start, or stored energy",
           "Loud noise",
+          "Reaching into a running or 'stopped-but-not-locked-out' conveyor that then restarts by sequence, remote start, or stored energy",
           "Dust"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Most conveyor fatalities involve reaching into a conveyor that restarts unexpectedly; full LOTO before clearing jams or entering guarded areas is mandatory - never defeat guards or pull-cords."
       },
       {
         "q": "How does encoder-based product tracking fire a diverter at the right moment?",
         "options": [
           "It guesses",
-          "Each encoder pulse represents belt distance; an item's position is registered at a known point and advanced by encoder counts until it reaches the divert",
           "By timing with a stopwatch",
-          "Randomly"
+          "Randomly",
+          "Each encoder pulse represents belt distance; an item's position is registered at a known point and advanced by encoder counts until it reaches the divert"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A conveyor encoder measures belt travel; a package registered at induction advances in a tracking window by encoder counts, and the diverter fires (slightly early for actuation delay) at the target."
       },
       {
         "q": "When a drum motor (motorized pulley) fails, what does repair typically involve versus an external gearmotor?",
         "options": [
-          "Same repair for both",
           "The entire pulley is replaced as a unit (little field-repairable), whereas a gearmotor may need only a chain or bearing",
+          "Same repair for both",
           "Drum motors never fail",
           "Gearmotors are always replaced whole"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A drum motor integrates motor+reduction inside the pulley, so failure means a full pulley swap; an external gearmotor's individual parts (chain, bearing, reducer) are separately serviceable."
       },
       {
@@ -6885,33 +6885,33 @@ MODULES_3 = [
         "q": "A chute repeatedly jams. Which is a legitimate engineering fix rather than repeatedly clearing it?",
         "options": [
           "Clear it faster each time",
-          "Steepen the slope, add low-friction (UHMW) lining, a vibrator or air assist, or resolve the downstream stoppage",
           "Ignore it",
+          "Steepen the slope, add low-friction (UHMW) lining, a vibrator or air assist, or resolve the downstream stoppage",
           "Run the conveyor faster"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Recurring chute jams are a design/parameter problem: insufficient slope for the product's friction, a geometric bottleneck, or back-up - fixed by slope, lining, assists, or clearing the downstream cause."
       },
       {
         "q": "Why does a pull-cord E-stop monitor cable tension (tripping on a broken or slack cable)?",
         "options": [
           "To save power",
-          "So a failed cable fails safe - a break or slack condition also stops the conveyor rather than silently disabling protection",
           "To increase belt speed",
-          "To detect packages"
+          "To detect packages",
+          "So a failed cable fails safe - a break or slack condition also stops the conveyor rather than silently disabling protection"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Monitoring tension makes the pull-cord fail-safe: pulling, breaking, or slackening the cable all trip the latched stop, so a damaged safety device does not leave the conveyor unprotected."
       },
       {
         "q": "What does the CEMA class (A-E) of a conveyor roller specify?",
         "options": [
-          "The belt color",
           "Bearing size, shaft diameter, and load capacity for the duty - undersizing causes early bearing failure",
+          "The belt color",
           "The motor voltage",
           "The barcode format"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "CEMA idler classes rate rollers by duty (bearing/shaft size and load capacity); matching class to belt width, speed, and load prevents premature bearing failure."
       },
       {
@@ -6929,77 +6929,77 @@ MODULES_3 = [
         "q": "A dynamic weight scale (weigh-in-motion) achieves what accuracy at typical sortation speeds?",
         "options": [
           "+/- 0.1g",
-          "+/- 5-10g at 1 m/s",
           "+/- 100g",
+          "+/- 5-10g at 1 m/s",
           "Exact grams"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Well-set-up in-motion checkweighers achieve +/-5-10g at 1 m/s; accuracy degrades at higher speed and with shorter parcels."
       },
       {
         "q": "Why does a warm-up cycle matter for a cold sortation line?",
         "options": [
           "It saves electricity",
-          "Cold grease, stiff belts, and slow pneumatics cause tracking and timing faults if the line is loaded at full throughput immediately",
           "It is required by NEC",
-          "It resets alarms"
+          "It resets alarms",
+          "Cold grease, stiff belts, and slow pneumatics cause tracking and timing faults if the line is loaded at full throughput immediately"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Cold viscosity raises gearbox drag, stiff belts wander, pneumatic actuators lag, and VFD DC-bus capacitors have higher ESR when cold. A warm-up prevents preventable faults."
       },
       {
         "q": "A belt conveyor is tracking to the right. The 'leading side' rule for adjusting an idler is:",
         "options": [
-          "Advance the RIGHT end of an idler",
           "Advance the LEFT end of an idler (belt tracks toward the leading side)",
+          "Advance the RIGHT end of an idler",
           "Loosen the take-up",
           "Reverse the belt"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Belt tracks toward the leading side of a skewed idler. To move the belt right, advance the LEFT end. Fix mechanical squareness first, then fine-tune with idlers."
       },
       {
         "q": "Which chute-blockage detection method reliably catches hard jams but not slow build-up?",
         "options": [
           "Ultrasonic level sensor",
-          "Photoelectric through-beam",
           "Motor-current signature on the downstream conveyor",
+          "Photoelectric through-beam",
           "Camera-based"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "A jammed chute stalls the receiving conveyor and motor current rises above idle. Reliable for hard jams, insensitive to gradual accumulation."
       },
       {
         "q": "When mounting a photoeye that reads glossy packaging, best practice is:",
         "options": [
           "Mount perpendicular to the belt",
-          "Angle emitter and receiver 5-10 degrees off perpendicular to reject specular reflections",
           "Increase sensitivity to maximum",
+          "Angle emitter and receiver 5-10 degrees off perpendicular to reject specular reflections",
           "Use a proximity sensor instead"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Angling 5-10 degrees off perpendicular scatters specular reflections off shiny wrappers so the receiver only sees intentional signal, reducing false triggers."
       },
       {
         "q": "In a proper conveyor handoff handshake, the upstream releases a parcel only when:",
         "options": [
           "A timer expires",
-          "PARCEL_READY (upstream has one to send) AND READY_TO_RECEIVE (downstream is empty and running) are both TRUE",
           "The operator presses a button",
-          "The scale confirms weight"
+          "The scale confirms weight",
+          "PARCEL_READY (upstream has one to send) AND READY_TO_RECEIVE (downstream is empty and running) are both TRUE"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Ready/busy handshake beats open-loop timing: both AND-ed states must be true to release. This handles speed variation, jams, and warm-up automatically."
       },
       {
         "q": "Encoders on the head pulley are used in sortation to:",
         "options": [
-          "Regulate motor speed",
           "Track parcel position in conveyor pulses so the PLC handles speed changes gracefully",
+          "Regulate motor speed",
           "Measure weight",
           "Detect belt breaks"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Encoder pulses tie parcel position to belt travel not time; if the belt slows or speeds, tracking stays accurate through diverts and merges."
       },
       {
@@ -7017,33 +7017,33 @@ MODULES_3 = [
         "q": "For a legal-for-trade dynamic weight scale application, what is required?",
         "options": [
           "Any load cell will do",
-          "NTEP or OIML approval and periodic sealed calibration",
           "Only annual calibration is needed",
+          "NTEP or OIML approval and periodic sealed calibration",
           "No calibration"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Legal-for-trade weighing (billing customers) requires NTEP (US) or OIML (international) approval with sealed periodic calibration by an authorised technician."
       },
       {
         "q": "In a 24V MDR (motorized drive roller) conveyor, how is zero-pressure accumulation typically achieved?",
         "options": [
           "A single central motor drives all rollers continuously",
-          "Each zone's controller card runs its zone only when it can move product to a clear downstream zone, stopping when the next zone is occupied",
           "Gravity alone",
-          "A human operator starts each zone"
+          "A human operator starts each zone",
+          "Each zone's controller card runs its zone only when it can move product to a clear downstream zone, stopping when the next zone is occupied"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "MDR zone cards communicate with neighbors and run a zone only when the downstream zone is clear, stopping when it is occupied, so cartons accumulate without touching (zero-pressure) and motors run only when needed."
       },
       {
         "q": "Which sorter technology offers the highest throughput and handles the widest mix of items (including bags and irregular shapes) by carrying each item on its own cell?",
         "options": [
+          "Cross-belt or tilt-tray sorter",
           "Pop-up wheel diverter",
           "Pusher/paddle diverter",
-          "Cross-belt or tilt-tray sorter",
           "Gravity roller"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Cross-belt and tilt-tray sorters carry each item on its own powered belt cell or tilting tray around a loop, discharging precisely at the target, giving the highest throughput and flexibility for mixed and irregular items."
       },
       {
@@ -7061,11 +7061,11 @@ MODULES_3 = [
         "q": "A section of clear conveyor keeps stopping with a jam fault though nothing is physically stuck. What is the most likely cause to check first?",
         "options": [
           "The main drive motor has failed",
-          "A misaligned or dirty photo-eye is falsely detecting a blockage",
           "The belt is too tight",
+          "A misaligned or dirty photo-eye is falsely detecting a blockage",
           "The PLC needs replacing"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Jam detection relies on photo-eye state and timing. A misaligned or dirty photo-eye falsely reads product present (or missing), triggering a jam fault on a clear conveyor, making the sensor the first thing to check."
       }
     ],
@@ -7290,45 +7290,45 @@ MODULES_3 = [
       {
         "q": "How does an AR drive unit know its position on the floor?",
         "options": [
-          "GPS",
           "It reads 2D barcode/QR fiducials laid out in a floor grid",
+          "GPS",
           "Ultrasonic beacons",
           "Dead reckoning only"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Drives read floor fiducials (2D barcode/QR markers) with a downward camera. Smeared or damaged fiducials cause navigation errors."
       },
       {
         "q": "An AR drive throws error 105. What is the most likely cause and fix?",
         "options": [
           "Low battery - swap battery",
-          "Fiducial read failure - clean the fiducial (dry microfiber) or replace if corner damage &gt; 5 mm",
           "Motor fault - replace motor",
+          "Fiducial read failure - clean the fiducial (dry microfiber) or replace if corner damage &gt; 5 mm",
           "Network outage - reboot switch"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Error 105 = fiducial read failure. Clean QR codes with dry microfiber (no solvents); replace any fiducial with corner damage &gt; 5 mm."
       },
       {
         "q": "Using DUDT's Wheel Wear function, you should replace a standard drive's wheels when the OD drops below:",
         "options": [
           "150 mm",
-          "190 mm",
           "220 mm",
-          "250 mm"
+          "250 mm",
+          "190 mm"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Replace standard-drive wheels below 190 mm OD (195 mm for H-drive). Worn wheels raise motor current and cause navigation drift."
       },
       {
         "q": "What does LCRM (Low Charge Regime Manager) do?",
         "options": [
-          "Speeds up all drives",
           "Reduces MDIPF to hold drives in reserve for charging when fleet charge drops",
+          "Speeds up all drives",
           "Disables chargers",
           "Increases pod weight limits"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "LCRM automatically lowers MDIPF (Max Drives In Play Fraction), parking drives in reserve to protect charge - enabled everywhere except lead-acid (R) drives and LVM zones."
       },
       {
@@ -7346,33 +7346,33 @@ MODULES_3 = [
         "q": "The #1 cause of drive disablements during peak is:",
         "options": [
           "Software bugs",
-          "Floor debris (cardboard, strapping, labels) fouling wheels",
           "Operator error",
+          "Floor debris (cardboard, strapping, labels) fouling wheels",
           "Charger failures"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Floor debris is the top disablement cause during peak - it triggers error 206 (wheel obstruction). Run hourly floor walks and clear with compressed air."
       },
       {
         "q": "Drives show 'No Comms' in ARTS. What do you check?",
         "options": [
           "The pod weight",
-          "AP status, Ethernet to the AP, and switch-port VLAN assignment",
           "The floor fiducials",
-          "The charger LED"
+          "The charger LED",
+          "AP status, Ethernet to the AP, and switch-port VLAN assignment"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Check access-point (AP) status on the floor map, the Ethernet cable to the AP, and the VLAN on the switch port - AR drives use a dedicated VLAN."
       },
       {
         "q": "Before physically approaching a disabled drive on the AR field, you must:",
         "options": [
-          "Just walk out and grab it",
           "Follow the site's AR floor-access / safe-entry procedure (field paused or segment cleared, authorization/vest)",
+          "Just walk out and grab it",
           "Wait for the drive to move",
           "Turn off the whole building"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The AR floor is a restricted controlled space. Always follow the site's floor-access procedure - a loaded pod-carrying drive is heavy and quiet. Never enter a live field unprocedurally."
       },
       {
@@ -7422,34 +7422,34 @@ MODULES_3 = [
       {
         "q": "In Conflict-Based Search (CBS) for MAPF, what does the HIGH-LEVEL search do?",
         "options": [
-          "Plans each robot's individual shortest path using A*",
           "Detects inter-robot conflicts and imposes constraints to force replanning",
+          "Plans each robot's individual shortest path using A*",
           "Manages TMS segment reservations and broadcasts grants",
           "Assigns charging slots based on SoC priority"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The CBS high level detects pairwise conflicts between individually-planned paths and adds constraints (robot A must not be at node X at time T) that force the low-level A* planner to find conflict-free alternatives. The low level handles individual A* planning. TMS reservations and charging are separate system functions."
       },
       {
         "q": "In the TMS wait-for graph, what structure definitively indicates a deadlock?",
         "options": [
           "A node with no outgoing edges",
-          "A disconnected subgraph",
           "A directed cycle",
+          "A disconnected subgraph",
           "A node with more than four robots waiting"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "A directed cycle in the wait-for graph - A waits for B, B waits for C, C waits for A - is the formal definition of deadlock. A node with no outgoing edges simply means that robot is not waiting. Disconnected subgraphs and high-degree nodes are not deadlock indicators."
       },
       {
         "q": "Per IEC 60204-1, which E-stop category describes a CONTROLLED deceleration followed by power removal once stopped?",
         "options": [
           "Category 0",
-          "Category 1",
           "Category 2",
+          "Category 1",
           "Category 3"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Category 1 provides controlled deceleration (motors braked actively) then removes power once stopped - protecting a loaded pod from tipping. Category 0 immediately removes power (coast to stop). Category 2 maintains power after stopping for fast restart. Category 3 is not an IEC 60204-1 E-stop classification."
       },
       {
@@ -7457,43 +7457,43 @@ MODULES_3 = [
         "options": [
           "802.11v (BSS Transition Management)",
           "802.11k (Radio Resource Measurement)",
-          "802.11r (Fast BSS Transition)",
-          "802.11ac (throughput)"
+          "802.11ac (throughput)",
+          "802.11r (Fast BSS Transition)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "802.11r (Fast BSS Transition) pre-authenticates to the target AP while the robot is still associated to the current one, reducing handoff time from ~50 ms to ~2-5 ms. 802.11k provides neighbor AP lists. 802.11v enables AP-initiated client steering. 802.11ac is a throughput/PHY standard, not a roaming mechanism."
       },
       {
         "q": "A robotic fleet has Availability=0.92, Performance=0.85, Quality=0.98. What is the OEE?",
         "options": [
-          "91.7%",
           "76.6%",
+          "91.7%",
           "87.5%",
           "83.3%"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "OEE = 0.92 x 0.85 x 0.98 = 0.7663, approximately 76.6%. Multiplying only two of the three factors yields incorrect intermediate values. All three must be multiplied together."
       },
       {
         "q": "What charging current does a 2C rate represent for a 50 Ah LiFePO4 drive-unit battery pack?",
         "options": [
           "25 A",
-          "50 A",
           "100 A",
+          "50 A",
           "2 A"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "C-rate x nominal Ah capacity = current. 2C x 50 Ah = 100 A. 1C = 50 A, 0.5C = 25 A. The 2 A option represents approximately 0.04C, a very slow trickle charge."
       },
       {
         "q": "Which standard specifically governs Industrial Mobile Robots (IMR) in the US, covering risk assessment, safeguarding, and performance requirements?",
         "options": [
           "ISO 10218-1 (stationary robot arms)",
-          "ANSI/RIA R15.08-2020",
           "IEC 61508 (generic functional safety)",
+          "ANSI/RIA R15.08-2020",
           "NFPA 79 (electrical standard for machinery)"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ANSI/RIA R15.08-2020 is the US standard specifically for Industrial Mobile Robots. ISO 10218-1 covers stationary robot arms. IEC 61508 is a generic functional safety standard. NFPA 79 governs industrial machinery electrical design. R15.08 references ISO 3691-4 for vehicle-level safety requirements."
       },
       {
@@ -7501,21 +7501,21 @@ MODULES_3 = [
         "options": [
           "20%",
           "50%",
-          "80%",
-          "100%"
+          "100%",
+          "80%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "The CC phase efficiently delivers approximately 80% SoC. The final 20% is filled during the CV (constant voltage) phase where current tapers - this tail takes comparable time but reduces cell stress. Opportunity charging is most efficient when terminated at end-of-CC (~80% SoC)."
       },
       {
         "q": "Applying Little's Law: throughput is 800 pods/hr. If average residence time W increases from 4.5 min to 6.0 min, how many MORE pods are simultaneously in-flight?",
         "options": [
-          "10 more",
           "20 more",
+          "10 more",
           "30 more",
           "60 more"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "L = lambda x W. At W=4.5 min (0.075 hr): L=800x0.075=60. At W=6.0 min (0.10 hr): L=800x0.10=80. Difference = 20 more pods in-flight, indicating the fleet needs more robot capacity or the congestion source must be resolved."
       },
       {
@@ -7533,33 +7533,33 @@ MODULES_3 = [
         "q": "How does an Amazon Robotics drive unit determine its precise position on the floor?",
         "options": [
           "GPS satellites",
-          "Reading floor fiducial markers with a downward camera, fused with wheel odometry",
           "Overhead cameras only",
+          "Reading floor fiducial markers with a downward camera, fused with wheel odometry",
           "Magnetic tape guides"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Drive units read a grid of floor fiducial markers with a downward camera for exact position/heading, using wheel odometry to dead-reckon between markers."
       },
       {
         "q": "Several drive units fault and stop in the same small area of the floor. What should you check FIRST?",
         "options": [
           "Replace each robot's battery",
-          "The floor/fiducial marker and for an obstruction or spill in that area",
           "The workstation scanners",
-          "The charger stations"
+          "The charger stations",
+          "The floor/fiducial marker and for an obstruction or spill in that area"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A cluster of faults in one spot usually points to a damaged/dirty fiducial or a floor obstruction, not a robot fault. Check the environment before pulling individual robots."
       },
       {
         "q": "What is the purpose of the fleet traffic manager reserving grid cells?",
         "options": [
-          "To charge robots faster",
           "To prevent collisions by granting each robot conflict-free path cells",
+          "To charge robots faster",
           "To read barcodes",
           "To lift pods higher"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The traffic manager grants moving cell reservations so robots never occupy conflicting cells at once, preventing collisions and coordinating yields/routes."
       },
       {
@@ -7577,33 +7577,33 @@ MODULES_3 = [
         "q": "Why do Amazon Robotics fleets use opportunity charging rather than full deep-cycle charging?",
         "options": [
           "It is cheaper hardware",
-          "To keep units in service and avoid a synchronized fleet-wide charge, topping up as workload allows",
           "Because batteries cannot be fully charged",
+          "To keep units in service and avoid a synchronized fleet-wide charge, topping up as workload allows",
           "To make robots move faster"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Opportunity charging tops up state-of-charge during idle windows, keeping robots available and preventing a whole fleet from needing to charge at once."
       },
       {
         "q": "What is the correct way for a technician to enter an active robotic floor?",
         "options": [
           "Walk on whenever robots look far away",
-          "Follow the site clearance/lockout process - vest plus technician device or interlocked gate that pauses robots in the zone",
           "Wait until end of shift only",
-          "Ride on top of a pod"
+          "Ride on top of a pod",
+          "Follow the site clearance/lockout process - vest plus technician device or interlocked gate that pauses robots in the zone"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Active fields are hazardous; entry requires the defined safety process (marked vest plus a clearing device or interlocked gate that pauses traffic in that zone) - never walk on unprotected."
       },
       {
         "q": "At a pick/stow workstation, what safety device keeps an associate out of the pod-swap motion?",
         "options": [
-          "A fire sprinkler",
           "Light curtains / area safety scanners at the pod presentation opening",
+          "A fire sprinkler",
           "A smoke detector",
           "The floor fiducials"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Light curtains or area scanners guard the pod-presentation opening, stopping the pod-swap motion if the associate breaks the field - a safety-critical human/robot boundary."
       },
       {
@@ -7621,33 +7621,33 @@ MODULES_3 = [
         "q": "How does a drive unit steer and turn in place?",
         "options": [
           "A steering wheel and rack",
-          "Two independently driven wheels (differential drive)",
           "Front casters only",
+          "Two independently driven wheels (differential drive)",
           "Magnetic repulsion"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Differential drive - two independently driven wheels - lets the disc-shaped unit turn in place and maneuver precisely under and with a pod."
       },
       {
         "q": "A drive unit keeps returning to charge with very little run time between charges. What is the most likely cause?",
         "options": [
           "The traffic manager is misconfigured",
-          "A degraded/end-of-life battery",
           "Dirty floor fiducials",
-          "A workstation light curtain fault"
+          "A workstation light curtain fault",
+          "A degraded/end-of-life battery"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Short run time between charges indicates a battery losing capacity (end of life); track and replace batteries showing declining runtime."
       },
       {
         "q": "Why are drive-unit speed and acceleration limited when carrying a pod?",
         "options": [
-          "To save electricity only",
           "Because a tall, heavy, possibly unbalanced pod raises tip-over risk",
+          "To save electricity only",
           "To reduce barcode no-reads",
           "Fiducials cannot be read at speed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Carrying a tall heavy pod raises the center of gravity and tip risk, so motion is limited and routes are planned to keep the load stable."
       },
       {
@@ -7665,33 +7665,33 @@ MODULES_3 = [
         "q": "A unit faults under a heavy pod but runs fine empty. Where should you look?",
         "options": [
           "The wireless network",
-          "The lift drivetrain (screw/cam, lift motor, gears) or an over-limit/uneven load",
           "The barcode scanner",
+          "The lift drivetrain (screw/cam, lift motor, gears) or an over-limit/uneven load",
           "The fiducial grid"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A load-dependent fault points at the lift mechanism and payload envelope - a straining/worn lift drivetrain or an overloaded/unevenly loaded pod, not comms or navigation."
       },
       {
         "q": "Why is 5 GHz preferred over 2.4 GHz for a dense robot fleet's wireless?",
         "options": [
           "It travels farther",
-          "It offers more non-overlapping channels and less congestion than 2.4 GHz's three usable channels, aiding capacity/channel reuse",
           "It uses less power",
-          "Robots only support 5 GHz"
+          "Robots only support 5 GHz",
+          "It offers more non-overlapping channels and less congestion than 2.4 GHz's three usable channels, aiding capacity/channel reuse"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Dense fleets need capacity and channel reuse; 5 GHz has many non-overlapping channels versus 2.4 GHz's three, reducing co-channel interference in a high-client environment."
       },
       {
         "q": "Robots repeatedly stop or bunch in one specific floor zone. What does this pattern suggest?",
         "options": [
-          "A single defective robot",
           "An infrastructure problem in that zone - an AP dead spot/interference, or a damaged fiducial - since it affects many units in one place",
+          "A single defective robot",
           "The pods are too light",
           "Normal operation"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A fault that recurs by LOCATION across many units indicates infrastructure (network dead spot/interference or a damaged fiducial), whereas a fault that follows one robot is unit-specific."
       },
       {
@@ -7709,33 +7709,33 @@ MODULES_3 = [
         "q": "What is the efficient first step in AMR fault triage?",
         "options": [
           "Immediately disassemble the robot",
-          "Read the unit's fault codes and health telemetry first, then distinguish an infrastructure problem (recurs by location) from a unit-specific one (follows the robot)",
           "Replace the battery",
+          "Read the unit's fault codes and health telemetry first, then distinguish an infrastructure problem (recurs by location) from a unit-specific one (follows the robot)",
           "Reboot every robot"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Data-first triage: the unit's fault log and telemetry (currents, temps, battery, localization) localize the issue, and the recurrence pattern separates infrastructure from unit faults."
       },
       {
         "q": "Why does a LiFePO4 drive-unit battery eventually require replacement?",
         "options": [
           "It never does",
-          "Capacity fades with charge cycles, eventually shortening run time - a wear-out item replaced on a cycle-based schedule",
           "It leaks acid",
-          "The voltage doubles"
+          "The voltage doubles",
+          "Capacity fades with charge cycles, eventually shortening run time - a wear-out item replaced on a cycle-based schedule"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "LiFePO4 capacity degrades with cycling; as run time shortens it is replaced as a wear-out component, ideally preventively before it causes in-service shortfalls."
       },
       {
         "q": "What does bad-actor (Pareto) analysis achieve in managing a large robot fleet?",
         "options": [
-          "It ranks robots by color",
           "It ranks the worst units and most common fault modes so effort targets the vital few driving most interventions",
+          "It ranks robots by color",
           "It replaces all robots equally",
           "It disables telemetry"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A few units or one recurring fault mode often cause a disproportionate share of interventions; Pareto/bad-actor ranking directs limited effort where it yields the biggest availability gain."
       },
       {
@@ -7753,33 +7753,33 @@ MODULES_3 = [
         "q": "Why is 'shadow mode' important when onboarding a new drive unit to the fleet?",
         "options": [
           "It saves battery",
-          "It runs the new drive at low priority for a shift so divergent behaviour is caught before it affects throughput",
           "It bypasses testing",
+          "It runs the new drive at low priority for a shift so divergent behaviour is caught before it affects throughput",
           "It resets the fleet"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Shadow mode introduces the new drive at low priority so its behaviour can be observed against the fleet baseline. Skipping it can cascade delays through the whole floor."
       },
       {
         "q": "A rolling software deploy on an AR fleet should be canaried at what fraction first?",
         "options": [
           "100% immediately",
-          "5% across multiple zones for at least a shift",
           "50%",
-          "10% in one zone"
+          "10% in one zone",
+          "5% across multiple zones for at least a shift"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Canary at 5% across multiple zones catches zone-specific bugs early. Then ramp 5% &rarr; 25% &rarr; 50% &rarr; 100% with sign-off at each step."
       },
       {
         "q": "For a 500-drive fleet with T=4h run time and 1.5h charge time, minimum charger count is approximately:",
         "options": [
-          "~30",
           "~137 (with 20% margin)",
+          "~30",
           "~500",
           "~50"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "N * t_charge / (T + t_charge) = 500 * 1.5 / 5.5 ~= 136, plus 20% margin ~= 137. Undersizing causes queueing cascade."
       },
       {
@@ -7797,33 +7797,33 @@ MODULES_3 = [
         "q": "On a fleet reliability dashboard, sustained charger utilisation above 90% typically means:",
         "options": [
           "Chargers are healthy",
-          "The fleet is charger-bound; adding more drives will not improve throughput until chargers are added",
           "Drives are broken",
+          "The fleet is charger-bound; adding more drives will not improve throughput until chargers are added",
           "Batteries are new"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Charger-bound operation means drives are waiting for chargers. Adding drives just extends queues; the fix is more chargers or better staggering."
       },
       {
         "q": "After a facility-wide E-stop, drives should be restarted:",
         "options": [
           "All at once",
-          "In staged batches (e.g., 10% at a time, 60s intervals) to avoid utility inrush and to spot faults early",
           "In random order",
-          "Only after 24 hours"
+          "Only after 24 hours",
+          "In staged batches (e.g., 10% at a time, 60s intervals) to avoid utility inrush and to spot faults early"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Staged batches spread inrush and let faults be caught batch by batch. All-at-once risks utility breaker trips and hides drives that faulted during restart."
       },
       {
         "q": "Which battery-health rule of thumb triggers cell replacement in an AR fleet?",
         "options": [
-          "Any capacity drop",
           "Cells below 80% of nameplate capacity",
+          "Any capacity drop",
           "Only when the drive fails to move",
           "Never; batteries last the drive's life"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Below 80% of nameplate, run-time drops noticeably and charger utilisation rises. Scheduled proactive replacement beats waiting for outright failure on shift."
       },
       {
@@ -7841,33 +7841,33 @@ MODULES_3 = [
         "q": "Deploying new fleet-controller software on Friday afternoon is:",
         "options": [
           "Convenient because of the weekend",
-          "A bad practice because nobody is available to fix a Saturday regression",
           "Required by policy",
+          "A bad practice because nobody is available to fix a Saturday regression",
           "Only allowed for canary"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Never deploy Friday afternoon; if it breaks, nobody is available to fix it. Also never during peak season (Q4)."
       },
       {
         "q": "How does a fiducial-grid drive unit determine its exact position, correcting for wheel-odometry drift?",
         "options": [
           "GPS satellites",
-          "A downward camera reading floor fiducial markers, giving absolute position at each marker",
           "Free-roaming LiDAR SLAM",
-          "Counting motor rotations only"
+          "Counting motor rotations only",
+          "A downward camera reading floor fiducial markers, giving absolute position at each marker"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A downward-facing camera reads floor fiducials (2D barcodes) laid in a grid, re-deriving the robot's absolute position and orientation at each marker, so odometry drift is corrected rather than accumulated."
       },
       {
         "q": "A pod-moving robot pauses in an aisle for several seconds, then continues. What is the most likely explanation?",
         "options": [
-          "A motor failure",
           "It is waiting for the traffic-management system to clear a reserved cell ahead, not a malfunction",
+          "A motor failure",
           "Its battery is dead",
           "The fiducial camera failed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Central traffic management reserves cells/segments so robots do not collide. A pausing robot is often simply waiting for a reserved cell downstream to clear, which is normal coordination, not a fault."
       },
       {
@@ -7885,11 +7885,11 @@ MODULES_3 = [
         "q": "On a free-roaming AMR, what is the role of a safety-rated laser scanner's protective field, distinct from its navigation sensor?",
         "options": [
           "To read barcodes on inventory",
-          "To trigger a safe stop when a person or obstacle enters the danger zone, with field size varying by speed",
           "To charge the battery",
+          "To trigger a safe stop when a person or obstacle enters the danger zone, with field size varying by speed",
           "To rotate the payload"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A safety-rated scanner defines protective (and warning) fields that slow or safely stop the robot when something enters the danger zone. The field grows with speed and is a certified safety device separate from the navigation LiDAR."
       }
     ],

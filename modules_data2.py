@@ -239,12 +239,12 @@ MODULES_2 = [
       {
         "q": "Hydraulic cylinder, 4in bore, 1500 PSI. Extend force?",
         "options": [
-          "6000 lbs",
           "18,850 lbs",
+          "6000 lbs",
           "4712 lbs",
           "1500 lbs"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A = pi(2^2) = 12.57in2. F = 1500 x 12.57 = 18,850 lbs."
       },
       {
@@ -262,11 +262,11 @@ MODULES_2 = [
         "q": "5/2 valve means:",
         "options": [
           "5 PSI, 2 gal",
-          "5 ports, 2 positions",
           "5 cylinders, 2 valves",
+          "5 ports, 2 positions",
           "Size 5 type 2"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "5 ports (P,A,B,EA,EB) and 2 positions."
       },
       {
@@ -274,21 +274,21 @@ MODULES_2 = [
         "options": [
           "30-40 psig",
           "60-70 psig",
-          "90-100 psig",
-          "150-200 psig"
+          "150-200 psig",
+          "90-100 psig"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Standard facility compressed air for FC equipment is supplied at 90-100 psig gauge. FRL regulators step this down to 60-80 psig at the machine."
       },
       {
         "q": "A coalescing filter in an FRL unit is primarily used to remove:",
         "options": [
-          "Solid particulate larger than 40 microns",
           "Oil aerosols and sub-micron mist",
+          "Solid particulate larger than 40 microns",
           "Carbon monoxide from the compressor",
           "Nitrogen from shop air"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Coalescing filters use borosilicate fiber media to capture oil aerosols down to 0.01 micron. Standard particulate filters handle water and solids but not oil mist."
       },
       {
@@ -317,22 +317,22 @@ MODULES_2 = [
         "q": "Why is meter-out flow control preferred over meter-in for most ACY1 horizontal cylinder applications?",
         "options": [
           "Meter-out uses less compressed air",
-          "Meter-out provides stable speed by creating back-pressure on the exhaust side, resisting overrunning loads",
           "Meter-out allows faster maximum speed",
-          "Meter-out prevents seal wear on the piston"
+          "Meter-out prevents seal wear on the piston",
+          "Meter-out provides stable speed by creating back-pressure on the exhaust side, resisting overrunning loads"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Meter-out restricts exhaust air leaving the cylinder, creating controlled back-pressure against the piston regardless of load variation, giving smooth stable motion."
       },
       {
         "q": "In ISO 1219 circuit diagrams, a dashed line represents:",
         "options": [
-          "A high-pressure working line",
           "A pilot signal or drain line",
+          "A high-pressure working line",
           "A flexible hose",
           "An electrical connection to a solenoid"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ISO 1219-1 uses dashed lines for pilot signals and drain/case-drain lines. Solid lines indicate main working pressure circuits."
       },
       {
@@ -350,33 +350,33 @@ MODULES_2 = [
         "q": "A hydraulic system is operating at 2,000 psi with a pump flow of 5 GPM. Approximately how much horsepower is being consumed?",
         "options": [
           "2.9 HP",
-          "5.8 HP",
           "10,000 HP",
+          "5.8 HP",
           "1.2 HP"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "HP = (Pressure * Flow) / 1714 = (2000 * 5) / 1714 = 5.83 HP. The formula divides by 1714 to convert psi-GPM to horsepower."
       },
       {
         "q": "A hydraulic accumulator uses nitrogen pre-charge because:",
         "options": [
           "Nitrogen dissolves into hydraulic oil improving lubricity",
-          "Nitrogen is inert and compressible, storing energy safely without reacting with hydraulic oil",
           "Nitrogen increases the bulk modulus of the hydraulic system",
-          "Nitrogen cools the hydraulic oil during high-cycle operation"
+          "Nitrogen cools the hydraulic oil during high-cycle operation",
+          "Nitrogen is inert and compressible, storing energy safely without reacting with hydraulic oil"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Nitrogen is chemically inert, does not oxidize or react with hydraulic oil, and is compressible -- ideal for energy storage in accumulator bladder/piston units."
       },
       {
         "q": "A 50 mm diameter suction cup operating at -60 kPa vacuum can hold approximately how much force?",
         "options": [
+          "118 N",
           "12 N",
           "62 N",
-          "118 N",
           "250 N"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Area = pi/4 * (0.05)^2 = 0.001963 m^2. Force = 0.001963 * 60,000 Pa = 117.8 N (~118 N or ~26 lb)."
       },
       {
@@ -394,99 +394,99 @@ MODULES_2 = [
         "q": "Slow cylinder actuation in a pneumatic system with adequate supply pressure most likely indicates:",
         "options": [
           "A failed pressure relief valve",
-          "A clogged inlet filter (differential pressure &gt; 5 psid), kinked tubing, or undersized valve Cv",
           "Excess lubricator oil causing valve sticking",
+          "A clogged inlet filter (differential pressure &gt; 5 psid), kinked tubing, or undersized valve Cv",
           "High ambient temperature reducing air density"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Slow actuation with adequate supply typically means flow restriction: clogged filter element (&gt;5 psid differential is the service threshold), kinked supply tubing, or a valve Cv too small for the required flow rate."
       },
       {
         "q": "In the simplified compressed-air pipe pressure-drop formula, if pipe length doubles while all other variables remain constant, the pressure drop:",
         "options": [
-          "Doubles",
           "Quadruples",
           "Stays the same",
-          "Is reduced by half"
+          "Is reduced by half",
+          "Doubles"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "The formula is &Delta;P = (0.001025 &times; L &times; Q&sup2;) / (d<sup>5</sup> &times; P). Pressure drop is directly proportional to L, so doubling L doubles &Delta;P."
       },
       {
         "q": "An ISO 15407 valve island with an EtherNet/IP fieldbus node requires how many conductors from the panel to drive 32 solenoid outputs?",
         "options": [
+          "4-5 wires regardless of solenoid count (power plus network)",
           "64 wires (two per coil)",
           "33 wires (one per coil plus a common)",
-          "4-5 wires regardless of solenoid count (power plus network)",
           "The same number as individually wired solenoids"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Fieldbus valve islands carry all solenoid commands over the network cable. Only power supply conductors plus the network pair (4-5 total wires) are needed, regardless of how many solenoids are on the manifold."
       },
       {
         "q": "A proportional pressure valve has P_max = 10 bar, P_min = 0 bar, and accepts a 0-10 V command signal. What pressure does a 6 V command produce?",
         "options": [
           "3 bar",
-          "4 bar",
           "6 bar",
+          "4 bar",
           "8 bar"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Valve gain K = (10 &minus; 0) / 10 = 1.0 bar/V. At 6 V: P = 6 &times; 1.0 = 6 bar."
       },
       {
         "q": "During a pneumatic cylinder rebuild, bore wear measures 0.08 mm oversize. The correct action is:",
         "options": [
           "Re-seal with standard U-cups - tolerance is acceptable",
-          "Replace the cylinder tube; bore wear exceeds the 0.05 mm re-seal threshold",
           "Hone to the next oversize and fit oversize seals",
+          "Replace the cylinder tube; bore wear exceeds the 0.05 mm re-seal threshold",
           "Apply RTV sealant to the piston face before installing new seals"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "When bore wear exceeds 0.05 mm oversize or scoring exceeds 0.01 mm depth, new standard seals cannot maintain reliable sealing. The tube or full cylinder assembly should be replaced."
       },
       {
         "q": "A hydraulic gear motor has a displacement of 32 cm3/rev and operates at a differential pressure of 180 bar. Its theoretical output torque is approximately:",
         "options": [
           "916 N&middot;m",
-          "91.6 N&middot;m",
           "458 N&middot;m",
-          "5,760 N&middot;m"
+          "5,760 N&middot;m",
+          "91.6 N&middot;m"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "T = (P &times; D) / (2&pi;) = (18 &times; 10<sup>6</sup> Pa &times; 32 &times; 10&minus;6 m&sup3;/rev) / 6.283 = 576 / 6.283 &asymp; 91.7 N&middot;m."
       },
       {
         "q": "A hydraulic system uses servo valves. What is the minimum ISO 4406 cleanliness code typically required?",
         "options": [
+          "16/14/11",
           "22/20/17",
           "19/17/14",
-          "18/16/13",
-          "16/14/11"
+          "18/16/13"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "Servo valves have extremely tight internal clearances (pilot orifices and spool-to-bore fits). ISO 4406 code 16/14/11 or better (&beta;10 &ge; 200) is the accepted industry requirement to prevent clogging and stiction."
       },
       {
         "q": "Per SAE J517, a hydraulic hose must have a rated working pressure of at least what multiple of the maximum system pressure?",
         "options": [
           "1.5&times;",
-          "2&times;",
           "4&times;",
+          "2&times;",
           "6&times;"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "SAE J517 mandates a minimum 4:1 safety factor. The hose rated working pressure must be at least 4 times the maximum system pressure to provide burst protection and long service life."
       },
       {
         "q": "In the ISO 4406 cleanliness code system, each increment in range code (e.g., going from code 16 to code 17) represents a change in particle count of:",
         "options": [
           "An increase of 1,000 particles/mL",
-          "A doubling of particle count",
           "A 10-fold increase",
+          "A doubling of particle count",
           "An increase of 50%"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ISO 4406 range codes are based on doubling intervals. Code 17 represents approximately twice the particle count as code 16. Each step up in code number means twice as many particles per milliliter."
       },
       {
@@ -494,21 +494,21 @@ MODULES_2 = [
         "options": [
           "5-10%",
           "10-15%",
-          "20-35%",
-          "50-60%"
+          "50-60%",
+          "20-35%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "VSD compressors modulate rotor speed to match actual demand, avoiding the no-load power consumption of load/unload cycling. In variable-demand applications, typical measured savings are 20-35%."
       },
       {
         "q": "In a regenerative hydraulic cylinder circuit, how does the cylinder extension force compare to standard (non-regenerative) operation?",
         "options": [
+          "Force is reduced; only pressure acting on the rod cross-sectional area drives extension",
           "Force is greater because rod-side flow adds to cap-side flow",
           "Force is the same; pressure alone determines force regardless of circuit configuration",
-          "Force is reduced; only pressure acting on the rod cross-sectional area drives extension",
           "Force is zero; regenerative circuits are used only for speed control on the retract stroke"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "In a regenerative connection, cap-side and rod-side pressures equalize. The net driving force equals pressure times only the rod cross-sectional area (A_rod), which is smaller than the full bore area used in standard extension."
       },
       {
@@ -537,22 +537,22 @@ MODULES_2 = [
         "q": "Per ISO 4413, the hydrostatic test pressure applied to a new hydraulic circuit during commissioning is:",
         "options": [
           "Equal to the maximum working pressure",
-          "1.5 times the maximum working pressure",
           "2.0 times the maximum working pressure",
-          "0.8 times the maximum working pressure for safety"
+          "0.8 times the maximum working pressure for safety",
+          "1.5 times the maximum working pressure"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISO 4413 section 5.4.2 specifies a hydrostatic leak test at 1.5 times the maximum allowable working pressure, maintained for a minimum of 5 minutes. This verifies all joints, fittings, and components before the first operational cycle."
       },
       {
         "q": "Ultrasonic leak detectors used during pneumatic system commissioning operate at approximately what frequency?",
         "options": [
+          "40 kHz (ultrasonic)",
           "60 Hz (line frequency)",
           "1,000 Hz (audible range)",
-          "40 kHz (ultrasonic)",
           "1 MHz (megasonic)"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Compressed-air leaks produce turbulent flow that radiates energy predominantly at approximately 40 kHz. Handheld ultrasonic detectors tuned to this frequency can locate leaks as small as 0.001 scfm on a pressurized system even in a noisy production environment."
       },
       {
@@ -570,33 +570,33 @@ MODULES_2 = [
         "q": "Which valve is the primary pressure-safety device that caps maximum system pressure by dumping excess flow to tank?",
         "options": [
           "Flow control valve",
-          "Relief valve",
           "Directional control valve",
+          "Relief valve",
           "Check valve"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A relief valve opens above its setpoint to dump flow to tank, capping maximum pressure - the primary safety device protecting the hydraulic system."
       },
       {
         "q": "For a load that could run away (pull the cylinder faster than commanded), which flow-control arrangement is preferred?",
         "options": [
           "Meter-in",
-          "Meter-out",
           "No flow control",
-          "A relief valve only"
+          "A relief valve only",
+          "Meter-out"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Meter-out controls the fluid LEAVING the cylinder, providing back-pressure that resists an overrunning/runaway load; meter-in would let the load run ahead of the supplied flow."
       },
       {
         "q": "In an FRL air-preparation unit, what is the function of the Regulator?",
         "options": [
+          "Sets and holds a stable downstream pressure regardless of supply swings",
           "Adds oil mist to the air",
           "Removes water and dirt",
-          "Sets and holds a stable downstream pressure regardless of supply swings",
           "Increases the compressor speed"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "The Regulator (the R in FRL) maintains a constant set downstream pressure despite supply fluctuations; the Filter removes contaminants and the Lubricator adds oil mist."
       },
       {
@@ -614,33 +614,33 @@ MODULES_2 = [
         "q": "A hydraulic pump makes a gravel-like noise and output is low. What condition is indicated?",
         "options": [
           "Normal operation",
-          "Cavitation - the pump is starved of fluid (check suction filter/level)",
           "Over-lubrication",
+          "Cavitation - the pump is starved of fluid (check suction filter/level)",
           "Too clean fluid"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A gravelly noise with low output is cavitation, caused by the pump being starved on the suction side (clogged suction filter, low fluid, restricted inlet) - it rapidly destroys the pump."
       },
       {
         "q": "On a 4/3 directional control valve, what does the '3' refer to?",
         "options": [
           "3 ports",
-          "3 positions (e.g. extend, retract, center)",
           "3 bar of pressure",
-          "3 cylinders"
+          "3 cylinders",
+          "3 positions (e.g. extend, retract, center)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "In n/m valve notation the first number is ways (ports) and the second is positions. A 4/3 valve has 4 ports and 3 positions; the center condition (open/closed/tandem/float) sets centered behavior."
       },
       {
         "q": "Excessive heat in a hydraulic system most often indicates what?",
         "options": [
-          "The fluid is too clean",
           "Energy being dumped across a restriction or relief valve (e.g. running over relief)",
+          "The fluid is too clean",
           "The reservoir is too large",
           "Correct efficient operation"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Heat is wasted energy; a system continuously passing fluid across a relief valve or restriction converts that energy to heat and overheats - a diagnostic sign of a pressure/flow problem."
       },
       {
@@ -669,22 +669,22 @@ MODULES_2 = [
         "q": "A fixed-displacement pump controls system flow by:",
         "options": [
           "Changing its displacement",
-          "Dumping excess flow over a relief valve (wasting energy as heat)",
           "Reversing rotation",
-          "Adding air"
+          "Adding air",
+          "Dumping excess flow over a relief valve (wasting energy as heat)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A fixed pump moves the same volume per rev; unused flow is relieved to tank as heat - the inefficiency that variable-displacement/load-sensing pumps eliminate."
       },
       {
         "q": "Which pressure-control valve is normally OPEN and maintains a reduced downstream pressure for a branch?",
         "options": [
-          "Relief valve",
           "Pressure-reducing valve",
+          "Relief valve",
           "Sequence valve",
           "Counterbalance valve"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A pressure-reducing valve is normally open and throttles to hold a lower downstream pressure (e.g. a clamp needing less force than the main circuit)."
       },
       {
@@ -702,33 +702,33 @@ MODULES_2 = [
         "q": "A pump suddenly emitting a high-pitched whine/rattle most likely indicates:",
         "options": [
           "Perfect operation",
-          "Cavitation from inlet starvation (clogged strainer, cold oil, low reservoir)",
           "Too little pressure setting",
+          "Cavitation from inlet starvation (clogged strainer, cold oil, low reservoir)",
           "Excess flow"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Cavitation - vapor bubbles imploding due to inlet starvation - causes the characteristic noise and rapidly erodes the pump; act immediately."
       },
       {
         "q": "Aeration (air entrained in hydraulic fluid) typically causes:",
         "options": [
           "Perfectly smooth motion",
-          "Spongy, erratic actuator motion and foaming oil",
           "Higher efficiency",
-          "Lower fluid temperature"
+          "Lower fluid temperature",
+          "Spongy, erratic actuator motion and foaming oil"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Air drawn in from a low reservoir, leaking suction fitting, or turbulent return produces spongy/erratic motion and foaming - distinct from vapor cavitation."
       },
       {
         "q": "A key advantage of an air motor over an electric motor is that it:",
         "options": [
-          "Is more efficient",
           "Can stall indefinitely without damage and is spark-free for hazardous areas",
+          "Is more efficient",
           "Needs no air supply",
           "Runs cooler than any motor"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Air motors are stall-safe (no overheating when stalled) and spark-free, making them ideal for hazardous atmospheres and continuous-duty tools/hoists."
       },
       {
@@ -746,77 +746,77 @@ MODULES_2 = [
         "q": "A load-sensing hydraulic system saves energy by:",
         "options": [
           "Running the pump at full flow always",
-          "Matching pump output to the actual flow and pressure demanded (small margin above load)",
           "Removing the relief valve",
+          "Matching pump output to the actual flow and pressure demanded (small margin above load)",
           "Using only gear pumps"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Load-sensing maintains just a small margin above the sensed load pressure and delivers only the flow needed, eliminating the continuous relief-dumping heat loss."
       },
       {
         "q": "A cylinder consumes 0.42 SCFM. A plant has 20 similar cylinders, diversity factor 0.7, and 20% leak allowance. Estimated shop demand is closest to:",
         "options": [
           "about 5 SCFM",
-          "about 7 SCFM",
           "about 15 SCFM",
-          "about 60 SCFM"
+          "about 60 SCFM",
+          "about 7 SCFM"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "20 &times; 0.42 &times; 0.7 &asymp; 5.88 SCFM, plus 20% leaks &asymp; 7.06 SCFM total demand."
       },
       {
         "q": "A valve with tandem center connects P to T in neutral, blocks A and B. This means in neutral:",
         "options": [
-          "The actuator floats",
           "The actuator is locked while pump flow returns to tank",
+          "The actuator floats",
           "The actuator drifts freely",
           "Pump pressure builds against a closed circuit"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Tandem center holds the load (A and B blocked) while unloading the pump (P-to-T open), useful with fixed-displacement pumps."
       },
       {
         "q": "A pilot-operated check valve for holding a heavy load should be mounted:",
         "options": [
           "At the pump outlet",
-          "At the tank return",
           "As close as possible to the cylinder port, ideally screwed into the cylinder body",
+          "At the tank return",
           "On the accumulator only"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Locating the valve directly at the cylinder means a hose failure downstream cannot drop the load; the trapped oil column between valve and piston is minimal."
       },
       {
         "q": "An ISO 8573-1 specification of 5:4:5 refers to classes for:",
         "options": [
           "Voltage, current, and phase",
-          "Solid particulate, water (dew point), and total oil",
           "Flow, pressure, and viscosity",
+          "Solid particulate, water (dew point), and total oil",
           "Length, weight, and time"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ISO 8573-1 rates each of solid particulate, water dew point, and total oil on class 1-9 (plus X); 5:4:5 is a typical general-shop spec."
       },
       {
         "q": "A single 3 mm compressed-air leak at 7 bar wastes on the order of:",
         "options": [
-          "About 25 L/s",
           "About 0.1 L/s",
           "About 500 L/s",
-          "About 0.001 L/s"
+          "About 0.001 L/s",
+          "About 25 L/s"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "A 3 mm hole at 7 bar leaks roughly 25 L/s (60 SCFM), costing about $1500/year at typical electricity prices."
       },
       {
         "q": "Reducing plant compressed-air pressure by 1 bar typically cuts compressor input energy by about:",
         "options": [
-          "1%",
           "7%",
+          "1%",
           "30%",
           "50%"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Rule of thumb: about 7% energy reduction per 1 bar of system pressure reduction, from lower compression work."
       },
       {
@@ -834,33 +834,33 @@ MODULES_2 = [
         "q": "On a hydraulic schematic, the abbreviation \"BOM\" refers to:",
         "options": [
           "Ball on machine",
-          "Bill of materials listing tagged components and part numbers",
           "Backup oil manifold",
+          "Bill of materials listing tagged components and part numbers",
           "Bar oil measure"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The BOM cross-references each tagged component on the schematic to a manufacturer part number for ordering and identification."
       },
       {
         "q": "A regenerative hydraulic circuit works by:",
         "options": [
-          "Routing rod-side flow to cap side during extension, increasing extend speed",
           "Reversing the pump automatically",
           "Adding a battery",
-          "Bypassing all filters"
+          "Bypassing all filters",
+          "Routing rod-side flow to cap side during extension, increasing extend speed"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "During extension, rod-side oil is combined with pump flow to the cap side, roughly doubling extend speed at reduced extend force."
       },
       {
         "q": "To control a double-acting pneumatic cylinder's speed smoothly regardless of load variation, which flow-control method is preferred?",
         "options": [
-          "Meter-in (restrict supply air)",
           "Meter-out (restrict exhaust air)",
+          "Meter-in (restrict supply air)",
           "Increase supply pressure",
           "Remove the flow control entirely"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Meter-out restricts the exhaust so the piston moves against a controlled back-pressure, giving smooth, load-independent motion. Meter-in restricts supply and is jerky under varying loads."
       },
       {
@@ -878,22 +878,22 @@ MODULES_2 = [
         "q": "How does a Venturi ejector generate vacuum?",
         "options": [
           "A motor-driven piston pump",
-          "Compressed air through a converging-diverging nozzle entrains air at low pressure (Bernoulli)",
           "A magnetic field",
+          "Compressed air through a converging-diverging nozzle entrains air at low pressure (Bernoulli)",
           "Heating the air to expand it"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A Venturi ejector accelerates compressed air through a nozzle; by Bernoulli's principle the high-velocity jet creates a low-pressure region that entrains air from the suction port, generating vacuum with no moving parts."
       },
       {
         "q": "Why is fine filtration critical for servo and proportional hydraulic valves?",
         "options": [
           "To increase fluid viscosity",
-          "Contamination silts up their tight spool clearances, causing failure",
           "To raise the fluid temperature",
-          "To reduce the flow rate"
+          "To reduce the flow rate",
+          "Contamination silts up their tight spool clearances, causing failure"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Servo and proportional valves have very tight spool clearances; particulate contamination silts them up and is the leading cause of failure, so filtration to a fine ISO cleanliness code is mandatory."
       }
     ],
@@ -1150,12 +1150,12 @@ MODULES_2 = [
       {
         "q": "Recommended HMI background color?",
         "options": [
+          "Gray (neutral)",
           "Bright blue",
           "Black",
-          "Gray (neutral)",
           "White"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Gray reduces fatigue, makes status colors stand out."
       },
       {
@@ -1173,11 +1173,11 @@ MODULES_2 = [
         "q": "HMI tags vs PLC tags?",
         "options": [
           "Same thing",
-          "HMI tags reference PLC tags via comm protocol",
           "HMI has no tags",
+          "HMI tags reference PLC tags via comm protocol",
           "PLC tags are motor-only"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "HMI tags are linked copies that poll PLC data via protocol."
       },
       {
@@ -1185,21 +1185,21 @@ MODULES_2 = [
         "options": [
           "Level 0 - Field devices",
           "Level 1 - Basic control (PLCs)",
-          "Level 2 - Supervisory control",
-          "Level 3 - Manufacturing execution"
+          "Level 3 - Manufacturing execution",
+          "Level 2 - Supervisory control"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "ISA-95 places supervisory control (SCADA/HMI) at Level 2. Level 1 is basic PLC/DCS control, Level 0 is field devices, and Level 3 is MES/production scheduling."
       },
       {
         "q": "A conveyor control panel is rated IP65. What protection does this provide?",
         "options": [
-          "Dust-proof and splash-proof only",
           "Dust-tight and protected against water jets from any direction",
+          "Dust-proof and splash-proof only",
           "Dust-tight and full submersion to 1 m",
           "Dust-protected and protected against dripping water"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "IEC 60529 IP65: first digit 6 = dust-tight (no ingress), second digit 5 = water jets from any direction. It does not cover submersion (that is IP67/68). IP64 is splash-proof."
       },
       {
@@ -1217,33 +1217,33 @@ MODULES_2 = [
         "q": "Under ISA-101 High-Performance HMI principles, what is the primary purpose of using a grayscale color scheme for normal process states?",
         "options": [
           "To reduce display rendering CPU load",
-          "To maximize the visual contrast of alarms and deviations against the normal baseline",
           "To comply with color-blindness accessibility standards",
+          "To maximize the visual contrast of alarms and deviations against the normal baseline",
           "To reduce the number of required display hierarchy levels"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "HP-HMI reserves color as an alarm signal. When the baseline is gray, any colored element immediately draws the operator's eye to a deviation. Colorful mimic-style graphics bury alarms in visual noise."
       },
       {
         "q": "ISA 18.2 defines a manageable steady-state alarm rate as no more than:",
         "options": [
           "1 alarm per minute per operator",
-          "1 alarm per 10 minutes per operator",
           "10 alarms per hour per operator",
-          "5 alarms per shift per operator"
+          "5 alarms per shift per operator",
+          "1 alarm per 10 minutes per operator"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISA 18.2 states the manageable rate is &lt;= 1 alarm per 10 minutes per operator at steady state. More than 10 alarms in 10 minutes constitutes an alarm flood that exceeds operator response capacity."
       },
       {
         "q": "A sorter belt speed sensor produces chattering alarms because the value oscillates between 79.8 and 80.2 FPM around a setpoint of 80 FPM. The best ISA 18.2 remedy is to:",
         "options": [
+          "Apply a dead-band of at least 0.5 FPM so the alarm clears only when the value drops below 79.5",
           "Raise the alarm priority to suppress acknowledgment prompts",
           "Shelve the alarm permanently",
-          "Apply a dead-band of at least 0.5 FPM so the alarm clears only when the value drops below 79.5",
           "Delete the alarm and rely on operator observation"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Dead-band (hysteresis) is the correct tool for chattering alarms. With a 0.5 FPM dead-band, the alarm activates at 80.0 but clears only when the value falls to 79.5, preventing rapid on/off cycling. Shelving hides the alarm without fixing the root cause."
       },
       {
@@ -1261,33 +1261,33 @@ MODULES_2 = [
         "q": "Compared to a polling-based SCADA architecture, Report-by-Exception (RBE) offers which primary advantage?",
         "options": [
           "Simpler master station configuration",
-          "Near-zero update latency for value changes with greatly reduced network traffic",
           "Guaranteed delivery of every scan cycle value",
+          "Near-zero update latency for value changes with greatly reduced network traffic",
           "No need for dead-band configuration at the field device"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "RBE transmits data only when a value changes beyond the dead-band, so alarm-generating changes are reported immediately while stable values generate no traffic. Polling must wait for the next scan cycle to detect a change, introducing latency proportional to the scan period."
       },
       {
         "q": "OPC-UA (IEC 62541) improves on OPC-DA primarily because OPC-UA:",
         "options": [
           "Requires Microsoft Windows and DCOM on both client and server",
-          "Is transport-agnostic, platform-independent, and includes built-in certificate-based authentication and AES encryption",
           "Supports only polling, not publish-subscribe",
-          "Is proprietary to Rockwell Automation"
+          "Is proprietary to Rockwell Automation",
+          "Is transport-agnostic, platform-independent, and includes built-in certificate-based authentication and AES encryption"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "OPC-UA is platform-independent (runs on Linux, embedded, cloud), uses TCP binary or HTTPS transport (no DCOM), and includes a security model with certificate authentication and AES-128/256 encryption. OPC-DA relied on Windows COM/DCOM with no native encryption."
       },
       {
         "q": "A pharmaceutical customer requires the SCADA system to comply with FDA 21 CFR Part 11. Which feature is most directly mandated by this regulation?",
         "options": [
+          "Tamper-evident audit trail attributing every data change and login to a named user",
           "Color-coded alarm priorities",
           "Swinging-door historian compression",
-          "Tamper-evident audit trail attributing every data change and login to a named user",
           "OPC-UA SignAndEncrypt security policy"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "21 CFR Part 11 requires electronic records to include a tamper-evident audit trail with user identification, timestamp, and the nature of changes. Shared accounts defeat this requirement. While OPC-UA security is best practice, it is not the specific 21 CFR Part 11 requirement."
       },
       {
@@ -1305,11 +1305,11 @@ MODULES_2 = [
         "q": "For secure remote HMI access to an ACY1 OT network, which architecture best aligns with IEC 62443 and NIST SP 800-82 guidance?",
         "options": [
           "Direct RDP port forwarding from the internet to the SCADA server",
-          "VPN with MFA terminating in an OT DMZ jump server, with all sessions logged and time-limited",
           "SCADA server placed on the corporate IT LAN for easy access",
+          "VPN with MFA terminating in an OT DMZ jump server, with all sessions logged and time-limited",
           "Disabling the firewall between IT and OT to reduce latency"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "IEC 62443 zone-and-conduit architecture and NIST SP 800-82 require separating OT from IT with a DMZ. Remote access should use VPN with MFA, terminate at a jump/bastion server in the OT DMZ, and log all sessions. Direct internet RDP has caused major ransomware incidents in industrial environments."
       },
       {
@@ -1317,43 +1317,43 @@ MODULES_2 = [
         "options": [
           "Level 0 and Level 1",
           "Level 1 and Level 2",
-          "Level 3 and Level 4",
-          "Level 4 and Level 5"
+          "Level 4 and Level 5",
+          "Level 3 and Level 4"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "The iDMZ sits between Level 3 (site operations/MES) and Level 4 (enterprise IT/ERP) to prevent direct routed connections between OT and IT networks while allowing controlled data exchange through hosted historians and jump hosts."
       },
       {
         "q": "IEC 62443 organizes ICS assets into Zones and Conduits. Which statement best describes a Conduit?",
         "options": [
+          "The controlled communication path between two security zones, enforced by a firewall or data diode",
           "A physical cable run between two PLCs",
           "A group of assets sharing the same security level",
-          "The controlled communication path between two security zones, enforced by a firewall or data diode",
           "An encrypted VPN tunnel between Level 4 and Level 0"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A Conduit in IEC 62443 is the defined, controlled communication path (policy plus enforcement mechanism such as a firewall, proxy, or data diode) that links two Zones. A Zone is the grouping of assets; the Conduit is the enforced pathway between them."
       },
       {
         "q": "In Ignition, a tag that computes a value from an expression formula without writing to the PLC is called a:",
         "options": [
           "Memory tag",
-          "OPC tag",
           "Derived / Expression tag",
+          "OPC tag",
           "System tag"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Ignition's Expression (derived) tag evaluates a formula using other tag values at the HMI layer, producing a calculated result without any PLC write. Memory tags store a value locally; OPC tags link to a PLC address; System tags expose gateway diagnostics."
       },
       {
         "q": "A faceplate or Global Object in HMI design provides which primary engineering benefit?",
         "options": [
           "Reduces PLC scan time by offloading logic to the display server",
-          "Allows one master display definition to be instanced many times so a single fix propagates to all instances",
           "Increases the number of simultaneous operator sessions on an RDS server",
+          "Allows one master display definition to be instanced many times so a single fix propagates to all instances",
           "Replaces the need for a tag database"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Faceplates / Global Objects are reusable display assemblies. Updating the master definition automatically updates every instance, dramatically reducing maintenance effort and ensuring consistency across all device representations in the project."
       },
       {
@@ -1361,21 +1361,21 @@ MODULES_2 = [
         "options": [
           "Unit Procedure",
           "Operation",
-          "Phase",
-          "Procedure"
+          "Procedure",
+          "Phase"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "The ISA-88 procedural hierarchy is Procedure &gt; Unit Procedure &gt; Operation &gt; Phase. A Phase is the lowest level; it maps directly to a PLC function block and follows the ISA-88 state machine (Idle, Running, Complete, Pausing, Holding, etc.)."
       },
       {
         "q": "According to ISA-95, which XML schema language is used to implement data exchange between Level 3 MES and Level 4 ERP systems?",
         "options": [
-          "OPC-UA NodeSet XML",
           "B2MML (Business To Manufacturing Markup Language)",
+          "OPC-UA NodeSet XML",
           "Modbus XML Gateway",
           "PROFINET GSD file"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "B2MML (Business To Manufacturing Markup Language) is the XML implementation of the ISA-95 (IEC 62264) data models, used for structured exchange of production schedule, performance, and resource data between Level 3 and Level 4 systems."
       },
       {
@@ -1405,21 +1405,21 @@ MODULES_2 = [
         "options": [
           "The tag value crosses zero",
           "The elapsed time since the last stored point exceeds a fixed interval",
-          "The current value falls outside the linear corridor defined by two imaginary doors hinged at the last stored point",
-          "The tag quality changes from Good to Uncertain"
+          "The tag quality changes from Good to Uncertain",
+          "The current value falls outside the linear corridor defined by two imaginary doors hinged at the last stored point"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "SDT uses two imaginary doors (upper and lower linear bounds) hinged at the last stored value. A sample is stored only when the new value would fall outside the corridor those doors define, preserving step changes while eliminating intermediate redundant linear ramp samples."
       },
       {
         "q": "ISA-18.2 defines an alarm flood as more than how many alarms per operator per 10-minute period?",
         "options": [
+          "10",
           "1",
           "5",
-          "10",
           "25"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "ISA-18.2 defines an alarm flood as more than 10 alarms per operator per 10-minute period. The long-term average target for normal operation is less than or equal to 1 alarm per operator per 10 minutes."
       },
       {
@@ -1437,33 +1437,33 @@ MODULES_2 = [
         "q": "A trend display has 50 pens each buffering 8 hours of data at 1-second samples and 16 bytes per sample. What is the approximate client memory consumed by trend buffers alone?",
         "options": [
           "2.3 MB",
-          "23 MB",
           "230 MB",
+          "23 MB",
           "2.3 GB"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "50 pens x 28,800 samples/pen (8 hrs x 3,600 s/hr) x 16 bytes = 23,040,000 bytes, approximately 23 MB. This calculation is critical for sizing thin-client RDS server RAM when many operator sessions each open the same trend-heavy display simultaneously."
       },
       {
         "q": "For a mobile HMI deployment on a warehouse Wi-Fi network, what is the recommended minimum RSSI at any intended use location to avoid TCP retransmission-induced tag update jitter?",
         "options": [
           "-50 dBm",
-          "-67 dBm",
           "-75 dBm",
-          "-85 dBm"
+          "-85 dBm",
+          "-67 dBm"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A minimum of -67 dBm is the widely-cited target for reliable industrial Wi-Fi application performance. Below -75 dBm, packet loss and retransmissions increase measurably, causing HMI tag updates to lag and potentially missing time-critical alarm notifications on the mobile device."
       },
       {
         "q": "During an HMI/SCADA Site Acceptance Test (SAT), which test is required that is NOT typically performed during the FAT?",
         "options": [
+          "Verifying actual field I/O live from physical instruments and actuators",
           "Verifying tag data types match the I/O list",
           "Testing each alarm at its configured setpoint using simulation",
-          "Verifying actual field I/O live from physical instruments and actuators",
           "Checking that user role security restricts access to permitted displays"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "The FAT is conducted at the integrator's facility using simulated I/O. The SAT, conducted after installation at the site, additionally verifies that all field instruments and actuators produce correct live values in the HMI, confirming wiring, scaling, and engineering units against the real physical process."
       },
       {
@@ -1481,33 +1481,33 @@ MODULES_2 = [
         "q": "In DNP3, what is the purpose of Class 0 data?",
         "options": [
           "Highest-priority alarm events",
-          "A static integrity poll of all current values",
           "Firmware update transfer",
+          "A static integrity poll of all current values",
           "Time synchronization only"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Class 0 is the static (integrity) poll returning all current point values; Classes 1-3 carry prioritized event data."
       },
       {
         "q": "In High-Performance HMI design, color on a normally-operating screen should be:",
         "options": [
           "Used heavily to make the screen attractive",
-          "Reserved almost entirely for abnormal conditions",
           "Matched to the physical equipment paint",
-          "Randomly assigned per tag"
+          "Randomly assigned per tag",
+          "Reserved almost entirely for abnormal conditions"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Grayscale backgrounds with color reserved for abnormal states make genuine problems pop out, reducing operator detection time."
       },
       {
         "q": "A Level 1 display in the HMI display hierarchy is best described as:",
         "options": [
-          "A single valve's detailed diagnostics",
           "A plant or area overview with KPIs and abnormal summary",
+          "A single valve's detailed diagnostics",
           "A trend and help screen",
           "A raw I/O force table"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Level 1 is the area/plant overview; detail increases through Levels 2-4 down to single-equipment diagnostics."
       },
       {
@@ -1525,33 +1525,33 @@ MODULES_2 = [
         "q": "An HMI write handshake where the HMI sets a request bit and waits for the PLC to echo an acknowledge bit primarily protects against:",
         "options": [
           "Excessive screen refresh rate",
-          "A command being lost in a dropped packet without confirmation",
           "Operator fatigue",
+          "A command being lost in a dropped packet without confirmation",
           "Incorrect engineering units"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The echoed acknowledge confirms the PLC actually received the command, guarding against silently lost writes."
       },
       {
         "q": "Assigning tags to different poll rates by importance (controls fast, static data slow) is called using:",
         "options": [
-          "Scan groups",
           "VLAN tagging",
           "Gain scheduling",
-          "Deadband clamping"
+          "Deadband clamping",
+          "Scan groups"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Scan groups let critical data update quickly while slow/static data polls infrequently, conserving link bandwidth."
       },
       {
         "q": "An analog deadband on a SCADA point reduces traffic by:",
         "options": [
-          "Compressing the historian file",
           "Only transmitting when the value changes more than a set threshold",
+          "Compressing the historian file",
           "Blocking all analog values",
           "Encrypting each sample"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Deadbands suppress reporting of small/noise changes; on report-by-exception protocols this dramatically cuts transmitted messages."
       },
       {
@@ -1569,33 +1569,33 @@ MODULES_2 = [
         "q": "Why do User-Defined Types (UDTs) improve a large HMI tag database?",
         "options": [
           "They increase the PLC scan rate",
-          "One structure definition drives thousands of instances, so a single change propagates everywhere",
           "They eliminate the need for a network",
+          "One structure definition drives thousands of instances, so a single change propagates everywhere",
           "They convert analog signals to digital"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A UDT bundles related members into one reusable template; editing the definition updates every instance, and it enables indirect-addressed reusable faceplates."
       },
       {
         "q": "Per ISA-101 high-performance HMI philosophy, how should color be used on a normal-operation screen?",
         "options": [
           "Bright saturated colors everywhere so the screen looks lively",
-          "Reserved for alarms and abnormal states, over a low-contrast grayscale background",
           "Only red and green, matching traffic-light convention",
-          "Randomly assigned per operator preference"
+          "Randomly assigned per operator preference",
+          "Reserved for alarms and abnormal states, over a low-contrast grayscale background"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A muted grayscale background reserves color for abnormal conditions so real alarms stand out; shape/position reinforce color for colorblind operators."
       },
       {
         "q": "An intermittent fault occurred overnight. Which HMI tool best lets you investigate it now?",
         "options": [
-          "A real-time trend only",
           "A historical trend that replays the past window from the historian",
+          "A real-time trend only",
           "The current alarm banner",
           "A static faceplate"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Historical trending queries the historian to replay any past time window - the essential tool for diagnosing events that already happened."
       },
       {
@@ -1613,33 +1613,33 @@ MODULES_2 = [
         "q": "Which is the correct ISA-18.2 definition of an alarm flood?",
         "options": [
           "Any alarm with High priority",
-          "More than 10 alarms in 10 minutes per operator",
           "A single alarm that repeats twice",
+          "More than 10 alarms in 10 minutes per operator",
           "An alarm during maintenance"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ISA-18.2 defines a flood as more than 10 alarms in 10 minutes per operator - a state that overwhelms the operator and is targeted by suppression/rationalization."
       },
       {
         "q": "What distinguishes alarm SHELVING from permanently disabling an alarm?",
         "options": [
           "Shelving is permanent; disabling is temporary",
-          "Shelving is a temporary, time-bounded, auto-reverting silence logged in the audit trail; disabling is a change-managed permanent action",
           "They are identical",
-          "Shelving requires rewiring"
+          "Shelving requires rewiring",
+          "Shelving is a temporary, time-bounded, auto-reverting silence logged in the audit trail; disabling is a change-managed permanent action"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Shelving temporarily silences a nuisance alarm for a bounded time and auto-unshelves, with an audit record; a permanent disable is a controlled change."
       },
       {
         "q": "Why is a tag-naming convention like SORT01_MTR03_SPEED valuable?",
         "options": [
-          "It makes tags shorter than any alternative",
           "It makes tags self-documenting and searchable by area, equipment, and function",
+          "It makes tags shorter than any alternative",
           "It is required by the National Electrical Code",
           "It doubles the historian speed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Structured Area_Equipment_Function naming encodes location and purpose, making tags self-documenting, searchable, and consistent across a large database."
       },
       {
@@ -1657,33 +1657,33 @@ MODULES_2 = [
         "q": "Where do HMIs typically log long-term production and audit data for external querying?",
         "options": [
           "Only in PLC memory",
-          "Into a relational SQL database (SQL Server, MySQL, PostgreSQL), decoupling storage from runtime",
           "On the operator's phone",
+          "Into a relational SQL database (SQL Server, MySQL, PostgreSQL), decoupling storage from runtime",
           "Nowhere - it is discarded each shift"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Logging tags, alarms, and audit events to a SQL database decouples long-term storage from the HMI runtime and lets IT/reporting tools query it."
       },
       {
         "q": "The primary reason to use per-user login rather than a shared password on an HMI is:",
         "options": [
           "Faster typing",
-          "Actions in the audit trail can be attributed to a specific person",
           "No password is required",
-          "Fewer keys on the panel"
+          "Fewer keys on the panel",
+          "Actions in the audit trail can be attributed to a specific person"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Per-user credentials plus a role-based audit trail links every change to an identified person, meeting IEC 62443 and 21 CFR Part 11 traceability."
       },
       {
         "q": "For multi-language HMI screens, best practice is to:",
         "options": [
-          "Hard-code English and let others translate on paper",
           "Store text in a language table with key references and switch column at runtime",
+          "Hard-code English and let others translate on paper",
           "Use flags as the only label",
           "Only support one language"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Language-key references let the same screen change language at runtime; leave 10-30% extra width for longer translations."
       },
       {
@@ -1701,33 +1701,33 @@ MODULES_2 = [
         "q": "HMI project files should ideally be stored in:",
         "options": [
           "Only on the panel",
-          "A version-control system with tagged releases and offsite backups",
           "Random USB sticks",
+          "A version-control system with tagged releases and offsite backups",
           "Email attachments only"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "VCS gives change history and rollback; nightly automated backup plus offsite copy protects against panel failure and disaster."
       },
       {
         "q": "During HMI runtime deployment, the FIRST step that protects against a bad load is to:",
         "options": [
           "Delete the old project",
-          "Backup the current running project before installing the new one",
           "Turn off the panel",
-          "Skip verification"
+          "Skip verification",
+          "Backup the current running project before installing the new one"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A backup enables rapid rollback if the new project misbehaves; skipping it turns a small defect into extended downtime."
       },
       {
         "q": "OPC-UA improves on OPC-DA primarily by:",
         "options": [
-          "Being COM/DCOM based only",
           "Using TCP with strong security (certificates) and platform-independent stacks",
+          "Being COM/DCOM based only",
           "Removing all security",
           "Being slower"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "OPC-UA runs cross-platform over TCP with X.509 certificates and encrypted, signed messaging, and it defines rich information models."
       },
       {
@@ -1745,33 +1745,33 @@ MODULES_2 = [
         "q": "On an OPC subscription, the \"deadband\" setting is used to:",
         "options": [
           "Silence all alarms",
-          "Suppress reporting of analog changes smaller than a threshold to reduce chatter",
           "Disable authentication",
+          "Suppress reporting of analog changes smaller than a threshold to reduce chatter",
           "Slow down the entire server"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Deadbands filter tiny fluctuations from noise so the server does not flood the client with meaningless updates; only meaningful changes propagate."
       },
       {
         "q": "The reason to leave extra label width when localizing an HMI is that:",
         "options": [
           "Colours differ by language",
-          "Translations in German or French are often 10-30% longer than English",
           "Font size changes",
-          "Buttons shrink"
+          "Buttons shrink",
+          "Translations in German or French are often 10-30% longer than English"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Character-per-word varies by language; sizing labels only to English text leads to truncated or wrapped translated captions."
       },
       {
         "q": "In high-performance (ISA-101) HMI design, how is color used?",
         "options": [
-          "Bright colors everywhere to make the screen engaging",
           "Reserved mainly for abnormal/alarm conditions against a muted gray background",
+          "Bright colors everywhere to make the screen engaging",
           "Green for all running equipment, red for all stopped",
           "Randomly assigned per screen"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "High-performance HMI uses a muted gray-scale background with normal values in plain text, reserving color for abnormal conditions so the eye is drawn instantly to what needs attention, reducing detection time during upsets."
       },
       {
@@ -1789,22 +1789,22 @@ MODULES_2 = [
         "q": "What is the primary purpose of an audit trail in a regulated HMI/SCADA system?",
         "options": [
           "To speed up screen rendering",
-          "To log who made each change and when, providing accountability and traceability",
           "To compress historical data",
+          "To log who made each change and when, providing accountability and traceability",
           "To manage network bandwidth"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An audit trail records every setpoint change, alarm acknowledgment, and login with user and timestamp, providing accountability and, in regulated industries, a compliance requirement (e.g., FDA 21 CFR Part 11)."
       },
       {
         "q": "Swinging-door compression in a process historian works by:",
         "options": [
           "Deleting the oldest data first",
-          "Storing only the points needed to reconstruct the trend within a tolerance band",
           "Averaging all tags together",
-          "Recording every sample without loss"
+          "Recording every sample without loss",
+          "Storing only the points needed to reconstruct the trend within a tolerance band"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Swinging-door compression keeps only the points required to reconstruct the trend within a set tolerance, dropping redundant straight-line samples to greatly reduce storage while preserving the curve's shape."
       }
     ],
@@ -2060,12 +2060,12 @@ MODULES_2 = [
       {
         "q": "RPI in EtherNet/IP controls:",
         "options": [
-          "Cable type",
           "How often I/O data is exchanged (ms)",
+          "Cable type",
           "Voltage level",
           "Routing priority"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "RPI = Requested Packet Interval (ms between cyclic exchanges)."
       },
       {
@@ -2083,55 +2083,55 @@ MODULES_2 = [
         "q": "Can't ping new VFD. First step?",
         "options": [
           "Replace VFD",
-          "Check IP/subnet and physical link LED",
           "Reboot PLC",
+          "Check IP/subnet and physical link LED",
           "Call vendor"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Check physical layer and IP config first."
       },
       {
         "q": "A Modbus RTU device communicates via RS-485. Which OSI layers does Modbus RTU explicitly define?",
         "options": [
           "Layers 1 through 7 (full stack)",
-          "Layers 1 and 2 only (physical and data-link)",
           "Layers 3 and 4 (network and transport)",
-          "Layers 5 through 7 (session, presentation, application)"
+          "Layers 5 through 7 (session, presentation, application)",
+          "Layers 1 and 2 only (physical and data-link)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Modbus RTU defines only the physical layer (RS-485) and data-link framing (address, function code, CRC). Layers 3-7 are not formally specified; the master/slave polling application logic sits outside the OSI-defined Modbus spec."
       },
       {
         "q": "In EtherNet/IP, which message type uses UDP, is established via a Forward_Open service, and transfers cyclic I/O data at a Requested Packet Interval (RPI)?",
         "options": [
+          "Implicit (I/O) messaging over UDP",
           "Explicit messaging over TCP port 44818",
           "Unconnected messaging (UCMM) over TCP port 44818",
-          "Implicit (I/O) messaging over UDP",
           "Modbus TCP bridging over TCP port 502"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "EtherNet/IP implicit (I/O) messaging uses UDP and is established by a Forward_Open. The target device (producer) sends its I/O assembly at the configured RPI. Explicit messaging uses TCP port 44818 for request/response configuration and diagnostics."
       },
       {
         "q": "An EtherNet/IP conveyor I/O adapter is configured with RPI = 10 ms. Using the default connection timeout behavior, after approximately how long with no packets received will the connection fault?",
         "options": [
           "10 ms (1 missed packet)",
-          "20 ms (2 missed packets)",
           "30 ms (3 missed packets - default watchdog)",
+          "20 ms (2 missed packets)",
           "100 ms (10 missed packets)"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The ODVA EtherNet/IP specification defaults to faulting a connection after 3 consecutive missed packets. At RPI = 10 ms that is 30 ms of silence. The connection timeout multiplier is configurable, but the default watchdog fires at 3 x RPI."
       },
       {
         "q": "A PROFINET device is labeled 'Conformance Class B (CC-B).' What capability does CC-B add over CC-A?",
         "options": [
           "IRT isochronous real-time with IEEE 1588 PTP time synchronization",
-          "Media Redundancy Protocol (MRP, IEC 62439-2) and extended network diagnostics",
           "Wireless PROFINET over IEEE 802.11 infrastructure",
+          "Media Redundancy Protocol (MRP, IEC 62439-2) and extended network diagnostics",
           "IO-Link master port functionality"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Conformance Class B adds MRP ring redundancy (IEC 62439-2) and enhanced diagnostics over CC-A. CC-C adds IRT isochronous real-time on top of CC-B. IRT requires certified ASICs such as the Siemens ERTEC200P; CC-B devices do not need IRT hardware."
       },
       {
@@ -2139,21 +2139,21 @@ MODULES_2 = [
         "options": [
           "Function Code 01 - Read Coils",
           "Function Code 02 - Read Discrete Inputs",
-          "Function Code 03 - Read Holding Registers",
-          "Function Code 05 - Write Single Coil"
+          "Function Code 05 - Write Single Coil",
+          "Function Code 03 - Read Holding Registers"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Function Code 03 reads one or more 16-bit holding registers - the standard register type for VFD speed references, setpoints, and status words. FC01 reads coil (1-bit output) states; FC02 reads discrete inputs; FC05 writes a single coil output."
       },
       {
         "q": "An RS-485 Modbus RTU segment has a 120-ohm terminator at one end only. What symptom is most likely at 115.2 kbps?",
         "options": [
-          "Bus voltage is too low for any slave to detect valid signals",
           "Signal reflections from the unterminated end cause CRC failures and communication errors",
+          "Bus voltage is too low for any slave to detect valid signals",
           "The master transmitter is destroyed by the impedance mismatch",
           "All slaves respond simultaneously, causing address collisions"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Without a terminator at the far end, transmitted signals reflect back along the cable and interfere with subsequent bits, producing CRC errors and intermittent communication failures - especially above ~19.2 kbps. Both ends must be terminated with 120 ohm resistors to match cable characteristic impedance."
       },
       {
@@ -2170,12 +2170,12 @@ MODULES_2 = [
       {
         "q": "A Device Level Ring (DLR) network for EtherNet/IP suffers a cable break between two nodes. What is the expected failover behavior?",
         "options": [
-          "Failover in under 3 ms; ring supervisor opens the ring and the network operates as linear - transparent to the PLC",
           "Failover in under 200 ms via MRP ring reconfiguration",
           "Failover in under 1 second as RSTP recalculates the spanning tree",
+          "Failover in under 3 ms; ring supervisor opens the ring and the network operates as linear - transparent to the PLC",
           "All devices downstream of the break lose communication until the cable is repaired"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "ODVA DLR provides sub-3 ms failover. The ring supervisor detects beacon loss, logically opens the ring at its port, and all nodes resume communication in a linear topology. This is fully transparent to the PLC scan cycle. RSTP offers sub-1-second convergence but applies to switch-to-switch backbone topologies, not DLR device rings."
       },
       {
@@ -2183,32 +2183,32 @@ MODULES_2 = [
         "options": [
           "It encrypts multicast EtherNet/IP frames to prevent unauthorized access",
           "It assigns IEEE 802.1p priority 7 to I/O frames automatically",
-          "It prevents UDP multicast frames from flooding all switch ports, limiting traffic only to subscribing ports",
-          "It converts UDP multicast to TCP unicast to ensure delivery acknowledgment"
+          "It converts UDP multicast to TCP unicast to ensure delivery acknowledgment",
+          "It prevents UDP multicast frames from flooding all switch ports, limiting traffic only to subscribing ports"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "EtherNet/IP implicit messages use UDP multicast. Without IGMP snooping, a managed switch floods multicast to every port, needlessly loading all connected devices. With IGMP snooping enabled, the switch inspects IGMP Join/Leave messages and forwards each multicast group only to ports with active subscribers."
       },
       {
         "q": "An engineer must subnet exactly 30 VFDs plus one PLC gateway (31 hosts total). What is the smallest valid subnet prefix?",
         "options": [
+          "/26 - mask 255.255.255.192 - 62 usable hosts",
           "/28 - mask 255.255.255.240 - 14 usable hosts",
           "/27 - mask 255.255.255.224 - 30 usable hosts",
-          "/26 - mask 255.255.255.192 - 62 usable hosts",
           "/25 - mask 255.255.255.128 - 126 usable hosts"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A /27 provides only 30 usable addresses (2 to the power of 5 minus 2), which is one short of the 31 needed. A /26 uses 6 host bits: 2 to the power of 6 minus 2 = 62 usable addresses, which comfortably fits 31 hosts. /27 is insufficient; /26 is the smallest subnet that works."
       },
       {
         "q": "IO-Link (IEC 61131-9) connects smart sensors below the fieldbus layer. What physical cable does IO-Link specify?",
         "options": [
           "Shielded twisted-pair Cat5e, 100 m max, RJ-45 connector",
-          "RS-485 differential pair, 1200 m max, 9-pin Sub-D connector",
           "Unshielded 3-wire cable, 20 m max, M12 connector",
+          "RS-485 differential pair, 1200 m max, 9-pin Sub-D connector",
           "Single-mode fiber, 10 km max, LC connector"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "IEC 61131-9 IO-Link uses a standard unshielded 3-wire cable (24 V supply, GND, and C/Q signal) up to 20 m with M12 connectors. The signal is Manchester-encoded over a single-ended line - not differential - so no shielding is required. An IO-Link master port connects up to 8 IO-Link devices per port."
       },
       {
@@ -2227,21 +2227,21 @@ MODULES_2 = [
         "options": [
           "8 ms",
           "24 ms",
-          "32 ms",
-          "40 ms"
+          "40 ms",
+          "32 ms"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "WCRT from network = RPI + watchdog = 8 + (3 x 8) = 8 + 24 = 32 ms. The jitter budget is separate; 32 ms is the minimum network contribution before adding jitter."
       },
       {
         "q": "In MQTT, which QoS level uses a four-part handshake (PUBREC, PUBREL, PUBCOMP) to guarantee exactly-once message delivery?",
         "options": [
+          "QoS 2",
           "QoS 0",
           "QoS 1",
-          "QoS 2",
           "QoS 3"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "QoS 2 uses the PUBREC/PUBREL/PUBCOMP four-way handshake to ensure exactly-once delivery. QoS 0 is fire-and-forget; QoS 1 uses a single PUBACK for at-least-once delivery. QoS 3 does not exist in MQTT."
       },
       {
@@ -2259,33 +2259,33 @@ MODULES_2 = [
         "q": "In IEEE 1588 PTP, the following timestamps are measured: t1=0 ns, t2=90 ns, t3=180 ns, t4=250 ns. What is the calculated clock offset of the slave from the master?",
         "options": [
           "5 ns",
-          "10 ns",
           "20 ns",
+          "10 ns",
           "35 ns"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Offset = [(t2-t1) - (t4-t3)] / 2 = [(90-0) - (250-180)] / 2 = [90 - 70] / 2 = 10 ns. The mean path delay = (t4-t1-(t3-t2))/2 = (250-0-(180-90))/2 = (250-90)/2 = 80 ns. Offset = (t2-t1) - mean_delay = 90 - 80 = 10 ns."
       },
       {
         "q": "WirelessHART (IEC 62591) uses which channel access technique to avoid RF interference from Wi-Fi and other 2.4 GHz sources?",
         "options": [
           "CSMA/CA with RTS/CTS",
-          "Time-Slotted Channel Hopping (TSCH) across 15 channels",
           "Frequency Division Multiplexing across 79 Bluetooth channels",
-          "Listen-Before-Talk with adaptive power control"
+          "Listen-Before-Talk with adaptive power control",
+          "Time-Slotted Channel Hopping (TSCH) across 15 channels"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "WirelessHART uses TSCH (Time-Slotted Channel Hopping) with 15 channels in the 2.4 GHz ISM band and 10 ms time slots. The channel-hop schedule is managed by the network manager to avoid persistent interference sources."
       },
       {
         "q": "Under IEC 62443, which Foundational Requirement (FR) specifically addresses controlling what authenticated users are permitted to do after login?",
         "options": [
-          "FR1 - Identification and Authentication",
           "FR2 - Use Control",
+          "FR1 - Identification and Authentication",
           "FR3 - System Integrity",
           "FR5 - Restricted Data Flow"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "FR2 (Use Control) governs authorization - what actions authenticated users and devices are permitted to perform. FR1 covers identity verification (authentication). FR3 addresses software and firmware integrity. FR5 restricts network paths between zones."
       },
       {
@@ -2303,33 +2303,33 @@ MODULES_2 = [
         "q": "EtherCAT frames use which EtherType value and why are they NOT routable by standard IP routers?",
         "options": [
           "0x0800 - IP headers are stripped at the router's ingress",
-          "0x88A4 - EtherCAT uses a proprietary L2 frame with no IP header",
           "0x8892 - the protocol relies on VLAN tagging for routing",
+          "0x88A4 - EtherCAT uses a proprietary L2 frame with no IP header",
           "0x892F - HSR encapsulation prevents IP routing"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "EtherCAT uses EtherType 0x88A4 and operates at Layer 2 with no IP header. Standard IP routers forward based on IP addresses and cannot process proprietary L2 EtherTypes - all EtherCAT masters and slaves must reside on a single Ethernet segment."
       },
       {
         "q": "CC-Link IE Field operates at what line speed, and what logical topology does it use over standard CAT5e cabling?",
         "options": [
           "100 Mbps, daisy-chain line topology",
-          "1 Gbps, logical token-ring topology",
           "1 Gbps, star topology with a central hub",
-          "100 Mbps, logical token-bus topology"
+          "100 Mbps, logical token-bus topology",
+          "1 Gbps, logical token-ring topology"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "CC-Link IE Field runs at 1 Gbps over standard CAT5e/CAT6. It uses a logical token-ring topology - the master controls token passing for deterministic cyclic access, while physically the cabling can be wired in a ring or line depending on configuration."
       },
       {
         "q": "An AS-i network has 48 slaves configured using extended A/B addressing. What is the approximate cycle time?",
         "options": [
-          "5 ms",
           "10 ms",
+          "5 ms",
           "15 ms",
           "20 ms"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Standard AS-i addressing supports 31 slaves at a 5 ms cycle. Extended A/B addressing doubles capacity to 62 slaves but doubles the cycle time to 10 ms. With 48 slaves under extended addressing, the cycle time is 10 ms."
       },
       {
@@ -2347,11 +2347,11 @@ MODULES_2 = [
         "q": "In HSR (High-availability Seamless Redundancy), how does the originating node prevent frames from circulating indefinitely around the ring?",
         "options": [
           "A TTL field in the HSR header decrements to zero at each hop",
-          "The originating node recognizes its own frame by source MAC address and removes it after one full pass",
           "A central HSR supervisor node monitors the ring and removes duplicate frames",
+          "The originating node recognizes its own frame by source MAC address and removes it after one full pass",
           "HSR uses sequence numbers and a discard timer - frames older than 10 ms are dropped"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "In HSR, each node monitors incoming frames and removes any frame whose source MAC address matches its own - meaning the frame has completed a full pass of the ring. This is called the duplicate discard function and prevents infinite circulation without requiring a TTL field."
       },
       {
@@ -2359,21 +2359,21 @@ MODULES_2 = [
         "options": [
           "Level 1 - Basic Control",
           "Level 2 - Supervisory Control",
-          "Level 3 - Site Operations / Manufacturing Operations",
-          "Level 4 - Enterprise Network"
+          "Level 4 - Enterprise Network",
+          "Level 3 - Site Operations / Manufacturing Operations"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Level 3 (Site Operations) hosts the historian, MES, and OEE systems. This level represents the boundary where IT/OT convergence occurs, requiring an iDMZ between L3 and L4 (Enterprise) to enforce data flow controls and protect the control system from enterprise network threats."
       },
       {
         "q": "A CIP Safety connection is configured with an RPI of 5 ms. The safety application requires PLd per ISO 13849. The safety watchdog is set to 150 ms. What is wrong with this configuration?",
         "options": [
-          "The RPI is too fast for CIP Safety - minimum is 10 ms",
           "The watchdog is too long - at 150 ms it is 30x RPI and exceeds the maximum allowed multiplier of 3x",
+          "The RPI is too fast for CIP Safety - minimum is 10 ms",
           "The watchdog of 150 ms is acceptable but the RPI should be at least 10 ms",
           "Nothing is wrong - RPI and watchdog settings are independent of safety integrity level"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "CIP Safety requires the consumer watchdog to be set appropriately relative to the RPI. A watchdog of 150 ms with a 5 ms RPI equals a 30x multiplier. Best practice and most safety system requirements limit the watchdog to 3x RPI to ensure the safety controller detects a lost connection quickly enough. At 150 ms the safety function's required response time could be exceeded without detection."
       },
       {
@@ -2391,33 +2391,33 @@ MODULES_2 = [
         "q": "Two PLCs on the same physical switch cannot communicate; one is /24 and the other is /25 with mismatched assumptions. The most likely root cause is:",
         "options": [
           "Bad fiber end-face",
-          "A subnet mask mismatch so they disagree on being on the same subnet",
           "IGMP querier missing",
+          "A subnet mask mismatch so they disagree on being on the same subnet",
           "Wrong GSDML file"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A mask mismatch makes endpoints disagree about whether they share a subnet, so they try to route instead of talk directly - a classic 'on the network but unreachable' fault."
       },
       {
         "q": "Which description file is used to add a PROFINET device to TIA Portal?",
         "options": [
           "EDS",
-          "GSDML",
           "IODD",
-          "PCAP"
+          "PCAP",
+          "GSDML"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "GSDML (XML) describes PROFINET devices. EDS is for EtherNet/IP/DeviceNet; IODD is for IO-Link."
       },
       {
         "q": "Which TSN amendment defines time-aware traffic shaping with scheduled gated queues?",
         "options": [
-          "802.1AS",
           "802.1Qbv",
+          "802.1AS",
           "802.1Qbu",
           "802.1X"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "802.1Qbv is the time-aware shaper (gated queues on a synchronized schedule); 802.1AS is time sync and 802.1Qbu is frame preemption."
       },
       {
@@ -2435,33 +2435,33 @@ MODULES_2 = [
         "q": "Which fiber type and source combination is correct for a multi-kilometer run?",
         "options": [
           "Multimode OM3 with LED",
-          "Single-mode OS2 with laser",
           "Multimode OM4 with VCSEL",
+          "Single-mode OS2 with laser",
           "Single-mode with LED"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Single-mode (OS2, 9 um core) with a laser source supports kilometer-scale runs; multimode is limited to hundreds of meters."
       },
       {
         "q": "The single most common field cause of high loss / intermittent fiber links is:",
         "options": [
           "Fiber that is too new",
-          "Contaminated or dirty connector end-faces",
           "Too many switches",
-          "Using LC connectors"
+          "Using LC connectors",
+          "Contaminated or dirty connector end-faces"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Dirty/contaminated end-faces are the leading fiber fault; always inspect and clean before mating connectors."
       },
       {
         "q": "10BASE-T1L (Single Pair Ethernet) is notable for supporting:",
         "options": [
-          "10 Gbps over 100 m",
           "10 Mbps over a single pair up to 1000 m",
+          "10 Gbps over 100 m",
           "Only wireless links",
           "40 Gbps backbone"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "10BASE-T1L runs 10 Mbps over one twisted pair up to 1000 m, ideal for long field-instrument runs replacing 4-20 mA."
       },
       {
@@ -2479,33 +2479,33 @@ MODULES_2 = [
         "q": "Ten identical OEM machines all ship with PLCs at 192.168.1.10. What lets them share one plant network without re-addressing each?",
         "options": [
           "Increasing the switch speed",
-          "1:1 NAT at each machine boundary, mapping the duplicate internal address to a unique plant-side address",
           "Disabling all firewalls",
+          "1:1 NAT at each machine boundary, mapping the duplicate internal address to a unique plant-side address",
           "Using the same IP on purpose"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "1:1 NAT maps each machine's identical internal address to a unique plant-side address, letting vendor-locked duplicate programs coexist and isolating each cell."
       },
       {
         "q": "On an OT network, which SNMP version should you use and why?",
         "options": [
           "SNMPv1, because it is fastest",
-          "SNMPv3, because it is authenticated and encrypted (v1/v2c use plaintext community strings)",
           "No SNMP at all",
-          "SNMPv2c, because 'public' is secure"
+          "SNMPv2c, because 'public' is secure",
+          "SNMPv3, because it is authenticated and encrypted (v1/v2c use plaintext community strings)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "SNMPv3 provides authentication and encryption; v1/v2c send plaintext community strings ('public') and are unsuitable for a secured OT network."
       },
       {
         "q": "Rising CRC error counts polled from a switch port most likely indicate:",
         "options": [
-          "The PLC program has a bug",
           "A marginal cable/connector degrading before it fully drops the link",
+          "The PLC program has a bug",
           "Too many tags in the HMI",
           "A correctly functioning link"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "CRC/error counters climbing on a port signal physical-layer degradation (bad cable, connector, or EMI) - an early warning before the link fails outright."
       },
       {
@@ -2523,33 +2523,33 @@ MODULES_2 = [
         "q": "802.3bt Type 4 PoE++ delivers approximately how much power, and how?",
         "options": [
           "15.4 W over two pairs",
-          "Up to about 90 W by energizing all four pairs",
           "1000 W over fiber",
+          "Up to about 90 W by energizing all four pairs",
           "5 W via USB"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "802.3bt Type 4 (4PPoE) supplies up to ~90 W at the PSE by powering all four pairs; af is ~15.4 W, at ~30 W, bt Type 3 ~60 W."
       },
       {
         "q": "What is the recommended commissioning practice for a Rockwell EtherNet/IP device that must always have the same address?",
         "options": [
           "Leave DHCP enabled permanently",
-          "Assign the address once via BOOTP/DHCP, then disable BOOTP/DHCP so it boots independently (effectively static)",
           "Give it a random address each boot",
-          "Use IPv6 only"
+          "Use IPv6 only",
+          "Assign the address once via BOOTP/DHCP, then disable BOOTP/DHCP so it boots independently (effectively static)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "BOOTP-then-disable (or a DHCP reservation) sets the address once, then disabling the client makes it deterministic and independent of any server at power-up."
       },
       {
         "q": "Why is an industrial network cable shield typically grounded at ONE end only?",
         "options": [
-          "To save copper",
           "To prevent a ground loop - a potential difference between panels driving circulating current that becomes a noise source",
+          "To save copper",
           "Because two grounds are illegal",
           "It has no effect"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Single-end grounding drains the shield while preventing a ground loop caused by differing panel ground potentials, which would inject noise into the shield."
       },
       {
@@ -2567,11 +2567,11 @@ MODULES_2 = [
         "q": "What does a TDR (Time-Domain Reflectometer) tell a technician about a cable?",
         "options": [
           "The device's IP address",
-          "The distance to a fault or impedance discontinuity by timing a reflected pulse",
           "The SNMP community string",
+          "The distance to a fault or impedance discontinuity by timing a reflected pulse",
           "The PoE class"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A TDR sends a pulse and times its reflection to locate the distance to an open, short, or impedance discontinuity - e.g. a crushed cable in a tray."
       },
       {
@@ -2579,65 +2579,65 @@ MODULES_2 = [
         "options": [
           "Preamble",
           "MAC destination",
-          "EtherType",
-          "CRC"
+          "CRC",
+          "EtherType"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "The 2-byte EtherType field after the source MAC (or after VLAN tag) identifies the payload protocol."
       },
       {
         "q": "On a 1 Gbps link, how many terminations should an RS-485 network have?",
         "options": [
+          "Exactly two, at each of the two extreme ends of the bus",
           "Never any",
           "One on the master only",
-          "Exactly two, at each of the two extreme ends of the bus",
           "One per node"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Reflections are eliminated with two 120 ohm terminations, one at each far end; more or fewer creates errors that worsen with baud rate."
       },
       {
         "q": "Which of the following contributes MOST to unpredictable variable latency on a congested control network?",
         "options": [
           "Propagation delay",
-          "Serialisation of a single small frame",
           "Queueing behind higher-priority traffic",
+          "Serialisation of a single small frame",
           "CRC checking"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Queueing waiting for other frames to serialise ahead is highly variable and dominates jitter on congested best-effort Ethernet."
       },
       {
         "q": "When two industrial devices share the same IP address, the typical symptom is:",
         "options": [
           "Both stop working immediately",
-          "Random intermittent comms as ARP tables flip between their MACs",
           "Higher throughput",
+          "Random intermittent comms as ARP tables flip between their MACs",
           "Perfect operation"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ARP tables on peers flip-flop between MACs of the two duplicates, so responses seemingly go to the wrong device intermittently."
       },
       {
         "q": "When commissioning a managed switch for control traffic, IGMP snooping is enabled to:",
         "options": [
           "Reduce power consumption",
-          "Direct multicast frames only to ports whose devices subscribed, preventing flood",
           "Increase broadcast traffic",
-          "Block all Ethernet traffic"
+          "Block all Ethernet traffic",
+          "Direct multicast frames only to ports whose devices subscribed, preventing flood"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Multicast-heavy protocols (CIP produced/consumed, motion) benefit from IGMP snooping so multicast is not flooded to every port."
       },
       {
         "q": "Deep Packet Inspection at the IT/OT firewall can improve safety by:",
         "options": [
-          "Blocking all Modbus regardless of content",
           "Permitting Modbus reads while blocking write function codes, per operational need",
+          "Blocking all Modbus regardless of content",
           "Ignoring protocol content",
           "Increasing latency deliberately"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "DPI inspects payload (Modbus function codes, CIP services) so policy can allow safe reads and deny risky writes without blocking the protocol entirely."
       },
       {
@@ -2655,11 +2655,11 @@ MODULES_2 = [
         "q": "On an IT/OT firewall, the safe default rule policy is:",
         "options": [
           "Default-allow, block specific known threats",
-          "Default-deny, allow only defined and approved flows",
           "Turn off the firewall",
+          "Default-deny, allow only defined and approved flows",
           "Log only, never block"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Default-deny (whitelist) ensures no untracked service crosses the boundary; each allowance must be justified by a documented business need."
       },
       {
@@ -2667,21 +2667,21 @@ MODULES_2 = [
         "options": [
           "The preamble",
           "The CRC",
-          "The EtherType field",
-          "The destination MAC"
+          "The destination MAC",
+          "The EtherType field"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "802.1Q inserts the tag before EtherType; it carries a 12-bit VLAN ID plus a 3-bit priority (PCP) for QoS."
       },
       {
         "q": "Two Ethernet devices have valid IP addresses but different subnet masks, so each believes the other is on a remote network. What is the likely symptom?",
         "options": [
-          "Faster communication",
           "They cannot communicate directly even though both are on the same physical LAN",
+          "Faster communication",
           "The switch overheats",
           "IP addresses change automatically"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Devices communicate directly only if the subnet mask places them on the same subnet. A mismatched mask makes each treat the other as remote, so traffic is sent to a gateway and never reaches the local peer."
       },
       {
@@ -2710,11 +2710,11 @@ MODULES_2 = [
         "q": "Why is fiber optic media often chosen for network runs near large VFDs and motors or between separate buildings?",
         "options": [
           "It is cheaper than copper",
-          "It is immune to EMI and provides galvanic isolation, avoiding noise and ground loops",
           "It supports more IP addresses",
-          "It does not need connectors"
+          "It does not need connectors",
+          "It is immune to EMI and provides galvanic isolation, avoiding noise and ground loops"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Fiber is immune to electromagnetic interference and galvanically isolates the link, avoiding noise pickup near drives/motors and ground-loop problems between buildings with different ground potentials, over long distances."
       }
     ],
@@ -2971,23 +2971,23 @@ MODULES_2 = [
       {
         "q": "Straight-line TCP motion type?",
         "options": [
-          "Joint",
           "Linear",
+          "Joint",
           "Circular",
           "Random"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Linear moves TCP in a straight line."
       },
       {
         "q": "Max TCP speed in teach mode (R15.06)?",
         "options": [
           "1000mm/s",
-          "250mm/s",
           "500mm/s",
+          "250mm/s",
           "No limit"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "250mm/sec max for human safety during programming."
       },
       {
@@ -3004,12 +3004,12 @@ MODULES_2 = [
       {
         "q": "A 6-axis articulated robot's wrist axes are typically joints J4, J5, and J6. What is the PRIMARY function of these wrist joints compared to J1-J3?",
         "options": [
-          "Controlling the position (XYZ location) of the tool center point",
           "Controlling the orientation (roll, pitch, yaw) of the end effector",
+          "Controlling the position (XYZ location) of the tool center point",
           "Providing redundant reach to avoid singularities in J1-J3",
           "Amplifying payload capacity at extended reach"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "J1-J3 (shoulder/elbow) position the wrist in 3D space, while J4-J6 (wrist roll, pitch, roll) control the orientation of the end effector. This division is the basis of the spherical wrist architecture common in 6-axis robots."
       },
       {
@@ -3027,11 +3027,11 @@ MODULES_2 = [
         "q": "A servo drive uses a three-loop cascade architecture. Ranked from FASTEST to SLOWEST loop bandwidth, the correct order is:",
         "options": [
           "Position loop, velocity loop, torque/current loop",
-          "Torque/current loop, velocity loop, position loop",
           "Velocity loop, torque/current loop, position loop",
+          "Torque/current loop, velocity loop, position loop",
           "All three loops operate at identical bandwidth for stability"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The innermost torque/current loop operates at 1-5 kHz to tightly regulate motor current. The velocity loop runs at 200-500 Hz using the current loop as its actuator. The outermost position loop runs at 50-100 Hz using the velocity loop. Each inner loop must be 5-10x faster than the outer loop for stable cascaded control."
       },
       {
@@ -3039,21 +3039,21 @@ MODULES_2 = [
         "options": [
           "Shorter total move time for the same distance",
           "Higher achievable peak velocity",
-          "Reduced mechanical shock and structural vibration by limiting the rate of change of acceleration",
-          "Lower energy consumption because peak acceleration is reduced"
+          "Lower energy consumption because peak acceleration is reduced",
+          "Reduced mechanical shock and structural vibration by limiting the rate of change of acceleration"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "A trapezoidal profile changes acceleration instantaneously, producing theoretically infinite jerk at transition points. An S-curve limits jerk (m/s^3) by smoothly ramping acceleration up and down. This eliminates impulsive loads on gearboxes, belts, and robot links, reducing vibration and extending component life - the primary engineering motivation."
       },
       {
         "q": "A robot program is written with motion targets referenced to a USER FRAME attached to a conveyor fixture. If the fixture is moved to a new station, what is the minimum change needed to make the program work correctly at the new station?",
         "options": [
-          "All target joint angles must be retaught at the new station",
           "Only the user frame origin and orientation need to be redefined at the new station; programmed targets remain valid",
+          "All target joint angles must be retaught at the new station",
           "The tool frame (TCP) calibration must be repeated at the new station",
           "The base frame must be recalibrated relative to the world frame"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "When programs are referenced to a user (work object) frame, the robot executes all motions relative to that frame. Redefining the user frame to match the new fixture location transforms all programmed points automatically. No individual target re-teaching is needed - this is the primary productivity benefit of user-frame programming."
       },
       {
@@ -3071,11 +3071,11 @@ MODULES_2 = [
         "q": "For a vacuum suction cup with a 50 mm diameter cup operating at -65 kPa vacuum, what is the approximate theoretical holding force?",
         "options": [
           "About 28 N",
-          "About 128 N",
           "About 510 N",
+          "About 128 N",
           "About 12 N"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "F = P x A = 65,000 Pa x (pi/4 x 0.050^2 m^2) = 65,000 x 0.001963 = approximately 127.6 N, rounding to about 128 N. This is the theoretical maximum; practical ratings derate 25-50% for surface variations and safety margin."
       },
       {
@@ -3083,43 +3083,43 @@ MODULES_2 = [
         "options": [
           "Power and Force Limiting (PFL)",
           "Safety-Rated Monitored Stop (SMS)",
-          "Speed and Separation Monitoring (SSM)",
-          "Hand Guiding"
+          "Hand Guiding",
+          "Speed and Separation Monitoring (SSM)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Speed and Separation Monitoring (SSM) uses a safety-rated sensor (laser scanner, camera) to measure distance between the human and the robot, then commands the robot to reduce TCP speed proportionally. PFL limits contact force by sensing it directly. SMS stops the robot when an operator enters the zone. Hand guiding requires a held enable device."
       },
       {
         "q": "Safe Torque Off (STO), as defined in IEC 61800-5-2, removes drive output power to the motor. The PRIMARY advantage of STO over simply cutting main power to the drive is:",
         "options": [
-          "STO also applies mechanical brakes automatically",
           "STO is faster and allows the DC bus to remain charged, enabling rapid restart after the safe condition clears",
+          "STO also applies mechanical brakes automatically",
           "STO complies with OSHA lockout/tagout and eliminates stored energy",
           "STO reduces motor temperature by eliminating PWM heating"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "STO disables the IGBT gate signals, removing torque, while keeping the drive's control power and DC bus charged. This allows very fast restart (milliseconds) after the safe state clears, versus a full power-cycle restart which can take seconds. STO does NOT substitute for LOTO - stored DC bus energy remains present."
       },
       {
         "q": "Amazon Robotics drive units navigate the fulfillment center floor primarily using:",
         "options": [
           "Laser SLAM (simultaneous localization and mapping) using 360-degree LIDAR",
-          "GPS with differential correction for sub-centimeter accuracy",
           "Downward-facing cameras reading QR-code fiducials embedded in the floor, with encoder odometry between fiducials",
+          "GPS with differential correction for sub-centimeter accuracy",
           "Magnetic tape tracks with RFID waypoint tags"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "AR drive units use a downward camera to read QR-code fiducials laid in a regular grid on the floor. This provides absolute position and heading at each fiducial, correcting cumulative odometry error. Between fiducials, wheel encoders and IMU dead-reckoning maintain position continuity. This approach gives reliable, scalable localization without building a SLAM map."
       },
       {
         "q": "A multi-turn absolute encoder on a robot joint is preferred over an incremental encoder primarily because:",
         "options": [
           "It provides higher counts-per-revolution resolution",
-          "It retains absolute position across power cycles, eliminating the need for a homing routine after power loss",
           "It is immune to vibration and requires no signal conditioning",
+          "It retains absolute position across power cycles, eliminating the need for a homing routine after power loss",
           "It can withstand higher operating temperatures than incremental encoders"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Multi-turn absolute encoders (battery-backed or capacitor-backed) store both the within-revolution position and the revolution count. When power is restored, the drive immediately knows exact joint position without a homing move. This is critical for safety and uptime in production robots - a homing cycle on a 6-axis robot can take 30-60 seconds and requires a clear work envelope."
       },
       {
@@ -3127,10 +3127,10 @@ MODULES_2 = [
         "options": [
           "Delta robots have a larger work envelope and higher payload capacity",
           "Delta robots can perform full 6-DOF orientation changes without any wrist module",
-          "The parallel kinematic structure keeps most actuator mass at the fixed base, minimizing moving inertia and enabling cycle times of 100-200 picks per minute",
-          "Delta robots are easier to program because forward kinematics has a unique closed-form solution"
+          "Delta robots are easier to program because forward kinematics has a unique closed-form solution",
+          "The parallel kinematic structure keeps most actuator mass at the fixed base, minimizing moving inertia and enabling cycle times of 100-200 picks per minute"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Delta robots use three parallelogram arms connected to a lightweight end plate. The motors and gearboxes are fixed to the stationary base frame, so the moving mass is extremely low. This allows very high accelerations (20-100 m/s^2) and cycle times of 100-200 picks/min - far exceeding what a serial-chain 6-axis robot (with all joint masses in the kinematic chain) can achieve at similar payload."
       },
       {
@@ -3159,11 +3159,11 @@ MODULES_2 = [
         "q": "The manipulability measure w = sqrt(det(J*J^T)) equals zero when:",
         "options": [
           "The robot is at its home position",
-          "The robot is at a singular configuration",
           "The robot reaches maximum payload",
+          "The robot is at a singular configuration",
           "The DC bus voltage drops below nominal"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "When det(J*J^T) = 0, the Jacobian is rank-deficient, indicating a singular configuration. w = 0 means the robot cannot generate velocity in at least one Cartesian direction regardless of joint velocities."
       },
       {
@@ -3181,44 +3181,44 @@ MODULES_2 = [
         "q": "In RRT path planning, what is the primary purpose of the 'step size delta-q' parameter?",
         "options": [
           "It sets the maximum joint velocity during execution",
-          "It controls how far the tree extends toward each random sample per iteration",
           "It defines the minimum distance between the robot and obstacles",
-          "It sets the PID loop update rate"
+          "It sets the PID loop update rate",
+          "It controls how far the tree extends toward each random sample per iteration"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Delta-q is the incremental extension of the tree toward the random sample. Smaller values improve resolution near obstacles but increase computation; larger values speed planning but may miss narrow passages."
       },
       {
         "q": "Hand-eye calibration using the Tsai-Lenz method solves which equation?",
         "options": [
-          "T_world = T_base * T_flange",
           "AX = XB where A is flange motion, B is camera motion, and X is the camera-to-flange transform",
+          "T_world = T_base * T_flange",
           "F = M*a for the camera mass",
           "p_world = J * p_pixel"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The Tsai-Lenz and Park-Martin methods both solve AX = XB to find the fixed transform X (camera-to-flange) from at least 3 robot motions A (flange) and corresponding camera observations B."
       },
       {
         "q": "According to ISO/TS 15066 Table 1, which body region has the LOWEST allowable transient contact force limit for collaborative robot operation?",
         "options": [
           "Thigh",
-          "Forearm",
           "Head and neck",
+          "Forearm",
           "Shoulder"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "ISO/TS 15066 specifies lower force limits for more vulnerable body regions. The head and neck region has among the lowest limits (approximately 65 N transient) compared to thighs and shoulders. Always verify against the current standard revision."
       },
       {
         "q": "EtherCAT achieves deterministic cycle times as low as 31.25 microseconds primarily through which mechanism?",
         "options": [
           "Using UDP multicasting for low latency",
-          "Slaves process data on-the-fly as the Ethernet frame passes through each device",
           "A central hub polls each drive sequentially",
+          "Slaves process data on-the-fly as the Ethernet frame passes through each device",
           "Token-ring arbitration with a 1 ms guaranteed slot"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "EtherCAT slaves read and write data to a single Ethernet frame as it travels through the ring - no frame copying or store-and-forward delay. This on-the-fly processing is what enables sub-100 microsecond cycle times."
       },
       {
@@ -3226,21 +3226,21 @@ MODULES_2 = [
         "options": [
           "Category 1 - controlled stop then de-energize",
           "Category 2 - controlled stop, motor remains energized",
-          "Category 0 - immediate removal of power (uncontrolled coast to stop)",
-          "Category 3 - dynamic braking stop"
+          "Category 3 - dynamic braking stop",
+          "Category 0 - immediate removal of power (uncontrolled coast to stop)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "STO removes the drive enable so no torque is generated; the motor coasts to a stop without controlled deceleration. This is a Category 0 stop per IEC 60204-1. For controlled stops followed by STO, use SS1 (Category 1)."
       },
       {
         "q": "ISO 9283 defines 'Pose Repeatability (RP)' as:",
         "options": [
-          "The maximum Cartesian speed the robot can achieve",
           "The radius of a sphere containing 99.73% of return poses at the same programmed position",
+          "The maximum Cartesian speed the robot can achieve",
           "The average deviation from a straight-line path",
           "The time required to return to home position"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ISO 9283 RP is the radius of the smallest sphere centered on the mean pose that contains 99.73% of repeated poses (3-sigma). A lower RP value indicates better repeatability."
       },
       {
@@ -3257,78 +3257,78 @@ MODULES_2 = [
       {
         "q": "A servo Bode plot shows the phase crosses -180 degrees at a frequency where the gain is -5 dB. What is the gain margin, and is it adequate?",
         "options": [
-          "5 dB - marginally adequate (minimum recommended is 6 dB)",
           "5 dB - fully adequate",
           "-5 dB - unstable system",
+          "5 dB - marginally adequate (minimum recommended is 6 dB)",
           "180 dB - the system is very stable"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Gain margin = -(-5 dB) = 5 dB. The minimum recommended gain margin for servo loops is 6 dB (conservative practice uses &ge; 6 dB). At 5 dB the system is stable but under-margined - reduce Kp slightly."
       },
       {
         "q": "A notch filter is added to a servo velocity loop to address mechanical resonance. Where should the notch frequency be set?",
         "options": [
           "At the servo control bandwidth frequency",
-          "At the mechanical resonant frequency shown as a gain spike on the Bode plot",
           "At the power line frequency (60 Hz) to reject electrical noise",
-          "At half the encoder sample rate"
+          "At half the encoder sample rate",
+          "At the mechanical resonant frequency shown as a gain spike on the Bode plot"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A notch filter is tuned to the resonant frequency (the gain spike on the Bode plot). It attenuates the resonant peak that would otherwise cause instability when loop gain is increased. The notch should be narrow to minimize phase loss at other frequencies."
       },
       {
         "q": "TCP calibration using the 4-point method works by moving the robot so the tool tip touches the same fixed point in 4 different orientations. The controller then solves for:",
         "options": [
-          "The kinematic model of all 6 joints simultaneously",
           "The TCP offset vector that minimizes scatter in the tip position across all 4 poses",
+          "The kinematic model of all 6 joints simultaneously",
           "The payload mass and center of mass",
           "The world frame origin relative to the robot base"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "In 4-point TCP calibration, the controller performs a least-squares fit to find the flange-to-TCP offset vector that makes the computed tool tip position consistent across all 4 orientations. It does not identify payload or world frame."
       },
       {
         "q": "Which robot configuration typically achieves the highest pick rate (150-300+ picks/min) for light, flat products?",
         "options": [
           "6-axis articulated",
-          "SCARA",
           "Delta (parallel-link)",
+          "SCARA",
           "Cartesian gantry"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "Delta robots keep the heavy motors on the fixed frame, minimizing moving mass and enabling the highest beat rates for light picking."
       },
       {
         "q": "A SCARA robot is characterized by being:",
         "options": [
           "Compliant vertically, rigid horizontally",
-          "Rigid vertically, compliant horizontally",
           "Compliant in all axes",
+          "Rigid vertically, compliant horizontally",
           "A parallel-link design"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "SCARA is Selective Compliance - stiff in Z (vertical) and compliant in the horizontal plane, ideal for insertion and planar assembly."
       },
       {
         "q": "When a palletizing robot builds the top layer, the worst-case for reach and payload is:",
         "options": [
           "A case at the pallet center",
-          "A case at the far corner of the top layer",
           "The first case placed",
-          "The slip sheet"
+          "The slip sheet",
+          "A case at the far corner of the top layer"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A case at the far top corner is at maximum extension and height - the limiting case for both reach and payload capacity."
       },
       {
         "q": "In conveyor line tracking, latching the conveyor encoder when a photoeye triggers is used to:",
         "options": [
-          "Stop the belt",
           "Establish the part's position at that instant for continuous tracking",
+          "Stop the belt",
           "Reset the robot mastering",
           "Increase belt speed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Latching captures the encoder count at the trigger, fixing the part's reference so its position is known at any later time by encoder delta."
       },
       {
@@ -3346,33 +3346,33 @@ MODULES_2 = [
         "q": "The primary advantage of offline programming (OLP) over online teaching is:",
         "options": [
           "It never needs on-robot touch-up",
-          "It builds and validates programs without stopping production",
           "It eliminates the need for calibration",
+          "It builds and validates programs without stopping production",
           "It works only for single-robot cells"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "OLP develops and checks programs in simulation off-line, avoiding production downtime; it still needs on-robot calibration/touch-up."
       },
       {
         "q": "Under ISO/TS 15066 power-and-force limiting, a rounded tool with acceptable contact force can still fail validation because of:",
         "options": [
-          "Excessive contact pressure from a small contact area",
           "Robot color",
           "Network latency",
-          "Encoder resolution"
+          "Encoder resolution",
+          "Excessive contact pressure from a small contact area"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Pressure = force / area; a small/sharp contact area can exceed biomechanical pressure limits even when total force is within limits."
       },
       {
         "q": "Near-zero backlash at industrial robot joints is provided by:",
         "options": [
-          "Worm gears",
           "Harmonic (strain-wave) drives",
+          "Worm gears",
           "Timing belts",
           "Slip clutches"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Harmonic (strain-wave) gearsets give high ratio with near-zero backlash; increasing lost motion signals wear needing replacement."
       },
       {
@@ -3390,33 +3390,33 @@ MODULES_2 = [
         "q": "A fast pick-and-place robot shows placement accuracy drifting and visible oscillation at the end of moves. A likely root cause is:",
         "options": [
           "The IP address is wrong",
-          "Insufficient base/foundation rigidity flexing under reaction forces and moments",
           "Too many quiz questions",
+          "Insufficient base/foundation rigidity flexing under reaction forces and moments",
           "The gripper is electric"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Large reaction torques during accel/decel flex an inadequate base or foundation, degrading repeatability and causing end-of-move oscillation."
       },
       {
         "q": "What is the main advantage of offline programming (OLP) over teach-pendant programming?",
         "options": [
           "It needs no calibration ever",
-          "Production keeps running while programming happens on a PC, and reach/collision issues are caught virtually",
           "It is always more accurate to the real cell",
-          "It requires no software"
+          "It requires no software",
+          "Production keeps running while programming happens on a PC, and reach/collision issues are caught virtually"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "OLP programs in simulation without stopping production and catches problems virtually, but the model must be calibrated to the real cell and points touched up."
       },
       {
         "q": "Why is motion blending (zone/CNT/blend radius) DISABLED at pick and place points but enabled on air-moves?",
         "options": [
-          "It saves electricity",
           "Blending rounds the corner and skips the exact point for speed; pick/place need accurate fine-stop positioning",
+          "It saves electricity",
           "Air-moves require exact points",
           "It has no effect on accuracy"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Blending trades exact positioning for speed by rounding corners; that is acceptable on air-moves but not at grasp points where accuracy is critical."
       },
       {
@@ -3434,33 +3434,33 @@ MODULES_2 = [
         "q": "When using a pneumatic gripper, why should you never assume a grip succeeded?",
         "options": [
           "Pneumatics are always reliable",
-          "Reed/proximity switches must confirm open/closed/part-present states back to the controller",
           "The PLC cannot read inputs",
+          "Reed/proximity switches must confirm open/closed/part-present states back to the controller",
           "Vacuum is better"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Part-present and open/closed confirmation sensors verify the actual grip state; assuming success leads to dropped or crushed parts and downstream faults."
       },
       {
         "q": "A heavy tool that is within the robot's payload MASS rating still faults the wrist. Why?",
         "options": [
           "The mass number is the only limit",
-          "A long/cantilevered tool can exceed the wrist MOMENT OF INERTIA/torque rating even under the payload mass",
           "The robot is broken",
-          "Payload never matters"
+          "Payload never matters",
+          "A long/cantilevered tool can exceed the wrist MOMENT OF INERTIA/torque rating even under the payload mass"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Payload has both a mass and a moment-of-inertia/offset limit; a long or offset tool can exceed the wrist torque rating even if its mass is acceptable."
       },
       {
         "q": "Why must a low absolute-encoder BATTERY warning be serviced promptly on many robots?",
         "options": [
-          "It changes the gripper force",
           "A dead battery loses mastering/position data, forcing a full re-master",
+          "It changes the gripper force",
           "It speeds up the arm",
           "Batteries improve network speed"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Absolute encoders retain position via a backup battery when powered off; if it dies, mastering data is lost and the robot must be fully re-mastered."
       },
       {
@@ -3478,22 +3478,22 @@ MODULES_2 = [
         "q": "What does an automatic tool changer add to a robot cell?",
         "options": [
           "Faster network speed",
-          "The ability to autonomously dock one EOAT and pick up another, multiplying cell flexibility for multiple products",
           "Higher payload mass",
+          "The ability to autonomously dock one EOAT and pick up another, multiplying cell flexibility for multiple products",
           "A larger work envelope"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A tool changer (coupler with pass-through air/power/network) lets the robot swap tools autonomously, letting one cell handle multiple products or tasks."
       },
       {
         "q": "Motion blending in a robot program reduces cycle time by:",
         "options": [
           "Adding delays between moves",
-          "Passing through via-points without stopping between segments",
           "Slowing acceleration",
-          "Skipping the pick"
+          "Skipping the pick",
+          "Passing through via-points without stopping between segments"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Blended (fly-by) motion lets the robot pass through a via-point on a curve without decelerating to zero, shaving fractions of a second per move."
       },
       {
@@ -3510,45 +3510,45 @@ MODULES_2 = [
       {
         "q": "An axis with an incremental encoder must be HOMED after power-up because:",
         "options": [
-          "The encoder loses position through power loss",
           "The motor overheats",
+          "The encoder loses position through power loss",
           "The brake fails",
           "The gearbox needs lubrication"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "Incremental encoders lose their reference at power off; homing to a switch or index mark re-establishes the zero point."
       },
       {
         "q": "A cable in an energy chain should NEVER bend below:",
         "options": [
           "100 mm regardless of diameter",
-          "Its manufacturer's minimum bending radius, typically 12-15x cable OD dynamic",
           "Any radius at all",
+          "Its manufacturer's minimum bending radius, typically 12-15x cable OD dynamic",
           "The chain outer radius"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Bending below minimum radius stresses conductors and jacket; the chain's inner radius is chosen to enforce that limit."
       },
       {
         "q": "A direct-drive (torque motor) provides high performance mainly because it:",
         "options": [
           "Uses a very large gearbox",
-          "Eliminates gearbox backlash and elasticity, enabling higher control bandwidth",
           "Runs at extremely high speed",
-          "Requires no cooling ever"
+          "Requires no cooling ever",
+          "Eliminates gearbox backlash and elasticity, enabling higher control bandwidth"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "No mechanical stage between motor and load means zero backlash and low mechanical filter, so servo gains can be pushed higher for tighter tracking."
       },
       {
         "q": "After an E-stop, best practice is to:",
         "options": [
-          "Immediately resume the interrupted move",
           "Identify the cause, reset, home the axes, and take the machine to a defined safe start position before resuming",
+          "Immediately resume the interrupted move",
           "Restart from a random point",
           "Skip homing to save time"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Recovery sequences protect both people and equipment; auto-resuming a program with unknown state is a common cause of collisions after E-stops."
       },
       {
@@ -3566,11 +3566,11 @@ MODULES_2 = [
         "q": "The fill ratio inside an energy chain should stay below approximately:",
         "options": [
           "10%",
-          "60%",
           "95%",
+          "60%",
           "100% is fine"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Above about 60% fill cables cannot shift relative to each other, and friction accelerates jacket wear and can seize the chain."
       },
       {
@@ -3578,21 +3578,21 @@ MODULES_2 = [
         "options": [
           "The same as at rated payload",
           "Slower than at rated payload",
-          "2-3x faster than at rated payload",
-          "Never in that condition"
+          "Never in that condition",
+          "2-3x faster than at rated payload"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Motor and structural limits set the peak; at low payload the inertia and torque required drop so the same peak torque yields higher acceleration."
       },
       {
         "q": "A robot must lift a 9 kg part using a 5 kg gripper. What minimum payload rating should the robot have, before considering center-of-gravity effects?",
         "options": [
+          "14 kg or more",
           "5 kg",
           "9 kg",
-          "14 kg or more",
           "4 kg"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Payload includes the end-of-arm tool plus the part: 9 kg + 5 kg = 14 kg minimum, and it must be de-rated further as the load's center of gravity moves away from the flange (moment/inertia)."
       },
       {
@@ -3610,22 +3610,22 @@ MODULES_2 = [
         "q": "Compared to a trapezoidal profile, an S-curve motion profile primarily reduces:",
         "options": [
           "Maximum velocity",
-          "Jerk (rate of change of acceleration), lowering vibration and wear",
           "The number of axes needed",
+          "Jerk (rate of change of acceleration), lowering vibration and wear",
           "Payload"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "An S-curve limits jerk by ramping acceleration gradually, producing smoother starts/stops that reduce vibration, mechanical wear, and settling time, at the cost of slightly gentler (sometimes net-faster) moves."
       },
       {
         "q": "A power-and-force-limiting (PFL) cobot is fitted with a sharp cutting tool and a heavy payload run at high speed. What is the correct safety conclusion?",
         "options": [
           "It remains collaborative because it is a cobot",
-          "The application may no longer be safe without additional guarding or speed/separation monitoring; a new risk assessment is required",
           "PFL automatically compensates for any tool",
-          "Cobots never need risk assessment"
+          "Cobots never need risk assessment",
+          "The application may no longer be safe without additional guarding or speed/separation monitoring; a new risk assessment is required"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Collaborative operation depends on the application, not just the robot. A sharp tool or fast heavy payload can exceed biomechanical limits, voiding PFL safety, so a fresh risk assessment and possibly guarding or SSM are required."
       }
     ],
@@ -3880,67 +3880,67 @@ MODULES_2 = [
       {
         "q": "Integral (I) term eliminates:",
         "options": [
+          "Steady-state error (offset)",
           "Overshoot",
           "Oscillation",
-          "Steady-state error (offset)",
           "Noise"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "I accumulates error to drive it to zero."
       },
       {
         "q": "P&amp;ID tag TT-304 means:",
         "options": [
-          "Temperature Transmitter loop 304",
           "Total Throughput",
           "Test Terminal",
+          "Temperature Transmitter loop 304",
           "Timer Trigger"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "T=Temp, T=Transmitter, 304=loop number."
       },
       {
         "q": "Loop oscillating steadily - what to do?",
         "options": [
           "Increase Kp",
-          "Decrease Kp",
           "Increase Ki",
-          "Add dead time"
+          "Add dead time",
+          "Decrease Kp"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Oscillation = too much gain. Reduce Kp to stabilize."
       },
       {
         "q": "In an open-loop conveyor speed control system, what happens when a sudden load increase causes the belt to slow below setpoint?",
         "options": [
-          "The controller detects the speed drop and increases VFD output automatically",
           "Nothing - the controller has no feedback and cannot respond to the disturbance",
+          "The controller detects the speed drop and increases VFD output automatically",
           "The integral term eliminates the error over time",
           "The proportional band widens to accommodate the load"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Open-loop control has no sensor feedback. The controller issues a fixed command regardless of actual PV changes. A closed-loop system with a tachometer and PID would correct the speed error automatically."
       },
       {
         "q": "A 4-20 mA pressure transmitter is ranged 0-500 kPa. The measured current is 10.4 mA. What is the process pressure?",
         "options": [
-          "200 kPa",
           "260 kPa",
           "162.5 kPa",
+          "200 kPa",
           "325 kPa"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "PV = (I - 4) / 16 x span = (10.4 - 4) / 16 x 500 = 6.4/16 x 500 = 0.4 x 500 = 200 kPa. IEC 60381-1 governs 4-20 mA signal scaling."
       },
       {
         "q": "A FOPDT step test: the PV does not move for the first 15 s, then reaches 63.2% of its final change at t = 55 s after the step. What are theta and tau?",
         "options": [
-          "theta = 15 s, tau = 40 s",
           "theta = 55 s, tau = 15 s",
           "theta = 15 s, tau = 55 s",
-          "theta = 40 s, tau = 55 s"
+          "theta = 40 s, tau = 55 s",
+          "theta = 15 s, tau = 40 s"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Dead time theta is the delay before PV begins to move: 15 s. Time constant tau is the elapsed time from end of dead time to 63.2% of final change: 55 - 15 = 40 s."
       },
       {
@@ -3968,34 +3968,34 @@ MODULES_2 = [
       {
         "q": "A PID in ISA ideal form has Kc = 5, Ti = 60 s, Td = 10 s. In equivalent parallel form, what are Ki and Kd?",
         "options": [
-          "Ki = 0.0833 per s, Kd = 50 s",
           "Ki = 300 per s, Kd = 0.5 s",
           "Ki = 12 per s, Kd = 2 s",
+          "Ki = 0.0833 per s, Kd = 50 s",
           "Ki = 0.5 per s, Kd = 500 s"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Parallel form: Ki = Kc / Ti = 5 / 60 = 0.0833 per second; Kd = Kc x Td = 5 x 10 = 50. These conversions are required when migrating parameters between controller platforms using different PID forms."
       },
       {
         "q": "Using Ziegler-Nichols, a temperature loop sustains oscillation at Ku = 6, Tu = 80 s. What are the PID parameters (ideal form)?",
         "options": [
-          "Kc = 3.6, Ti = 40 s, Td = 10 s",
           "Kc = 3.0, Ti = 66.7 s, Td = 10 s",
           "Kc = 4.8, Ti = 60 s, Td = 20 s",
-          "Kc = 2.7, Ti = 40 s, Td = 5 s"
+          "Kc = 2.7, Ti = 40 s, Td = 5 s",
+          "Kc = 3.6, Ti = 40 s, Td = 10 s"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "ZN PID formulas: Kc = 0.60 x Ku = 3.6; Ti = Tu/2 = 40 s; Td = Tu/8 = 10 s. These are the standard Ziegler-Nichols closed-loop PID settings."
       },
       {
         "q": "Lambda tuning is particularly preferred for level control because tank level is often:",
         "options": [
-          "A fast first-order process with negligible dead time",
           "A pure integrating process (net flow integrates into level), making ZN methods unreliable",
+          "A fast first-order process with negligible dead time",
           "A highly nonlinear process requiring gain scheduling",
           "Subject to derivative kick requiring derivative on measurement"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A tank level integrates the difference between inflow and outflow with no natural self-regulation. This integrating nature makes ZN ultimate-gain tests problematic. Lambda (IMC) tuning provides a systematic, robust approach for integrating processes."
       },
       {
@@ -4013,11 +4013,11 @@ MODULES_2 = [
         "q": "In cascade control of a heat exchanger (outer: temperature, inner: steam flow), why is the inner loop chosen to be the faster one?",
         "options": [
           "Temperature sensors respond faster than flow sensors",
-          "Flow responds rapidly so the inner loop corrects steam-supply disturbances before they upset outlet temperature",
           "Temperature directly manipulates the steam valve position",
+          "Flow responds rapidly so the inner loop corrects steam-supply disturbances before they upset outlet temperature",
           "Both loops run at the same speed; cascade only improves setpoint tracking"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The inner loop (flow or pressure) responds much faster than the outer temperature loop. Steam header pressure disturbances are corrected by the fast inner loop before they propagate to the slower temperature PV, dramatically improving disturbance rejection."
       },
       {
@@ -4025,21 +4025,21 @@ MODULES_2 = [
         "options": [
           "1.25 times (linear with speed)",
           "1.5625 times (speed squared)",
-          "1.953 times (speed cubed)",
-          "Power is unchanged; only flow changes"
+          "Power is unchanged; only flow changes",
+          "1.953 times (speed cubed)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "By the affinity laws, power scales as the cube of speed ratio: P2/P1 = (N2/N1)^3 = (1500/1200)^3 = 1.25^3 = 1.953. Flow scales linearly (factor 1.25) and pressure as the square (factor 1.5625). This cubic relationship is why even small speed reductions yield large energy savings with VFDs."
       },
       {
         "q": "A Smith Predictor improves control of high dead-time processes by:",
         "options": [
-          "Adding derivative action proportional to dead time to anticipate PV movement",
           "Running an internal process model to subtract the dead-time effect from feedback, so the PID sees the process as if dead time were absent",
+          "Adding derivative action proportional to dead time to anticipate PV movement",
           "Increasing integral gain to accumulate error faster during the dead-time period",
           "Switching the controller to open-loop mode during the dead-time period"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The Smith Predictor uses an internal FOPDT model running in parallel. It feeds back the modelled response minus the delayed modelled response, effectively removing dead time from the feedback path. This allows the PID to be tuned more aggressively. It requires an accurate process model to work correctly."
       },
       {
@@ -4089,12 +4089,12 @@ MODULES_2 = [
       {
         "q": "A water control valve must pass 60 gpm (SG = 1.0) at a valve pressure drop of 36 psi. To keep the valve at or below 80% open at maximum flow, the minimum rated Cv should be:",
         "options": [
+          "Cv = 12.5",
           "Cv = 8.0",
           "Cv = 10.0",
-          "Cv = 12.5",
           "Cv = 15.0"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Required Cv at max flow = Q x sqrt(SG / dP) = 60 x sqrt(1.0 / 36) = 60 x (1/6) = 10.0. To operate at or below 80% open: Cv_rated &ge; 10.0 / 0.80 = 12.5. This keeps the valve in a controllable range and avoids operating at full stroke where sensitivity decreases."
       },
       {
@@ -4112,22 +4112,22 @@ MODULES_2 = [
         "q": "Gain scheduling is most appropriate for which type of process?",
         "options": [
           "A linear FOPDT process with constant gain across all operating points",
-          "A process whose gain changes significantly with the operating point, such as one with an equal-percentage control valve",
           "A process with very small dead time relative to its time constant",
+          "A process whose gain changes significantly with the operating point, such as one with an equal-percentage control valve",
           "A process where the setpoint is fixed and disturbances are the only inputs"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Gain scheduling compensates for plant nonlinearity by storing multiple PID tuning parameter sets and selecting the correct set based on a scheduling variable (PV or output). It is specifically designed for processes where K varies with operating point - such as equal-percentage valves, centrifugal fans at varying speeds, or pH near the neutral point."
       },
       {
         "q": "What is the primary advantage of the velocity (incremental) form of discrete PID over the position (absolute) form?",
         "options": [
           "It requires less CPU processing time per scan",
-          "Anti-windup is inherent - clamping the output increment prevents any accumulator from exceeding actuator limits",
           "It is more accurate at high sample rates",
-          "It eliminates the need for a derivative filter"
+          "It eliminates the need for a derivative filter",
+          "Anti-windup is inherent - clamping the output increment prevents any accumulator from exceeding actuator limits"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "In the velocity form, only the output increment Delta_u is computed. The running output u[k] = u[k-1] + Delta_u[k] can be clamped to actuator limits at each step without any separate accumulator winding up. This provides inherent anti-windup without a back-calculation circuit. The position form must explicitly manage integral accumulation and initialisation."
       },
       {
@@ -4145,11 +4145,11 @@ MODULES_2 = [
         "q": "The Smith Predictor is most sensitive to inaccuracies in which process parameter?",
         "options": [
           "Process gain K",
-          "Process time constant tau",
           "Process dead time theta",
+          "Process time constant tau",
           "The initial steady-state operating point"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "The Smith Predictor places a dead-time model in the feedback path. An error in the modelled dead time theta directly corrupts both the prediction signal and the mismatch correction, causing sustained oscillation. A 20% error in theta can destabilise the loop. Errors in K or tau cause less severe degradation and can often be tolerated with some PI detuning."
       },
       {
@@ -4168,65 +4168,65 @@ MODULES_2 = [
         "options": [
           "10^-2 to 10^-1 (1% to 10%)",
           "10^-4 to 10^-3 (0.01% to 0.1%)",
-          "10^-3 to 10^-2 (0.1% to 1%)",
-          "10^-1 to 10^0 (10% to 100%)"
+          "10^-1 to 10^0 (10% to 100%)",
+          "10^-3 to 10^-2 (0.1% to 1%)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "IEC 61511 assigns SIL levels to ranges of Probability of Failure on Demand (PFD_avg): SIL 1 = 10^-2 to 10^-1; SIL 2 = 10^-3 to 10^-2; SIL 3 = 10^-4 to 10^-3. A higher SIL number requires a lower (better) PFD. SIL 2 is 0.1% to 1% probability of failing to respond on demand."
       },
       {
         "q": "What is the minimum loop resistance required in a 4-20 mA field circuit to support HART communication?",
         "options": [
-          "50 ohms",
           "250 ohms",
+          "50 ohms",
           "100 ohms",
           "500 ohms"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The HART specification requires at least 250 ohms total loop resistance for the superimposed 1.2 mA peak-to-peak FSK signal to develop sufficient voltage swing for the communicator to detect. Many PLC analog input cards present only 50 ohms input impedance; a 250-ohm resistor must be added in series at the communicator tap point to ensure reliable HART communication."
       },
       {
         "q": "A PID loop trend shows a slow, irregular sawtooth oscillation in PV even with a constant setpoint. The MOST likely cause is:",
         "options": [
           "Controller proportional gain Kp is too high",
-          "Controller integral time Ti is too short",
           "Valve or actuator mechanical stiction (friction dead band)",
+          "Controller integral time Ti is too short",
           "Derivative term amplifying sensor noise at the sample frequency"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "An irregular slow sawtooth is the classic signature of valve stiction. The controller integrates error until output overcomes the static friction, the valve jumps, PV overshoots, and the cycle repeats irregularly. Fast regular oscillations indicate gain or integral tuning issues. High-frequency chatter indicates derivative/noise problems. Stiction is a maintenance issue (valve repacking, actuator service) per ISA-TR75.25.02 diagnosis, not a re-tuning issue."
       },
       {
         "q": "In a heat/cool split-range scheme (0-50% cooling, 50-100% heating), a deadband around 50% is tuned to:",
         "options": [
           "Increase controller gain",
-          "Prevent simultaneous heating and cooling 'fighting' at crossover",
           "Add integral action",
+          "Prevent simultaneous heating and cooling 'fighting' at crossover",
           "Speed up the sample rate"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A deadband/overlap at the split point stops both elements acting at once (energy waste and chatter) as control hands off."
       },
       {
         "q": "An override (low-select) scheme on a compressor allows the anti-surge controller to take over when needed. The non-selected controller must have anti-windup so that:",
         "options": [
           "It runs faster",
-          "Its integral does not wind up while overridden, enabling bumpless takeover",
           "It ignores its setpoint",
-          "It doubles its gain"
+          "It doubles its gain",
+          "Its integral does not wind up while overridden, enabling bumpless takeover"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Without external-reset anti-windup, the idle controller's integral saturates; anti-windup keeps it ready for a smooth, bumpless handover."
       },
       {
         "q": "Why does naive single-element drum level control react wrongly to a sudden steam-load increase?",
         "options": [
-          "The level transmitter fails",
           "Shrink/swell momentarily raises indicated level as mass actually leaves",
+          "The level transmitter fails",
           "Feedwater flow reverses",
           "The drum pressure rises"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A load increase drops pressure and flashes bubbles ('swell'), raising indicated level even as mass departs - so single-element control cuts feedwater exactly when it should add it."
       },
       {
@@ -4244,33 +4244,33 @@ MODULES_2 = [
         "q": "A valve positioner improves loop performance by:",
         "options": [
           "Replacing the controller",
-          "Closing a local loop between commanded signal and actual stem position",
           "Increasing supply air pressure only",
+          "Closing a local loop between commanded signal and actual stem position",
           "Eliminating the need for a control valve"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The positioner compares command to actual travel and modulates actuator air until they match, overcoming friction and hysteresis."
       },
       {
         "q": "A smart digital valve controller (DVC) valve signature test plots:",
         "options": [
           "PV versus time",
-          "Actuator pressure versus travel to reveal friction/wear",
           "Flow versus temperature",
-          "Network latency"
+          "Network latency",
+          "Actuator pressure versus travel to reveal friction/wear"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The pressure-vs-travel signature exposes rising friction, seat wear, or a bent stem for predictive maintenance before failure."
       },
       {
         "q": "A loop oscillates; the trend shows controller output ramping smoothly while PV sits still, then PV jumps suddenly. This signature indicates:",
         "options": [
-          "Excessive derivative gain",
           "Valve stiction (a limit cycle)",
+          "Excessive derivative gain",
           "A dead PLC",
           "Correct tuning"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The stick-then-jump pattern and PV-vs-output parallelogram are classic stiction; the fix is mechanical, not lowering gain."
       },
       {
@@ -4288,33 +4288,33 @@ MODULES_2 = [
         "q": "Which IEC 61131-3 language is best suited to a timed, step-by-step batch sequence (fill, heat, hold, drain)?",
         "options": [
           "Ladder Diagram",
-          "Sequential Function Chart (SFC)",
           "Structured Text expressions only",
+          "Sequential Function Chart (SFC)",
           "Function Block Diagram"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "SFC models steps (actions) and transitions (conditions), with parallel/selective branches - the natural fit for sequential/batch control per ISA-88."
       },
       {
         "q": "Why should a surge/buffer tank use averaging level control rather than tight level control?",
         "options": [
           "Tight control saves energy",
-          "Its job is to absorb inlet flow variations and pass smooth outlet flow; tight tuning would translate every inlet bump into an outlet bump",
           "Averaging control is always more accurate",
-          "Level never matters"
+          "Level never matters",
+          "Its job is to absorb inlet flow variations and pass smooth outlet flow; tight tuning would translate every inlet bump into an outlet bump"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A surge tank exists to smooth flow. Averaging control uses low gain/long reset so level wanders within limits while outlet flow stays steady; tight tuning defeats the tank's purpose."
       },
       {
         "q": "Temperature loops overshoot because of thermal lag. Which PID feature genuinely helps anticipate the lag on a (clean) temperature signal?",
         "options": [
-          "High proportional gain alone",
           "Derivative action, which backs off the output before PV arrives at setpoint",
+          "High proportional gain alone",
           "Removing integral action",
           "Faster scan only"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Temperature is one loop where derivative helps: it anticipates the long lag and reduces output before PV reaches SP, curbing overshoot (unlike noisy flow loops)."
       },
       {
@@ -4332,33 +4332,33 @@ MODULES_2 = [
         "q": "A technician needs to trace a 4-20 mA signal from a faulty transmitter back to its input card, with wire and terminal numbers. Which document do they use?",
         "options": [
           "The alarm summary",
-          "The loop sheet (loop diagram, ISA-5.4)",
           "The employee handbook",
+          "The loop sheet (loop diagram, ISA-5.4)",
           "The historian trend"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A loop sheet shows one loop end-to-end - field device, junction/terminal numbers, IO card/channel, and controller block - exactly what is needed to trace the signal."
       },
       {
         "q": "Why is a deadband (differential gap) added to on-off control of a fill pump?",
         "options": [
           "To make it hold a tight setpoint",
-          "To prevent chatter/rapid cycling at setpoint and respect the motor's starts-per-hour limit",
           "To eliminate the pump",
-          "To increase pump speed"
+          "To increase pump speed",
+          "To prevent chatter/rapid cycling at setpoint and respect the motor's starts-per-hour limit"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Without a gap the output chatters as PV hovers at SP, wearing the motor; the deadband (e.g. on at 20%, off at 80%) limits cycling and protects the starts-per-hour rating."
       },
       {
         "q": "Two interacting loops sharing a valve region oscillate when both are tuned aggressively. Besides re-pairing via RGA, what is a simple practical fix?",
         "options": [
-          "Delete one loop",
           "Tune the loops at different speeds (one fast, one slow) so they operate on separate timescales",
+          "Delete one loop",
           "Set both to maximum gain",
           "Switch both to manual permanently"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Detuning one loop so the pair operates on different timescales stops them from fighting; RGA guides pairing and a decoupler is the more advanced remedy."
       },
       {
@@ -4376,33 +4376,33 @@ MODULES_2 = [
         "q": "What does the controllability ratio tau/theta (time constant / dead time) tell you?",
         "options": [
           "The valve size",
-          "How difficult the loop is to control - a large ratio is easy, near/below 1 (dead-time-dominant) is hard",
           "The wire gauge",
+          "How difficult the loop is to control - a large ratio is easy, near/below 1 (dead-time-dominant) is hard",
           "The alarm priority"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A large tau/theta (long time constant, short dead time) is easy to control; a ratio near or below 1 is dead-time-dominant and hard, possibly needing a Smith predictor."
       },
       {
         "q": "What is the instrument index?",
         "options": [
           "A list of alarm priorities",
-          "The master list of every instrument - tag, service, type, range, location, and P&amp;ID/loop reference",
           "A PID tuning formula",
-          "A type of transmitter"
+          "A type of transmitter",
+          "The master list of every instrument - tag, service, type, range, location, and P&amp;ID/loop reference"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The instrument index is the master spreadsheet of all instruments with their key attributes and references - the backbone tying the documentation set together."
       },
       {
         "q": "On a PID audit report, a loop showing 60% of time in MANUAL mode is:",
         "options": [
-          "Well tuned",
           "A candidate for review, probably fighting bad tuning or a stuck valve",
+          "Well tuned",
           "Optimal",
           "In alarm suppression"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Loops spending large fractions of time in manual are not controlling automatically; the reason (tuning, valve, saturation) should be diagnosed and fixed."
       },
       {
@@ -4419,34 +4419,34 @@ MODULES_2 = [
       {
         "q": "Deadtime in a control loop mainly limits how:",
         "options": [
-          "Fast and aggressive tuning can be without ringing/instability",
           "Big the process variable can be",
           "Precise the measurement is",
+          "Fast and aggressive tuning can be without ringing/instability",
           "Long the trend is"
         ],
-        "answer": 0,
+        "answer": 2,
         "explain": "Deadtime bounds achievable loop bandwidth; pushing tuning faster than the delay allows causes ringing and eventually instability."
       },
       {
         "q": "When a sequence step ends and a heating loop should stop, best practice is to:",
         "options": [
           "Leave the loop in AUTO chasing the old setpoint",
-          "Place the loop in MANUAL with output zero (bumpless), avoiding wind-up",
           "Disable the sensor",
-          "Force the valve wide open"
+          "Force the valve wide open",
+          "Place the loop in MANUAL with output zero (bumpless), avoiding wind-up"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Leaving loops in AUTO after a sequence stop leads to wind-up and unwanted output; a clean MANUAL zero handoff avoids surprises when the sequence restarts."
       },
       {
         "q": "On an analyzer loop, sample-system transport lag from take-off to analyzer typically adds:",
         "options": [
-          "Nothing",
           "Seconds to minutes of deadtime that dominate achievable performance",
+          "Nothing",
           "Only noise, no delay",
           "Only gain"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Sample-line volume and analyzer cycle time add tens to hundreds of seconds of deadtime; poor design kills achievable control performance."
       },
       {
@@ -4464,33 +4464,33 @@ MODULES_2 = [
         "q": "MPC's key structural advantage over PID is:",
         "options": [
           "Simpler tuning",
-          "Handling of multi-variable interactions, hard constraints, and deadtime via an explicit process model",
           "No need for measurement",
+          "Handling of multi-variable interactions, hard constraints, and deadtime via an explicit process model",
           "Faster sample rate"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "MPC uses a model to predict future outputs and optimise input moves subject to constraints; PID considers only current error and cannot inherently handle multi-variable or constraint problems."
       },
       {
         "q": "A loop that shows a stair-step response to setpoint changes exhibits:",
         "options": [
           "Pure deadtime",
-          "Deadband (nonlinearity)",
           "Perfect control",
-          "Only random noise"
+          "Only random noise",
+          "Deadband (nonlinearity)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Deadband produces stair-step or limit-cycle behaviour because small commanded changes produce no movement; deadtime instead produces a flat delay before the ramp."
       },
       {
         "q": "Which is a symptom that regulatory-supervisory coordination is failing?",
         "options": [
-          "Loops are stable and setpoints track economics",
           "Supervisory changes setpoints faster than regulatory loops can respond, causing oscillation",
+          "Loops are stable and setpoints track economics",
           "Operators press E-stop for fun",
           "Historian is offline"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "When supervisory rate exceeds regulatory bandwidth, the lower loops chase moving setpoints and destabilise; supervisory moves must respect the regulatory time constants."
       },
       {
@@ -4530,11 +4530,11 @@ MODULES_2 = [
         "q": "What does anti-windup logic prevent in a PID controller?",
         "options": [
           "The valve from ever fully opening",
-          "The integral term from accumulating while the output is saturated, avoiding large overshoot",
           "The setpoint from changing",
-          "Derivative kick"
+          "Derivative kick",
+          "The integral term from accumulating while the output is saturated, avoiding large overshoot"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Anti-windup stops or limits integration when the output saturates, so the integral does not keep accumulating during saturation and cause a large overshoot when the process finally responds and the error reverses."
       }
     ],
@@ -4791,78 +4791,78 @@ MODULES_2 = [
       {
         "q": "S2+F2+P2 on risk graph = PLr?",
         "options": [
+          "PL e",
           "PL a",
           "PL c",
-          "PL d",
-          "PL e"
+          "PL d"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "Highest risk path = PLr e."
       },
       {
         "q": "After lockout, you MUST:",
         "options": [
           "Start maintenance",
-          "Verify zero energy (try start, check stored energy)",
           "Only tag it",
+          "Verify zero energy (try start, check stored energy)",
           "Wait 30 min"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Verification is mandatory - try start, check caps/pressure/springs."
       },
       {
         "q": "ISO 13849 Category 3 means:",
         "options": [
           "No safety needed",
-          "Single fault does NOT cause loss of safety function",
           "Basic principles only",
-          "Software-only"
+          "Software-only",
+          "Single fault does NOT cause loss of safety function"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Cat 3 = single-fault tolerant via redundancy + diagnostics."
       },
       {
         "q": "According to ISO 12100, which three risk-estimation parameters feed the risk graph to determine the required Performance Level?",
         "options": [
-          "Voltage, current, and frequency of the hazardous energy",
           "Severity (S), frequency/duration of exposure (F), and possibility of avoidance (P)",
+          "Voltage, current, and frequency of the hazardous energy",
           "Probability, consequence, and detectability (as in FMEA RPN)",
           "Category, MTTFd, and diagnostic coverage"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ISO 12100 risk estimation uses S (severity of harm), F (frequency/duration of exposure), and P (possibility of avoiding the hazard). These three navigate the risk graph to a required PLr. The other options describe different frameworks - FMEA RPN or ISO 13849-1 architectural parameters."
       },
       {
         "q": "A light curtain with 14 mm resolution and a total system reaction time of 50 ms is installed on a conveyor induction gate. Using ISO 13855 (K = 2000 mm/s), what is the minimum required safety distance?",
         "options": [
           "25 mm",
-          "100 mm",
           "228 mm",
+          "100 mm",
           "500 mm"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "S = K x T + C = 2000 x 0.050 + 0 = 100 mm. C = 8 x (14 - 14) = 0 because resolution equals 14 mm. The curtain face must be mounted at least 100 mm from the nearest hazard zone."
       },
       {
         "q": "Which IEC 60204-1 stop category de-energises the drive immediately without a controlled deceleration ramp?",
         "options": [
-          "Category 0",
           "Category 1",
           "Category 2",
-          "Category 3"
+          "Category 3",
+          "Category 0"
         ],
-        "answer": 0,
+        "answer": 3,
         "explain": "Category 0 is immediate removal of power to the actuator, causing an uncontrolled coast-to-stop. Category 1 is a controlled stop followed by de-energisation. Category 2 is a controlled stop with power maintained. Category 3 does not exist in IEC 60204-1."
       },
       {
         "q": "What is the PFHd range assigned to PLd under ISO 13849-1?",
         "options": [
+          "10^-7 to 10^-6 per hour",
           "10^-5 to 10^-4 per hour",
           "10^-6 to 3 x 10^-6 per hour",
-          "10^-7 to 10^-6 per hour",
           "10^-8 to 10^-7 per hour"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "ISO 13849-1 assigns PLd to PFHd in the range &gt;= 10^-7 to &lt; 10^-6 per hour. PLe is 10^-8 to 10^-7. PLc is 10^-6 to 3x10^-6. PLb corresponds to higher (less safe) failure rates."
       },
       {
@@ -4880,22 +4880,22 @@ MODULES_2 = [
         "q": "What is the key architectural distinction between ISO 13849-1 Category 3 and Category 4?",
         "options": [
           "Category 4 uses three redundant channels; Category 3 uses only one",
-          "Category 3 tolerates a single fault but may not detect it immediately; Category 4 requires DC &gt;= 99% so faults are detected before or at the next safety demand",
           "Category 4 applies only to pneumatic systems; Category 3 applies to electrical systems",
+          "Category 3 tolerates a single fault but may not detect it immediately; Category 4 requires DC &gt;= 99% so faults are detected before or at the next safety demand",
           "Category 3 requires RFID-coded actuators; Category 4 requires tongue-type actuators"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Both Cat 3 and Cat 4 are dual-channel and tolerate a single fault. The distinction is diagnostic coverage: Cat 4 requires DC &gt;= 99% so a dangerous fault is detected before or at the next demand. Cat 3 allows DC 60-99%, meaning a latent fault may persist until the next proof-test cycle."
       },
       {
         "q": "Under IEC 62061, what is the maximum SIL a subsystem with hardware fault tolerance (HFT) = 0 and safe-failure fraction (SFF) &gt;= 90% can claim?",
         "options": [
           "SIL 1",
-          "SIL 2",
           "SIL 3",
-          "SIL 4"
+          "SIL 4",
+          "SIL 2"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC 62061 architectural constraints: HFT = 0 with SFF 90-99% allows SILCL 2. To claim SIL 3, HFT must be &gt;= 1. SIL 4 is excluded from machinery scope. SIL 1 would apply to lower SFF values at HFT = 0."
       },
       {
@@ -4924,11 +4924,11 @@ MODULES_2 = [
         "q": "A safety laser scanner classified as Type 3 AOPDDR per IEC 61496-3 is protecting a robot work cell. Which SIL and PL does this device type typically support?",
         "options": [
           "SIL 1 / PLc",
-          "SIL 2 / PLd",
           "SIL 3 / PLe",
+          "SIL 2 / PLd",
           "SIL 4 / PLe"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Type 3 AOPDDRs per IEC 61496-3 are rated SIL 2 / PLd. Type 4 AOPDs (e.g., safety light curtains with continuous self-checking) achieve SIL 3 / PLe. SIL 4 is outside machinery scope. SIL 1 / PLc describes Type 2 devices which self-check only on startup."
       },
       {
@@ -4936,21 +4936,21 @@ MODULES_2 = [
         "options": [
           "t_s (sensor response time)",
           "t_l (logic evaluation time)",
-          "t_a (actuator stopping time)",
-          "T itself; STO is instantaneous and adds no sub-interval"
+          "T itself; STO is instantaneous and adds no sub-interval",
+          "t_a (actuator stopping time)"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "t_a is the actuator (drive or brake) stopping time measured from when the stop command reaches the actuator to when the hazardous motion ceases. VFD STO response is typically 5-10 ms. t_s is the protective device response (e.g., light curtain); t_l is the safety relay or PLC scan time."
       },
       {
         "q": "Why is an E-stop classified as a supplementary protective measure under ISO 13849-1, and what does this mean in practice?",
         "options": [
-          "E-stops are too slow to stop fast conveyors; light curtains must be installed as the primary device",
           "E-stop backs up guards and interlocks but does not replace inherent safe design or fixed guarding at the top of the risk-reduction hierarchy",
+          "E-stops are too slow to stop fast conveyors; light curtains must be installed as the primary device",
           "E-stops require LOTO lockout before activation, making them unsuitable as a first-response measure",
           "E-stops only apply to Category 0 stops and are irrelevant to controlled-stop applications"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "ISO 13849-1 section 5.2.2 classifies E-stop as supplementary. The risk-reduction hierarchy is: (1) inherently safe design, (2) safeguarding and protective measures, (3) information for use. E-stop supplements but cannot substitute for fixed guards, interlocks, or other engineered safeguards higher in the hierarchy."
       },
       {
@@ -4979,11 +4979,11 @@ MODULES_2 = [
         "q": "In the CCF beta-factor model, what does a higher beta value indicate?",
         "options": [
           "The system has greater redundancy and higher reliability",
-          "A larger fraction of all failures are common-cause, reducing the benefit of redundancy",
           "The diagnostic coverage of the safety circuit is improved",
+          "A larger fraction of all failures are common-cause, reducing the benefit of redundancy",
           "The proof-test interval can be extended without affecting PFD"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Beta is the fraction of failures that defeat both redundant channels simultaneously. A higher beta means CCF dominates, and the safety benefit of redundancy is reduced. CCF avoidance measures (diversity, separation, different manufacturers) lower beta. Beta does not directly relate to diagnostic coverage or proof-test intervals."
       },
       {
@@ -5002,21 +5002,21 @@ MODULES_2 = [
         "options": [
           "60%",
           "75%",
-          "90%",
-          "99%"
+          "99%",
+          "90%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "IEC 61508-2 Table 2: Type B, HFT = 0 requires SFF &ge; 90% for SIL 2. With HFT = 1, SFF &ge; 60% is sufficient for SIL 2. Type A (simple) components have less stringent SFF requirements. 99% is the SIL 3 threshold for Type B with HFT = 0."
       },
       {
         "q": "Which IEC 61508 lifecycle phase produces the Safety Requirements Specification (SRS) that all subsequent design and verification steps must trace back to?",
         "options": [
-          "Hazard and Risk Analysis",
           "Overall Safety Requirements",
+          "Hazard and Risk Analysis",
           "Realisation",
           "Overall Installation and Commissioning"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The Overall Safety Requirements phase (IEC 61508-1 clause 7.5) produces the SRS, which captures each safety function, its SIL target, response time, safe state, and demand rate. The Hazard and Risk Analysis (clause 7.4) precedes it and identifies what functions are needed. Realisation is the design phase. Commissioning verifies the realised design against the SRS."
       },
       {
@@ -5034,33 +5034,33 @@ MODULES_2 = [
         "q": "ISO/TS 15066 defines Speed and Separation Monitoring (SSM) for collaborative robots. If the robot TCP speed is 400 mm/s, T_stop = 0.12 s, human approach speed K = 1600 mm/s, and combined uncertainty terms = 120 mm, what is the minimum protective separation distance?",
         "options": [
           "192 mm",
-          "360 mm",
           "360 mm + 120 mm = 480 mm",
+          "360 mm",
           "241 mm"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "C = (v_r + v_h) &times; T_stop + uncertainty = (400 + 1600) &times; 0.12 + 120 = 2000 &times; 0.12 + 120 = 240 + 120 = 360 mm. The 480 mm option double-counts the +120 mm uncertainty term, which is already included in the total."
       },
       {
         "q": "In parallel (4-sensor) muting, what is the purpose of the configurable time window between sensor pair activations?",
         "options": [
           "To extend the mute duration to accommodate large pallets",
-          "To confirm the conveyed object is moving in the correct direction and at a consistent speed",
           "To allow the safety light curtain OSSD to ramp up its output voltage",
-          "To synchronize the PLC scan cycle with the muting module firmware"
+          "To synchronize the PLC scan cycle with the muting module firmware",
+          "To confirm the conveyed object is moving in the correct direction and at a consistent speed"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "The timing window between the two sensors in a pair confirms that the object is moving at a valid speed and in the correct direction. If both sensors activate within the window (e.g., 0.5-4 s), it is a valid conveyance. If activation is too fast (object too small/thin) or too slow, the mute is not granted, preventing a person from exploiting the muting function by moving slowly through the curtain."
       },
       {
         "q": "Under the EU Machinery Directive 2006/42/EC, which category of machinery listed in Annex IV requires involvement of a Notified Body before CE marking?",
         "options": [
+          "High-risk machinery such as presses, saws, and industrial robots",
           "All conveyor systems regardless of speed",
           "Only machinery with electrical power above 10 kW",
-          "High-risk machinery such as presses, saws, and industrial robots",
           "Any machinery installed in a food-processing environment"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "MD Annex IV lists specific high-risk machine categories (presses, woodworking machinery, industrial robots, etc.) for which a Notified Body must either examine the technical file or certify compliance with harmonised standards before CE marking. Standard conveyor systems not listed in Annex IV use the self-declaration route if harmonised standards are applied."
       },
       {
@@ -5078,33 +5078,33 @@ MODULES_2 = [
         "q": "A pneumatic pop-up sorter accumulator holds 8 litres at 6 bar gauge. What stored energy must be dissipated before maintenance entry, and which device provides a SIL 2-capable exhaust?",
         "options": [
           "4800 J; a single 5/2 spring-return solenoid valve",
-          "4800 J; a dual-valve safety exhaust module with cross-monitoring",
           "480 J; a manual isolation ball valve with lockout hasp",
+          "4800 J; a dual-valve safety exhaust module with cross-monitoring",
           "48 kJ; a pressure-relief valve set to 3 bar"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "W = P x V = 6x10^5 Pa x 0.008 m^3 = 4800 J. A single 5/2 valve in exhaust position does not guarantee safe isolation (spring force can re-extend cylinder, and a single valve is a single point of failure). A dual-valve safety exhaust module with cross-monitoring of both valve positions achieves PLd/SIL 2 per ISO 4414 and IEC 62061. A manual ball valve is not a certified safety-rated pneumatic isolation device."
       },
       {
         "q": "During a safety function SAT (Site Acceptance Test), the technician manually breaks Channel A of a dual-channel guard interlock while the machine runs. Per Category 3 requirements (ISO 13849-1), what is the EXPECTED system response?",
         "options": [
           "Immediate safe state (machine stops) because single fault must cause safe state in Category 3",
-          "Machine continues operating; the fault is detected and logged; next demand of the safety function will produce a safe state",
           "Machine continues indefinitely; Category 3 only requires detection at the next proof test",
-          "Machine stops and cannot be restarted until a Notified Body inspects the circuit"
+          "Machine stops and cannot be restarted until a Notified Body inspects the circuit",
+          "Machine continues operating; the fault is detected and logged; next demand of the safety function will produce a safe state"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISO 13849-1 Category 3: a single fault shall not lead to loss of the safety function, AND the fault shall be detected at or before the next demand (or at machine start-up). The machine continues to operate on the remaining channel; the fault is detected and the system transitions to a state where the next demand will safely stop the machine (or stops at next cycle). It does NOT stop immediately on fault detection unless Category 4 is implemented."
       },
       {
         "q": "Which standard governs the construction of an industrial control panel in the US market, covering enclosure ratings, wire sizing, and component spacing?",
         "options": [
+          "UL 508A",
           "NFPA 79",
           "IEC 60204-1",
-          "UL 508A",
           "ANSI B11.19"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "UL 508A (Standard for Industrial Control Panels) covers the construction requirements for industrial control panels in the US: wire gauge and color, terminal sizing, enclosure type ratings, component spacing and clearances, and the UL listing mark. NFPA 79 covers electrical requirements for the overall machinery (broader scope). IEC 60204-1 is the international/EU equivalent. ANSI B11.19 covers performance criteria for safeguarding devices."
       },
       {
@@ -5122,11 +5122,11 @@ MODULES_2 = [
         "q": "A Safety-Rated Monitored Stop (SRMS) means the robot is:",
         "options": [
           "Fully de-energized and locked out",
-          "Stopped with drives energized under safety monitoring, ready to resume when the person leaves",
           "Running at reduced speed",
+          "Stopped with drives energized under safety monitoring, ready to resume when the person leaves",
           "In power-and-force-limiting mode"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "SRMS is a monitored standstill (drives holding position); unexpected motion triggers a protective stop, and motion resumes only when the shared space is clear."
       },
       {
@@ -5134,21 +5134,21 @@ MODULES_2 = [
         "options": [
           "Plain mechanical limit switch",
           "Uncoded magnetic switch",
-          "High-coded RFID switch",
-          "A cable tie"
+          "A cable tie",
+          "High-coded RFID switch"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "High-coded RFID switches recognize a unique transponder and are highly resistant to defeat; uncoded/plain devices are easily fooled."
       },
       {
         "q": "Guard locking (holding a guard shut until motion stops) is specifically needed when:",
         "options": [
-          "The machine has no moving parts",
           "Machine run-down time means opening immediately would still expose the hazard",
+          "The machine has no moving parts",
           "The guard is transparent",
           "The operator is trained"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "For high-inertia machines with long run-down, guard locking prevents access until hazardous motion has actually ceased."
       },
       {
@@ -5166,33 +5166,33 @@ MODULES_2 = [
         "q": "ISO 13857 safety distances address the risk that a person could:",
         "options": [
           "Overload the PLC",
-          "Reach over, under, around, or through a guard to the hazard",
           "Defeat an RFID switch",
+          "Reach over, under, around, or through a guard to the hazard",
           "Cause arc flash"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "ISO 13857 provides anthropometric reach distances so guard height, setback, and opening size prevent reaching the hazard zone."
       },
       {
         "q": "A fine wire-mesh guard fails an audit because fingers can reach the pinch point through it. The likely problem is:",
         "options": [
           "The mesh is too fine",
-          "The guard is mounted too close to the hazard for its opening size",
           "The guard is the wrong color",
-          "There is no light curtain"
+          "There is no light curtain",
+          "The guard is mounted too close to the hazard for its opening size"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISO 13857 ties permissible opening size to distance-to-hazard; even fine mesh mounted too close allows reach-through - it must be set farther back."
       },
       {
         "q": "Muting of a light curtain requires at least two independent sequenced sensors primarily to:",
         "options": [
-          "Increase throughput",
           "Prevent a person from mimicking the pallet to bypass protection",
+          "Increase throughput",
           "Reduce wiring",
           "Speed the PLC scan"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Two sequenced, independent muting sensors ensure only a valid object (correct size/direction/timing) mutes the curtain - a person cannot fake the sequence."
       },
       {
@@ -5210,33 +5210,33 @@ MODULES_2 = [
         "q": "When is a Category 1 stop (controlled stop, then power removed) preferred over a Category 0 stop?",
         "options": [
           "Never - Cat 0 is always safer",
-          "On high-inertia loads where an uncontrolled coast is more hazardous or where power loss would drop a load",
           "Only on office equipment",
+          "On high-inertia loads where an uncontrolled coast is more hazardous or where power loss would drop a load",
           "When there is no E-stop"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Cat 1 actively decelerates (e.g. SS1) then removes power, best for high-inertia machines where a Cat 0 coast is slower/more dangerous or a sudden power loss would drop a load."
       },
       {
         "q": "What does the ~0.5 s concurrency window on a two-hand control device defeat?",
         "options": [
           "Slow computers",
-          "Anti-tie-down cheating - taping one button down makes the other press fall outside the window, so it will not start",
           "Network attacks",
-          "Power surges"
+          "Power surges",
+          "Anti-tie-down cheating - taping one button down makes the other press fall outside the window, so it will not start"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Both buttons must be pressed within ~0.5 s; if one is tied down, the other press is out of window and the cycle is inhibited - anti-tie-down."
       },
       {
         "q": "Two-hand control protects whom?",
         "options": [
-          "Everyone near the machine",
           "Only the operator using it - a second person reaching in is unprotected",
+          "Everyone near the machine",
           "The maintenance team only",
           "Nobody"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "THC keeps only the operating person's hands out; it does not protect a second individual, so it is often combined with light curtains or fixed guards."
       },
       {
@@ -5254,33 +5254,33 @@ MODULES_2 = [
         "q": "In the light-curtain minimum-distance formula S = K x T + C, what does T represent?",
         "options": [
           "The curtain temperature",
-          "The total system stop time: curtain response + safety logic + machine stopping time",
           "The tag count",
+          "The total system stop time: curtain response + safety logic + machine stopping time",
           "The number of beams"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "T sums every delay from detection to motion ceasing; because machine stop time degrades with brake/clutch wear, it must be measured periodically, not taken from the nameplate."
       },
       {
         "q": "A safety light curtain's resolution (detection capability) is set by beam spacing. Which resolution is required for finger detection?",
         "options": [
           "40 mm or more",
-          "14 mm or finer",
           "100 mm",
-          "Resolution does not matter"
+          "Resolution does not matter",
+          "14 mm or finer"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Finger detection needs &le;14 mm resolution; ~30 mm is hand, &ge;40 mm is body/access. Finer resolution allows closer mounting but changes the C penetration factor."
       },
       {
         "q": "Why does a pressure-sensitive safety mat use 4-wire construction?",
         "options": [
-          "To carry more power",
           "So a broken wire or short is detected as a fault (fail-safe)",
+          "To carry more power",
           "To reduce cost",
           "To speed up the PLC"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The 4-wire design lets the safety monitor detect open or short faults in the mat, ensuring a failure is revealed rather than silently disabling protection."
       },
       {
@@ -5298,11 +5298,11 @@ MODULES_2 = [
         "q": "What does the Hazard Rating Number (HRN) accomplish in a risk assessment?",
         "options": [
           "It sizes the motor",
-          "It combines factors (likelihood, frequency, severity, number of people) into a ranked number to prioritize risk-reduction action",
           "It sets the IP address",
+          "It combines factors (likelihood, frequency, severity, number of people) into a ranked number to prioritize risk-reduction action",
           "It replaces the E-stop"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "HRN multiplies exposure factors into a single score so risks can be ranked and the highest addressed first via the hierarchy of controls, then re-assessed as residual risk."
       },
       {
@@ -5310,21 +5310,21 @@ MODULES_2 = [
         "options": [
           "PPE",
           "Administrative procedures",
-          "Fixed guards",
-          "Warning signs"
+          "Warning signs",
+          "Fixed guards"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "After elimination and substitution, fixed guards are the preferred engineering control; interlocked guards follow when access is required."
       },
       {
         "q": "Guard locking (physical hold-shut of a door) is required when:",
         "options": [
-          "The machine is quiet",
           "Coasting time or hazard energy makes standard interlocking insufficient to stop hazard before access",
+          "The machine is quiet",
           "There is no hazard",
           "The door is small"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "If a person can reach the hazard before it has stopped after opening, the door must lock until safe conditions are verified (drives stopped, safe-speed reached)."
       },
       {
@@ -5342,33 +5342,33 @@ MODULES_2 = [
         "q": "A safety radar (mm-wave) compared with a light curtain works BETTER in:",
         "options": [
           "Perfect optical conditions only",
-          "Dusty or steamy environments and around obstructions where light curtains struggle",
           "Zero-visibility fog only",
+          "Dusty or steamy environments and around obstructions where light curtains struggle",
           "Silent environments only"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Radar propagates through dust and steam and can shape non-straight zones, extending safety sensing where optics fail; certified up to PL d/e."
       },
       {
         "q": "An ISO 13849-1 Category 3 architecture guarantees:",
         "options": [
           "A single fault always disables the function",
-          "A single fault does NOT lose the function AND is detected on the next cycle",
           "Zero faults ever occur",
-          "Only manual reset is possible"
+          "Only manual reset is possible",
+          "A single fault does NOT lose the function AND is detected on the next cycle"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Category 3 requires redundancy and monitoring so that a single fault does not defeat the function AND is detected in the next operating cycle."
       },
       {
         "q": "CE marking under the Machinery Directive means the manufacturer has:",
         "options": [
-          "Applied for a US patent",
           "Self-certified (or, for Annex IV, been assessed) that the machine meets EHSRs, backed by a Technical File and Declaration",
+          "Applied for a US patent",
           "Registered with OSHA",
           "Marked the machine with its price"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "CE marking indicates conformity with EU EHSRs; most machines are self-certified, Annex IV categories need notified-body involvement."
       },
       {
@@ -5386,33 +5386,33 @@ MODULES_2 = [
         "q": "Adding a magnet to defeat an interlocked guard:",
         "options": [
           "Is best practice for productivity",
-          "Violates OSHA and EU rules and is a leading cause of severe injuries",
           "Requires no permit",
+          "Violates OSHA and EU rules and is a leading cause of severe injuries",
           "Improves safety"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Interlock defeat is a documented cause of severe machine injuries and a violation of guarding requirements; the fix is redesigning the process, not defeating the safety."
       },
       {
         "q": "For dual-channel safety wiring, using a mechanical switch AND a magnetic sensor as the two channels adds:",
         "options": [
           "Nothing",
-          "Diversity that reduces common-cause failure probability",
           "More failure modes",
-          "Reduced reliability"
+          "Reduced reliability",
+          "Diversity that reduces common-cause failure probability"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Different sensing technologies do not share a common failure mechanism (e.g., dirt fouling both), lowering the beta-factor for common-cause failure."
       },
       {
         "q": "In the minimum safety distance formula S = K x T + C, why must the stopping time T be re-measured periodically over the machine's life?",
         "options": [
-          "The approach speed K changes daily",
           "Brakes and clutches wear, increasing stopping time and making a once-safe distance unsafe",
+          "The approach speed K changes daily",
           "The intrusion factor C decreases over time",
           "T is only relevant at commissioning"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "T is the total system stopping time, which grows as brakes/clutches wear. A safeguarding distance safe at commissioning can become unsafe as stop time increases, so periodic stop-time measurement is required."
       },
       {
@@ -5441,11 +5441,11 @@ MODULES_2 = [
         "q": "Why must an accumulator be bled through its dedicated bleed valve as part of lockout, even after the pump is stopped and electrical power is removed?",
         "options": [
           "To refill it with nitrogen",
-          "It stores hydraulic energy and can hold lethal pressure long after the pump stops",
           "To calibrate the pressure gauge",
-          "Electrical lockout already removes all energy"
+          "Electrical lockout already removes all energy",
+          "It stores hydraulic energy and can hold lethal pressure long after the pump stops"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "An accumulator stores pressurized energy and retains lethal pressure long after the pump stops and power is off. Complete lockout must dissipate this stored energy via the bleed valve and verify zero energy before work."
       }
     ],
@@ -5707,12 +5707,12 @@ MODULES_2 = [
       {
         "q": "Before applying power to a new machine:",
         "options": [
-          "Run auto to check errors",
           "Verify wiring point-to-point, check torque, megger motors, verify grounding",
+          "Run auto to check errors",
           "Just turn it on",
           "Program PLC first"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Pre-power checks prevent catastrophic damage."
       },
       {
@@ -5731,21 +5731,21 @@ MODULES_2 = [
         "options": [
           "1",
           "2",
-          "3",
-          "5"
+          "5",
+          "3"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "ISA CCST: Level I (entry), II (experienced), III (expert)."
       },
       {
         "q": "In the ISA-95 / Purdue Model, which layer is responsible for the WCS (Warehouse Control System) sort-decision logic?",
         "options": [
+          "Level 3 - MES / supervisory",
           "Level 0 - Physical process",
           "Level 1 - Sensing and actuation",
-          "Level 2 - PLC / safety controller",
-          "Level 3 - MES / supervisory"
+          "Level 2 - PLC / safety controller"
         ],
-        "answer": 3,
+        "answer": 0,
         "explain": "The WCS is a supervisory system that issues sort commands to the sorter PLC based on barcode scan data. This places it at Level 3 (MES/supervisory) in the Purdue Model. Level 2 is the PLC executing the tracking array and shoe actuation. Understanding this boundary helps diagnose whether a mis-sort is a WCS timing issue (L3) or a PLC tracking issue (L2)."
       },
       {
@@ -5775,21 +5775,21 @@ MODULES_2 = [
         "options": [
           "NFPA 70 (NEC) Article 430 motor branch circuits",
           "IEC 61131-3 structured text programming standard",
-          "OSHA 29 CFR 1910.119 / IEC 61511 functional safety management",
-          "IEEE Std 315 electrical drawing symbols"
+          "IEEE Std 315 electrical drawing symbols",
+          "OSHA 29 CFR 1910.119 / IEC 61511 functional safety management"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "OSHA 29 CFR 1910.119 (Process Safety Management) and IEC 61511 (functional safety lifecycle) both require MOC for changes to process control parameters, including PLC setpoints that affect equipment protection. Changing a decel timer modifies torque loading on mechanical components (T = J x delta-omega / delta-t) and bypasses the engineering basis documented in the FDS. An MOC ensures the risk is evaluated before implementation."
       },
       {
         "q": "During a FAT for a new conveyor system, the test team forces the safety light curtain input open. The measured e-stop response time is 14 ms. The URS requires e-stop response time of 10 ms or less per IEC 62061. What is the correct action?",
         "options": [
+          "Log as a P1 punch-list item; the system cannot be accepted until the safety response time meets spec",
           "Accept and note it as a P3 (cosmetic) punch-list item",
           "Accept; 14 ms is within normal variation and close enough",
-          "Log as a P1 punch-list item; the system cannot be accepted until the safety response time meets spec",
           "Log as P2; proceed to SAT and retest at site"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "A safety response time that exceeds the URS requirement is a P1 (safety-critical) punch-list item. Per IEC 62061, the response time is part of the Safety Integrity Level verification. The system cannot proceed to shipment or SAT until this item is resolved and retested. Accepting out-of-spec safety parameters to meet a schedule is a serious liability and violates the functional safety lifecycle."
       },
       {
@@ -5819,21 +5819,21 @@ MODULES_2 = [
         "options": [
           "Trust the ladder logic since it was last modified",
           "Trust the I/O list since it was approved at FAT",
-          "Verify the actual physical wiring at the card terminals and report a documentation discrepancy regardless of which is correct",
-          "Update the I/O list to match the ladder without field verification"
+          "Update the I/O list to match the ladder without field verification",
+          "Verify the actual physical wiring at the card terminals and report a documentation discrepancy regardless of which is correct"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "A discrepancy between the I/O list (I:5/3) and the ladder (I:5/4) means at least one document is wrong. The technician must verify the actual field wiring at the terminal block and PLC card to determine which address is physically wired. Only after physical verification can the incorrect document be corrected. Updating a document without physical verification risks creating a second error that masks a real wiring fault."
       },
       {
         "q": "When transitioning from RME Technician to Controls Technician, which new capability most distinguishes the role?",
         "options": [
-          "Ability to execute preventive maintenance tasks from a PM schedule",
           "Proficiency in writing and modifying PLC logic per IEC 61131-3, configuring VFD parameters, and performing network diagnostics",
+          "Ability to execute preventive maintenance tasks from a PM schedule",
           "Authority to approve MOC requests and sign off on SAT documentation",
           "Responsibility for authoring the URS and FDS for capital projects"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "The key distinguishing capability of the Controls Technician vs. the RME Technician is active programming skill: writing and modifying PLC ladder/FBD/ST logic per IEC 61131-3, configuring VFD parameters beyond basic startup, and performing network diagnostics (Wireshark, switch CLI). The RME Technician is primarily a diagnostics and PM executor; the Controls Technician is also a modifier and configurator. URS/FDS authorship is at the Automation Engineer level."
       },
       {
@@ -5851,11 +5851,11 @@ MODULES_2 = [
         "q": "In a TPM (Total Productive Maintenance) implementation at an Amazon RME site, what is the primary role of the RME technician?",
         "options": [
           "Perform all cleaning and lubrication tasks previously assigned to operators",
-          "Set standards, train operators in autonomous maintenance tasks, and focus technician time on higher-skill diagnostics and improvements",
           "Eliminate autonomous maintenance because operators lack technical training",
+          "Set standards, train operators in autonomous maintenance tasks, and focus technician time on higher-skill diagnostics and improvements",
           "Manage the CMMS/EAM system and generate PM schedules for all assets"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "In the TPM model (per JIPM standards), operators take ownership of basic machine health (cleaning, inspection, minor lubrication) through autonomous maintenance. The RME technician's role shifts to setting the standards, training operators, auditing compliance, and focusing technical effort on planned maintenance, diagnostics, and reliability improvements. This is not deskilling the technician - it is leveraging the technician's expertise to multiply the entire team's maintenance effectiveness."
       },
       {
@@ -5873,66 +5873,66 @@ MODULES_2 = [
         "q": "According to IEC 62443, what is the primary purpose of a 'conduit' in an ICS security architecture?",
         "options": [
           "A physical cable tray that separates OT and IT network cables",
-          "A controlled communication path between two security zones",
           "A hardware firewall appliance installed at the MCC room entrance",
-          "A software patch management channel for PLC firmware updates"
+          "A software patch management channel for PLC firmware updates",
+          "A controlled communication path between two security zones"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "IEC 62443 defines conduits as the controlled communication paths (logical or physical) between security zones. Zones group assets; conduits govern and protect traffic between those zones."
       },
       {
         "q": "A safety function has a calculated PFH of 5.0 &times; 10<sup>-7</sup> per hour. Which SIL level does this correspond to per IEC 62061?",
         "options": [
-          "SIL 1",
           "SIL 2",
+          "SIL 1",
           "SIL 3",
           "SIL 4"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "SIL 2 requires PFH between 10<sup>-6</sup> and 10<sup>-7</sup> per hour. A PFH of 5.0 &times; 10<sup>-7</sup>/hr falls within this range, so the function meets SIL 2."
       },
       {
         "q": "Per EEMUA Publication 191, what is the maximum acceptable steady-state alarm rate per operator?",
         "options": [
           "1 alarm per minute",
-          "5 alarms per 10 minutes",
           "1 alarm per 10 minutes",
+          "5 alarms per 10 minutes",
           "10 alarms per hour"
         ],
-        "answer": 2,
+        "answer": 1,
         "explain": "EEMUA 191 benchmarks acceptable steady-state alarm rate at no more than 1 alarm per 10 minutes per operator. Rates exceeding this indicate alarm rationalization work is needed."
       },
       {
         "q": "In EtherNet/IP, a Class 1 connection uses which transport mechanism for real-time I/O data?",
         "options": [
           "TCP unicast, polled on demand",
-          "UDP cyclic or change-of-state",
           "HTTP REST over TCP port 80",
+          "UDP cyclic or change-of-state",
           "Modbus TCP register read/write"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "EtherNet/IP Class 1 (I/O messaging) uses UDP for real-time cyclic or change-of-state data transfer. Class 3 uses TCP for explicit request-response messaging (configuration, diagnostics)."
       },
       {
         "q": "A 6-pulse VFD operating on a 60 Hz supply produces what two dominant harmonic frequencies in the supply current?",
         "options": [
           "2nd (120 Hz) and 3rd (180 Hz)",
-          "5th (300 Hz) and 7th (420 Hz)",
           "11th (660 Hz) and 13th (780 Hz)",
-          "3rd (180 Hz) and 9th (540 Hz)"
+          "3rd (180 Hz) and 9th (540 Hz)",
+          "5th (300 Hz) and 7th (420 Hz)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "A 6-pulse rectifier generates characteristic harmonics at orders 6n &plusmn; 1 (n = 1, 2, ...). For n = 1 at 60 Hz: 5th harmonic = 300 Hz and 7th harmonic = 420 Hz are the dominant injected currents."
       },
       {
         "q": "Two control panels 50 m apart on a conveyor have a 2 V ground potential difference. A 4-20 mA sensor circuit with 500 &ohm; loop impedance runs between them. What is the approximate measurement error current introduced by the ground loop?",
         "options": [
+          "4 mA",
           "0.4 mA",
           "2 mA",
-          "4 mA",
           "8 mA"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "Error current = voltage &divide; impedance = 2 V &divide; 500 &ohm; = 4 mA. This represents 25% of the 4-20 mA (16 mA) span - a significant measurement error. Use isolated transmitters or single-end shield grounding to eliminate the loop."
       },
       {
@@ -5962,21 +5962,21 @@ MODULES_2 = [
         "options": [
           "S1 continuous, 100%",
           "S2 short-time, 60%",
-          "S3 intermittent periodic, 40%",
-          "S4 intermittent periodic with starting, 50%"
+          "S4 intermittent periodic with starting, 50%",
+          "S3 intermittent periodic, 40%"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "S3 (intermittent periodic duty) applies to cyclic on/off loads. Duty = t<sub>on</sub> &divide; T<sub>cycle</sub> = 6 &divide; (6+9) = 6 &divide; 15 = 40%. Use the &radic;(duty) factor to find the equivalent continuous power rating required."
       },
       {
         "q": "Below approximately what output frequency does a standard TEFC motor on a VFD require derating due to reduced shaft-fan cooling?",
         "options": [
+          "20 Hz",
           "50 Hz",
           "30 Hz",
-          "20 Hz",
           "5 Hz"
         ],
-        "answer": 2,
+        "answer": 0,
         "explain": "TEFC (Totally Enclosed Fan-Cooled) motors use a shaft-mounted fan; cooling efficiency drops significantly below about 20 Hz (roughly 1/3 of 60 Hz base speed). Below 6 Hz, current derating of 20-30% is typically required unless a separate forced-cooling blower is installed."
       },
       {
@@ -5994,33 +5994,33 @@ MODULES_2 = [
         "q": "A 480 V conveyor MCC section draws 150 kW at a power factor of 0.72 lagging. Approximately how much reactive power (kVAR) must a capacitor bank supply to correct PF to 0.95?",
         "options": [
           "49 kVAR",
-          "95 kVAR",
           "144 kVAR",
+          "95 kVAR",
           "208 kVAR"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Existing Q &asymp; 144 kVAR (from &radic;(208<sup>2</sup> &minus; 150<sup>2</sup>)). Target Q at PF 0.95 = 150 &times; tan(arccos(0.95)) &asymp; 49 kVAR. Correction needed = 144 &minus; 49 = 95 kVAR. A 95 kVAR switched capacitor bank is required."
       },
       {
         "q": "In a Category 3 dual-channel E-stop circuit, what happens when only one of the two channels opens and the other does not follow within the maximum discrepancy time (t<sub>disc</sub>)?",
         "options": [
           "The safety relay outputs remain energized; the single-channel fault is logged silently",
-          "The safety relay de-energizes its outputs AND latches a fault requiring manual reset and investigation",
           "The drive trips on an overcurrent fault but the safety relay stays ready",
-          "The PLC generates a Class 1 fault that automatically restarts after 30 seconds"
+          "The PLC generates a Class 1 fault that automatically restarts after 30 seconds",
+          "The safety relay de-energizes its outputs AND latches a fault requiring manual reset and investigation"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Category 3 cross-monitoring detects channel discrepancy. If one channel opens and the other does not follow within t<sub>disc</sub> (typically 500 ms), the safety relay de-energizes all outputs AND latches a fault state. Manual reset is required after investigation and correction of the discrepant channel."
       },
       {
         "q": "During a post-project reliability review, an asset class shows an observed MTBF that is 40% of the value predicted in the pre-project FMEA. This is most indicative of:",
         "options": [
-          "Normal random failure distribution - no action needed",
           "Infant-mortality failures suggesting a design, installation, or application problem",
+          "Normal random failure distribution - no action needed",
           "End-of-life wear-out, indicating the asset class should be replaced on a calendar basis",
           "A SIM-T data entry error that overstates the failure count"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "When observed MTBF is less than 50% of predicted, the asset is experiencing infant-mortality failures - typically caused by design issues, incorrect installation, application mismatch, or substandard components. This triggers an engineering review before the issue is attributed to random failure or wear-out."
       },
       {
@@ -6038,77 +6038,77 @@ MODULES_2 = [
         "q": "A drop-in spare VFD often fails to work immediately because:",
         "options": [
           "It is the wrong color",
-          "Its firmware and parameter set must match the original before it works",
           "Spares never work",
+          "Its firmware and parameter set must match the original before it works",
           "It needs a new BOM"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Hardware alone is not enough - the spare must be flashed to the matching firmware and loaded with the correct parameter set to be a true drop-in."
       },
       {
         "q": "During loop checking of a 4-20 mA analog input, the technician should:",
         "options": [
           "Trust the wiring diagram without testing",
-          "Inject a signal and verify the correct value appears at PLC and HMI, including 0/50/100%",
           "Only check at startup under load",
-          "Skip it if the tag name looks right"
+          "Skip it if the tag name looks right",
+          "Inject a signal and verify the correct value appears at PLC and HMI, including 0/50/100%"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Loop checking forces the field signal end-to-end and verifies scaling at multiple points, catching miswiring, reversed, or mis-scaled signals before real operation."
       },
       {
         "q": "Before making an online edit to a running PLC program, the first discipline is to:",
         "options": [
-          "Delete the old program",
           "Take a verified upload/backup so you can roll back",
+          "Delete the old program",
           "Change the IP address",
           "Disable the safety system"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "A verified backup of the running program provides a rollback path; editing without one risks an unrecoverable state."
       },
       {
         "q": "A line runs at Availability 90%, Performance 95%, Quality 99%. Its OEE is approximately:",
         "options": [
-          "About 85%",
           "About 95%",
+          "About 85%",
           "About 60%",
           "About 99%"
         ],
-        "answer": 0,
+        "answer": 1,
         "explain": "OEE = 0.90 x 0.95 x 0.99 = ~0.846, about 85% - near the commonly-cited world-class benchmark for discrete manufacturing."
       },
       {
         "q": "The main analytical value of OEE is that it:",
         "options": [
           "Replaces maintenance entirely",
-          "Decomposes losses into Availability, Performance, and Quality to target improvement",
           "Measures only scrap",
+          "Decomposes losses into Availability, Performance, and Quality to target improvement",
           "Requires no data collection"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Breaking OEE into its three factors reveals whether downtime, speed loss, or defects dominates, directing improvement effort."
       },
       {
         "q": "Which is a vendor-NEUTRAL automation credential?",
         "options": [
           "FANUC robot programmer certificate",
-          "ISA Certified Control Systems Technician (CCST)",
           "Siemens TIA Portal certification",
-          "Rockwell course certificate"
+          "Rockwell course certificate",
+          "ISA Certified Control Systems Technician (CCST)"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "ISA CCST (and CAP) are vendor-neutral; FANUC, Siemens, and Rockwell credentials are platform-specific."
       },
       {
         "q": "For a controls interview, a strong response to 'a conveyor faults intermittently' demonstrates:",
         "options": [
-          "Immediately replacing the PLC",
           "A structured diagnosis: symptoms, check power/air/comms/safety, read faults, isolate domain, verify",
+          "Immediately replacing the PLC",
           "Guessing the most expensive part",
           "Blaming the operator"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Employers probe structured troubleshooting - systematic symptom gathering, checking fundamentals, reading faults, isolating mechanical/electrical/controls, and verifying the fix."
       },
       {
@@ -6126,33 +6126,33 @@ MODULES_2 = [
         "q": "On a project schedule, what is the critical path?",
         "options": [
           "The most expensive task",
-          "The longest chain of dependent tasks that sets the minimum project duration - any slip on it slips the whole project",
           "The safety circuit",
+          "The longest chain of dependent tasks that sets the minimum project duration - any slip on it slips the whole project",
           "The tasks with the most float"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "The critical path is the longest dependent task chain; it determines the earliest finish, so delays on it delay the project, while tasks with float have slack."
       },
       {
         "q": "A UL 508A panel's Short-Circuit Current Rating (SCCR) must satisfy what condition at the installation point?",
         "options": [
           "It must be lower than the available fault current",
-          "It must equal or exceed the available fault current, or the panel is a code violation and arc-flash hazard",
           "SCCR is irrelevant",
-          "It must match the IP address"
+          "It must match the IP address",
+          "It must equal or exceed the available fault current, or the panel is a code violation and arc-flash hazard"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "SCCR (set by the weakest component) must be &gt;= the available fault current where installed; otherwise the panel cannot safely withstand a fault - a violation and hazard."
       },
       {
         "q": "During startup, a punch-list item that prevents acceptance or safe operation is typically classified:",
         "options": [
-          "Category B (minor, complete later)",
           "Category A (must be closed before handover)",
+          "Category B (minor, complete later)",
           "Optional",
           "Cosmetic"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Category A deficiencies block acceptance/safe operation and must be resolved before handover; Category B are minor items completed post-startup on an agreed schedule."
       },
       {
@@ -6170,33 +6170,33 @@ MODULES_2 = [
         "q": "What is the secure architecture for vendor remote support per IEC 62443?",
         "options": [
           "A direct always-on connection to the PLC",
-          "Encrypted VPN into the industrial DMZ, then a hardened jump server brokering least-privilege, time-bounded, logged access",
           "An open internet port on the HMI",
+          "Encrypted VPN into the industrial DMZ, then a hardened jump server brokering least-privilege, time-bounded, logged access",
           "Sharing the admin password by email"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Vendors connect via VPN terminating in the DMZ, then through an auditable jump server - never directly to a PLC - with least-privilege, time-bounded, MFA, logged sessions."
       },
       {
         "q": "Payback period for an automation upgrade is calculated as:",
         "options": [
           "Annual savings / investment",
-          "Investment / annual savings - how fast the money returns",
           "Purchase price only",
-          "NPV times ROI"
+          "NPV times ROI",
+          "Investment / annual savings - how fast the money returns"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Payback = investment divided by annual savings; many capital thresholds require payback under ~2-3 years, while NPV adds discounting of future savings."
       },
       {
         "q": "Why can a cheaper drive have a higher Total Cost of Ownership than a premium one?",
         "options": [
-          "It never can",
           "Because TCO includes install, energy, spares, maintenance, and downtime over life - frequent failures and no spares can dwarf the price difference",
+          "It never can",
           "TCO only counts purchase price",
           "Premium drives always cost more to own"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Lifecycle/TCO analysis counts all costs over the asset's life; a low purchase price with high failure rate, poor spares, and downtime can far exceed a premium unit's TCO."
       },
       {
@@ -6214,33 +6214,33 @@ MODULES_2 = [
         "q": "Why is hardware procurement scheduled and tracked early in an automation project?",
         "options": [
           "To spend the budget faster",
-          "Because PLCs, drives, and switchgear have long lead times, and one late component can idle the entire install crew",
           "Vendors require it",
+          "Because PLCs, drives, and switchgear have long lead times, and one late component can idle the entire install crew",
           "It has no schedule impact"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Long-lead items (often 12-30+ weeks) must be ordered early; a single late critical component can stall installation and cascade delays down the critical path."
       },
       {
         "q": "The single most important output of an automation project kickoff meeting is:",
         "options": [
           "The location of the coffee",
-          "A one-page charter documenting scope, success criteria, and RACI so all stakeholders align",
           "The colour of the panel",
-          "The IP of one PLC"
+          "The IP of one PLC",
+          "A one-page charter documenting scope, success criteria, and RACI so all stakeholders align"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Aligning stakeholders on scope, success criteria, and roles at kickoff prevents scope creep and finger-pointing later; charter and RACI are the enduring artefacts."
       },
       {
         "q": "In a 30/60/90% design review model, the 30% review focuses on:",
         "options": [
-          "Final punch-list items",
           "Concept and architecture correctness before detailed design begins",
+          "Final punch-list items",
           "Warranty return",
           "Vendor invoicing"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "30% catches architectural mistakes cheaply; 60% checks detailed correctness; 90% is a last-look before FAT and installation."
       },
       {
@@ -6258,33 +6258,33 @@ MODULES_2 = [
         "q": "Which is typically part of a site turnover package?",
         "options": [
           "Only the invoice",
-          "Final as-built drawings, backup files, parts list, SOPs, calibration records, and training records",
           "Nothing formal",
+          "Final as-built drawings, backup files, parts list, SOPs, calibration records, and training records",
           "Only the marketing brochure"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A complete turnover captures the operational knowledge (drawings, backups, spares, procedures, training) so operations/maintenance can sustain the system."
       },
       {
         "q": "A blameless postmortem's primary goal is to:",
         "options": [
           "Identify a person to punish",
-          "Understand the failure mechanism and prevent recurrence through system-level actions",
           "Close the incident quickly with no learning",
-          "Force overtime"
+          "Force overtime",
+          "Understand the failure mechanism and prevent recurrence through system-level actions"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Blameless reviews create the conditions for open information sharing so real root causes emerge and are addressed, not the same individual failure repeated with a new person."
       },
       {
         "q": "In a 30/60/90% review model, the 60% review is best used to verify:",
         "options": [
-          "The concept and architecture at the highest level",
           "Detailed schematics, panel layouts, and I/O lists for correctness",
+          "The concept and architecture at the highest level",
           "The invoice number",
           "Ceiling paint colour"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "By 60%, architecture is set and details fill in; the review catches conductor sizing, tag naming, and I/O completeness errors while still cheap to fix."
       },
       {
@@ -6302,33 +6302,33 @@ MODULES_2 = [
         "q": "A weekly progress meeting cadence and a change-control process should be set up at:",
         "options": [
           "Go-live only",
-          "The project kickoff, before design begins",
           "The one-year anniversary",
+          "The project kickoff, before design begins",
           "Never"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "Establishing communication cadence and change control at kickoff sets expectations and captures scope changes formally, avoiding untracked drift."
       },
       {
         "q": "A trend of three near-miss incidents on the same interlock class in one year should be treated as:",
         "options": [
           "Three unrelated individual errors",
-          "A system-level pattern needing a system-level action, not three isolated fixes",
           "Bad luck",
-          "Ignored"
+          "Ignored",
+          "A system-level pattern needing a system-level action, not three isolated fixes"
         ],
-        "answer": 1,
+        "answer": 3,
         "explain": "Repeated incidents in a category signal a design or procedural weakness; postmortems trended over time expose these patterns for higher-level intervention."
       },
       {
         "q": "What is the primary purpose of a loop check (point-to-point check) during commissioning?",
         "options": [
-          "To tune the PID controllers",
           "To verify each I/O point end to end, catching swapped wires, wrong addresses, and scaling errors before the process runs",
+          "To tune the PID controllers",
           "To calculate return on investment",
           "To write the control narrative"
         ],
-        "answer": 1,
+        "answer": 0,
         "explain": "Loop checks actuate each field device and confirm the correct signal reaches the right controller address and HMI with correct scaling, catching wiring, addressing, and scaling errors while they are cheap to fix."
       },
       {
@@ -6346,11 +6346,11 @@ MODULES_2 = [
         "q": "In a spare-parts criticality analysis, which component most justifies holding a spare on the shelf despite high cost?",
         "options": [
           "A cheap, next-day-available contactor",
-          "A high-consequence, long-lead-time, failure-prone specialty drive",
           "A standard fuse stocked plant-wide",
+          "A high-consequence, long-lead-time, failure-prone specialty drive",
           "A commodity terminal block"
         ],
-        "answer": 1,
+        "answer": 2,
         "explain": "A part whose failure stops the line, has a long lead time, and is failure-prone justifies stocking even at high cost, because the carrying cost is trivial against days of lost production waiting for delivery."
       },
       {
@@ -6358,10 +6358,10 @@ MODULES_2 = [
         "options": [
           "Expose the PLC directly to the internet with a simple password",
           "A shared permanent connection for all vendors",
-          "An authenticated, encrypted VPN into a controlled DMZ, least-privilege, on-demand, logged, and revocable",
-          "A dial-up modem left permanently connected"
+          "A dial-up modem left permanently connected",
+          "An authenticated, encrypted VPN into a controlled DMZ, least-privilege, on-demand, logged, and revocable"
         ],
-        "answer": 2,
+        "answer": 3,
         "explain": "Secure remote support uses an authenticated (ideally MFA), encrypted VPN into a DMZ, granting least-privilege on-demand access that is logged and revocable, never exposing controllers directly. Insecure remote access is a top OT breach vector."
       }
     ],

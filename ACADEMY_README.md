@@ -1,5 +1,8 @@
 # AET Academy - Build Changelog
 
+## v13.74 (2026-07-22) - Answer-key rebalance (test integrity fix)
+QA sweep after the 7-wave doubling found a test-integrity defect: 968 of 1299 correct answers (74%) sat in option slot B, because Waves 5-7 authored content defaulting the correct choice to index 1. A student could pass by always picking B. FIX: a deterministic rebalancer permutes each question's four options and retracks the correct index, greedily flattening the per-module A/B/C/D distribution. 1275 questions shuffled; 24 frozen (order-dependent options like "all/none of the above", "both B and C", or explanations that name an option letter are left untouched). Distribution A/B/C/D: [67,968,242,22] -> [327,325,325,322] (near-even 25% each). Verified vs git HEAD: all 1299 questions retain their exact correct-answer TEXT (0 mismatches) - only positions changed. Audit ERRORS=0, ruff clean, py_compile clean. Build modules=22 glossary=131 flashcards+gloss=187 sims=11 ladderlabs=236. Ship zip v13.74 (5 members, testzip None).
+
 ## v13.73 (2026-07-22) - Wave 7: FOURTH deepening pass on all 22 modules (DOUBLING COMPLETE)
 Content: sections 967 -> 1140 (+173), quiz 1211 -> 1299 (+88). Every module received a fourth +8 sec / +4 quiz deepening pass (3 dup sections auto-skipped in M10/M16/M18 -> those got +7). Doubling targets EXCEEDED: sections 1140 vs 1132 target (101%), quiz 1299 vs 1224 target (106%). The 7-wave curriculum-doubling effort is now COMPLETE (baseline 566 sec / 612 quiz -> 1140 / 1299). Audit ERRORS=0, ruff clean, py_compile clean. Build modules=22 glossary=131 flashcards+gloss=187 sims=11 ladderlabs=236. Ship zip v13.73 (5 members, testzip None).
 
