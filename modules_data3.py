@@ -122,6 +122,30 @@ MODULES_3 = [
       {
         "h": "Task Types, Priorities, and Scan Time",
         "body": "A Logix controller organizes programs into <b>tasks</b>. A <b>continuous task</b> runs, finishes, and immediately restarts (the background). <b>Periodic tasks</b> run on a fixed interval (e.g. every 10 ms) - use these for time-critical PID or motion. <b>Event tasks</b> trigger on an input or instruction. Higher-priority periodic tasks <b>interrupt</b> lower-priority/continuous ones.<br><br>Watch <b>scan time</b> and <b>task overlap</b>: if a periodic task cannot finish before its next scheduled start, you get an <b>overlap</b> fault - the logic is too heavy for the interval. Keep periodic tasks lean, put slow/non-critical logic (data logging, HMI housekeeping) in the continuous task, and size PID/motion in fast periodic tasks. The <b>watchdog</b> timer bounds total task time; exceeding it majors the controller. Monitoring max scan time and task-overlap counters is a key predictive indicator that a program is growing beyond the controller's real-time budget."
+      },
+      {
+        "h": "GSV/SSV: Reading and Writing Controller System Data",
+        "body": "Logix controllers expose their internal status through <b>system objects</b> that programs read with <b>GSV (Get System Value)</b> and write with <b>SSV (Set System Value)</b>. This is how code becomes self-aware and self-diagnosing. Common uses: read the <b>WALLCLOCKTIME</b> object to timestamp events and alarms; read the <b>TASK</b> object's scan-time attributes (LastScanTime, MaxScanTime) to <b>monitor and trend controller loading</b> and catch a task creeping toward its watchdog; read the <b>MODULE</b> object's FaultCode/EntryStatus to detect an I/O module that has dropped and drive an HMI diagnostic; and read the <b>CONTROLLER</b>/PROGRAM fault objects for logging. SSV can write attributes such as re-enabling a disabled output module after a verified repair or adjusting a message timeout. GSV/SSV must be used carefully - writing system attributes can change controller behavior, and some are only valid in a fault routine. The pattern to remember: GSV turns hidden firmware state into tag data your logic and HMI can act on, which is the foundation of building rich on-board diagnostics rather than relying on a laptop to see what the PLC knows."
+      },
+      {
+        "h": "Alarm and Event Instructions (ALMD/ALMA) in Logix",
+        "body": "Rather than hand-building alarm logic with comparison and latch rungs, modern Logix uses dedicated <b>alarm instructions</b>: <b>ALMD (digital alarm)</b> for boolean conditions and <b>ALMA (analog alarm)</b> for level alarms with multiple thresholds (HH/H/L/LL) and deadband. These instructions manage the full <b>alarm state model</b> internally - In-Alarm, Acknowledged, Return-to-Normal, latched/unlatched - and integrate with the FactoryTalk Alarms and Events subsystem so the HMI subscribes to controller-based alarms directly, with server-side timestamping at the source (more accurate than HMI-polled alarms). Each instruction carries priority, severity, and message association, plus built-in <b>shelving and suppression</b> support aligned with ISA-18.2. The advantages over roll-your-own alarms: consistent behavior, automatic acknowledgment handling, source timestamping to millisecond accuracy, and far less ladder to maintain. The tradeoff is controller memory and scan overhead per instruction, so on large systems alarms are budgeted. Understanding ALMD/ALMA states is essential for troubleshooting why an alarm will not clear - often it is latched and awaiting acknowledgment, or its return-to-normal deadband has not been satisfied."
+      },
+      {
+        "h": "Data Type Conversion and Numeric Precision in Structured Text",
+        "body": "Mixing data types is a rich source of subtle PLC bugs. In Structured Text, assigning a <b>REAL to a DINT</b> truncates or rounds and can lose precision or overflow; assigning a large DINT to an INT <b>wraps</b> silently. Logix provides <b>COP (Copy)</b> and <b>CPS (Synchronous Copy)</b> for bulk/typeless memory copies, and explicit conversion functions where supported. The classic trap: doing integer division (7 / 2 = 3, not 3.5) when you expected a real result - one operand must be REAL to force floating-point math. Another: a REAL cannot exactly represent every decimal (0.1 has no exact binary form), so accumulating money or counts in REAL drifts; use DINT for exact integer counts and scale. <b>CPS</b> is important for data integrity: it copies atomically without being interrupted by a higher-priority task, so a multi-element structure (a recipe, a set of coordinates) is never read half-updated. Knowing when to use COP vs CPS vs element-by-element assignment, and being deliberate about REAL-versus-integer math and rounding, prevents the intermittent off-by-one and precision faults that are miserable to debug."
+      },
+      {
+        "h": "Recipe Management with Indexed UDT Arrays",
+        "body": "A machine that runs many products needs <b>recipes</b> - stored parameter sets (speeds, temperatures, dwell times, positions) that reconfigure the process without reprogramming. The clean pattern is an <b>array of a Recipe UDT</b>: define a UDT with all product parameters as members, then declare an array Recipe[0..99], one element per product. A single <b>recipe-number tag</b> indexes the array, and the active parameters are copied (with CPS for atomicity) into the running machine tags. Adding a product is then data entry, not programming. Recipes are typically edited on the HMI (with range validation and security), stored in the controller and/or a SQL/recipe server, and version-controlled so a batch record can prove which recipe made which lot - key for traceability and quality. Best practices: validate every parameter against safe min/max before it becomes active (a fat-fingered temperature must not reach the heater), log recipe changes to the audit trail, and never let a recipe download take effect mid-cycle. Indexed UDT recipes turn a rigid single-product machine into a flexible one and are a core Industry 4.0 changeover-reduction technique."
+      },
+      {
+        "h": "Motion Control Instructions: MAM, MAJ, and Coordinated Motion Basics",
+        "body": "Integrated motion (CIP Motion / SERCOS) programs servo axes with dedicated <b>motion instructions</b>, not raw analog outputs. The essentials: <b>MSO (Motion Servo On)</b> enables the drive/closes the loop; <b>MAH (Motion Axis Home)</b> establishes the reference; <b>MAJ (Motion Axis Jog)</b> runs an axis at a commanded speed indefinitely; <b>MAM (Motion Axis Move)</b> moves to an absolute or incremental position at a profiled speed/accel/decel; and <b>MAS (Motion Axis Stop)</b> halts it. Each instruction is <b>message-based</b> - it initiates a motion and completes over multiple scans, so logic monitors the instruction's <b>.DN/.PC (process complete) and .ER</b> status bits rather than expecting instant completion. Multi-axis <b>coordinated motion</b> (MCLM linear, MCCM circular) moves several axes together along a path in a defined coordinate system for pick-and-place or gantry work. Motion also has its own <b>fault model</b>: a drive fault, following error (position deviation exceeding a limit), or overtravel must be handled and reset explicitly. Understanding that motion instructions are asynchronous state-driven operations - not one-scan actions - is the mental shift needed to write reliable servo sequences and to troubleshoot an axis that 'won't move' because a prior instruction never completed."
+      },
+      {
+        "h": "Online Program Backup, Version Control, and Change Documentation",
+        "body": "The program running in a controller is a critical asset, and disciplined <b>backup and version control</b> is what lets a plant recover from a controller failure in minutes instead of days. Best practice: keep the <b>authoritative offline project file</b> under version control (a dated, commented archive at minimum; ideally a real VCS or a tool like AssetCentre/version-dog that auto-polls controllers and flags drift). After any online edit, <b>upload and archive</b> so the master matches the running code - the classic disaster is a controller that dies with months of undocumented online changes that exist nowhere else. Every change should carry <b>documentation</b>: what changed, why, who, when, and the associated work order or MOC. Firmware revision, HMI application, drive parameters, and network configuration are backed up alongside the PLC program because a spare controller needs all of them to run. Store backups <b>off the machine</b> (network share plus off-site) so a fire or ransomware event does not take the code with the hardware. For safety systems, program changes are change-managed and re-validated. The recovery test - can you actually restore a dead controller from your backups within your downtime target - is the only proof that the backup strategy works."
       }
     ],
     "lab": {
@@ -498,6 +522,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "A per-step timer detects a step that never satisfies its transition (e.g. a clamp that never confirms) and forces an alarm/abort rather than hanging the sequence indefinitely."
+      },
+      {
+        "q": "What is the purpose of the GSV instruction in Logix?",
+        "options": [
+          "To start a motor",
+          "To read internal controller system data (scan time, wall-clock, module status) into tags for logic/HMI use",
+          "To send an email",
+          "To size a conductor"
+        ],
+        "answer": 1,
+        "explain": "GSV (Get System Value) exposes firmware/system objects - task scan times, WALLCLOCKTIME, module fault codes - as tag data, enabling on-board diagnostics."
+      },
+      {
+        "q": "In Structured Text, why does 7 / 2 yield 3 instead of 3.5?",
+        "options": [
+          "The PLC is broken",
+          "Integer division truncates; one operand must be REAL to force floating-point math",
+          "ST cannot divide",
+          "2 is invalid"
+        ],
+        "answer": 1,
+        "explain": "With two integer operands ST performs integer division (truncating the remainder); making an operand REAL forces floating-point and yields 3.5."
+      },
+      {
+        "q": "Why use CPS (Synchronous Copy) instead of COP for a multi-element recipe structure?",
+        "options": [
+          "CPS is faster always",
+          "CPS copies atomically without interruption by a higher-priority task, so the structure is never read half-updated",
+          "COP does not exist",
+          "CPS uses less memory"
+        ],
+        "answer": 1,
+        "explain": "CPS guarantees an uninterrupted (atomic) copy, preventing a higher-priority task from reading a partially-updated multi-element structure - critical for data integrity."
+      },
+      {
+        "q": "What is the recommended data structure for a machine that must store parameters for 100 products?",
+        "options": [
+          "100 separate programs",
+          "An array of a Recipe UDT indexed by a recipe-number tag",
+          "One BOOL per product",
+          "Nothing - retype parameters each changeover"
+        ],
+        "answer": 1,
+        "explain": "An indexed array of a Recipe UDT lets a single recipe-number select the active parameter set; adding a product becomes data entry, not reprogramming."
+      },
+      {
+        "q": "Motion instructions like MAM are message-based. What does logic monitor to know a move finished?",
+        "options": [
+          "Nothing - it completes in one scan",
+          "The instruction's status bits (.DN/.PC process complete, .ER error) over multiple scans",
+          "The HMI color",
+          "The IP address"
+        ],
+        "answer": 1,
+        "explain": "Motion instructions initiate an operation that completes over many scans; logic must watch .PC/.DN/.ER status bits rather than assuming instant completion."
+      },
+      {
+        "q": "What is the classic disaster that disciplined online-edit archiving prevents?",
+        "options": [
+          "Slow scan time",
+          "A controller dying with months of undocumented online changes that exist nowhere else",
+          "Too many alarms",
+          "High SCCR"
+        ],
+        "answer": 1,
+        "explain": "If online edits are never uploaded/archived, the only copy of the changes is in the running controller; when it fails, that work is lost - hence upload-and-archive after edits."
+      },
+      {
+        "q": "What advantage do ALMD/ALMA alarm instructions have over hand-built latch/compare alarm rungs?",
+        "options": [
+          "They need no memory",
+          "They manage the full alarm state model internally with source-timestamping and ISA-18.2 shelving/suppression, reducing maintenance",
+          "They eliminate the HMI",
+          "They increase scan time to zero"
+        ],
+        "answer": 1,
+        "explain": "ALMD/ALMA handle In-Alarm/Ack/RTN states, millisecond source timestamps, priority, and shelving/suppression automatically, with far less ladder to maintain."
+      },
+      {
+        "q": "Accumulating exact integer counts in a REAL tag is risky because:",
+        "options": [
+          "REAL is always slower",
+          "REAL cannot exactly represent every decimal, so values drift; use DINT for exact counts",
+          "REAL cannot store numbers",
+          "DINT overflows first"
+        ],
+        "answer": 1,
+        "explain": "Floating-point cannot exactly represent many decimals (e.g. 0.1), so accumulating counts/money in REAL drifts; exact integer quantities belong in DINT."
+      },
+      {
+        "q": "Why are drive parameters, HMI application, and firmware revision backed up alongside the PLC program?",
+        "options": [
+          "To use more disk",
+          "Because a spare controller/system needs all of them to fully restore and run, not just the ladder logic",
+          "They are unrelated",
+          "Only the PLC program matters"
+        ],
+        "answer": 1,
+        "explain": "A complete recovery requires the whole system state - PLC code, firmware, HMI app, drive parameters, and network config - so all are archived together off the machine."
       }
     ],
     "resources": [
@@ -656,6 +779,30 @@ MODULES_3 = [
       {
         "h": "OT Cybersecurity Basics for Technicians",
         "body": "Connecting machines raises real security stakes - a compromised control network can stop production or endanger people. Core defenses a tech supports: <b>network segmentation</b> (VLANs, firewalls, the Purdue DMZ) so a breach cannot roam; <b>least privilege</b> (accounts and access limited to need); <b>patch discipline</b> (test and apply firmware/OS updates in maintenance windows); and <b>physical security</b> (locked panels, disabled unused USB/ports).<br><br>Everyday hygiene: never plug an unknown USB into an HMI or engineering workstation; do not connect personal laptops to the control network; change default device passwords; and keep a known-good <b>backup</b> of PLC programs and HMI projects offline so you can recover from ransomware or a bricked controller. Recognize that OT patching is constrained by uptime and validation - you cannot always patch immediately, which makes segmentation and monitoring even more important. Standards like <b>IEC 62443</b> define the industrial cybersecurity framework."
+      },
+      {
+        "h": "Unified Namespace (UNS): A Single Source of Truth for Plant Data",
+        "body": "The <b>Unified Namespace (UNS)</b> is an architectural pattern that has become central to modern IIoT. Instead of dozens of point-to-point integrations (PLC-to-SCADA, SCADA-to-MES, MES-to-ERP), every system <b>publishes and subscribes to one central broker</b> - typically MQTT - where all data lives in a single, semantically organized, real-time hierarchy. The namespace mirrors the business physically: <b>Enterprise/Site/Area/Line/Cell/Device</b>, e.g. Acme/ACY1/Sortation/Line3/Motor2/Speed. Any consumer - a dashboard, an analytics engine, an ERP - subscribes to the branches it needs without knowing or caring which PLC produced them. This <b>decouples producers from consumers</b>: add a new dashboard and it just subscribes; replace a PLC and as long as it publishes to the same topics, nothing downstream changes. The UNS holds <b>current state</b> (via MQTT retained messages, a new subscriber immediately gets the last value) and is <b>edge-driven and report-by-exception</b>, so it scales to thousands of tags efficiently. Combined with <b>Sparkplug B</b> (which adds birth/death certificates, defined payloads, and auto-discovery), the UNS turns a tangle of brittle integrations into one coherent, self-documenting data backbone - the practical foundation of a Industry 4.0 data strategy."
+      },
+      {
+        "h": "REST APIs and Webhooks for Machine-to-Enterprise Integration",
+        "body": "Above the real-time OT layer, systems exchange data over the same web technologies IT uses. A <b>REST API</b> (Representational State Transfer over HTTPS) lets one system request or send data with standard verbs - <b>GET</b> to read, <b>POST</b> to create, <b>PUT</b> to update - typically exchanging <b>JSON</b> payloads. An MES might expose a REST endpoint so a machine's edge gateway POSTs a completed-unit record, or a maintenance system exposes an API so condition-monitoring analytics can automatically <b>create a work order</b> when a bearing trend crosses a limit. Authentication uses <b>API keys or OAuth tokens</b>, and requests are stateless (each carries its own auth and context). <b>Webhooks</b> invert the model for events: instead of a client polling 'is there anything new?', the server <b>pushes</b> an HTTP callback to a registered URL the instant something happens (a batch completes, an alarm fires), which is far more efficient than constant polling. For a technician, the takeaway is that the boundary between the plant floor and enterprise IT is increasingly these web APIs; an edge gateway that speaks MQTT downward and REST/webhooks upward is the bridge that gets machine data into ERP, CMMS, and cloud analytics."
+      },
+      {
+        "h": "OEE Dashboards from Machine Data: Availability, Performance, Quality",
+        "body": "<b>Overall Equipment Effectiveness (OEE)</b> is the headline metric of a data-driven plant, and building it from live machine data is a core IIoT deliverable. OEE = <b>Availability &times; Performance &times; Quality</b>, each a fraction between 0 and 1. <b>Availability</b> = run time / planned production time, capturing downtime losses (breakdowns, changeovers) - the machine must report its run/stop/fault state and reason codes. <b>Performance</b> = (ideal cycle time &times; total count) / run time, capturing speed losses (minor stops, slow running) - it needs the actual count and the ideal rate. <b>Quality</b> = good count / total count, capturing defect losses. A world-class benchmark is often cited around <b>85%</b> (roughly 90% x 95% x 99%). The power of a live OEE dashboard is <b>loss attribution</b>: it does not just show a number, it breaks the 15% loss into its <b>Six Big Losses</b> (breakdowns, setup/adjustment, small stops, reduced speed, startup rejects, production rejects) so improvement effort targets the biggest bucket. Automated <b>downtime reason capture</b> (the operator or the PLC tags each stop) is what makes OEE actionable rather than just a scoreboard. Accurate OEE requires trustworthy timestamps and counts from the machine - garbage-in still applies."
+      },
+      {
+        "h": "Time-Series Databases: InfluxDB, Downsampling, and Retention",
+        "body": "IIoT generates enormous volumes of timestamped sensor data, and a <b>time-series database (TSDB)</b> - InfluxDB, TimescaleDB, or a historian - is purpose-built to store and query it far more efficiently than a general SQL table. Data is organized as <b>measurements with tags (indexed metadata like machine/line) and fields (the numeric values)</b>, timestamped at write. TSDBs excel at <b>time-range and aggregation queries</b> ('average vibration per hour for machine 5 last week') and use columnar/compressed storage. The two concepts a technician must understand are <b>downsampling and retention</b>: raw high-resolution data (say 1-second samples) is expensive to keep forever, so a <b>continuous query/task automatically rolls it up</b> into lower-resolution aggregates (1-minute, then 1-hour averages/min/max) as it ages, and a <b>retention policy</b> deletes the raw data after a set window while keeping the downsampled summaries for years. This mirrors historian compression: full forensic detail for recent weeks, trend-preserving summaries for long-term analysis, balancing storage cost against the ability to investigate. Analytics, dashboards (Grafana), and ML pipelines query the TSDB rather than hammering the live control system, which protects the OT network."
+      },
+      {
+        "h": "IIoT Sensor Retrofit: Wireless Vibration and Current Sensors",
+        "body": "Most existing plant equipment was installed without smart sensors, so <b>retrofitting condition monitoring</b> onto legacy assets is where much IIoT value is unlocked. <b>Wireless vibration sensors</b> (MEMS accelerometers with battery and radio) mount magnetically or by stud on a motor or gearbox and periodically transmit vibration spectra and overall levels to a gateway - no conduit, no wiring, deployable in minutes, ideal for hard-to-reach or non-critical assets that never justified wired monitoring. <b>Clamp-on / split-core current sensors</b> and energy monitors clip around a motor lead to trend load, detect <b>motor current signature</b> anomalies, and infer run-time/duty without opening the panel or interrupting power. Selection considerations: <b>battery life</b> (often 3-5 years, traded against transmit frequency - continuous streaming drains fast, so most retrofit sensors are periodic/report-by-exception), <b>wireless protocol and range</b> (LoRaWAN for long range/low data, WirelessHART/ISA100 for process plants, BLE/Wi-Fi for short range/richer data), <b>hazardous-area rating</b> where required, and gateway/backhaul to the analytics platform. The retrofit strategy is usually <b>tiered</b>: cheap periodic sensors broadcast-monitor many assets to catch developing faults, and only critical machines get high-resolution wired online systems - matching monitoring investment to asset criticality."
+      },
+      {
+        "h": "Data Contextualization: Turning Raw Tags into Meaningful Information",
+        "body": "A raw value like '73.4' is useless without <b>context</b> - contextualization is the step that turns data into information, and it is often the hardest part of an IIoT project. Context answers: what is this (engineering units, a temperature), where (which asset, using the ISA-95 <b>Enterprise/Site/Area/Line/Unit</b> hierarchy), when (an accurate synchronized timestamp), and how it relates to other data (this temperature belongs to Motor 2, which is on Line 3, which is making Product X on Batch 1234). Structured <b>metadata models</b> and asset hierarchies (ISA-95 equipment models, the Asset Administration Shell) attach this context so that analytics and humans can interpret the value and so a temperature can be correlated with the product, recipe, and ambient conditions at that moment. Standards like <b>B2MML</b> (the XML implementation of ISA-95) define how production data is structured for MES/ERP exchange. Good contextualization also enables <b>genealogy/traceability</b> - tying a finished unit back to every process parameter, material lot, and machine that touched it. The lesson for practitioners: collecting data is easy and cheap; the value is created by modeling it with consistent naming, units, hierarchy, and timestamps so that a machine value means the same thing everywhere in the enterprise. A UNS and an ISA-95 model are the frameworks that deliver this."
       }
     ],
     "lab": {
@@ -1089,6 +1236,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "Production uptime and change-validation constraints mean OT systems often cannot be patched immediately, so network segmentation and monitoring carry more of the defensive load."
+      },
+      {
+        "q": "What problem does a Unified Namespace (UNS) primarily solve?",
+        "options": [
+          "It speeds up motors",
+          "It replaces brittle point-to-point integrations with one central broker where all systems publish/subscribe, decoupling producers from consumers",
+          "It eliminates the need for sensors",
+          "It is a type of PLC"
+        ],
+        "answer": 1,
+        "explain": "The UNS centralizes all plant data in one semantically organized broker (usually MQTT); systems publish/subscribe to it, decoupling producers from consumers so changes do not ripple."
+      },
+      {
+        "q": "How does a webhook differ from polling a REST API?",
+        "options": [
+          "Webhooks are slower",
+          "The server pushes an HTTP callback the instant an event occurs, instead of the client repeatedly asking 'anything new?'",
+          "They are identical",
+          "Webhooks require no network"
+        ],
+        "answer": 1,
+        "explain": "A webhook is server-initiated: it POSTs to a registered URL when an event happens, far more efficient than a client constantly polling for changes."
+      },
+      {
+        "q": "OEE is the product of which three factors?",
+        "options": [
+          "Voltage x Current x Power",
+          "Availability x Performance x Quality",
+          "Speed x Torque x Time",
+          "Cost x Count x Cycle"
+        ],
+        "answer": 1,
+        "explain": "OEE = Availability (uptime) x Performance (speed) x Quality (good parts); ~85% is a common world-class benchmark (about 90% x 95% x 99%)."
+      },
+      {
+        "q": "What makes a live OEE dashboard actionable rather than just a scoreboard?",
+        "options": [
+          "Bright colors",
+          "Loss attribution - breaking the loss into the Six Big Losses with automated downtime reason capture",
+          "A faster PLC",
+          "More decimal places"
+        ],
+        "answer": 1,
+        "explain": "Attributing losses to the Six Big Losses (with captured stop reasons) tells the team which bucket to attack; a bare number does not guide improvement."
+      },
+      {
+        "q": "In a time-series database, what does a retention policy combined with downsampling do?",
+        "options": [
+          "Encrypts the data",
+          "Rolls up aging high-resolution data into lower-resolution aggregates and deletes the raw data after a window, keeping summaries long-term",
+          "Deletes all data daily",
+          "Speeds up the PLC scan"
+        ],
+        "answer": 1,
+        "explain": "Downsampling aggregates old raw data (1s to 1min to 1hr) and retention deletes the raw after a window, keeping trend-preserving summaries - balancing detail vs storage."
+      },
+      {
+        "q": "Why are most retrofit wireless vibration sensors periodic/report-by-exception rather than continuously streaming?",
+        "options": [
+          "Streaming is illegal",
+          "Continuous transmission drains the battery fast; periodic sampling extends battery life to years",
+          "They cannot sense vibration",
+          "Gateways reject streams"
+        ],
+        "answer": 1,
+        "explain": "Battery life (often 3-5 years) trades against transmit frequency; periodic or exception-based reporting conserves the battery while still catching developing faults."
+      },
+      {
+        "q": "Why is a raw value like '73.4' useless without contextualization?",
+        "options": [
+          "It is the wrong number",
+          "Without units, asset/location (ISA-95 hierarchy), timestamp, and relationships, it cannot be interpreted or correlated",
+          "73.4 is always an error",
+          "Context slows analytics"
+        ],
+        "answer": 1,
+        "explain": "Contextualization attaches units, ISA-95 location, accurate timestamp, and relationships, turning a bare number into information that means the same thing enterprise-wide."
+      },
+      {
+        "q": "What does Sparkplug B add on top of plain MQTT for the UNS?",
+        "options": [
+          "Nothing",
+          "Birth/death certificates, defined payloads, state awareness, and auto-discovery",
+          "It removes the broker",
+          "Higher voltage"
+        ],
+        "answer": 1,
+        "explain": "Sparkplug B standardizes MQTT payloads and adds birth/death certificates and auto-discovery, making the namespace self-describing and state-aware."
+      },
+      {
+        "q": "In the OEE Availability calculation, what data must the machine report?",
+        "options": [
+          "Only the product name",
+          "Its run/stop/fault state (and ideally downtime reason codes) versus planned production time",
+          "Only the temperature",
+          "The operator's name"
+        ],
+        "answer": 1,
+        "explain": "Availability = run time / planned production time, so the machine must report its running/stopped/faulted state, with reason codes enabling loss attribution."
       }
     ],
     "resources": [
@@ -1247,6 +1493,30 @@ MODULES_3 = [
       {
         "h": "Finding Intermittent and Ground Faults",
         "body": "Intermittent faults are the hardest - the failure is not present when you look. Tactics: use the DMM <b>Min/Max/record</b> or a datalogger to catch transient dropouts; <b>wiggle-test</b> harnesses and connectors while monitoring to provoke loose contacts; check for <b>thermal</b> dependence (fails only when hot - a connection that opens with expansion); and review the machine's own <b>first-out</b>/fault history for a pattern (time of day, specific step, vibration event).<br><br>For a <b>ground fault</b> on an ungrounded or resistance-grounded system, the classic method is <b>isolate and divide</b>: open sections and watch when the ground indication clears to localize the faulted branch, or use a clamp meter reading net current (a nonzero sum indicates leakage to ground on that path). Insulation testing then pinpoints the failed cable or winding. Document what provokes the fault - reproducibility is half the battle, and a fault you can trigger on demand is a fault you can fix and verify."
+      },
+      {
+        "h": "Sensor Diagnostics: Photoeyes and Proximity Sensors - Alignment and Margin",
+        "body": "Discrete sensors are among the most common failure points on automated lines, and diagnosing them fast keeps throughput up. A <b>photoelectric sensor (photoeye)</b> fails in a few characteristic ways: <b>misalignment</b> (through-beam emitter and receiver drift out of line), a <b>dirty lens or reflector</b> (dust, condensation, product film attenuates the beam), or a target that is out of range or too dark/reflective. The key diagnostic concept is <b>excess gain / operating margin</b> - the ratio of received signal to the minimum needed to switch. A sensor may still work at margin 1.2 in a clean lab and drop out at margin 0.9 once the lens fouls; a healthy install targets a margin of <b>at least 2-3&times;</b> (often higher for dirty environments) so it tolerates contamination before failing. Many sensors have a <b>stability/margin LED</b> (green solid = good margin, flashing = marginal) - reading it during setup prevents nuisance dropouts later. <b>Inductive proximity sensors</b> fail from excessive <b>gap</b> (sensing distance is small, ~a few mm, and derates for non-ferrous targets by a correction factor), physical damage, or wrong output type. Always confirm the <b>output configuration matches the input card</b>: a PNP (sourcing) sensor on a sinking input reads nothing. Check the sensor LED, then the voltage at the input terminal, then the input-card status bit - three points that localize the fault to sensor, wiring, or card."
+      },
+      {
+        "h": "Encoder and Resolver Fault Diagnosis: Signal Integrity and Count Loss",
+        "body": "Position and speed feedback devices cause maddening intermittent faults when they degrade. An <b>incremental encoder</b> outputs A/B quadrature (and often Z/index) channels; a healthy pair is two clean square waves 90 degrees out of phase. Faults include <b>lost counts</b> (electrical noise coupling into unshielded cable, or a marginal supply voltage), <b>a dead channel</b> (following the position drifts or the drive faults on feedback loss), and <b>mechanical coupling slip</b> (the encoder reads but the shaft moved without it - position error with no electrical fault). Diagnose with a scope: verify amplitude, the clean 90-degree phase relationship, and freedom from noise; check that A and B both toggle. <b>Differential (line-driver, RS-422) outputs</b> reject noise far better than single-ended - a long single-ended encoder run near VFD cable is a classic noise-induced count-loss setup, cured by shielded differential wiring routed away from power. <b>Resolvers</b> (rugged, brushless, analog) are decoded by the drive from sine/cosine windings; faults show as a resolver-loss drive fault or position error, often a connector or excitation-wiring problem. The tell for a feedback fault versus a mechanical one: if the drive commands motion and faults on <b>excessive following error</b> while the motor physically tries to move, suspect feedback; if it moves smoothly but ends up in the wrong place, suspect coupling slip or a homing/reference error."
+      },
+      {
+        "h": "Reading VFD Parameters and Drive-Recorded Fault History",
+        "body": "A modern VFD is a data recorder, and reading it is often faster than any external instrument. Every drive stores a <b>fault log/history</b> - the last several faults with codes and, on better drives, a <b>timestamp and a snapshot</b> of output frequency, current, DC bus voltage, and load at the moment of the trip. This turns 'it faulted overnight' into 'it tripped on overcurrent at 47 Hz drawing 180% current at 02:14' - which points straight at a mechanical bind or jam rather than a drive problem. Learn to read the common trips: <b>overcurrent (OC)</b> usually mechanical (jam, bearing, excessive load) or too-fast accel; <b>DC bus overvoltage (OV)</b> from decelerating too fast without a brake resistor (regeneration) or high line voltage; <b>DC bus undervoltage (UV)</b> from a supply sag or lost input phase; <b>overtemperature (OH)</b> from a clogged heatsink/failed fan or high ambient; <b>ground fault (GF)</b> from a failing motor or cable; <b>motor overload (OL)</b> from sustained excess current. Also check key <b>parameters</b>: motor nameplate data, accel/decel times, current limit, and the <b>drive's own diagnostic monitors</b> (live output current, frequency, bus voltage) which let you watch the drive react to a load. Reading the fault history and live monitors first - before pulling meters - is the efficient VFD troubleshooting habit."
+      },
+      {
+        "h": "Battery and Backup Power Testing: UPS, Chargers, and Runtime",
+        "body": "Control systems ride through power events on <b>UPS and battery backup</b>, and these silently degrade until the day they are needed and fail. A <b>UPS</b> is only as good as its battery, and <b>battery capacity fades</b> with age (typical VRLA design life 3-5 years, less in hot enclosures) - a UPS that reports 'online' may deliver only minutes of the runtime it once had. Testing: check the <b>battery terminal voltage</b> and, better, perform a <b>load/runtime test</b> (many UPS units self-test; a load bank gives a true capacity number) rather than trusting the front-panel icon. For control-panel <b>24 VDC backup</b>, verify the <b>charger/power supply output voltage</b> under load and the battery's ability to hold up the load through a simulated outage. <b>PLC memory-backup batteries</b> (in older processors) and <b>absolute-encoder batteries</b> must be replaced on schedule <b>with power applied</b> where possible, so retentive memory or mastering data is not lost during the swap - a low-battery warning is a work order, not a someday item. For critical loads, document the <b>required runtime</b> (long enough to ride through the outage or perform an orderly shutdown) and test against it periodically. The common failure mode is discovering a dead backup only during the outage it was bought to survive, so scheduled proof-testing is the whole point."
+      },
+      {
+        "h": "Ground-Fault Location on Grounded and Ungrounded Systems",
+        "body": "A <b>ground fault</b> - an unintended connection between a conductor and ground - behaves very differently depending on the system's grounding, and knowing which you have is the first step. On a <b>solidly grounded system</b> (common for 480 V and control circuits), a ground fault becomes a high-current fault that trips a breaker or blows a fuse immediately - the protection localizes it, and you trace from the tripped device. On an <b>ungrounded or high-resistance-grounded system</b> (used where continuity of service matters, so the first fault does not shut things down), a single ground fault draws little current and the system <b>keeps running</b> - but it puts the healthy phases at elevated voltage to ground and, critically, a <b>second fault on another phase becomes a phase-to-phase short</b>. A <b>ground-detection scheme</b> (indicator lights or a ground-fault monitor) warns that a fault exists; locating it means <b>selectively opening circuits</b> until the indication clears, or using a <b>pulsing ground-fault locator</b> that injects a signal a clamp meter can trace to the faulted feeder. For control-transformer secondaries, a ground on the 'hot' leg of a grounded control circuit can cause <b>unexpected energization</b> (a coil pulls in through the ground path), a subtle and dangerous fault. Understanding the grounding architecture prevents chasing a ground fault the wrong way and explains why some systems trip instantly while others keep running with a fault present."
+      },
+      {
+        "h": "Documenting Findings: Failure Reports and Root-Cause Records",
+        "body": "Troubleshooting is not finished when the machine runs again - the <b>documentation of the finding</b> is what turns a one-time repair into organizational knowledge and feeds reliability improvement. A good <b>failure/repair report</b> captures: the <b>symptom</b> as reported and as observed, the <b>diagnostic steps</b> taken and their results (including dead ends, which save the next person time), the <b>root cause</b> found (not just the failed part - <i>why</i> it failed: a bearing failed, but because the seal let coolant in), the <b>corrective action</b>, the <b>parts used</b>, and the <b>downtime</b>. This record flows into the <b>CMMS/EAM</b> work-order history where it becomes searchable - the next technician facing the same symptom finds the prior fix in minutes. Aggregated over time, these records reveal <b>bad actors</b> (assets with repeated failures), <b>MTBF</b> trends, and recurring root causes that justify a design fix or PM change. Distinguishing the <b>failed component</b> from the <b>root cause</b> is the discipline that prevents endless repeat failures: replacing the fuse without finding why it blew guarantees it blows again. Clear, honest documentation - including 'I am not sure why this cleared it' when that is the truth - is more valuable than a tidy but fictional narrative, because reliability engineering depends on trustworthy failure data."
       }
     ],
     "lab": {
@@ -1678,6 +1948,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "A poor connection has elevated resistance; with current flowing it dissipates I-squared-R heat and runs hotter than good connections - visible to an IR camera under normal load."
+      },
+      {
+        "q": "A photoeye works when clean but drops out once its lens fouls with dust. What concept explains this and how is it prevented?",
+        "options": [
+          "The IP address changed",
+          "Low operating margin (excess gain); install for a margin of at least 2-3x so contamination is tolerated before dropout",
+          "The PLC is too fast",
+          "Photoeyes never foul"
+        ],
+        "answer": 1,
+        "explain": "Excess gain/operating margin is the ratio of received to minimum signal; a healthy install targets 2-3x or more so lens contamination does not push it below switching threshold."
+      },
+      {
+        "q": "A PNP (sourcing) proximity sensor is wired to a sinking input card and reads nothing. The fault is:",
+        "options": [
+          "A dead PLC",
+          "An output-type mismatch - sourcing sensor on a sinking input; they must match",
+          "A blown fuse",
+          "Wrong IP address"
+        ],
+        "answer": 1,
+        "explain": "Sensor output type (PNP/sourcing vs NPN/sinking) must match the input card's expectation; a mismatch means the input never sees the signal despite a working sensor."
+      },
+      {
+        "q": "A drive faults on excessive following error while the motor physically tries to move. What should you suspect?",
+        "options": [
+          "A mechanical coupling slip",
+          "A feedback (encoder/resolver) problem - lost counts or a dead channel",
+          "The wrong recipe",
+          "A dirty lens"
+        ],
+        "answer": 1,
+        "explain": "Following error with the motor attempting motion points to feedback loss (noise, dead channel, wiring); smooth motion ending in the wrong place points to coupling slip or homing error."
+      },
+      {
+        "q": "Why read a VFD's fault history and live monitors BEFORE reaching for external meters?",
+        "options": [
+          "Meters are illegal",
+          "The drive logs the trip code with a snapshot (frequency, current, bus voltage) that often pinpoints the cause - e.g. overcurrent at high load = mechanical jam",
+          "It saves battery",
+          "The drive cannot be trusted"
+        ],
+        "answer": 1,
+        "explain": "The drive is a data recorder; its timestamped fault log and live monitors frequently localize the problem faster than any external instrument."
+      },
+      {
+        "q": "On an ungrounded (or high-resistance-grounded) system, why is a single ground fault dangerous even though the system keeps running?",
+        "options": [
+          "It trips instantly",
+          "A second fault on another phase becomes a phase-to-phase short, and healthy phases sit at elevated voltage to ground",
+          "It cannot happen",
+          "It speeds up motors"
+        ],
+        "answer": 1,
+        "explain": "The first ground fault draws little current so service continues, but it elevates the other phases and a second fault elsewhere completes a phase-to-phase short - hence ground-detection alarms."
+      },
+      {
+        "q": "A UPS front panel reports 'online', yet the batteries are 5 years old in a hot enclosure. What is the risk?",
+        "options": [
+          "No risk - the icon is definitive",
+          "Battery capacity has faded; actual runtime may be minutes, so a load/runtime test is needed, not trust in the icon",
+          "The UPS is too new",
+          "It will overcharge"
+        ],
+        "answer": 1,
+        "explain": "VRLA capacity fades with age/heat; an 'online' indicator does not prove runtime. A load or runtime test (or self-test) gives the true remaining capacity."
+      },
+      {
+        "q": "Why must a failure report distinguish the failed component from the root cause?",
+        "options": [
+          "Paperwork rules",
+          "Replacing the failed part without finding WHY it failed (e.g. a seal let coolant into a bearing) guarantees a repeat failure",
+          "They are the same thing",
+          "Root cause is optional"
+        ],
+        "answer": 1,
+        "explain": "The failed component is a symptom; unless the root cause (why it failed) is found and corrected, the same failure recurs - the core discipline of reliability troubleshooting."
+      },
+      {
+        "q": "Why is a differential (RS-422 line-driver) encoder output preferred over single-ended for a long run near VFD cable?",
+        "options": [
+          "It is cheaper",
+          "Differential signaling rejects common-mode noise, preventing the count loss that plagues single-ended runs near power cable",
+          "It uses fewer wires",
+          "Single-ended is faster"
+        ],
+        "answer": 1,
+        "explain": "Differential pairs reject induced common-mode noise; a long single-ended encoder run near VFD cable is a classic noise-induced count-loss setup cured by shielded differential wiring."
+      },
+      {
+        "q": "A VFD trips on DC bus OVERVOLTAGE (OV) during a fast stop. The most likely cause is:",
+        "options": [
+          "A jammed conveyor",
+          "Decelerating too fast without a brake resistor - regenerated energy pumps up the DC bus",
+          "Low line voltage",
+          "A dirty photoeye"
+        ],
+        "answer": 1,
+        "explain": "Rapid deceleration regenerates energy into the DC bus; without a brake resistor or regen unit the bus voltage rises and trips OV. Overcurrent (not OV) signals a mechanical jam."
       }
     ],
     "resources": [
@@ -1836,6 +2205,30 @@ MODULES_3 = [
       {
         "h": "Reliability Metrics - MTBF, MTTR, and Availability",
         "body": "<b>MTBF</b> (Mean Time Between Failures) measures reliability - the average uptime between failures of a repairable asset (higher is better). <b>MTTR</b> (Mean Time To Repair) measures maintainability - the average time to restore it (lower is better). <b>Availability</b> combines them: Availability = MTBF / (MTBF + MTTR). Improving availability means either failing less often (raise MTBF via PdM/design) or recovering faster (lower MTTR via spares, procedures, training).<br><br>Related metrics: <b>OEE</b> (Overall Equipment Effectiveness = Availability x Performance x Quality) captures total productive capability, and <b>DPMO</b> (defects per million opportunities) tracks quality/jam rates in material handling. Track these to prove a PdM program's value: a rising MTBF and stable/falling MTTR show fewer breakdowns and faster recovery. Beware chasing a single metric - high availability with poor quality still loses throughput. Metrics guide where to focus reliability effort and justify maintenance investment to management."
+      },
+      {
+        "h": "Precision Field Balancing: Single-Plane and Two-Plane Correction",
+        "body": "<b>Mass unbalance</b> is the most common source of machine vibration, appearing as a dominant <b>1&times; running-speed</b> peak in the spectrum, and it is often correctable in place without pulling the rotor. Unbalance exists because the rotor's mass centerline does not coincide with its rotational centerline; the resulting centrifugal force rises with the <b>square of speed</b>, so a small unbalance is violent at high RPM. <b>Single-plane balancing</b> corrects a narrow rotor (a fan, a pulley) by measuring the 1&times; vibration amplitude and phase, adding a <b>trial weight</b> to see how the vector moves, then calculating the correction weight and angle from the influence-coefficient response. <b>Two-plane balancing</b> is needed for longer rotors where unbalance in one plane couples into the other (a rocking/couple mode), correcting both ends simultaneously with a cross-effect calculation. The standard grades come from <b>ISO 21940</b> (formerly ISO 1940), which define permissible residual unbalance (G-grades, e.g. G2.5 for machine tools, G6.3 for general industrial fans) as a function of rotor mass and speed. Before balancing, always <b>rule out other 1&times; causes</b> - a bent shaft, looseness, or misalignment can masquerade as unbalance, and adding weight to a misaligned machine just chases a moving target."
+      },
+      {
+        "h": "Baseline Signatures and Acceptance Testing of New and Rebuilt Equipment",
+        "body": "Predictive maintenance is only as good as its <b>reference</b>, and the most valuable data point is the <b>baseline signature</b> taken when a machine is known-good - newly installed or freshly rebuilt. A baseline captures the vibration spectrum, overall levels, temperature, and current draw of a healthy machine so that later measurements are compared against <b>that machine's own normal</b>, not a generic table. This matters because every machine has a unique signature (its own minor imbalances, structural resonances, and bearing frequencies), and a level that is alarming on one unit is normal on another. <b>Acceptance testing</b> goes further: before a new or rebuilt asset is put into service, it is verified against criteria - vibration within ISO grade, no early bearing defect frequencies, alignment within tolerance, correct rotation, temperatures stable - so that <b>infant-mortality defects</b> (a rebuild error, a shipping-damaged bearing, a soft foot) are caught before they cause an in-service failure. This is the practical answer to the bathtub curve's high early-failure region: a good acceptance test screens out the defects that would otherwise fail early. Recording the baseline into the CMMS/condition-monitoring database at commissioning turns every future route measurement into a meaningful trend rather than an isolated number."
+      },
+      {
+        "h": "Belt, Chain, and Coupling Condition Monitoring",
+        "body": "Power-transmission components have their own predictive signatures and failure progressions. <b>V-belt and synchronous-belt drives</b> announce problems at identifiable frequencies: a <b>belt-frequency</b> peak (belt RPM, always below shaft speed) and its harmonics indicate a defect (a crack, hard spot, or uneven wear), while high <b>1&times; sheave</b> vibration flags sheave eccentricity or misalignment. Belts also fail from <b>improper tension</b> (too loose slips and overheats, glazing the belt; too tight overloads bearings), and belt drives should be checked for <b>sheave wear</b> (a worn groove lets the belt ride low and slip). <b>Chain drives</b> wear by <b>elongation</b> ('chain stretch' from pin/bushing wear) - a chain that has elongated beyond ~2-3% rides high on the sprocket and must be replaced with its sprockets; listen for a rough/notchy sound and check for a whipping slack span. <b>Flexible couplings</b> tolerate slight misalignment but a failing elastomeric element or a worn gear/grid coupling shows as elevated <b>2&times; running speed</b> (the classic misalignment/coupling signature) and can shed debris. The practical PM: correct tension and alignment at install, inspect for wear and heat on route, and use vibration and ultrasound/temperature to catch a degrading drive before it strands a line with a thrown belt or a snapped chain."
+      },
+      {
+        "h": "Maintenance Backlog and Work Prioritization",
+        "body": "A maintenance department always has more work identified than hours to do it, so <b>backlog management</b> and <b>prioritization</b> are core reliability disciplines. <b>Backlog</b> is all approved-but-not-yet-completed work, usually measured in <b>crew-weeks</b> (total backlog hours / weekly available hours); a healthy backlog is often cited as roughly <b>2-4 crew-weeks</b> - too little suggests over-staffing or reactive firefighting, too much means work ages and equipment degrades while waiting. Prioritization uses a structured method rather than whoever shouts loudest: <b>RIME (Ranking Index for Maintenance Expenditures)</b> multiplies an <b>asset-criticality</b> rating by a <b>work-type</b> rating so that safety and critical-production work rises to the top and low-value work on non-critical assets waits. The <b>planning and scheduling</b> distinction matters: planning defines <i>how</i> a job is done (parts, tools, procedure, permits) to make it efficient; scheduling defines <i>when</i>, coordinated with operations to secure equipment access. A high <b>schedule-compliance</b> (percentage of scheduled work actually completed as planned, target often &gt;90% for proactive work) is a leading indicator of a proactive organization, whereas a plant that constantly breaks its schedule for emergencies is stuck in a reactive cycle. Managing backlog and protecting scheduled PM time is how a team escapes firefighting."
+      },
+      {
+        "h": "Lubricant Selection, Compatibility, and Storage Best Practices",
+        "body": "Choosing and handling lubricant correctly prevents a large fraction of mechanical failures. Selection starts with <b>viscosity</b> - the single most important property - chosen for the bearing/gear speed, load, and operating temperature (too thin fails to form a film; too thick causes churning and heat); the <b>ISO VG</b> grade or the required film thickness sets it. <b>Additive packages</b> (EP/anti-wear for high-load gears, rust/oxidation inhibitors, tackifiers) match the application, and <b>base oil type</b> (mineral vs synthetic) is chosen for temperature range and life. A critical and often-overlooked hazard is <b>incompatibility</b>: mixing greases with different thickeners (lithium, polyurea, calcium-sulfonate) can cause the mixture to <b>soften and run out or harden and stop feeding</b> the bearing - never mix greases without verifying compatibility, and purge fully when switching. <b>Contamination control</b> extends to storage: lubricants must be kept sealed, indoors, dry, and clean, because <b>water and dirt ingress during storage</b> ruins oil before it ever reaches a machine; use <b>color-coded, dedicated transfer containers</b> to prevent cross-contamination, filter new oil (new is not clean - it often exceeds target cleanliness codes as delivered), and practice <b>FIFO</b> stock rotation since additives degrade with age. A disciplined lube program - right lubricant, right amount, right interval, clean and uncontaminated - is consistently one of the highest-ROI reliability activities."
+      },
+      {
+        "h": "Failure Coding and the Reliability Feedback Loop",
+        "body": "Predictive and preventive maintenance only improve reliability if the data they generate feeds back into decisions, and <b>failure coding</b> is the mechanism. When a work order closes, the technician records <b>structured codes</b>: the <b>failure mode</b> (how it failed - e.g. bearing seized, winding shorted, belt broke), the <b>cause</b> (why - lubrication, contamination, fatigue, misapplication), and the <b>action</b> taken. Standard taxonomies like <b>ISO 14224</b> define these codes so data is consistent across technicians and assets rather than free-text that cannot be analyzed. Coded failure data is what enables the analytics that justify strategy changes: <b>Pareto (bad-actor) analysis</b> ranks assets and failure modes by frequency and cost so effort targets the vital few; <b>MTBF trends</b> show whether a PM change actually helped; and <b>Weibull analysis</b> needs failure-time data with modes to distinguish infant mortality from wear-out and set the right maintenance interval. The <b>feedback loop</b> is: monitor &rarr; find and fix &rarr; code the failure accurately &rarr; analyze the accumulated data &rarr; adjust the PM/PdM program or redesign &rarr; monitor again. The weakest link is almost always <b>data quality</b> at the point of capture - a rushed or generic failure code ('replaced part, machine runs') destroys the analysis. Teaching technicians why the codes matter, and making them quick to enter, is what keeps the reliability feedback loop alive."
       }
     ],
     "lab": {
@@ -2268,6 +2661,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "Iron is a ferrous wear metal; a rising trend points to gear/component wear. Wear-metal ratios help localize which part is degrading, complementing vibration data."
+      },
+      {
+        "q": "Mass unbalance shows as a dominant vibration peak at which frequency, and its force rises with what?",
+        "options": [
+          "2x speed, rising linearly",
+          "1x running speed, with force rising as the square of speed",
+          "Belt frequency, constant with speed",
+          "Line frequency, independent of speed"
+        ],
+        "answer": 1,
+        "explain": "Unbalance produces a dominant 1x running-speed peak; centrifugal force scales with the square of rotational speed, so it worsens rapidly at higher RPM."
+      },
+      {
+        "q": "Why is a baseline signature taken on a known-good (new or rebuilt) machine so valuable?",
+        "options": [
+          "It looks good in reports",
+          "Later measurements are compared against that machine's own normal, since every machine has a unique signature",
+          "It replaces all future measurements",
+          "It sets the IP address"
+        ],
+        "answer": 1,
+        "explain": "Each machine has unique inherent characteristics; comparing against its own known-good baseline (not a generic table) makes trend deviations meaningful."
+      },
+      {
+        "q": "A misalignment or failing coupling classically shows elevated vibration at which frequency?",
+        "options": [
+          "1x only",
+          "2x running speed",
+          "Belt frequency",
+          "0.5x"
+        ],
+        "answer": 1,
+        "explain": "Misalignment and coupling problems characteristically raise the 2x running-speed component (often with axial vibration), distinguishing them from 1x unbalance."
+      },
+      {
+        "q": "What does a healthy maintenance backlog of roughly 2-4 crew-weeks indicate, and what does too little suggest?",
+        "options": [
+          "Too little always means efficiency",
+          "Too little can mean over-staffing or reactive firefighting; the range balances work aging against readiness",
+          "Backlog should always be zero",
+          "Backlog is measured in dollars only"
+        ],
+        "answer": 1,
+        "explain": "Backlog (hours/weekly-available) near 2-4 crew-weeks is healthy; too little may signal over-staffing or reactive work, too much means work ages and equipment degrades waiting."
+      },
+      {
+        "q": "Why must you never mix greases with different thickeners without verifying compatibility?",
+        "options": [
+          "It changes the color",
+          "The mixture can soften and run out or harden and stop feeding the bearing, causing failure",
+          "It is always fine to mix",
+          "It only affects cost"
+        ],
+        "answer": 1,
+        "explain": "Incompatible thickeners (lithium, polyurea, calcium-sulfonate) can react so the grease softens and leaks or hardens and starves the bearing; purge fully when switching."
+      },
+      {
+        "q": "What does structured failure coding (per ISO 14224) enable that free-text notes cannot?",
+        "options": [
+          "Faster typing",
+          "Consistent, analyzable data for Pareto/bad-actor analysis, MTBF trending, and Weibull interval-setting",
+          "A prettier work order",
+          "Nothing"
+        ],
+        "answer": 1,
+        "explain": "Coded failure mode/cause/action data is consistent across technicians and assets, enabling the analytics (Pareto, MTBF, Weibull) that drive reliability decisions; free text cannot be analyzed."
+      },
+      {
+        "q": "A chain drive has elongated (stretched) about 3% from pin/bushing wear. What is the correct action?",
+        "options": [
+          "Add a link",
+          "Replace the chain WITH its sprockets, since a worn chain rides high and wears sprockets",
+          "Ignore it",
+          "Tighten it more"
+        ],
+        "answer": 1,
+        "explain": "Chain elongation beyond ~2-3% means the chain rides high on the sprocket teeth; the worn chain and its sprockets are replaced together to avoid rapid re-wear."
+      },
+      {
+        "q": "Why is acceptance testing of new/rebuilt equipment the practical answer to the bathtub curve's early-failure region?",
+        "options": [
+          "It extends the wear-out phase",
+          "It screens out infant-mortality defects (rebuild errors, shipping damage, soft foot) before they fail in service",
+          "It has no effect on failures",
+          "It only checks paperwork"
+        ],
+        "answer": 1,
+        "explain": "Acceptance testing verifies a machine is truly healthy before service, catching the early-life defects responsible for the bathtub curve's high infant-mortality region."
+      },
+      {
+        "q": "Why should new oil be filtered before use?",
+        "options": [
+          "New oil is always perfectly clean",
+          "New oil is often NOT clean - as delivered it can exceed target cleanliness codes with particulate",
+          "Filtering adds additives",
+          "To change its viscosity"
+        ],
+        "answer": 1,
+        "explain": "'New' does not mean 'clean' - delivered oil frequently exceeds target ISO cleanliness codes, so filtering (and clean, sealed storage) protects the machine from contamination."
       }
     ],
     "resources": [
@@ -2426,6 +2918,30 @@ MODULES_3 = [
       {
         "h": "Grounding, Bonding, and Arc-Flash Labeling",
         "body": "Inside the panel, <b>bonding</b> ties all non-current-carrying metal (subpanel, door, enclosure) together and to the <b>equipment grounding conductor</b> so a fault trips protection instead of energizing the box. Use a marked ground bar, star-washer or paint-piercing connections to bare metal, and a bonding jumper on the hinged door (a door with a display/pilot devices is a shock path if not bonded). Keep the <b>equipment ground</b> and the <b>signal/0 V reference</b> handled per design - improper grounding causes both shock hazards and noise/analog problems.<br><br>Externally, panels operating above thresholds must carry an <b>arc-flash label</b> (per NFPA 70E) stating incident energy or PPE category, arc-flash boundary, and shock-approach boundaries so workers know required PPE before opening. A tech relies on this label to dress correctly. Proper bonding plus current-limiting protection reduces both shock and arc-flash energy - grounding is the foundation that makes every other protective device work."
+      },
+      {
+        "h": "24 VDC Power Supply Sizing, Redundancy, and Diode-OR Backup",
+        "body": "The <b>24 VDC control supply</b> powers PLCs, I/O, sensors, relays, and HMIs, so its sizing and reliability are foundational. <b>Sizing</b> starts with summing every load's current and adding headroom - typically <b>25%</b> - for inrush and future additions; undersizing causes the supply to sag or fold back under a surge, browning out the PLC. Consider <b>inrush</b> especially: capacitive loads and lamp/relay banks draw a brief current spike far above steady-state that the supply must ride through. For critical panels, <b>redundancy</b> uses two supplies through a <b>redundancy (diode-OR) module</b>: each supply feeds the common bus through a blocking diode/ideal-diode so either can carry the load and a failed supply cannot drag the bus down - the healthy one simply takes over with no interruption, and a diagnostic contact flags the failure. Some designs add a <b>DC-UPS</b> (buffer module with a battery or supercap) to ride through brief input dropouts so a momentary utility blink does not fault the controller. Best practices: put the supply on its own protected branch, respect its <b>temperature derating</b> (rated current drops at high ambient inside the enclosure), and separate 24 V distribution into fused/protected groups so a shorted sensor lead does not crash the entire control system - a single fuse feeding everything means one field short stops the whole machine."
+      },
+      {
+        "h": "Marshalling, Interposing Relays, and Field Termination Strategy",
+        "body": "How field wiring lands in a panel - the <b>termination strategy</b> - governs how maintainable and reliable the system is. <b>Marshalling</b> is the organized zone of terminal blocks where incoming field cables terminate and are cross-connected to the I/O; a clean marshalling layout groups terminals by function and follows the loop-sheet numbering so a technician can trace any field device to its I/O point. <b>Interposing relays</b> sit between the PLC output and the field load whenever the load exceeds the PLC output's rating or needs a different voltage: a PLC digital output (often limited to a fraction of an amp) drives a small interposing relay coil, and the relay's heavier contacts switch a solenoid, contactor coil, or a 120 VAC/24 VDC load - this <b>protects the PLC output</b>, provides <b>voltage isolation/level translation</b>, and makes field faults land on a cheap replaceable relay rather than the expensive output card. Interposing relays also allow easy <b>manual override/testing</b> (many have a manual actuator) and a convenient point to isolate a circuit. Best practice separates <b>field power</b> from <b>logic</b>, fuses individual output circuits, and uses <b>plug-in relay bases</b> for fast replacement. Good marshalling and interposing turn a dense panel into one where a fault is found and fixed in minutes; poor practice - direct-driving loads off I/O and undocumented point-to-point wiring - creates fragile, un-maintainable systems."
+      },
+      {
+        "h": "Panel Condensation Control: Heaters, Hygrostats, and Breather Drains",
+        "body": "An outdoor or wash-down enclosure faces a hazard as damaging as heat: <b>condensation</b>. When the panel cools below the <b>dew point</b> of the internal air (after a hot day, overnight, or when a chilled component sits in humid air), moisture condenses on electronics, terminals, and bus bars, causing <b>corrosion, tracking, and ground faults</b>. Sealing the enclosure tighter does not solve it - a NEMA 4 box traps the humid air inside. The controls are: an <b>enclosure heater</b> (a small resistive heater, often with a fan) that keeps the internal temperature a few degrees above dew point so condensation never forms, switched by a <b>hygrostat</b> (humidity switch) or thermostat; <b>anti-condensation heaters</b> are standard in outdoor drives and motor terminal boxes for this reason. Where sealing is not required, a <b>breather/drain</b> (a hydrophobic vent or a weep drain at the low point) equalizes pressure and lets any accumulated water escape - a drain must be at the actual low point or water pools. <b>Desiccant</b> packs help in sealed boxes but saturate and need replacement. The design decision balances the <b>ingress rating</b> (keeping water/dust out) against <b>internal humidity management</b> (keeping condensation from forming inside) - both matter, and a well-sealed panel with no condensation control can corrode from the inside out."
+      },
+      {
+        "h": "Pilot Devices, Legend Plates, and Operator-Interface Ergonomics",
+        "body": "The <b>operator interface</b> - the pushbuttons, selector switches, pilot lights, and E-stop on the panel door - is where the human meets the machine, and its design follows both standards and human-factors sense. <b>Color coding</b> is standardized (NFPA 79 / IEC 60204-1): <b>red</b> for stop/emergency (and red mushroom for E-stop), <b>green or black</b> for start, <b>yellow</b> for abnormal/reset/return, <b>blue</b> for mandatory action, and <b>white/clear</b> for general functions; pilot-light colors carry meaning too (red = fault/danger, green = safe/running, amber = caution/attention). <b>Legend plates</b> label each device clearly and permanently so function is unambiguous. Ergonomics matters: the <b>E-stop must be immediately reachable</b> and unobstructed from the operator's normal position; frequently-used controls are placed at comfortable height and grouped logically; and the layout should mirror the process flow so it is intuitive. Device selection covers the <b>contact type</b> (a start button uses NO, a stop uses a positive-opening NC), <b>illumination</b>, and <b>guarding</b> (a shrouded or key-release button prevents accidental actuation of a critical function). The IP rating of the operator device must match the environment (a wash-down line needs sealed IP66/69K devices). Thoughtful HMI-door layout reduces operator error and speeds correct response in an upset - a safety and productivity benefit, not just aesthetics."
+      },
+      {
+        "h": "Motor Feeder and Branch-Circuit Design Within the Panel",
+        "body": "A panel that feeds motors must implement the <b>motor branch circuit</b> correctly per NEC Article 430 (and NFPA 79 for machinery), and the parts have distinct jobs that are easy to confuse. <b>Short-circuit and ground-fault protection</b> (the fuse or the magnetic-only <b>motor circuit protector, MCP</b>, or an inverse-time breaker) protects the <b>conductors and equipment against a fault</b> and is sized well above motor full-load current (a fuse may be 175-300% FLA, an MCP up to ~1300% instantaneous) because it must not trip on <b>inrush</b> (locked-rotor current is ~6&times; FLA for several seconds at start). <b>Overload protection</b> (the thermal/electronic <b>overload relay</b> in the starter, or the drive's electronic OL) protects the <b>motor windings against sustained overcurrent</b> and is set near FLA &times; service factor (typically ~115-125%) - it is the slow, motor-protecting element, separate from the fast, fault-protecting one. Conductors are sized at <b>125% of motor FLA</b> for a single continuous-duty motor. The <b>contactor</b> switches the motor and must match the <b>utilization category (AC-3</b> for standard motor switching, AC-4 for plugging/jogging). For VFD-fed motors, the drive provides the overload and often the branch protection philosophy changes (the drive's input protection and the motor thermal model). Getting the coordination right - fast fault protection, slow overload protection, correctly sized conductors and contactor - is the difference between a nuisance-tripping or hazardous panel and a reliable one."
+      },
+      {
+        "h": "Panel Fabrication Quality: Torque Verification, Meggering, and QA Checklists",
+        "body": "A panel can be designed perfectly and still fail from <b>build quality</b>, so fabrication QA is a defined step, not an afterthought. The number-one electrical connection failure is a <b>loose or over-torqued terminal</b>: under-torque leaves a high-resistance joint that heats, oxidizes, and eventually fails (and shows up on thermography); over-torque damages the conductor or terminal. Every power connection is tightened to the <b>manufacturer's torque spec</b> with a calibrated torque tool and then <b>marked with torque-seal paint</b> so a later inspection can see at a glance whether a connection has moved. Before energizing, the panel gets a <b>point-to-point continuity check</b> against the schematic (verifying every wire lands where the drawing says), an <b>insulation-resistance (megger) test</b> of power circuits to confirm no wiring fault or pinched conductor to ground, and a check that <b>grounding/bonding</b> is continuous. A <b>QA checklist</b> covers wire labeling matching the schematic, correct component installation and orientation, wireway fill and bend radius, door-ground bonding straps, fuse/breaker ratings matching the drawing, and arc-flash/warning labels applied. <b>Functional testing</b> (I/O checkout, interlock verification, and a controlled first energization with the disconnect ready) follows. This discipline - torque to spec and mark it, megger before energizing, verify against the drawings with a checklist - is what separates a panel that runs for decades from one that causes an early field failure or an arc-flash incident."
       }
     ],
     "lab": {
@@ -2858,6 +3374,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "The arc-flash label states incident energy/PPE category and the arc-flash and shock-approach boundaries so a worker selects correct PPE and maintains safe distances before opening the panel."
+      },
+      {
+        "q": "When sizing a 24 VDC control supply, why add roughly 25% headroom over the summed steady-state load?",
+        "options": [
+          "To waste power",
+          "For inrush current and future additions, so the supply does not sag or fold back under a surge",
+          "It is a legal requirement",
+          "To reduce voltage"
+        ],
+        "answer": 1,
+        "explain": "Capacitive/lamp/relay inrush spikes far above steady-state, and loads grow over time; ~25% headroom prevents the supply sagging or folding back and browning out the PLC."
+      },
+      {
+        "q": "What does a redundancy (diode-OR) module accomplish for dual 24 VDC supplies?",
+        "options": [
+          "It doubles the voltage",
+          "Each supply feeds the bus through a blocking diode so either carries the load and a failed supply cannot drag the bus down",
+          "It combines them into 48 V",
+          "It disables one supply"
+        ],
+        "answer": 1,
+        "explain": "Diode-OR/redundancy modules decouple the two supplies so a failure of one is isolated and the healthy one carries the load without interruption, with a diagnostic alarm."
+      },
+      {
+        "q": "Why is an interposing relay used between a PLC output and a solenoid or contactor coil?",
+        "options": [
+          "To slow the machine",
+          "To protect the PLC output (which is low-rated), provide voltage isolation/level translation, and put field faults on a cheap replaceable relay",
+          "It is decorative",
+          "To increase scan time"
+        ],
+        "answer": 1,
+        "explain": "The PLC output drives a small relay coil; the relay's heavier contacts switch the load, protecting the output card, translating voltage, and absorbing field faults cheaply."
+      },
+      {
+        "q": "Sealing an outdoor enclosure tighter (NEMA 4) does NOT solve condensation because:",
+        "options": [
+          "NEMA 4 is not waterproof",
+          "It traps humid air inside; when the panel cools below dew point, moisture condenses on the electronics",
+          "Condensation only happens outdoors",
+          "Sealing always solves it"
+        ],
+        "answer": 1,
+        "explain": "A tight box traps humid internal air; below the dew point it condenses inside, so condensation control needs a heater/hygrostat (or breather drain), not just sealing."
+      },
+      {
+        "q": "In a motor branch circuit, what is the distinct job of the OVERLOAD relay versus the fuse/MCP?",
+        "options": [
+          "They do the same thing",
+          "The overload protects the motor windings against sustained overcurrent (~115-125% FLA); the fuse/MCP protects conductors against a fault and must ride through inrush",
+          "The overload trips on short circuits only",
+          "The fuse protects the windings"
+        ],
+        "answer": 1,
+        "explain": "Overload = slow, motor-winding protection near FLA x SF; short-circuit/ground-fault device = fast, conductor/equipment protection sized high to not trip on ~6x inrush."
+      },
+      {
+        "q": "Why is a power terminal marked with torque-seal paint after tightening to spec?",
+        "options": [
+          "Decoration",
+          "So a later inspection can see at a glance whether the connection has loosened/moved",
+          "To insulate it",
+          "To increase its rating"
+        ],
+        "answer": 1,
+        "explain": "Torque-seal provides visual evidence a connection was torqued and reveals if it has since moved; loose joints are the top cause of connection failure and thermography findings."
+      },
+      {
+        "q": "Before first energization, why is an insulation-resistance (megger) test of the panel's power circuits performed?",
+        "options": [
+          "To charge the batteries",
+          "To confirm no wiring fault or pinched conductor to ground before applying power",
+          "To set the IP address",
+          "To test the PLC program"
+        ],
+        "answer": 1,
+        "explain": "Meggering power circuits before energizing catches a wiring-to-ground fault or pinched conductor that would otherwise cause a short or arc-flash on first power-up."
+      },
+      {
+        "q": "Why should 24 V distribution be split into separate fused/protected groups rather than one fuse for everything?",
+        "options": [
+          "To use more fuses",
+          "So a single shorted field sensor lead does not crash the entire control system",
+          "It looks organized",
+          "To increase voltage"
+        ],
+        "answer": 1,
+        "explain": "Segmenting and fusing distribution isolates a field short to its group; a single fuse feeding all loads means one field fault stops the whole machine."
+      },
+      {
+        "q": "An E-stop pushbutton uses which contact type, and why?",
+        "options": [
+          "NO, to energize on press",
+          "Positive-opening NC, so it opens the safety circuit on press and any contact failure fails safe",
+          "NO, because it is faster",
+          "Either type works equally"
+        ],
+        "answer": 1,
+        "explain": "E-stops use direct/positive-opening NC contacts so pressing opens the circuit and a welded/failed contact is forced open - the fail-safe requirement for emergency stops."
       }
     ],
     "resources": [
@@ -3016,6 +3631,30 @@ MODULES_3 = [
       {
         "h": "Interview Technical Prep and Salary Discussion",
         "body": "Technical interviews for controls/maintenance roles probe <b>fundamentals and reasoning</b>: expect Ohm's law and 3-phase basics, how a VFD/contactor/overload works, PLC scan and basic ladder, how you would troubleshoot a given failure, and safety (LOTO, arc flash, live-dead-live). Prepare by reviewing fundamentals and by rehearsing your <b>troubleshooting method</b> out loud - interviewers care as much about <i>how</i> you approach an unknown fault as the exact answer.<br><br>On compensation: research the <b>market range</b> for the role and region before discussing numbers, know your value (certs, quantified results, shift flexibility), and let the employer name a range first when possible. Negotiate on the total package (base, shift differential, overtime, benefits, training, advancement). Be professional and evidence-based - point to your portfolio and results. Preparation converts nervousness into confidence: knowing your fundamentals, your stories (STAR), and your worth lets you interview as a professional evaluating a mutual fit, not a supplicant."
+      },
+      {
+        "h": "Building a Home Lab: PLC Trainer, Simulators, and Practice Projects",
+        "body": "Nothing accelerates a controls career like <b>hands-on practice</b>, and you do not need an employer's equipment to get it. A <b>home lab</b> can start with free <b>software simulators</b>: vendor tools like <b>CODESYS</b> (free, IEC 61131-3, with a soft-PLC and visualization), Rockwell's <b>Studio 5000 with Emulate</b> (via a trial or an educational license), Siemens <b>TIA Portal with PLCSIM</b>, and free HMI/SCADA trials (Ignition Maker Edition is free for personal use) let you write, download, and run real logic against simulated I/O. Adding cheap hardware deepens it: a used <b>micro-PLC</b> (a MicroLogix, S7-1200, or a low-cost CLICK/Productivity unit), a handful of pushbuttons, pilot lights, a relay, and a 24 V supply build a tactile trainer for wiring, I/O, and troubleshooting. <b>Practice projects</b> that mirror real work teach the most: a three-motor conveyor sequence with jam detection, a traffic-light state machine, a tank fill/drain with level interlocks, a batching sequence with a recipe, or a PID temperature loop. Document each project (the problem, the logic, screenshots, what you learned) - this simultaneously builds skill <i>and</i> the portfolio evidence that proves it. Arduino/Raspberry Pi and open-source PLC runtimes (OpenPLC) offer an even cheaper entry. The point is to <b>build things and break them</b>: the muscle memory of writing, downloading, forcing I/O, and debugging is what interviewers and supervisors recognize instantly."
+      },
+      {
+        "h": "Documenting Troubleshooting Wins as Portfolio Case Studies",
+        "body": "Technicians solve hard problems constantly but rarely capture them, and a <b>documented troubleshooting case study</b> is one of the most persuasive pieces of career evidence because it proves you can diagnose, not just follow procedures. A strong case study follows a clear arc: the <b>problem and its business impact</b> (a sorter down, X units/hour lost, prior shift could not fix it), the <b>symptoms and initial observations</b>, the <b>systematic diagnostic process</b> (what you measured, what you ruled out and why - showing structured thinking, not luck), the <b>root cause</b> found, the <b>fix</b>, and the <b>result</b> quantified (restored throughput, prevented recurrence, hours saved). Include the reasoning, not just the answer - the value is demonstrating <i>how</i> you think under pressure. Sanitize anything proprietary or confidential (no employer secrets, real IPs, or safety-sensitive detail) and frame it around transferable skill. These case studies feed multiple channels: a portfolio document, STAR-method interview stories (a documented win is a ready-made STAR answer), resume accomplishment bullets with real numbers, and even internal recognition. The habit to build: after a satisfying save, spend ten minutes writing it down while it is fresh. Over a year you accumulate a dozen concrete, quantified proofs of capability that separate you from candidates who can only speak in generalities."
+      },
+      {
+        "h": "Time and Priority Management for Maintenance Professionals",
+        "body": "A maintenance day is a stream of competing demands - PMs due, a line down, a supervisor's urgent request, parts to chase - and the technicians who advance are those who <b>manage priority deliberately</b> rather than reacting to whoever is loudest. The foundational tool is <b>distinguishing urgent from important</b> (the Eisenhower matrix): a down critical line is urgent-and-important (do now); a due PM on a critical asset is important-but-not-yet-urgent (schedule and protect the time, because skipping it creates tomorrow's emergency); many interruptions are urgent-but-not-important (delegate or defer). The reliability lesson is that a plant stuck in <b>reactive firefighting</b> never does the proactive work that would end the fires, so <b>protecting scheduled PM time</b> against constant interruption is itself a priority skill. Practical habits: plan the day/shift against the schedule but leave slack for the inevitable breakdown; batch similar tasks and trips to reduce setup; stage parts and tools before starting a job (planning) so you are not walking to the crib mid-repair; and communicate realistic timelines rather than over-promising. Managing your own <b>documentation and follow-up</b> - closing work orders, ordering the part you found low, flagging the recurring fault - prevents small items from becoming tomorrow's big ones. Strong personal time management multiplies a technician's effective output and is highly visible to the leaders who decide advancement."
+      },
+      {
+        "h": "Business Acumen: Speaking the Language of Cost, Uptime, and Risk",
+        "body": "The technicians and engineers who advance fastest are those who can <b>translate technical work into business terms</b>, because that is the language leadership funds and rewards. The core currencies are <b>downtime cost</b> (a line producing X units/hour at Y margin loses a calculable amount per hour of downtime - often far more than the repair), <b>reliability metrics</b> (MTBF, availability, OEE) that quantify performance, and <b>risk</b> (probability &times; consequence, including safety and compliance exposure). Framing a proposal this way is what gets it approved: instead of 'we should upgrade this drive,' say 'this drive has failed three times this year, each costing ~4 hours of downtime at ~$Z/hour plus repair - a replacement costing $W pays back in under a year and removes a recurring safety risk.' Learn to build a simple <b>cost justification</b>: quantify the current cost of the problem (downtime + labor + scrap + safety risk), the cost of the fix, and the <b>payback period</b> or ROI. Understand how your work ladders up to plant <b>KPIs</b> and how capital versus expense budgets work. Even day to day, describing a repair by its impact ('this saved the AM peak from going down') rather than its mechanics builds a reputation as someone who understands the business. This acumen is often the dividing line between a senior technician and a promotion into planning, reliability engineering, or leadership."
+      },
+      {
+        "h": "Communication and Presentation Skills for Technical Advancement",
+        "body": "Deep technical skill plateaus in career impact unless it is paired with the ability to <b>communicate clearly</b> to different audiences. The key skill is <b>audience adaptation</b>: explaining a fault to a fellow technician (detailed and technical), to an operator (what to do and why, plainly), to a supervisor (impact, timeline, what you need), and to management (cost, risk, business impact) each require a different level and vocabulary - the same event, framed for the listener. <b>Concise written communication</b> matters daily: a clear work-order note, a failure report, an email that states the ask in the first line, and procedures others can follow. As responsibility grows, <b>presenting</b> becomes routine - a shift handoff, a root-cause review, a proposal to leadership, or training a peer - and the fundamentals apply: know your audience, lead with the conclusion (bottom-line-up-front), support it with evidence, use a simple visual (a trend, a photo, a one-line diagram) rather than dense slides, and anticipate questions. <b>Active listening</b> is half of communication: confirming you understood a problem before solving it, and drawing out the operator who witnessed the fault, prevents wasted effort. Technicians who can teach and explain become the go-to people, are trusted with more, and are natural candidates for lead and training roles. The good news is that communication is a learnable skill - practiced through documentation, teaching peers, and volunteering to present - not a fixed trait."
+      },
+      {
+        "h": "Leadership Transition: From Technician to Team Lead and Supervisor",
+        "body": "Moving from a skilled individual contributor to a <b>team lead or supervisor</b> is a genuine role change, not just a title, and many strong technicians struggle with it because the skills that made them great as a tech are not the ones that make a great leader. The core shift is <b>from doing the work to enabling others to do it</b>: your output is now the team's output, which means <b>delegating</b> (resisting the urge to grab every tough job yourself), <b>developing people</b> (coaching, teaching, giving growth assignments), and removing obstacles (parts, priorities, access) so the crew can perform. New leadership responsibilities include <b>planning and scheduling</b> work, <b>prioritizing</b> across competing demands, <b>holding safety and quality standards</b>, giving <b>feedback</b> (both recognition and correction), and being the interface between the crew and management in both directions. Common pitfalls: the <b>hero trap</b> (doing all the hard work personally, which fails to scale and stunts the team), avoiding difficult conversations, and micromanaging instead of trusting. Preparation before you are promoted helps enormously: <b>mentor junior techs</b>, take ownership of a project or a PM program, learn the CMMS planning side, and study the basics of the business (budgets, KPIs, labor). Seek a mentor who has made the transition. The mindset to adopt early: <b>a leader's success is measured by the team's results and growth</b>, and the reputation for developing people and delivering reliably is what opens the path to supervisor, planner, reliability engineer, and beyond."
       }
     ],
     "lab": {
@@ -3449,6 +4088,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "Explaining and teaching deepens your own understanding, builds trust and reputation on the floor, and expands your professional network - all of which accelerate advancement."
+      },
+      {
+        "q": "What is the most cost-effective way to start building hands-on controls skill without employer equipment?",
+        "options": [
+          "Wait for on-the-job training only",
+          "Use free software simulators (CODESYS, PLCSIM, Studio 5000 Emulate, Ignition Maker) plus a cheap used micro-PLC and practice projects",
+          "Read theory books exclusively",
+          "Buy an industrial robot"
+        ],
+        "answer": 1,
+        "explain": "Free simulators let you write and run real logic against simulated I/O; adding a low-cost micro-PLC and practice projects builds tactile wiring/troubleshooting skill and portfolio evidence."
+      },
+      {
+        "q": "What makes a documented troubleshooting case study persuasive career evidence?",
+        "options": [
+          "It lists parts numbers",
+          "It shows the systematic diagnostic reasoning (what was ruled out and why) and quantifies the business result, proving you can diagnose",
+          "It is very long",
+          "It hides the root cause"
+        ],
+        "answer": 1,
+        "explain": "The value is demonstrating HOW you think under pressure - structured diagnosis, root cause, and a quantified outcome - not just the final answer; it also doubles as a STAR interview story."
+      },
+      {
+        "q": "On the urgent/important matrix, how should a due PM on a critical asset be handled?",
+        "options": [
+          "Ignore it - it is not urgent",
+          "Schedule and protect the time - it is important-but-not-yet-urgent, and skipping it creates tomorrow's emergency",
+          "Do it only if someone complains",
+          "Delegate it away permanently"
+        ],
+        "answer": 1,
+        "explain": "Important-but-not-urgent proactive work (PMs) must be scheduled and protected; deferring it for constant urgent interruptions is what traps a plant in reactive firefighting."
+      },
+      {
+        "q": "How should a technician frame a drive-replacement proposal to get it funded?",
+        "options": [
+          "'This drive is old and I do not like it'",
+          "Quantify the recurring downtime cost and risk versus the replacement cost and payback period - business terms leadership funds",
+          "Only describe the technical specs",
+          "Demand it without justification"
+        ],
+        "answer": 1,
+        "explain": "Translating the problem into downtime cost, risk, and payback/ROI speaks leadership's language; a bare technical preference rarely wins capital approval."
+      },
+      {
+        "q": "What is the key communication skill for technical advancement?",
+        "options": [
+          "Using the most jargon possible",
+          "Audience adaptation - framing the same event differently for a technician, operator, supervisor, and management",
+          "Always speaking at length",
+          "Avoiding written communication"
+        ],
+        "answer": 1,
+        "explain": "Adapting level and vocabulary to the audience (detailed for peers, impact/cost for management) - plus bottom-line-up-front and active listening - is what makes technical communication effective."
+      },
+      {
+        "q": "What is the core mindset shift moving from technician to team lead/supervisor?",
+        "options": [
+          "Do all the hard jobs yourself",
+          "From doing the work to enabling others - delegating, developing people, and being measured by the team's results",
+          "Stop caring about safety",
+          "Avoid talking to the crew"
+        ],
+        "answer": 1,
+        "explain": "A leader's output is the team's output; success comes from delegating, coaching, and removing obstacles - not from personally doing every tough job (the hero trap)."
+      },
+      {
+        "q": "Why document a troubleshooting win within ten minutes of solving it?",
+        "options": [
+          "It is required by law",
+          "While it is fresh you capture the reasoning and numbers accurately, accumulating quantified proof of capability over time",
+          "To slow down",
+          "Managers demand it hourly"
+        ],
+        "answer": 1,
+        "explain": "Capturing the win fresh preserves the diagnostic detail and impact numbers; over a year these become a dozen concrete, quantified proofs that outclass generalities."
+      },
+      {
+        "q": "What is the 'hero trap' that derails new maintenance leaders?",
+        "options": [
+          "Delegating too much",
+          "Personally doing all the hard work, which does not scale and stunts the team's growth",
+          "Scheduling PMs",
+          "Coaching junior techs"
+        ],
+        "answer": 1,
+        "explain": "Grabbing every tough job yourself feels productive but fails to scale and prevents the team from developing; leadership success is measured by team results and growth."
+      },
+      {
+        "q": "Why is staging parts and tools before starting a job a key time-management habit?",
+        "options": [
+          "It looks professional",
+          "It is the planning step that avoids walking to the crib mid-repair, keeping the job efficient and reducing downtime",
+          "It is required by OSHA",
+          "It wastes time"
+        ],
+        "answer": 1,
+        "explain": "Planning (staging parts, tools, permits, procedure before starting) prevents mid-job interruptions and rework, directly shortening repair time - a core efficiency discipline."
       }
     ],
     "resources": [
@@ -3591,6 +4329,30 @@ MODULES_3 = [
       {
         "h": "Tag-Based vs Address-Based Addressing",
         "body": "Legacy PLCs (SLC-500, PLC-5, many small PLCs) use <b>physical addresses</b> like <code>I:1/0</code> (input, slot 1, bit 0) or <code>N7:5</code> (integer file). Modern controllers (ControlLogix/CompactLogix) use <b>named tags</b> like <code>Conveyor01.Run</code> tied to a data type, not a physical location. Tag-based addressing is self-documenting, supports UDTs/arrays, and decouples logic from I/O layout.<br><br>Implications for techs: on address-based systems you must keep the I/O map handy and cross-reference addresses to devices; on tag-based systems the name tells you the device, and aliases map a friendly tag to a physical I/O point (<code>StartPB</code> aliased to <code>Local:1:I.Data.0</code>). When migrating old code, addresses become tags and documentation quality jumps. Understanding both is essential in a mixed plant where a 20-year-old SLC still runs a machine next to a new CompactLogix line."
+      },
+      {
+        "h": "Structured Text Loops: FOR, WHILE, REPEAT, and Scan-Time Safety",
+        "body": "Loops are Structured Text's superpower over ladder - and its biggest foot-gun. A <b>FOR</b> loop iterates a known number of times (FOR i := 0 TO 99 DO ... END_FOR) and is the natural way to process an <b>array</b> - summing, searching, initializing, or shifting a hundred elements in a few lines that would be a nightmare of repeated rungs in ladder. <b>WHILE</b> loops (test-at-top) and <b>REPEAT</b> loops (test-at-bottom, runs at least once) iterate an <b>unknown</b> number of times until a condition is met. The critical safety rule: <b>a PLC executes the entire loop within a single scan</b>, and the scan has a <b>watchdog timeout</b>. A FOR loop over a fixed, bounded array is safe. But a WHILE loop whose exit condition depends on a live input or a value that never satisfies the test becomes an <b>infinite loop that hangs the scan and faults the processor on watchdog</b> - the classic beginner ST crash. Defensive practice: prefer bounded FOR loops; always give WHILE/REPEAT a guaranteed exit and often a <b>maximum-iteration guard</b> counter; never wait on an I/O change inside a loop (the I/O does not update mid-scan). Also mind performance: a large loop with heavy math per pass adds directly to scan time, so budget it. Used correctly, loops make ST vastly more concise than ladder for any repetitive data operation."
+      },
+      {
+        "h": "Ladder Special Instructions: Latch/Unlatch, One-Shots, and Jumps",
+        "body": "Beyond basic contacts and coils, ladder has <b>special-purpose instructions</b> every technician must recognize. <b>Latch (OTL / SET)</b> and <b>Unlatch (OTU / RST)</b> are <b>retentive</b> output instructions: OTL turns a bit on and it <b>stays on even if the rung goes false</b>, until an OTU explicitly turns it off - powerful for state that must persist, but dangerous because a latched output can <b>survive a power cycle</b> (retentive memory) and re-energize on startup, so they demand careful first-scan handling. A <b>one-shot (ONS / OSR / OSF)</b> produces a <b>single-scan pulse</b> on a rising (or falling) edge - essential for 'do this once per button press' actions like incrementing a counter or triggering a MSG, preventing the action from repeating every scan the input is held. <b>Jump (JMP) and Label (LBL)</b>, and <b>subroutine calls (JSR/SBR/RET)</b>, control program flow - skipping rungs or calling routines conditionally - but overusing JMP creates hard-to-follow spaghetti and can skip rungs that should always execute (an unscanned output holds its last state). Understanding these instructions is essential both to write clean logic and to troubleshoot: a stuck latched bit, a counter that increments wildly (missing one-shot), or an output frozen by a jump are all common real-world faults that make no sense until you know the instruction behavior behind them."
+      },
+      {
+        "h": "Function Block Diagram in Depth: Execution Order and Signal Chains",
+        "body": "<b>Function Block Diagram (FBD)</b> represents logic as interconnected blocks with signals flowing left-to-right along wires, making it intuitive for <b>continuous processes, analog signal chains, and control loops</b> - it looks like the process schematic. Signals pass from block output to block input; a PID block, a scaling block, a filter, and an alarm block wired in series form a readable analog control chain. Two subtleties trip people up. First, <b>execution order</b>: the runtime evaluates blocks in a defined sequence (often by network/data-flow order or an explicit order number), and if a block that produces a value executes <i>after</i> the block that consumes it, the consumer uses <b>last scan's value</b> - a one-scan delay that matters in fast loops and feedback paths. Second, <b>feedback loops</b>: wiring an output back to an earlier input (common in control) inherently introduces that one-scan delay and must be intentional. FBD's strengths are readability of signal flow and easy reuse of vendor and custom function blocks (a motor block, a valve block) that encapsulate logic like objects. Its weakness is that complex boolean interlocking and sequencing get messy - which is why real programs mix languages: FBD or ST for analog/loops, ladder for boolean interlocks and I/O, SFC for sequences. Knowing FBD execution order is key to debugging why an analog chain lags or a computed value is one scan stale."
+      },
+      {
+        "h": "Why Structured Text Wins for Analog, Math, and Data",
+        "body": "Choosing the right language per task is an IEC 61131-3 competency, and for <b>math, analog processing, and data manipulation, Structured Text is decisively better than ladder</b>. A scaling-and-linearization calculation that is one readable line in ST - Flow := (Raw - 6400.0) / 25600.0 * (FlowMax - FlowMin) + FlowMin; - becomes an unreadable chain of CPT/MUL/SUB/ADD ladder blocks that no one can maintain. ST offers the full set of <b>operators and functions</b> (arithmetic, trig, exponential, comparison, logical), clean <b>conditionals (IF/ELSIF/CASE)</b>, and <b>loops</b> for array work, all in compact text. Complex decision logic reads like a recipe in a CASE state machine versus a sprawl of interlocked rungs. Where the value crosses a threshold, ST's <b>expressions</b> capture engineering formulas directly from the datasheet. The corollary is equally important: ST is <b>worse than ladder for simple boolean I/O interlocks and for troubleshooting by maintenance staff</b>, because ladder's rung visualization shows live power flow that a technician can read at a glance to see why an output is off, whereas ST logic is opaque to online 'why is this false' tracing. The mature approach: <b>ST for the math/analog/data-heavy routines, ladder for the boolean interlock and machine-I/O logic</b> that operators and technicians will troubleshoot. Forcing everything into one language is the mark of inexperience."
+      },
+      {
+        "h": "Comments, Documentation, and Descriptive Naming Across Languages",
+        "body": "Code is read far more often than it is written, and in a plant it is read by the next technician at 3 a.m. during a breakdown - so <b>documentation is a safety and uptime issue</b>, not a nicety. The most powerful documentation is <b>descriptive naming</b>: tag-based systems let you name a tag <code>Sorter3_DivertSol_Extend</code> instead of <code>O:5/2</code>, making the logic self-explaining; a good name removes the need for many comments. <b>Rung/network comments</b> in ladder explain <i>why</i> a rung exists and what condition it implements ('Divert enabled only when downstream ZPA zone is clear AND barcode read is valid'), not just restating what the contacts obviously do. In <b>Structured Text</b>, inline comments (// or (* *)) explain intent, document the source of a magic number (the scaling constants above should cite the transmitter range), and flag assumptions. Cross-language, the discipline is the same: name things clearly, comment the non-obvious reasoning and any workaround, keep a revision history in a header block (what changed, when, who, why), and document interlocks and safety logic thoroughly. Poorly documented code costs enormous troubleshooting time and creates risk when someone modifies logic they do not fully understand. The habit that pays off most: write the comment explaining the <i>why</i> at the moment you write the logic, because the reasoning is obvious to you now and invisible to everyone later."
+      },
+      {
+        "h": "Debugging by Language: Watch Tables, Cross-Reference, and Trends",
+        "body": "Each IEC language has its own <b>online debugging</b> techniques, and mastering them is what makes troubleshooting fast. In <b>ladder</b>, the primary tool is <b>live rung visualization</b> - the software highlights energized rungs/contacts so you literally see power flow and can trace back from a de-energized output through each contact to find the one that is false; combined with <b>forcing</b> (overriding an I/O point to test a circuit) it is unmatched for boolean logic. Across all languages, the <b>cross-reference</b> is essential: it lists everywhere a tag is used (read and written), so when an output misbehaves you find every rung/routine that writes to it - critical for catching the classic <b>double-write / duplicate destructive rung</b> bug (two places writing one output, last-executed wins) and for understanding a tag's full role before you change it. For <b>Structured Text and analog</b>, where there is no power-flow visualization, you lean on <b>watch tables/tag monitors</b> (viewing live values), stepping logic, and especially <b>trends</b> - charting a variable over time reveals oscillation, drift, or a value that briefly spikes that a static value view would miss. Data trends are the ST/analog equivalent of ladder's live view. Also use the <b>fault log and diagnostics</b> (GSV/system data) and, for intermittent issues, capture with trends triggered on the fault. Knowing which debug tool fits which language - live rungs for boolean ladder, cross-reference for tag conflicts, watch/trend for ST and analog - turns hours of guessing into minutes of observation."
       }
     ],
     "lab": {
@@ -3989,6 +4751,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "IEC 61131-3 explicitly supports mixing languages; choosing the best language per task (ladder for interlocks, ST for math, SFC for sequence, FBD for loops) improves clarity and maintainability."
+      },
+      {
+        "q": "What is the classic scan-time danger with a WHILE loop in Structured Text?",
+        "options": [
+          "It runs too slowly",
+          "If its exit condition is never satisfied, it becomes an infinite loop that hangs the scan and faults the processor on watchdog",
+          "It cannot use variables",
+          "It only runs once"
+        ],
+        "answer": 1,
+        "explain": "A PLC executes the whole loop in one scan; a WHILE whose condition never becomes false (e.g. waiting on I/O that does not update mid-scan) hangs the scan and trips the watchdog fault."
+      },
+      {
+        "q": "What is distinctive about a Latch (OTL/SET) output instruction?",
+        "options": [
+          "It clears every scan",
+          "It is retentive - stays on even when the rung goes false (and can survive a power cycle) until an Unlatch turns it off",
+          "It is the same as a normal coil",
+          "It can only be used once"
+        ],
+        "answer": 1,
+        "explain": "OTL is retentive: the bit stays on after the rung goes false and can persist through a power cycle, requiring an explicit OTU and careful first-scan handling."
+      },
+      {
+        "q": "In FBD, if a block executes AFTER the block that consumes its output, what happens?",
+        "options": [
+          "A syntax error",
+          "The consumer uses last scan's value - a one-scan delay that matters in fast/feedback loops",
+          "The program stops",
+          "Nothing is affected ever"
+        ],
+        "answer": 1,
+        "explain": "FBD evaluates blocks in a defined order; a consumer running before its producer sees the previous scan's value, introducing a one-scan delay important in feedback paths."
+      },
+      {
+        "q": "For a datasheet scaling/linearization calculation, why is Structured Text preferred over ladder?",
+        "options": [
+          "Ladder cannot do math",
+          "One readable ST expression captures the formula directly, versus an unreadable chain of CPT/MUL/SUB ladder blocks",
+          "ST runs on different hardware",
+          "Ladder is always faster"
+        ],
+        "answer": 1,
+        "explain": "ST expresses arithmetic formulas compactly and readably; the same math in ladder becomes a hard-to-maintain sprawl of compute blocks. (Ladder still wins for boolean interlocks.)"
+      },
+      {
+        "q": "What is the single most powerful form of self-documenting code?",
+        "options": [
+          "Long file names",
+          "Descriptive tag naming (e.g. Sorter3_DivertSol_Extend) that makes logic self-explaining",
+          "Removing all comments",
+          "Using addresses like O:5/2"
+        ],
+        "answer": 1,
+        "explain": "A descriptive tag name conveys function at a glance and removes the need for many comments; opaque addresses force the reader to look everything up."
+      },
+      {
+        "q": "Which debugging tool best finds a double-write (two places writing one output) bug?",
+        "options": [
+          "Live rung view alone",
+          "The cross-reference, which lists everywhere a tag is written",
+          "A voltmeter",
+          "The HMI trend"
+        ],
+        "answer": 1,
+        "explain": "The cross-reference lists all reads/writes of a tag, exposing duplicate destructive writes where the last-executed instruction wins - a common, confusing fault."
+      },
+      {
+        "q": "Why use a one-shot (ONS/OSR) around a counter increment or MSG trigger?",
+        "options": [
+          "To slow the scan",
+          "To produce a single-scan pulse on the edge, so the action happens once per event instead of every scan the input is held",
+          "To make it retentive",
+          "To disable the counter"
+        ],
+        "answer": 1,
+        "explain": "A one-shot fires for a single scan on a rising/falling edge, ensuring 'do this once per press' actions do not repeat every scan the input remains true."
+      },
+      {
+        "q": "For debugging Structured Text or an analog value (no power-flow view), what is the key technique?",
+        "options": [
+          "Guessing",
+          "Watch tables/tag monitors and especially trends, which chart the value over time to reveal oscillation, drift, or brief spikes",
+          "Forcing every output",
+          "Rewriting in Instruction List"
+        ],
+        "answer": 1,
+        "explain": "Without ladder's live rung view, ST/analog debugging relies on watch tables and time trends; trending reveals dynamic behavior (oscillation, spikes) a static value view misses."
+      },
+      {
+        "q": "What is the mature approach to language selection in a mixed IEC 61131-3 program?",
+        "options": [
+          "Force everything into one language",
+          "ST for math/analog/data-heavy routines, ladder for boolean interlocks and machine I/O that techs troubleshoot, SFC for sequences",
+          "Only use Instruction List",
+          "Always use FBD"
+        ],
+        "answer": 1,
+        "explain": "Each language fits certain tasks: ST for calculations/data, ladder for troubleshootable boolean I/O logic, FBD for signal chains, SFC for sequences - forcing one language is inexperienced."
       }
     ],
     "resources": [
@@ -4123,6 +4984,30 @@ MODULES_3 = [
       {
         "h": "VFD-Driven Conveyor - Ramps, Faults, and Tuning",
         "body": "Larger belt conveyors and sorters use a <b>Variable Frequency Drive (VFD)</b> to run a 3-phase motor at controlled speed with soft <b>accel/decel ramps</b>. Ramps matter: too-fast acceleration on a loaded belt causes <b>belt slip</b>, product tip-over, and <b>overcurrent (OC)</b> trips; too-fast deceleration causes <b>DC bus overvoltage (OV)</b> as the load regenerates into the drive - fixed by longer decel or a <b>braking resistor</b>.<br><br>Typical VFD faults and meaning: <b>OC/overcurrent</b> = mechanical bind, jam, or too-fast accel; <b>OL/overload (I2t)</b> = sustained over-rated current, often a dragging bearing or overloaded belt; <b>OV</b> = decel too fast/regen; <b>UV/undervoltage</b> = supply sag or lost phase; <b>OH/overtemp</b> = blocked heatsink airflow or high ambient; <b>ground fault</b> = motor/cable insulation failure. Always clear the mechanical cause before resetting. Parameters that matter on conveyor: accel/decel time, current limit, V/Hz vs sensorless-vector mode, and the motor nameplate FLA entered for correct overload protection."
+      },
+      {
+        "h": "Rollers, Idlers, CEMA Ratings, and Bearing Life",
+        "body": "The humble <b>conveyor roller (idler)</b> is the most numerous component on a belt system and a leading source of failures and thermography/ultrasound findings. Rollers are rated by <b>CEMA class</b> (A, B, C, D, E in ascending duty) which specifies bearing size, shaft diameter, and load capacity for the belt width, speed, and load - undersizing causes early bearing failure, and oversizing wastes money and rotating mass. Each roller rides on <b>bearings</b> (typically sealed ball bearings) whose <b>L10 life</b> (the hours at which 10% will have failed) depends on load and speed; a roller run overloaded or contaminated fails early. Failure signatures a technician recognizes: a roller that <b>does not spin freely</b> (seized or dragging bearing) creates a flat spot and belt wear, drags the drive (raising motor current), and generates heat and noise - caught by touch, IR, or ultrasound on route. A <b>frozen return roller</b> abrades the belt bottom cover. <b>Idler alignment and spacing</b> affect belt tracking and sag; troughing idlers set belt shape on bulk conveyors. On MDR (motor-driven-roller) beds the roller <i>is</i> the drive, so a failed MDR is both a mechanical and a controls fault. PM includes spinning rollers by hand on route, listening/IR for hot bearings, and replacing seized rollers before they wear the belt or overload the drive - a cheap part whose neglect causes expensive belt and motor damage."
+      },
+      {
+        "h": "Conveyor Guarding, Nip Points, and E-Stop Pull-Cords",
+        "body": "Conveyors injure people primarily at <b>nip points</b> - where the belt meets a pulley, roller, or the frame, and where a hand, sleeve, or drawstring can be drawn in and crushed or amputated. Safe design and maintenance require <b>guarding</b> these hazards: <b>fixed guards</b> over drive/tail pulleys and in-running nips, guards at transfer points, and barriers where personnel pass. OSHA and ANSI/ASME B20.1 (conveyor safety) drive the requirements. Along the length of a conveyor that people work beside, a <b>pull-cord (cable-operated) E-stop</b> runs the full length so a worker anywhere can trip a stop by pulling the cable in any direction; these switches <b>latch</b> and require a local reset, and the cable tension is monitored so a broken or slack cable also trips (fail-safe). <b>Guard interlocks</b> stop the conveyor if an access guard is opened. Critical maintenance rule: conveyors must be <b>locked out (LOTO)</b> before reaching into guarded areas or clearing a jam - the leading cause of conveyor fatalities is reaching into a running or 'stopped but not locked out' conveyor that restarts, whether by automatic sequence, a remote start, or stored energy. Never defeat a guard or pull-cord; a bypassed safety on a conveyor is a mechanism for a serious injury. Verifying pull-cords and guard interlocks is a standard PM item."
+      },
+      {
+        "h": "Merge and Divert Timing: Encoder Tracking and Product Following",
+        "body": "High-rate sortation depends on knowing exactly <b>where each package is</b> at every instant so a diverter fires at precisely the right moment - this is <b>product tracking</b>. The core technique is a <b>conveyor encoder</b> that measures belt travel: each pulse represents a fixed distance moved, so the controller advances a virtual position for every tracked item as the belt runs. When a package is identified (a barcode read or a photoeye detect at a known point), its position is <b>registered into a tracking window/shift register</b> keyed to encoder counts; as the belt moves, the item's position updates, and when it reaches the target divert the controller fires the diverter (pop-up, shoe, cross-belt) for the calculated window. <b>Photoeyes</b> at induction confirm and re-synchronize the tracking, correcting for slip. Getting the timing right requires accounting for <b>diverter actuation delay</b> (a pop-up or shoe takes tens of milliseconds to deploy) and belt speed, so the fire command is issued slightly early. Failures show as <b>mis-sorts</b>: fire too early or late and the package goes to the wrong lane or is clipped. Encoder slip, a slipping belt (actual travel differs from encoder), a drifting photoeye, or a wrong tracking-distance parameter all corrupt tracking. Understanding encoder-based product following is essential to commissioning and troubleshooting any sorter, merge, or line-tracking application."
+      },
+      {
+        "h": "Motorized Pulley (Drum Motor) Drives vs External Gearmotors",
+        "body": "A conveyor's drive can be an <b>external gearmotor</b> (a motor and gearbox mounted outside the frame, coupled to the drive pulley by chain/sprocket or a direct/shaft mount) or a <b>motorized pulley (drum motor)</b> - a self-contained unit where the motor and gear reduction are built <b>inside the drive-pulley drum</b>. Each has clear trade-offs. The <b>external gearmotor</b> is easy to access, inspect, and service; components (motor, reducer, chain, sprockets, bearings) are standard and individually replaceable; but it occupies space outside the frame, exposes a chain/coupling nip that must be guarded, and has more parts to align and maintain. The <b>drum motor</b> is compact (everything inside the pulley, freeing frame space and eliminating external guarding), sealed and hygienic (favored in food/wash-down and tight installs), efficient, and quiet, with no external nip - but when it fails the <b>entire pulley is replaced</b> as a unit (little field-repairable), it can be costlier up front, and heat dissipation is limited by the drum. Selection depends on space, environment (wash-down favors drum motors), serviceability preference, and cost. For maintenance, know which you have: a drum-motor fault is a pulley swap, while a gearmotor fault might be a $30 chain or a bearing rather than the whole drive. Both are increasingly VFD-driven for soft start and speed control."
+      },
+      {
+        "h": "Conveyor Preventive Maintenance Routes and Inspection Standards",
+        "body": "Conveyor reliability comes from disciplined <b>PM routes</b> - scheduled inspection and service loops that catch degradation before it strands a line. A typical route combines <b>sensory inspection</b> and measured checks. Walking the conveyor, the technician checks <b>belt tracking</b> (running centered, not drifting to one side - a mistracking belt frays edges and can climb off), <b>belt condition</b> (cuts, fraying, worn covers, splice integrity), <b>belt tension/take-up</b> position (within travel range), and listens/feels for <b>hot or noisy bearings</b> on rollers, pulleys, and the drive (IR and ultrasound add objectivity). <b>Rollers</b> are spun to find seized/dragging units; <b>drive components</b> - gearmotor oil level, chain tension and wear/elongation, sprocket wear, coupling condition - are inspected and lubricated per schedule. <b>Cleanliness</b> matters: accumulated debris jams diverts, fouls photoeyes (causing no-reads and false stops), and loads the drive; belt scrapers and cleaning are PM items. <b>Safety devices</b> - E-stop pull-cords, guards, interlocks - are function-tested. <b>Photoeyes/sensors</b> are checked for alignment and margin. Findings are logged to the CMMS so trends emerge and repeat problems get engineered out. The philosophy mirrors the P-F curve: routine condition checks detect the potential failure (a warm bearing, a fraying belt, a stretched chain) with enough lead time to plan the repair into a scheduled window instead of suffering an unplanned line-down at peak."
+      },
+      {
+        "h": "Chutes, Transfers, and Product-Flow Problem Solving",
+        "body": "Where product moves between conveyors or changes elevation - <b>transfers, chutes, and merges</b> - is where flow problems concentrate, and diagnosing them blends mechanical, controls, and product knowledge. A <b>transfer point</b> (end of one conveyor to the start of the next) can cause <b>jams</b> if the gap is wrong (too large lets small items fall or tip; too small causes contact and hang-ups), if speeds are mismatched (a slower downstream conveyor causes pile-up and back-pressure), or if a <b>dead plate/transfer plate</b> is worn or misaligned. <b>Chutes</b> (gravity slides between levels) jam from insufficient slope for the product's friction, from a <b>bottleneck</b> where geometry narrows, from static cling or wet/deformed product, and from downstream stoppage causing back-up; the fix may be steepening the chute, adding low-friction lining (UHMW), a vibrator, or an air assist, or solving the downstream stop. <b>Merges</b> jam when two streams meet faster than the takeaway can accept, requiring <b>merge control</b> (metering/gapping upstream so streams interleave). The troubleshooting mindset: distinguish a <b>mechanical</b> cause (worn plate, wrong gap, damaged guide) from a <b>controls</b> cause (bad photoeye, mistimed divert/merge, speed mismatch, accumulation logic) from a <b>product/rate</b> cause (over-rate, out-of-spec item, wet/light product). Recurring jams at one spot are a design/parameter issue to engineer out, not a jam to keep clearing - the reliability lesson that separates firefighting from problem-solving on MHE."
       }
     ],
     "lab": {
@@ -4499,6 +5384,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "Polarizing filters make the eye respond only to light returned from its dedicated reflector, rejecting shine off glossy shrink-wrap that could otherwise mimic the reflector and cause missed detections."
+      },
+      {
+        "q": "A conveyor roller that will not spin freely (seized bearing) causes what problems?",
+        "options": [
+          "Nothing noticeable",
+          "A flat spot and belt wear, higher drive motor current, plus heat and noise - detectable by touch, IR, or ultrasound",
+          "Faster belt speed",
+          "Lower motor current"
+        ],
+        "answer": 1,
+        "explain": "A dragging/seized roller abrades the belt, loads the drive (raising current), and generates heat/noise; spinning rollers on route and IR/ultrasound catch it before belt/motor damage."
+      },
+      {
+        "q": "What is the leading cause of conveyor fatalities that LOTO is meant to prevent?",
+        "options": [
+          "Slow belts",
+          "Reaching into a running or 'stopped-but-not-locked-out' conveyor that then restarts by sequence, remote start, or stored energy",
+          "Loud noise",
+          "Dust"
+        ],
+        "answer": 1,
+        "explain": "Most conveyor fatalities involve reaching into a conveyor that restarts unexpectedly; full LOTO before clearing jams or entering guarded areas is mandatory - never defeat guards or pull-cords."
+      },
+      {
+        "q": "How does encoder-based product tracking fire a diverter at the right moment?",
+        "options": [
+          "It guesses",
+          "Each encoder pulse represents belt distance; an item's position is registered at a known point and advanced by encoder counts until it reaches the divert",
+          "By timing with a stopwatch",
+          "Randomly"
+        ],
+        "answer": 1,
+        "explain": "A conveyor encoder measures belt travel; a package registered at induction advances in a tracking window by encoder counts, and the diverter fires (slightly early for actuation delay) at the target."
+      },
+      {
+        "q": "When a drum motor (motorized pulley) fails, what does repair typically involve versus an external gearmotor?",
+        "options": [
+          "Same repair for both",
+          "The entire pulley is replaced as a unit (little field-repairable), whereas a gearmotor may need only a chain or bearing",
+          "Drum motors never fail",
+          "Gearmotors are always replaced whole"
+        ],
+        "answer": 1,
+        "explain": "A drum motor integrates motor+reduction inside the pulley, so failure means a full pulley swap; an external gearmotor's individual parts (chain, bearing, reducer) are separately serviceable."
+      },
+      {
+        "q": "A belt is mistracking (drifting to one side). Why address it promptly?",
+        "options": [
+          "It improves sorting",
+          "It frays the belt edges and can climb off the frame; it signals tracking/alignment or tension issues",
+          "It only affects appearance",
+          "It speeds the line"
+        ],
+        "answer": 1,
+        "explain": "A mistracking belt damages its own edges and can run off the structure; it is a routine PM check pointing to idler alignment, crown, tilt, or take-up problems."
+      },
+      {
+        "q": "A chute repeatedly jams. Which is a legitimate engineering fix rather than repeatedly clearing it?",
+        "options": [
+          "Clear it faster each time",
+          "Steepen the slope, add low-friction (UHMW) lining, a vibrator or air assist, or resolve the downstream stoppage",
+          "Ignore it",
+          "Run the conveyor faster"
+        ],
+        "answer": 1,
+        "explain": "Recurring chute jams are a design/parameter problem: insufficient slope for the product's friction, a geometric bottleneck, or back-up - fixed by slope, lining, assists, or clearing the downstream cause."
+      },
+      {
+        "q": "Why does a pull-cord E-stop monitor cable tension (tripping on a broken or slack cable)?",
+        "options": [
+          "To save power",
+          "So a failed cable fails safe - a break or slack condition also stops the conveyor rather than silently disabling protection",
+          "To increase belt speed",
+          "To detect packages"
+        ],
+        "answer": 1,
+        "explain": "Monitoring tension makes the pull-cord fail-safe: pulling, breaking, or slackening the cable all trip the latched stop, so a damaged safety device does not leave the conveyor unprotected."
+      },
+      {
+        "q": "What does the CEMA class (A-E) of a conveyor roller specify?",
+        "options": [
+          "The belt color",
+          "Bearing size, shaft diameter, and load capacity for the duty - undersizing causes early bearing failure",
+          "The motor voltage",
+          "The barcode format"
+        ],
+        "answer": 1,
+        "explain": "CEMA idler classes rate rollers by duty (bearing/shaft size and load capacity); matching class to belt width, speed, and load prevents premature bearing failure."
+      },
+      {
+        "q": "A package sorts to the wrong lane (mis-sort). Which is a plausible product-tracking cause?",
+        "options": [
+          "The lane is painted wrong",
+          "Encoder/belt slip, a drifting induction photoeye, or a wrong tracking-distance parameter corrupting the item's tracked position",
+          "Too many lanes",
+          "The belt is too clean"
+        ],
+        "answer": 1,
+        "explain": "Mis-sorts stem from corrupted tracking: belt/encoder slip, a mis-timed or drifting photoeye, or an incorrect tracking-distance/actuation-delay parameter firing the diverter early or late."
       }
     ],
     "resources": [
@@ -4625,6 +5609,30 @@ MODULES_3 = [
       {
         "h": "Exception Handling and Stuck Robots",
         "body": "Robots generate <b>exceptions</b> when they cannot complete an action: lost localization (bad/blocked fiducial), obstruction detected, failed pod pickup, mechanical fault, low battery mid-task, or communication loss. The fleet software flags the unit and, depending on the exception, reroutes around it, dispatches it to a maintenance/queue location, or requires a technician clear.<br><br>Effective response: read the <b>exception/fault code</b> from the fleet UI first - it usually localizes the problem (drive, lift, camera, comms, battery). Then check the environment (floor marker, obstruction, spill) before assuming a hardware fault, since a large fraction of stuck events are environmental. Track repeat offenders: a single drive unit throwing the same fault repeatedly is a hardware candidate for the repair bench; many units faulting in one area is an environment/infrastructure problem. Good data hygiene (which unit, which code, where on the grid) turns robot exceptions into targeted, low-mean-time-to-repair fixes."
+      },
+      {
+        "h": "Localization Error Sources and Lost-Robot Recovery",
+        "body": "An AMR/drive unit knows where it is by continuously <b>localizing</b> - fusing its wheel <b>odometry</b> (encoder-counted distance/heading) with periodic absolute references (fiducial/QR reads on the floor, or LiDAR SLAM matching against a map). <b>Localization error</b> accumulates between absolute fixes: wheel <b>slip</b> (on debris, spills, or a worn tire) makes odometry over- or under-count, so the robot's believed position drifts from reality. If drift grows before the next fiducial fix, or if a fiducial is <b>damaged, dirty, or missing</b>, the robot can <b>mislocalize</b> - confidently believe it is somewhere it is not - or declare itself <b>lost</b> and stop, refusing to move blindly into traffic (the safe behavior). Common root causes: a <b>worn or contaminated floor fiducial</b> the camera cannot read, a <b>dirty downward camera lens</b>, <b>wheel slip</b> from a floor contaminant, a <b>bent/loose caster or drive wheel</b> corrupting odometry, or a <b>lighting change</b> defeating the vision system. Recovery: the fleet software flags the lost robot; a technician may need to <b>manually verify its position and re-localize</b> it (place it on a known fiducial, clear the fault), and address the root cause (clean/replace the fiducial, clean the lens, fix the wheel). The lesson: localization is a sensor-fusion chain, and a fault anywhere - floor marker, camera, or wheel - shows up as position error, so triage covers all three."
+      },
+      {
+        "h": "Payload Handling: Lift Mechanism, Weight Limits, and Pod Stability",
+        "body": "A drive unit's job is to <b>lift and transport a pod (inventory shelf/rack)</b>, and the <b>lift mechanism</b> plus load limits are central to safe operation. The unit drives under a pod, engages a <b>lift (typically a motor-driven screw/cam or scissor mechanism)</b> that raises the pod off its feet, rotates/translates to carry it, and lowers it precisely back onto its footprint. Every unit has a <b>rated payload</b> - exceed it and the lift motor overloads, drive traction and braking suffer, and stability degrades. <b>Pod stability</b> matters because a tall, loaded shelf has a high <b>center of gravity</b>: aggressive acceleration, deceleration, or turning generates lateral force that can shift inventory or, in the extreme, tip a pod - so the fleet software <b>limits acceleration and speed as a function of load and turn</b>, and pods have weight-distribution rules (heavy items low). A pod that is <b>overloaded, unevenly loaded, or damaged</b> (bent feet, warped base) is a tipping and jam risk. Mechanically, the lift is a maintenance focus: the screw/cam and its bearings wear, the lift motor and its gear train are duty-cycled hard, and a <b>lift that does not fully raise or lower</b> strands the unit or drops a pod. PM inspects lift travel, listens for a straining lift motor, checks for wear/play, and verifies the unit refuses out-of-limit loads. Understanding the lift-and-payload envelope explains many field faults - a unit that faults under a heavy pod but runs fine empty points at the lift drivetrain or an over-limit load."
+      },
+      {
+        "h": "Wireless Network Design for Dense Robot Fleets",
+        "body": "A robotic field may run hundreds of drive units that <b>continuously communicate</b> with the fleet management system for path assignments, position reporting, and safety coordination, so the <b>wireless network is mission-critical infrastructure</b> - if a robot loses comms it must stop safely, and widespread comms loss halts the floor. Designing for density is hard: hundreds of clients in one space demand many <b>access points (APs)</b> with careful <b>cell planning</b>. Key principles: use <b>both bands</b> but lean on <b>5 GHz</b> (more non-overlapping channels, less congestion than 2.4 GHz's three usable channels), plan <b>channel reuse</b> so adjacent APs do not co-channel interfere, and size AP density and power for <b>capacity, not just coverage</b> (a signal can be strong yet the AP saturated by client count). Robots move constantly, so <b>seamless roaming</b> (fast BSS transition, 802.11r/k/v) lets a unit hand off between APs without a comms gap that would stop it. <b>Interference</b> from other 2.4 GHz devices, metal racking, and RF-reflective environments must be surveyed. <b>QoS</b> prioritizes the small, latency-sensitive robot control traffic. Redundancy (overlapping AP coverage) means one failed AP degrades rather than blinds an area. For a technician, wireless issues present as robots <b>stopping or bunching</b> in a particular zone (an AP dead spot, interference, or saturation), so reading AP client counts, signal maps, and roaming logs is part of AMR-floor troubleshooting."
+      },
+      {
+        "h": "Floor Infrastructure: Fiducials, Floor Flatness, and Environment",
+        "body": "The <b>floor itself is part of the robot system</b>, and its condition directly affects reliability. <b>Fiducials/QR markers</b> laid out on a precise grid are the absolute position references; they must stay <b>clean, undamaged, and correctly placed</b> - a torn, painted-over, worn, or debris-covered fiducial causes read failures and localization errors, so fiducial inspection/replacement is a defined maintenance activity. <b>Floor flatness and condition</b> matter mechanically: bumps, cracks, expansion joints, and debris cause wheel slip (corrupting odometry), jarring that loosens components, and can jam or deflect a low-riding drive unit; spilled liquids cause slip and can damage electronics. Even <b>floor color/finish and lighting</b> can affect the downward vision system's ability to read markers. <b>Housekeeping</b> is therefore a reliability function on a robotic floor - loose debris, stray packaging, and spills are hazards to be cleaned promptly, and dropped items become obstacles the LiDAR must detect and route around (or that stop a unit). <b>Environmental factors</b> - temperature (affects batteries and electronics), humidity/condensation, and dust - are managed within the equipment's ratings. Physical infrastructure like <b>charging stations, workstation interfaces, and safety fencing/access points</b> is inspected too. The mindset: a robotic field's uptime depends as much on clean, flat, well-marked, well-lit floor and good housekeeping as on the robots themselves, so floor/fiducial PM and cleanliness discipline are core to fleet reliability."
+      },
+      {
+        "h": "AMR Diagnostics: Robot Logs, Health Telemetry, and Fault Triage",
+        "body": "Modern drive units are heavily instrumented and stream <b>health telemetry</b> to the fleet system, so much AMR troubleshooting starts with <b>data, not the physical robot</b>. Each unit reports its <b>state</b> (idle, transiting, charging, faulted), <b>battery</b> status (state of charge, voltage, temperature, charge cycles), <b>motor/drive</b> data (currents, temperatures), <b>localization confidence</b>, error/fault codes, and communication health. The fleet software aggregates this so a technician (or an analytics system) can <b>triage</b>: a unit repeatedly faulting in one location points to <b>floor/fiducial or network</b> infrastructure, not the robot; a unit with rising motor current or temperature points to a <b>mechanical drag</b> (wheel, caster, lift); a unit with declining battery capacity or high charge-cycle count is nearing <b>battery end-of-life</b>; frequent lost-localization events flag a camera or fiducial issue. <b>Fault codes</b> and their <b>log history</b> (what the unit was doing, its sensor readings at the trip) localize the problem the same way a VFD fault log does. The efficient workflow: read the unit's fault and telemetry first, distinguish an <b>infrastructure problem</b> (recurs across many units in a spot) from a <b>unit-specific problem</b> (follows the individual robot), then service accordingly - pull a specific unit for shop repair, or fix the floor/network/fiducial that is faulting many units. This data-first triage, plus tracking fleet-wide <b>reliability metrics</b> (mean distance/time between interventions, per-unit fault rates), is how a large field is kept running rather than chasing one robot at a time."
+      },
+      {
+        "h": "Fleet Reliability, Bad-Actor Robots, and Preventive Replacement",
+        "body": "Managing hundreds of units is a <b>fleet reliability</b> problem, and the same reliability engineering that governs any asset population applies. The fleet software and CMMS track <b>per-unit and fleet-wide metrics</b>: intervention rate (how often a unit needs human help per hour or per mile), fault frequency by code, availability, and throughput contribution. <b>Bad-actor analysis</b> (Pareto) ranks the worst units and the most common fault modes so effort targets the vital few - a handful of units or one recurring fault often drive a disproportionate share of interventions, and fixing or retiring them yields the biggest availability gain. Individual units follow the <b>bathtub curve</b>: early-life faults from assembly/component defects (screened by commissioning/burn-in), a long useful life, and eventual <b>wear-out</b> of high-cycle components - drive wheels/tires, casters, the lift drivetrain, and especially the <b>battery</b> (LiFePO4 degrades with cycles; capacity fade eventually shortens run time and forces replacement). <b>Preventive component replacement</b> at cycle-based intervals (tires, casters, lift wear parts, batteries) is scheduled before wear-out causes in-service failures, mirroring PM interval optimization on any equipment. Units are rotated through <b>scheduled maintenance</b> and shop rebuilds to spread wear and catch degradation. The fleet lens also informs <b>spares strategy</b> (enough units and parts to cover the maintenance and failure population while hitting throughput) and design feedback (a fault mode common across the fleet is escalated to engineering). Treating the robots as a managed asset population - metrics, bad-actor targeting, cycle-based replacement, and spares - is what sustains high floor availability at scale."
       }
     ],
     "lab": {
@@ -5001,6 +6009,105 @@ MODULES_3 = [
         ],
         "answer": 1,
         "explain": "Carrying a tall heavy pod raises the center of gravity and tip risk, so motion is limited and routes are planned to keep the load stable."
+      },
+      {
+        "q": "A drive unit declares itself 'lost' and stops rather than moving. Why is stopping the correct behavior?",
+        "options": [
+          "It is a bug",
+          "Moving with an uncertain position would risk driving blindly into traffic or obstacles; stopping is the safe response to lost localization",
+          "It saves battery",
+          "It is charging"
+        ],
+        "answer": 1,
+        "explain": "When localization confidence is lost (e.g. missing fiducial, wheel slip drift), moving blindly is unsafe, so the unit stops and flags for recovery rather than risk a collision."
+      },
+      {
+        "q": "A unit faults under a heavy pod but runs fine empty. Where should you look?",
+        "options": [
+          "The wireless network",
+          "The lift drivetrain (screw/cam, lift motor, gears) or an over-limit/uneven load",
+          "The barcode scanner",
+          "The fiducial grid"
+        ],
+        "answer": 1,
+        "explain": "A load-dependent fault points at the lift mechanism and payload envelope - a straining/worn lift drivetrain or an overloaded/unevenly loaded pod, not comms or navigation."
+      },
+      {
+        "q": "Why is 5 GHz preferred over 2.4 GHz for a dense robot fleet's wireless?",
+        "options": [
+          "It travels farther",
+          "It offers more non-overlapping channels and less congestion than 2.4 GHz's three usable channels, aiding capacity/channel reuse",
+          "It uses less power",
+          "Robots only support 5 GHz"
+        ],
+        "answer": 1,
+        "explain": "Dense fleets need capacity and channel reuse; 5 GHz has many non-overlapping channels versus 2.4 GHz's three, reducing co-channel interference in a high-client environment."
+      },
+      {
+        "q": "Robots repeatedly stop or bunch in one specific floor zone. What does this pattern suggest?",
+        "options": [
+          "A single defective robot",
+          "An infrastructure problem in that zone - an AP dead spot/interference, or a damaged fiducial - since it affects many units in one place",
+          "The pods are too light",
+          "Normal operation"
+        ],
+        "answer": 1,
+        "explain": "A fault that recurs by LOCATION across many units indicates infrastructure (network dead spot/interference or a damaged fiducial), whereas a fault that follows one robot is unit-specific."
+      },
+      {
+        "q": "Why is housekeeping (cleaning spills and debris) a reliability function on a robotic floor?",
+        "options": [
+          "Only for appearance",
+          "Debris/spills cause wheel slip (odometry error), obscure fiducials, create obstacles, and can damage electronics - directly hurting uptime",
+          "It has no effect",
+          "It speeds up charging"
+        ],
+        "answer": 1,
+        "explain": "The floor is part of the system: contaminants cause slip and localization error, cover fiducials, become obstacles, and damage units - so cleanliness directly affects fleet reliability."
+      },
+      {
+        "q": "What is the efficient first step in AMR fault triage?",
+        "options": [
+          "Immediately disassemble the robot",
+          "Read the unit's fault codes and health telemetry first, then distinguish an infrastructure problem (recurs by location) from a unit-specific one (follows the robot)",
+          "Replace the battery",
+          "Reboot every robot"
+        ],
+        "answer": 1,
+        "explain": "Data-first triage: the unit's fault log and telemetry (currents, temps, battery, localization) localize the issue, and the recurrence pattern separates infrastructure from unit faults."
+      },
+      {
+        "q": "Why does a LiFePO4 drive-unit battery eventually require replacement?",
+        "options": [
+          "It never does",
+          "Capacity fades with charge cycles, eventually shortening run time - a wear-out item replaced on a cycle-based schedule",
+          "It leaks acid",
+          "The voltage doubles"
+        ],
+        "answer": 1,
+        "explain": "LiFePO4 capacity degrades with cycling; as run time shortens it is replaced as a wear-out component, ideally preventively before it causes in-service shortfalls."
+      },
+      {
+        "q": "What does bad-actor (Pareto) analysis achieve in managing a large robot fleet?",
+        "options": [
+          "It ranks robots by color",
+          "It ranks the worst units and most common fault modes so effort targets the vital few driving most interventions",
+          "It replaces all robots equally",
+          "It disables telemetry"
+        ],
+        "answer": 1,
+        "explain": "A few units or one recurring fault mode often cause a disproportionate share of interventions; Pareto/bad-actor ranking directs limited effort where it yields the biggest availability gain."
+      },
+      {
+        "q": "A single unit shows steadily rising motor current and temperature over its routes. What does this indicate?",
+        "options": [
+          "A network problem",
+          "A developing mechanical drag - a wheel, caster, or lift issue - following that individual unit",
+          "A fiducial problem",
+          "Normal battery aging"
+        ],
+        "answer": 1,
+        "explain": "Rising current/temperature that follows one unit signals mechanical drag (wheel/caster/lift), a unit-specific fault caught by trending telemetry before it fails outright."
       }
     ],
     "resources": [

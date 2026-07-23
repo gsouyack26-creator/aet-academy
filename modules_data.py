@@ -134,6 +134,30 @@ MODULES = [
       {
         "h": "A Structured Approach to Troubleshooting",
         "body": "Effective troubleshooting is a repeatable process, not intuition. A widely-taught structure: (1) <b>Observe and gather</b> - what are the exact symptoms, what changed, what does the operator report, what do the fault codes say. (2) <b>Check the fundamentals</b> first - is there power, air, network comms, and is the safety circuit made? A huge fraction of 'complex' faults are a tripped breaker, dropped E-stop, or lost comms. (3) <b>Divide and isolate</b> - split the system to determine whether the fault is mechanical, electrical, or controls, using the half-split method to halve the suspect area each test. (4) <b>Form and test one hypothesis at a time</b>, changing only one variable so you know what fixed it. (5) <b>Verify and document</b> - confirm the fix under real conditions and record root cause for the next person. Avoid the two classic traps: swapping parts randomly ('shotgunning') and fixing the symptom while missing the root cause that will bring the fault back."
+      },
+      {
+        "h": "Lean Manufacturing and the Role of Automation",
+        "body": "Automation delivers the most value when it serves a <b>lean</b> production system rather than automating waste. Lean targets the <b>seven (or eight) wastes</b> - Transport, Inventory, Motion, Waiting, Overproduction, Overprocessing, Defects (and unused Talent), remembered as TIMWOOD(T). Automation should attack these: conveyors and AGVs cut transport and motion waste; pull-based control and just-in-time reduce inventory and overproduction; automatic inspection cuts defects. Two lean tools are especially relevant to controls: <b>poka-yoke</b> (mistake-proofing - a sensor or interlock that makes an error physically impossible, like a fixture that only accepts a part one way), and <b>jidoka</b> (autonomation - a machine that stops itself the instant it detects an abnormality rather than making bad parts). <b>Kaizen</b> (continuous improvement) and <b>value-stream mapping</b> identify where automation payback is real. The cautionary principle: automating a wasteful process just makes waste faster - improve the process first, then automate."
+      },
+      {
+        "h": "Automation Project Delivery: Roles and the V-Model",
+        "body": "A capital automation project follows a structured lifecycle, often drawn as a <b>V-model</b>: the left side descends through requirements definition (URS - User Requirement Spec), functional design (FDS), and detailed design; the bottom is build/coding; and the right side ascends through matching verification stages - module test, integration test, <b>Factory Acceptance Test (FAT)</b>, and <b>Site Acceptance Test (SAT)</b> - each validating against the spec written at the same level on the left. Key roles: the <b>end user/owner</b> defines needs and accepts the system; the <b>OEM</b> builds the machine; the <b>system integrator</b> ties equipment, controls, and software together; <b>distributors/vendors</b> supply components; and <b>consulting/engineering firms</b> may design. Clear scope boundaries and a documented requirements trail prevent the classic failure mode where nobody owns an interface between two vendors. Understanding these roles helps a technician know who to call and what documentation to expect at handover."
+      },
+      {
+        "h": "Interpreting a Full Technical Documentation Set",
+        "body": "Every machine arrives with a <b>documentation package</b>, and fluency in reading it is a core skill. Typical contents: <b>electrical schematics</b> and panel layouts, <b>P&amp;IDs</b> and loop diagrams, mechanical/assembly drawings, the <b>I/O list</b> and network topology, PLC/HMI program printouts, a <b>sequence of operations</b> narrative, component <b>datasheets</b> and manuals, the <b>bill of materials</b>, and the O&amp;M (operations and maintenance) manual with PM schedules. Cross-referencing is the skill: a fault points to a device tag on the HMI, which appears on a schematic page/rung, which maps to an I/O point, which ties to a datasheet giving wiring and specs. <b>As-built</b> documentation (updated to reflect field changes) is what you actually troubleshoot from - drawings that were never redlined after commissioning changes are a leading source of wasted time. A technician's habit of keeping documentation current is as important as the initial package."
+      },
+      {
+        "h": "Artificial Intelligence and Machine Learning in Automation",
+        "body": "AI/ML is moving from buzzword to practical tool on the plant floor, mostly in <b>analytics and inspection</b> rather than replacing deterministic control. Common applications: <b>predictive maintenance</b> models that learn normal vibration/current/temperature signatures and flag anomalies before failure; <b>machine-vision AI</b> that classifies defects too subtle or variable for rule-based vision (surface flaws, mixed-SKU recognition); <b>process optimization</b> that tunes setpoints for yield or energy; and <b>generative/assistant</b> tools that help write code or summarize alarms. Crucially, safety and real-time control stay on <b>deterministic PLCs/safety systems</b> - ML runs at the edge or in analytics layers, advising rather than directly commanding hazardous motion, because ML outputs are probabilistic and not certifiable to functional-safety standards. The technician's realistic role is feeding these systems good data (well-labeled, well-sampled) and acting on their recommendations, while understanding their limits - a model is only as good as its training data and can be confidently wrong on novel conditions."
+      },
+      {
+        "h": "Augmented Reality and Digital Work Instructions in Maintenance",
+        "body": "<b>Augmented reality (AR)</b> and digital work instructions are changing how maintenance is performed and documented. AR overlays information onto the technician's view - via tablet or headset - such as step-by-step repair guidance, highlighted components, torque specs, or a remote expert's annotations drawn onto the live scene (<b>remote assist</b>, letting a specialist guide a field tech without traveling). <b>Digital work instructions</b> replace paper procedures with interactive, media-rich steps that can enforce sequence, capture readings, and confirm completion - reducing errors and creating an automatic record. Linked to the CMMS/EAM, a scanned asset QR code can pull up its history, drawings, and open work orders on the spot. Benefits are faster training of new technicians, fewer procedural errors, and better knowledge capture as experienced workers retire. The limits are hardware ruggedness, connectivity in the plant, and keeping the digital content accurate - out-of-date instructions are as dangerous as out-of-date drawings."
+      },
+      {
+        "h": "Energy Management and Sustainability in Automated Plants",
+        "body": "Energy is often a plant's largest controllable cost and a growing sustainability mandate, and automation is central to managing it. <b>Sub-metering</b> (measuring energy by line, area, or machine rather than one plant meter) reveals where energy goes and enables accountability - you cannot manage what you do not measure. <b>ISO 50001</b> provides an energy-management-system framework (baseline, targets, continuous improvement). Automation reduces energy through <b>VFDs on variable-torque loads</b> (affinity-law cubic savings on fans/pumps), <b>demand management</b> (staggering start-ups and shedding non-critical load to avoid peak-demand charges), <b>compressed-air leak detection</b> (air is one of the most expensive utilities and typically 20-30% is lost to leaks), lighting controls, and idle/standby modes that power down equipment during no-production periods. <b>Power-factor correction</b> avoids utility penalties. Framing improvements in both kWh and carbon terms increasingly matters for ESG reporting, and the control system is where the data and the levers live."
       }
     ],
     "lab": {
@@ -530,6 +554,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Verifying fundamentals (power, air, comms, safety made) resolves a large share of apparently complex faults before deeper diagnosis."
+      },
+      {
+        "q": "The lean principle of poka-yoke refers to:",
+        "options": [
+          "Speeding up the conveyor",
+          "Mistake-proofing - making an error physically impossible (e.g. a one-way fixture)",
+          "Increasing inventory",
+          "Running machines faster"
+        ],
+        "answer": 1,
+        "explain": "Poka-yoke is error/mistake-proofing; a sensor, interlock, or fixture design that prevents a defect from being created in the first place."
+      },
+      {
+        "q": "A machine that automatically stops the instant it detects an abnormality (rather than making bad parts) embodies the lean concept of:",
+        "options": [
+          "Overproduction",
+          "Jidoka (autonomation)",
+          "Batch processing",
+          "Transport waste"
+        ],
+        "answer": 1,
+        "explain": "Jidoka/autonomation gives a machine the 'intelligence' to stop on a detected fault, preventing defects and freeing operators from watching it."
+      },
+      {
+        "q": "In the project V-model, a Factory Acceptance Test (FAT) verifies against which left-side document?",
+        "options": [
+          "The invoice",
+          "The functional/requirements specification",
+          "The employee handbook",
+          "The marketing brochure"
+        ],
+        "answer": 1,
+        "explain": "Each right-side verification stage validates against the spec written at the matching left-side level; FAT/SAT confirm the system meets the functional/user requirements."
+      },
+      {
+        "q": "When troubleshooting, 'as-built' documentation is critical because:",
+        "options": [
+          "It is always the original drawing",
+          "It reflects field changes made during commissioning, unlike un-redlined originals",
+          "It replaces the PLC program",
+          "It is only for the sales team"
+        ],
+        "answer": 1,
+        "explain": "As-built docs are updated for field changes; troubleshooting from stale, un-redlined originals is a leading source of wasted time."
+      },
+      {
+        "q": "Why do safety and real-time control functions remain on deterministic PLC/safety systems rather than ML?",
+        "options": [
+          "ML is too cheap",
+          "ML outputs are probabilistic and not certifiable to functional-safety standards",
+          "PLCs cannot do control",
+          "ML is faster at everything"
+        ],
+        "answer": 1,
+        "explain": "ML is probabilistic and can be confidently wrong on novel data; safety-rated deterministic systems handle hazardous control, with ML advising in analytics layers."
+      },
+      {
+        "q": "A practical maintenance use of augmented reality is:",
+        "options": [
+          "Replacing all sensors",
+          "Remote assist - a specialist annotating the technician's live view to guide a repair",
+          "Increasing motor torque",
+          "Eliminating documentation"
+        ],
+        "answer": 1,
+        "explain": "AR remote assist lets an off-site expert guide a field technician by overlaying annotations on the live scene, plus step-by-step guided instructions."
+      },
+      {
+        "q": "You cannot manage energy you do not measure - the automation tool that reveals where energy is consumed is:",
+        "options": [
+          "A single plant meter",
+          "Sub-metering by line/area/machine",
+          "A louder alarm",
+          "A bigger transformer"
+        ],
+        "answer": 1,
+        "explain": "Sub-metering breaks consumption down by line/area/machine, enabling accountability and targeted savings; ISO 50001 frames the management system."
+      },
+      {
+        "q": "Compressed air is a prime energy-savings target because:",
+        "options": [
+          "It is free",
+          "Typically 20-30% is lost to leaks, and it is an expensive utility",
+          "It cannot be measured",
+          "It never leaks"
+        ],
+        "answer": 1,
+        "explain": "Compressed air is one of the most expensive utilities and commonly loses 20-30% to leaks, so leak detection/repair yields strong savings."
+      },
+      {
+        "q": "Automating a wasteful process without first improving it results in:",
+        "options": [
+          "Guaranteed savings",
+          "Making the waste happen faster",
+          "Lower energy use",
+          "Perfect quality"
+        ],
+        "answer": 1,
+        "explain": "The lean caution: automation amplifies whatever process it serves, so eliminate waste first, then automate - otherwise you just produce waste faster."
       }
     ],
     "resources": [
@@ -696,6 +819,30 @@ MODULES = [
       {
         "h": "Building Branch Circuits: Lighting and Receptacles",
         "body": "Automation technicians often maintain the <b>building electrical</b> around the machines too. A <b>branch circuit</b> is the wiring from the final overcurrent device to the loads. General-purpose 120 V receptacle circuits are typically 15 or 20 A on 14 or 12 AWG copper; the breaker protects the wire, so the conductor must match the breaker (a 20 A breaker requires 12 AWG minimum). The <b>NEC 80% continuous-load rule</b> limits a circuit carrying a continuous load to 80% of its rating (a 20 A circuit to 16 A continuous). <b>GFCI</b> protection is required in wet/outdoor and many commercial locations, and <b>AFCI</b> in some areas. Lighting circuits, switching (three-way/four-way), and receptacle grounding all follow NEC rules. Knowing basic building wiring lets a technician safely add a receptacle, troubleshoot a dead lighting circuit, or recognize when a load has outgrown its branch and needs a dedicated circuit."
+      },
+      {
+        "h": "Arc Flash Incident Energy and the IEEE 1584 Method",
+        "body": "An <b>arc flash</b> is the explosive release of energy when a fault arcs across conductors, producing temperatures near 35,000 deg F, a pressure blast, and molten-metal shrapnel. <b>NFPA 70E</b> requires an arc-flash risk assessment; <b>IEEE 1584</b> provides the engineering method to calculate <b>incident energy</b> (in cal/cm&sup2;) at a working distance, which drives the required <b>arc-rated PPE</b> and the <b>arc-flash boundary</b> (the distance at which incident energy falls to 1.2 cal/cm&sup2;, the onset of a second-degree burn). Incident energy depends on available <b>bolted fault current</b>, the protective device's <b>clearing time</b> (faster tripping = less energy), the electrode configuration, and working distance. This is why fast, well-coordinated overcurrent protection is a safety issue, not just a nuisance-trip issue - a slow-clearing breaker dramatically raises incident energy. Equipment must be <b>labeled</b> with the incident energy, boundary, and required PPE. De-energizing and verifying zero energy (LOTO) remains the primary control; PPE is the last resort when live work is unavoidable and justified."
+      },
+      {
+        "h": "Conductor Insulation Types and VFD/Motor Cable Selection",
+        "body": "A conductor is chosen for both its <b>ampacity</b> and its <b>insulation</b>, coded by letters in the NEC. Common types: <b>THHN/THWN-2</b> (thermoplastic, 90 deg C, the workhorse for conduit), <b>XHHW-2</b> (cross-linked, moisture/heat resistant), <b>MTW</b> (machine tool wire, flexible for panels), and <b>tray cable (TC)</b> for cable-tray runs. <b>VFD output cable</b> is a special case: the drive's fast-switching PWM creates high dV/dt and common-mode currents, so proper VFD cable uses <b>symmetrical three-conductor construction with a low-impedance shield/ground</b> to contain EMI, protect bearings from shaft currents, and manage reflected-wave stress - ordinary THHN in conduit is a frequent cause of drive EMI, tripping, and premature motor failure. Cable selection also weighs <b>voltage rating</b>, temperature rating (must match the terminal's rating - the weakest link governs), oil/sunlight resistance, and flexibility for continuous-flex (cable-track) applications where standard building wire would fatigue and break."
+      },
+      {
+        "h": "Power Distribution Equipment: Panelboards, Switchboards, and Busway",
+        "body": "Facility power flows through a hierarchy of distribution gear. The <b>service entrance</b> takes utility power through the main disconnect and metering. <b>Switchboards/switchgear</b> distribute large blocks of power with main and feeder breakers (switchgear is more robust, with drawout breakers and higher fault ratings than a switchboard). <b>Panelboards</b> (breaker panels) subdivide feeders into branch circuits. <b>Motor Control Centers (MCCs)</b> group motor starters, VFDs, and their protection in standardized vertical sections with pluggable 'buckets.' <b>Busway (bus duct)</b> is a prefabricated enclosed busbar system - efficient for high-current distribution and flexible plug-in tap-offs along a production line. Every device has an <b>interrupting/withstand rating (AIC)</b> that must exceed the available fault current at its location, or it can fail catastrophically during a fault. Understanding this hierarchy - and reading the <b>one-line diagram</b> that depicts it - lets a technician trace power, find the right disconnect for LOTO, and understand coordination."
+      },
+      {
+        "h": "Standby and Emergency Power: Generators, ATS, and UPS",
+        "body": "When the utility fails, backup power keeps critical loads alive. A <b>standby generator</b> (diesel or gas) starts on loss of utility, but takes seconds to start and stabilize. An <b>Automatic Transfer Switch (ATS)</b> senses the outage, signals the generator to start, and transfers the load once generator power is stable - then transfers back and cools down the generator when utility returns; <b>open-transition</b> ATS breaks briefly, <b>closed-transition</b> momentarily parallels for a bumpless transfer. For loads that cannot tolerate even a few seconds of gap (PLCs, servers, safety systems), an <b>Uninterruptible Power Supply (UPS)</b> bridges the gap instantly from batteries - <b>online/double-conversion</b> UPS always powers the load from the inverter (no transfer gap, best conditioning), while <b>standby/line-interactive</b> types switch to battery on failure with a tiny gap. A common design pairs a UPS (instant, short duration) with a generator (delayed, long duration) so the UPS carries the load until the generator picks up. Battery maintenance/testing is critical - a UPS with dead batteries fails silently until the outage exposes it."
+      },
+      {
+        "h": "Instrument Transformers: CTs and PTs",
+        "body": "Measuring and protecting high-current, high-voltage circuits safely requires <b>instrument transformers</b> that scale the quantities down to standard instrument levels. A <b>Current Transformer (CT)</b> has the primary conductor passing through its core and produces a proportional secondary current (commonly 5 A or 1 A at rated primary) - a 200:5 CT outputs 5 A when 200 A flows. Critical safety rule: <b>never open-circuit a CT secondary while primary current flows</b> - with no burden, dangerous high voltage develops across the open terminals; always short unused CT secondaries. A <b>Potential/Voltage Transformer (PT/VT)</b> steps voltage down (e.g. 480 V to 120 V) for meters and relays. These feed <b>power/energy meters, protective relays, and VFDs</b>. <b>Rogowski coils</b> are a modern flexible CT alternative with no saturation and open-circuit safety. Accuracy class and burden rating matter: an overloaded or wrong-class CT gives inaccurate metering and can mislead protection. Technicians encounter CTs in metering cabinets, MCCs, and drive current-sensing."
+      },
+      {
+        "h": "Surge Protection and Lightning Mitigation",
+        "body": "Transient overvoltages - from lightning, utility switching, or large inductive loads switching - can destroy electronics and degrade insulation over time. <b>Surge Protective Devices (SPDs)</b>, formerly called TVSS, clamp these transients by diverting surge current to ground, typically using metal-oxide varistors (MOVs). SPDs are rated by <b>type</b>: Type 1 (at the service entrance, line side of main), Type 2 (load side, at panelboards), Type 3 (point-of-use at the equipment). A layered approach - Type 1/2 at distribution plus Type 3 at sensitive equipment - gives cascaded protection. Key specs are the <b>maximum continuous operating voltage (MCOV)</b>, surge current rating (kA), and clamping/let-through voltage. SPDs are sacrificial and degrade with each hit, so many include end-of-life indicators. Proper <b>grounding and bonding</b> with short, low-impedance leads is essential - a long ground lead adds inductance that defeats the SPD. For control panels and networks, dedicated signal-line surge protectors guard sensor and communication circuits, where even small transients cause data corruption or device damage."
       }
     ],
     "lab": {
@@ -1126,6 +1273,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Continuous loads are limited to 80% of circuit rating: 20 A x 0.80 = 16 A continuous."
+      },
+      {
+        "q": "Per IEEE 1584, incident energy at a working point is reduced most directly by:",
+        "options": [
+          "A slower-clearing protective device",
+          "A faster-clearing (well-coordinated) protective device",
+          "A larger enclosure",
+          "A higher available fault current"
+        ],
+        "answer": 1,
+        "explain": "Incident energy scales with arcing time, so faster protective-device clearing lowers arc-flash energy - making fast, coordinated protection a safety issue."
+      },
+      {
+        "q": "The arc-flash boundary is defined as the distance at which incident energy equals:",
+        "options": [
+          "0 cal/cm2",
+          "1.2 cal/cm2 (onset of second-degree burn)",
+          "40 cal/cm2",
+          "100 cal/cm2"
+        ],
+        "answer": 1,
+        "explain": "The arc-flash boundary is where incident energy falls to 1.2 cal/cm2, the threshold for a second-degree skin burn."
+      },
+      {
+        "q": "Ordinary THHN in conduit used for VFD output leads commonly causes:",
+        "options": [
+          "Better efficiency",
+          "Drive EMI, nuisance tripping, and premature motor/bearing failure",
+          "Lower cost with no downside",
+          "Higher torque"
+        ],
+        "answer": 1,
+        "explain": "VFD PWM output needs symmetrical shielded VFD cable to contain EMI and shaft currents; plain THHN is a frequent source of EMI, tripping, and bearing damage."
+      },
+      {
+        "q": "When selecting a conductor, the temperature rating that governs is:",
+        "options": [
+          "Always the 90 deg C column",
+          "The lowest-rated element in the path (often the terminal rating)",
+          "The highest of all ratings",
+          "Irrelevant"
+        ],
+        "answer": 1,
+        "explain": "The weakest link governs - typically the terminal's temperature rating limits the usable ampacity even if the insulation is rated higher."
+      },
+      {
+        "q": "An MCC (Motor Control Center) is best described as:",
+        "options": [
+          "A single branch breaker",
+          "Standardized vertical sections grouping motor starters, VFDs, and protection in pluggable buckets",
+          "A backup generator",
+          "A surge protector"
+        ],
+        "answer": 1,
+        "explain": "An MCC groups motor starters/VFDs and their protection into standardized sections with pluggable 'buckets' for organized motor distribution."
+      },
+      {
+        "q": "Distribution equipment must have an interrupting/withstand rating (AIC) that:",
+        "options": [
+          "Is as low as possible",
+          "Exceeds the available fault current at its location",
+          "Equals the load current",
+          "Does not matter indoors"
+        ],
+        "answer": 1,
+        "explain": "AIC must exceed available fault current or the device can fail catastrophically when trying to interrupt a fault beyond its rating."
+      },
+      {
+        "q": "For a PLC that cannot tolerate even a few seconds of power gap during an outage, the correct backup is:",
+        "options": [
+          "A standby generator alone",
+          "A UPS (bridging instantly from batteries), often paired with a generator",
+          "A larger breaker",
+          "An ATS alone"
+        ],
+        "answer": 1,
+        "explain": "A UPS carries the load instantly from batteries with no gap; it commonly bridges until a generator (which takes seconds to start) picks up."
+      },
+      {
+        "q": "A critical safety rule for current transformers (CTs) is:",
+        "options": [
+          "Always open the secondary under load",
+          "Never open-circuit the secondary while primary current flows (short unused CTs)",
+          "Ground the primary only",
+          "Reverse the polarity"
+        ],
+        "answer": 1,
+        "explain": "An open CT secondary under primary current develops dangerous high voltage; unused CT secondaries must be shorted."
+      },
+      {
+        "q": "A surge protective device's ground lead should be:",
+        "options": [
+          "As long as possible",
+          "Short and low-impedance to avoid added inductance defeating the SPD",
+          "Undersized",
+          "Left disconnected"
+        ],
+        "answer": 1,
+        "explain": "Long ground leads add inductance that raises let-through voltage; SPDs need short, low-impedance bonding to be effective."
       }
     ],
     "resources": [
@@ -1284,6 +1530,30 @@ MODULES = [
       {
         "h": "Number Systems: Binary, Hex, BCD, and Bit Manipulation",
         "body": "PLCs work in <b>binary</b>, and technicians must move fluently between bases. A <b>bit</b> is 0/1; 8 bits = a byte; 16 bits = a word (the common integer size). <b>Hexadecimal</b> (base 16, digits 0-F) compactly represents binary - each hex digit is exactly 4 bits, so 16#FF = 255 = 1111 1111. <b>BCD</b> (binary-coded decimal) encodes each decimal digit in 4 bits and is still seen on thumbwheel switches and some displays - 1234 in BCD is 0001 0010 0011 0100, which is NOT the same as binary 1234, so a BCD-to-integer conversion instruction is required. <b>Bit manipulation</b> - masking with AND to isolate bits, OR to set, XOR to toggle, and shift/rotate instructions - is used to pack status flags into a word, decode a fault register, or read individual bits of a device's status word. Reading a drive's hex status word and decoding which fault bit is set is an everyday task."
+      },
+      {
+        "h": "Inside the Programming Software: Project Organization and Cross-Reference",
+        "body": "A modern PLC programming environment (Studio 5000, TIA Portal, GX Works, Codesys) is far more than a ladder editor. The <b>project tree/organizer</b> holds the controller configuration, I/O tree, tasks/programs/routines, tag/data structures, and communication setup. The single most-used troubleshooting tool is the <b>cross-reference</b>: it lists every place a tag is used and, crucially, everywhere it is <b>written</b> versus merely read - so when an output is unexpectedly off you can jump straight to what controls it rather than scrolling rungs. Other essentials: <b>search/find-all</b>, <b>compile/verify</b> (which catches errors before download), the difference between an <b>offline</b> edit (to the disk project) and an <b>online</b> change (to the running controller), and <b>upload vs download</b> (upload pulls from the PLC to your PC; download pushes to the PLC - confusing them can overwrite the wrong version). Disciplined use of <b>descriptions, symbols, and rung comments</b> turns an opaque program into a maintainable one; documentation lives in the project, so keeping the master project current is essential."
+      },
+      {
+        "h": "PLC Cybersecurity: Access Levels, Controller Locking, and Firmware Integrity",
+        "body": "Controllers are now network-connected targets, and basic OT security is a technician responsibility. Practical controls: change <b>default passwords</b> and use role-based <b>access levels</b> (read-only for viewing, higher privilege for edits/downloads); enable the controller's <b>key switch or software RUN/REM/PROG lock</b> so logic cannot be changed while running; restrict which workstations and users can connect; and segment the control network behind a firewall/DMZ (Purdue model), never directly on the business LAN or internet. <b>Firmware integrity</b> matters - only flash signed firmware from the vendor, and record versions. <b>Change control</b> (who changed what, when, why, with backups) is both a security and a reliability practice. The threat is real: unauthorized or malware-driven logic changes, ransomware reaching flat networks, and accidental downloads of the wrong program. Defense-in-depth per <b>IEC 62443</b> layers these measures; no single control is sufficient, and the human factor (phishing, USB drives, shared passwords) is often the weakest link."
+      },
+      {
+        "h": "PackML and Standardized Machine State Models",
+        "body": "<b>PackML</b> (Packaging Machine Language, an OMAC/ISA-TR88 standard) defines a common <b>machine state model</b> and naming so machines from different OEMs behave and report consistently - a huge benefit for integration, operator training, and OEE data collection. Its core is a defined set of <b>states</b> (e.g. Idle, Starting, Execute, Holding/Held, Suspending/Suspended, Aborting/Aborted, Stopping/Stopped, Resetting) connected by defined <b>commands</b> (Start, Stop, Hold, Reset, Abort) and transitions, plus standard <b>modes</b> (Producing, Maintenance, Manual). It also standardizes <b>PackTags</b> - a common tag structure for status, commands, and admin/production data. Because every PackML machine exposes the same states and tags, a line controller or MES can start/stop/monitor a mixed fleet uniformly, and OEE stop-reason data is captured consistently. Even outside packaging, adopting a standardized state model makes machines predictable and dramatically simplifies both operation and troubleshooting - an operator who knows the state model can run any compliant machine."
+      },
+      {
+        "h": "Interrupt and Event Tasks vs the Continuous Scan",
+        "body": "The default PLC execution is the <b>continuous scan</b>: read inputs, solve logic top to bottom, write outputs, repeat. But some functions cannot wait for the next scan. <b>Periodic tasks</b> run on a fixed timebase (e.g. a PID loop every 50 ms) for consistent timing regardless of program size. <b>Event tasks</b> run immediately when a trigger occurs - a hardware input, a consumed-tag update, or a module event - useful for capturing a fast transient or responding to a high-speed input with minimal latency. Tasks have <b>priorities</b>: a higher-priority periodic/event task interrupts a lower-priority continuous task, so a critical fast loop is not delayed by a long housekeeping program. The tradeoff: too many high-frequency tasks can starve the continuous task and cause a <b>scan overrun</b> fault. Understanding task structure explains why some code seems to run out of order and is essential for motion, high-speed counting, and deterministic control - not everything belongs in the main continuous scan."
+      },
+      {
+        "h": "Input Debounce, Filtering, and In-PLC Signal Conditioning",
+        "body": "Real-world signals are noisy, and raw inputs can produce false counts or chattering logic. Mechanical contacts (limit switches, pushbuttons) <b>bounce</b> - making and breaking several times over a few milliseconds when they change - which a fast PLC can read as multiple transitions. <b>Debounce</b> is handled by hardware <b>input filters</b> (many discrete modules let you set an ON/OFF filter time, e.g. a few ms) or in software with a short timer that requires the input to be stable before acting. For analog signals, in-PLC conditioning includes <b>filtering</b> (a moving average or first-order digital filter to smooth noise), <b>scaling</b> (raw counts to engineering units), <b>deadband</b> (ignore tiny changes), and <b>rate-of-change limiting</b> or plausibility checks to reject spikes. Over-filtering adds lag that can hurt control, so it is balanced against noise. Choosing hardware vs software filtering, and the right filter time, prevents both false triggers (too little) and missed real events or sluggish response (too much) - a subtle but common source of intermittent machine faults."
+      },
+      {
+        "h": "Reading the PLC's Own Diagnostics: Status LEDs and Fault Codes",
+        "body": "Before diving into logic, read what the controller is telling you. Every PLC and I/O module has <b>status LEDs</b>: a controller RUN/FAULT/FORCE indicator, module OK/fault LEDs, and per-point I/O LEDs that show the actual state of each input/output at the module - an invaluable first check (does the input LED light when you actuate the field device? if not, the problem is field-side, not in the logic). A <b>major fault</b> halts the controller and populates a <b>fault code</b> and fault routine data identifying the type (e.g. I/O fault, watchdog/scan overrun, math error, addressing fault) - reading that code points straight at the cause. <b>Minor faults</b> log without stopping. <b>Force</b> indicators warn that I/O is being overridden (a safety hazard if forgotten). Communication modules show link/activity and connection status. Systematic troubleshooting starts here: RUN state, module health, forces active, then trace the specific I/O point via its LED and the cross-reference - a huge fraction of faults are diagnosed at the LED and fault-code level before ever reading a rung."
       }
     ],
     "lab": {
@@ -1291,7 +1561,7 @@ MODULES = [
       "tool": "OpenPLC Editor (free)",
       "steps": [
         "Create BOOL vars: Start_PB, Stop_PB, Motor_Run, Seal",
-        "Write ladder: (Start OR Seal) AND NOT Stop -> Seal; Seal -> Motor_Run",
+        "Write ladder: (Start OR Seal) AND NOT Stop &rarr; Seal; Seal &rarr; Motor_Run",
         "Simulate and verify",
         "Add TON timer: 5s delay before Conveyor_Ready energizes"
       ]
@@ -1714,6 +1984,105 @@ MODULES = [
         ],
         "answer": 2,
         "explain": "XOR with 1 flips (toggles) a bit; AND masks/clears, OR sets, and shifts move bit positions."
+      },
+      {
+        "q": "An output is unexpectedly de-energized. The fastest software tool to find what controls it is:",
+        "options": [
+          "Deleting the rung",
+          "The cross-reference (showing where the tag is written)",
+          "Rebooting the PLC",
+          "Changing the IP address"
+        ],
+        "answer": 1,
+        "explain": "The cross-reference lists every use of a tag and distinguishes writes from reads, taking you straight to the logic controlling the output."
+      },
+      {
+        "q": "Uploading versus downloading a PLC program means:",
+        "options": [
+          "They are the same",
+          "Upload pulls from the PLC to your PC; download pushes from PC to the PLC",
+          "Both erase the program",
+          "Upload runs the program"
+        ],
+        "answer": 1,
+        "explain": "Upload reads the controller's program into your PC; download writes your PC project into the controller - confusing them can overwrite the wrong version."
+      },
+      {
+        "q": "A basic, high-value PLC cybersecurity control a technician can apply is:",
+        "options": [
+          "Putting the PLC directly on the internet",
+          "Changing default passwords and using the RUN/PROG lock plus role-based access",
+          "Sharing one admin password with everyone",
+          "Disabling all backups"
+        ],
+        "answer": 1,
+        "explain": "Default-password changes, controller run/program locking, role-based access, and network segmentation are foundational defense-in-depth per IEC 62443."
+      },
+      {
+        "q": "The main benefit of PackML's standardized state model is that:",
+        "options": [
+          "It makes machines slower",
+          "Machines from different OEMs behave and report consistently, easing integration, training, and OEE data",
+          "It eliminates the PLC",
+          "It only works for one vendor"
+        ],
+        "answer": 1,
+        "explain": "PackML defines common states, commands, and PackTags so a mixed machine fleet is operated, monitored, and OEE-tracked uniformly."
+      },
+      {
+        "q": "A PID loop that must execute at a precise, consistent interval regardless of program size should run in a:",
+        "options": [
+          "Continuous task only",
+          "Periodic task on a fixed timebase",
+          "Event task on a rare trigger",
+          "The output-write phase"
+        ],
+        "answer": 1,
+        "explain": "A periodic task fires on a fixed timebase (e.g. every 50 ms) for consistent PID timing, independent of the continuous scan length."
+      },
+      {
+        "q": "Too many high-frequency high-priority tasks can cause:",
+        "options": [
+          "Faster continuous scanning",
+          "A scan overrun fault by starving the continuous task",
+          "Lower power use",
+          "More I/O points"
+        ],
+        "answer": 1,
+        "explain": "High-priority tasks preempt the continuous task; overload starves it and triggers a scan-overrun/watchdog fault."
+      },
+      {
+        "q": "A mechanical limit switch producing multiple false counts per actuation is best addressed by:",
+        "options": [
+          "Ignoring it",
+          "Debounce - a hardware input filter or software stability timer",
+          "A larger power supply",
+          "Reversing sinking/sourcing"
+        ],
+        "answer": 1,
+        "explain": "Contact bounce makes/breaks several times in milliseconds; an input-filter time or a software debounce timer requires the signal to settle before acting."
+      },
+      {
+        "q": "Over-filtering an analog input signal in the PLC risks:",
+        "options": [
+          "No effect",
+          "Adding lag that degrades control response",
+          "Increasing noise",
+          "Higher resolution"
+        ],
+        "answer": 1,
+        "explain": "Heavy filtering smooths noise but adds phase lag/delay, which can slow or destabilize a control loop - filtering must be balanced against noise."
+      },
+      {
+        "q": "When an input does not turn on in the program, checking the module's per-point input LED first tells you:",
+        "options": [
+          "Nothing useful",
+          "Whether the signal is reaching the module (field-side) vs a logic problem",
+          "The IP address",
+          "The firmware version"
+        ],
+        "answer": 1,
+        "explain": "If the point LED does not light when the field device actuates, the fault is field-side (wiring/device); if it lights but logic ignores it, the issue is in the program."
       }
     ],
     "resources": [
@@ -1868,6 +2237,30 @@ MODULES = [
       {
         "h": "State-Machine Programming Patterns",
         "body": "Complex sequential machines are best structured as an explicit <b>state machine</b> rather than a tangle of interlocked timers and latches. The program tracks a <b>current state</b> (an integer or enumerated step - e.g. 0=Idle, 10=Fill, 20=Heat, 30=Hold, 40=Drain), executes only the actions for that state, and advances to the next state when a defined <b>transition condition</b> is met. This structure is easy to read, debug (you can see exactly what step the machine is in), and extend, and it maps cleanly to <b>Sequential Function Charts</b>. Best practices: make each state's actions and exit conditions explicit, always define a <b>fault/abort path</b> out of every state, ensure states are <b>mutually exclusive</b> (the machine is in exactly one), and drive outputs from state rather than scattering coil logic. A state variable displayed on the HMI instantly tells an operator where a stalled sequence is stuck - a huge troubleshooting aid over guessing which of a dozen latches failed to set."
+      },
+      {
+        "h": "String and ASCII Handling for Barcode and Serial Devices",
+        "body": "Many industrial devices - barcode scanners, weigh scales, printers, RFID readers, some instruments - communicate as <b>ASCII strings</b> over serial or Ethernet, so PLCs need <b>string handling</b>. A string is a length value plus an array of characters. Common operations: <b>concatenate</b> (build a message or label), <b>find/middle</b> (extract a field from a scanned barcode), <b>compare</b> (validate a scanned code against expected), and <b>convert</b> between strings and numbers (STOD/DTOS, string-to-DINT and back) to do math on a received value. Incoming messages are typically framed by <b>delimiters</b> - a start character and a termination like carriage-return/line-feed (CR/LF, ASCII 13/10) - and the program parses on those. Gotchas: fixed vs variable length, buffer overrun if a message is longer than the tag, and handling partial/fragmented messages that arrive across scans. A robust receive handler assembles characters until the terminator, then parses - never assuming a whole message lands in one read. Barcode-driven routing and scale-based fill control are everyday examples."
+      },
+      {
+        "h": "Floating-Point vs Integer Math: Overflow, Rounding, and Scaling Pitfalls",
+        "body": "Choosing the right numeric type prevents subtle, dangerous bugs. <b>Integers</b> (16-bit INT: -32768 to 32767; 32-bit DINT: about +/-2.1 billion) are exact and fast but <b>overflow</b> silently or set a fault if a result exceeds the range - multiplying two large INTs is a classic trap. <b>Integer division truncates</b> (7/2 = 3, losing the remainder), so scaling done as (raw * span)/range must <b>multiply before dividing</b> and watch intermediate overflow. <b>Floating-point (REAL)</b> handles a huge range and fractions but has <b>limited precision</b> (about 7 significant digits for 32-bit) - adding a tiny number to a huge one loses the small value, and exact decimal fractions (0.1) are not perfectly representable, so never test a float for exact equality; use a tolerance band. Mixing types causes implicit conversions that can truncate. Best practice: use DINT for counts and discrete math, REAL for engineering/analog values, be deliberate about conversions, and validate scaling with the endpoints (0% and 100%). A scaling error from truncation or overflow can command a valve or drive to a wildly wrong value."
+      },
+      {
+        "h": "Array Processing with FOR Loops and File Instructions",
+        "body": "When the same operation applies to many data points, <b>arrays</b> and iteration replace dozens of repetitive rungs. File/array instructions operate on blocks at once: <b>COP</b> (copy a block), <b>FLL</b> (fill a block with a value), <b>FAL/FSC</b> (file arithmetic/search-and-compare across an array), and <b>average/sort</b> instructions. A <b>FOR loop</b> (in Structured Text or a loop instruction) indexes through an array - e.g. scanning 50 zone temperatures to find the max, summing a batch of readings, or initializing a table. Two disciplines matter: <b>bounds</b> - indexing past the end of an array causes a fault or corrupts adjacent memory, so validate the index; and <b>scan time</b> - a large loop executes entirely within one scan, so an unbounded or huge loop can blow the <b>watchdog</b> and fault the controller. Loops and array instructions make code compact and maintainable (change the array size, not fifty rungs), and are the foundation for recipe tables, data logging buffers, and multi-zone control."
+      },
+      {
+        "h": "Bit-Shift Registers Applied: Tracking Parts Down a Conveyor",
+        "body": "A classic material-handling problem is remembering a decision (reject this box, this bin is full, this part failed inspection) and acting on it several stations downstream - and a <b>bit-shift register</b> is the elegant solution. The register is a string of bits representing physical positions along the conveyor. Each time the conveyor advances one position (triggered by an encoder pulse or a station photoeye), the program <b>shifts</b> all bits one place, moving each part's status to the next position; a new bit is loaded at the entry (e.g. the inspection result), and the bit that shifts out the end at the reject station fires the reject gate. This <b>synchronizes data movement to physical product movement</b> so the right box is diverted even though the decision was made stations earlier. Design points: shift on the correct trigger (indexed conveyor vs continuous with encoder counts), size the register to the number of positions, and handle gaps/empty positions. BSL/BSR (bit shift left/right) or an array shift implements it. The same pattern tracks parts through ovens, wash stations, and sortation."
+      },
+      {
+        "h": "Interlock and Permissive Logic Design Patterns",
+        "body": "Safe, correct machine behavior relies on well-structured <b>interlock</b> and <b>permissive</b> logic. A <b>permissive</b> is a condition that must be TRUE before an action is allowed to start (guards closed, air pressure OK, upstream ready, in the correct mode) - all permissives are ANDed into the start logic. An <b>interlock</b> stops or prevents an action when a condition goes wrong during operation (a jam detected, over-temperature, downstream full), overriding the run command. Good practice separates <b>start permissives</b> from <b>run interlocks</b>, drives outputs from a clear state/condition rather than scattered coils, and makes every interlock's cause visible (a diagnostic bit/alarm so the operator knows <b>why</b> the machine will not start or just stopped). A frequent design error is burying conditions so that 'the machine won't start' with no indication of the missing permissive - always surface it. Safety-rated interlocks (E-stop, guard, light curtain) must remain in <b>hardwired/safety-PLC</b> circuits independent of the standard logic; the standard PLC interlocks handle process/sequence protection, not personnel safety."
+      },
+      {
+        "h": "Debugging Logic Online: Trends, Watch Tables, and Logic Analysis",
+        "body": "Beyond reading rungs, the programming environment offers powerful online debugging. <b>Watch/data tables</b> let you monitor and (carefully) modify a chosen set of tags in real time - far faster than hunting through rungs for each value. <b>Trends</b> chart tag values over time, essential for catching intermittent events, watching a sequence step through states, or diagnosing a control loop's oscillation - you see the relationship between a command and the response. <b>Histogram/tag monitor</b> tools capture fast changes. For timing-critical or elusive faults, capturing a <b>trend around a fault trigger</b> (a snapshot buffer) reveals what happened in the milliseconds before a trip. <b>Forcing</b> an I/O point tests logic or wiring but is a serious action - a forced output can move real equipment, and forgotten forces are a safety hazard flagged by the FORCE indicator. Disciplined debugging: reproduce the fault, watch the relevant tags/trend, change one thing at a time, and remove all forces when done. These tools turn 'the machine acts weird sometimes' into a captured, understood event."
       }
     ],
     "lab": {
@@ -2299,6 +2692,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "A visible state value tells the operator exactly which step a stalled machine is in - far better than guessing which latch or timer failed."
+      },
+      {
+        "q": "Incoming ASCII messages from a barcode scanner are typically framed by:",
+        "options": [
+          "A checksum only",
+          "Delimiters such as a start character and a CR/LF terminator",
+          "Random spacing",
+          "Analog voltage levels"
+        ],
+        "answer": 1,
+        "explain": "Serial/ASCII messages use framing delimiters (e.g. CR/LF, ASCII 13/10); the receive handler assembles characters until the terminator, then parses."
+      },
+      {
+        "q": "Integer division of 7/2 in a PLC yields:",
+        "options": [
+          "3.5",
+          "3 (truncated, remainder lost)",
+          "4",
+          "A fault"
+        ],
+        "answer": 1,
+        "explain": "Integer division truncates the fractional part (7/2 = 3); this is why scaling must multiply before dividing and often use REAL where fractions matter."
+      },
+      {
+        "q": "Why should you never test a floating-point (REAL) value for exact equality?",
+        "options": [
+          "Floats are always integers",
+          "Limited precision means values like 0.1 are not exactly representable; use a tolerance band",
+          "REAL cannot be compared",
+          "It faults the PLC"
+        ],
+        "answer": 1,
+        "explain": "32-bit REAL has ~7 significant digits and cannot represent many decimals exactly, so exact-equality tests fail unpredictably - compare within a tolerance."
+      },
+      {
+        "q": "A large unbounded FOR loop in a single scan risks:",
+        "options": [
+          "Nothing",
+          "Blowing the watchdog and faulting the controller",
+          "Faster scanning",
+          "More I/O points"
+        ],
+        "answer": 1,
+        "explain": "The whole loop executes within one scan; an oversized/unbounded loop can exceed the watchdog time and cause a scan-overrun fault."
+      },
+      {
+        "q": "Indexing an array beyond its defined size typically causes:",
+        "options": [
+          "Automatic resizing",
+          "A fault or corruption of adjacent memory",
+          "Faster execution",
+          "Nothing"
+        ],
+        "answer": 1,
+        "explain": "Out-of-bounds array access faults or corrupts neighboring memory; the index must be validated against the array size."
+      },
+      {
+        "q": "A bit-shift register on a conveyor is used to:",
+        "options": [
+          "Store the PLC firmware",
+          "Track a decision (e.g. reject) with the physical part as it moves downstream",
+          "Filter analog noise",
+          "Set the IP address"
+        ],
+        "answer": 1,
+        "explain": "Shifting the register in step with conveyor movement carries each part's status to its position, firing the reject/divert at the right station."
+      },
+      {
+        "q": "The difference between a permissive and an interlock is best stated as:",
+        "options": [
+          "They are identical",
+          "A permissive must be true to START; an interlock STOPS/prevents action when a condition goes wrong",
+          "Permissives are only for motors",
+          "Interlocks only apply at startup"
+        ],
+        "answer": 1,
+        "explain": "Permissives are ANDed start conditions; interlocks override the run command when something goes wrong during operation."
+      },
+      {
+        "q": "Personnel-safety interlocks (E-stop, guard, light curtain) should be implemented in:",
+        "options": [
+          "The standard PLC logic only",
+          "Hardwired/safety-PLC circuits independent of the standard logic",
+          "The HMI script",
+          "A spreadsheet"
+        ],
+        "answer": 1,
+        "explain": "Safety functions must reside in hardwired or safety-rated PLC circuits; standard PLC interlocks handle process/sequence protection, not personnel safety."
+      },
+      {
+        "q": "To diagnose an intermittent control-loop oscillation, the most useful online tool is:",
+        "options": [
+          "Deleting rungs",
+          "A trend charting the command and response over time",
+          "Changing the IP address",
+          "A louder alarm"
+        ],
+        "answer": 1,
+        "explain": "Trends chart tag values over time, revealing the command-vs-response relationship and capturing intermittent/elusive events like oscillation."
       }
     ],
     "resources": [
@@ -2457,6 +2949,30 @@ MODULES = [
       {
         "h": "Calibration, Traceability, and Metrology Basics",
         "body": "A sensor reading is only trustworthy if the instrument is <b>calibrated</b> - compared against a reference of known accuracy and adjusted or documented. Good practice distinguishes <b>accuracy</b> (closeness to the true value) from <b>precision/repeatability</b> (consistency of repeated readings) - an instrument can be precise but inaccurate (consistently offset). Calibration establishes <b>zero and span</b> and characterizes <b>linearity and hysteresis</b> across the range. <b>Traceability</b> means the reference standard's calibration chains back through accredited labs to a national standard (e.g. NIST), with a documented uncertainty at each step. Instruments are calibrated on an <b>interval</b> based on criticality and drift history, and a found <b>out-of-tolerance</b> instrument may require reviewing product made since the last good cal. For a technician, the practical points are: use a reference at least several times more accurate than the device under test, record as-found and as-left readings, and never adjust a critical instrument without authorization and documentation."
+      },
+      {
+        "h": "Flow Measurement Deep Dive: Magnetic, Coriolis, Vortex, and DP",
+        "body": "Flow is measured by several fundamentally different principles, each with a niche. A <b>magnetic flowmeter (magmeter)</b> applies Faraday's law - a conductive liquid moving through a magnetic field generates a voltage proportional to velocity; no moving parts, no pressure drop, but requires a <b>conductive</b> fluid (not oils/gases). A <b>Coriolis</b> meter vibrates a tube and measures the phase shift caused by mass flow - it measures <b>true mass flow and density</b> directly with very high accuracy, ideal for custody transfer and dosing, but is costly. A <b>vortex</b> meter counts vortices shed behind a bluff body (frequency proportional to velocity) - good for steam, gas, and liquids with a minimum flow requirement. <b>Differential-pressure (orifice/venturi)</b> meters infer flow from the pressure drop across a restriction (flow proportional to the square root of DP) - cheap and proven but with permanent pressure loss and reduced low-flow accuracy. Selection weighs fluid type (conductive? clean? gas/steam?), accuracy needs, pressure-drop tolerance, and cost. Wrong technology for the fluid is a common misapplication - a magmeter on oil reads nothing."
+      },
+      {
+        "h": "Level Measurement Deep Dive: Radar, Guided-Wave, Hydrostatic, and Ultrasonic",
+        "body": "Level measurement technologies trade off cost, accuracy, and process conditions. <b>Hydrostatic</b> (pressure) level infers height from the pressure of the liquid column (P = rho&middot;g&middot;h) - simple and cheap but density-dependent and needs a bottom connection. <b>Ultrasonic</b> measures time-of-flight of a sound pulse to the surface and back - non-contact and inexpensive, but fooled by foam, vapor, and temperature gradients, with a blind zone near the sensor. <b>Non-contact radar</b> (FMCW/pulse) is similar but uses microwaves, largely immune to vapor/temperature and now the workhorse for demanding tanks. <b>Guided-wave radar (GWR)</b> sends a pulse down a probe, excellent for interfaces, foam, and turbulent surfaces since the wave is guided. Simple <b>float/displacer</b> and <b>capacitance</b> methods still serve point-level and specific fluids. Point-level <b>switches</b> (vibrating fork, conductive, float) provide high/low alarms and pump control. Choosing depends on the medium (foam, coating, conductivity, dielectric), accuracy, and whether continuous or point measurement is needed."
+      },
+      {
+        "h": "Gas Detection and Air-Quality Sensors",
+        "body": "Gas sensing protects people and processes. <b>Combustible gas</b> (LEL) detectors use catalytic-bead or infrared sensors to alarm before a flammable atmosphere reaches the Lower Explosive Limit. <b>Toxic gas</b> sensors (electrochemical cells) target specific gases like <b>carbon monoxide (CO)</b>, hydrogen sulfide (H2S), ammonia, and chlorine, each cell tuned to its gas. <b>Oxygen</b> sensors detect both <b>enrichment</b> and dangerous <b>depletion</b> - critical for confined-space entry, where displacement by another gas can be fatal. Sensors are characterized by their <b>target gas, range, response time (t90), and cross-sensitivity</b> to interfering gases. They require <b>bump testing</b> (a quick exposure to confirm response) and periodic <b>calibration</b> with span gas, since electrochemical cells drift and have a limited life (often 1-3 years). Fixed detectors tie into the control/safety system to trigger ventilation, alarms, or shutdown; portable monitors protect workers. Placement matters - lighter-than-air gases collect high, heavier-than-air (like propane) pool low."
+      },
+      {
+        "h": "Humidity and Dew-Point Measurement",
+        "body": "Humidity affects product quality (hygroscopic materials, coatings, electronics ESD), comfort (HVAC), and process control. <b>Relative humidity (RH)</b> is the ratio of actual water vapor to the maximum the air can hold at that temperature - so RH changes with temperature even if moisture content is constant. <b>Capacitive RH sensors</b> (a polymer dielectric whose capacitance changes with absorbed moisture) are the common industrial choice, often combined with a temperature sensor. <b>Dew point</b> - the temperature at which vapor condenses - is a more absolute measure of moisture content, important in compressed-air systems (to prevent condensation/freezing in lines) and drying processes; <b>chilled-mirror hygrometers</b> measure it precisely. Key specs are accuracy (% RH), operating range, and response time, plus resistance to condensation and contamination that degrade the sensor. In HVAC and cleanrooms, humidity is a controlled variable; in compressed air and instrument air, dew point is monitored to verify the dryer is working - a rising dew point warns of a failing desiccant or refrigerated dryer before moisture damages downstream pneumatics."
+      },
+      {
+        "h": "Resolvers and LVDTs: Rugged Position Feedback",
+        "body": "Where encoders are too fragile for heat, shock, or contamination, older but extremely robust analog feedback devices excel. A <b>resolver</b> is essentially a rotary transformer: a rotor winding excited with AC induces voltages in two stator windings 90 degrees apart, and the ratio of the sine/cosine outputs gives absolute angular position within one turn. Resolvers are brushless, tolerate high temperature, vibration, and dirt, and are common on servo motors in harsh environments and military/aerospace - they need a <b>resolver-to-digital converter</b> to interface. An <b>LVDT</b> (Linear Variable Differential Transformer) measures <b>linear</b> position: a moving core changes the coupling between a primary and two secondary coils, giving a rugged, frictionless, essentially infinite-resolution analog position signal used for valve position, hydraulic cylinder position, and precision gauging. Both are <b>absolute</b> (no homing needed within range), highly reliable, and immune to the optical-disk failure modes of encoders. The tradeoffs are the need for AC excitation and signal conditioning, and generally lower resolution/speed than modern high-count encoders. Knowing these devices matters when maintaining legacy servo and hydraulic systems."
+      },
+      {
+        "h": "Reading a Sensor Datasheet: Response Time, Hysteresis, and Repeatability",
+        "body": "Selecting and troubleshooting sensors requires reading the <b>datasheet</b> critically. Key parameters: <b>sensing range/distance</b> and how it derates with target material (the correction factor for a proximity sensor on aluminum vs steel); <b>response time / switching frequency</b> - a slow sensor misses fast targets, and switching frequency (Hz) limits how many objects per second it can detect; <b>hysteresis</b> - the deliberate gap between the on-point and off-point that prevents chattering at the threshold (too little causes output flicker, too much loses precision); <b>repeatability</b> - how consistently it triggers at the same point (the Rn spec); <b>output type</b> (NPN/PNP, NO/NC, analog, IO-Link); supply voltage, current rating, and short-circuit protection; and <b>environmental ratings</b> (IP, temperature, EMC). Also note the <b>correction factors</b>, hysteresis, and temperature drift that explain field behavior. A mismatch - a sensor whose switching frequency is too low for line speed, or whose hysteresis causes flicker feeding a fast counter - produces intermittent faults that make sense only once you have read the specs. Datasheet literacy turns 'the sensor is flaky' into a specific, correctable selection or setup issue."
       }
     ],
     "lab": {
@@ -2887,6 +3403,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Traceability links the reference through an unbroken, documented chain of accredited calibrations to a recognized national standard (e.g. NIST)."
+      },
+      {
+        "q": "A magnetic flowmeter (magmeter) will NOT work on:",
+        "options": [
+          "Water",
+          "Conductive slurry",
+          "Non-conductive oil or gas",
+          "Wastewater"
+        ],
+        "answer": 2,
+        "explain": "A magmeter relies on Faraday's law with a conductive fluid; non-conductive oils and gases produce no signal - a common misapplication."
+      },
+      {
+        "q": "Which flowmeter directly measures true mass flow and density with very high accuracy?",
+        "options": [
+          "Orifice plate",
+          "Coriolis",
+          "Ultrasonic level",
+          "Float"
+        ],
+        "answer": 1,
+        "explain": "A Coriolis meter measures mass flow and density directly via the phase shift of a vibrating tube - ideal for custody transfer and precise dosing."
+      },
+      {
+        "q": "A differential-pressure (orifice) flowmeter relates flow to DP by:",
+        "options": [
+          "Flow proportional to DP",
+          "Flow proportional to the square root of DP",
+          "Flow inversely proportional to DP",
+          "No relationship"
+        ],
+        "answer": 1,
+        "explain": "Across a restriction, flow is proportional to the square root of the differential pressure - hence reduced low-flow accuracy and square-root extraction."
+      },
+      {
+        "q": "For a tank with heavy vapor and foam, the most robust continuous level technology is generally:",
+        "options": [
+          "Ultrasonic",
+          "Guided-wave or non-contact radar",
+          "A sight glass only",
+          "Hydrostatic in the vapor space"
+        ],
+        "answer": 1,
+        "explain": "Radar (especially guided-wave) is largely immune to vapor/temperature and handles foam far better than ultrasonic, which is fooled by foam and vapor."
+      },
+      {
+        "q": "In confined-space entry, an oxygen sensor is critical primarily to detect:",
+        "options": [
+          "Only oxygen enrichment",
+          "Dangerous oxygen depletion (displacement by another gas)",
+          "Humidity",
+          "Combustible dust"
+        ],
+        "answer": 1,
+        "explain": "O2 sensors detect both enrichment and life-threatening depletion; displacement by another gas in a confined space can be fatal without warning."
+      },
+      {
+        "q": "Portable and fixed gas detectors require bump testing to:",
+        "options": [
+          "Charge the battery",
+          "Quickly confirm the sensor actually responds to its target gas",
+          "Increase the range",
+          "Change the units"
+        ],
+        "answer": 1,
+        "explain": "A bump test briefly exposes the sensor to confirm it responds and alarms; periodic span-gas calibration corrects drift, since cells age and have limited life."
+      },
+      {
+        "q": "Relative humidity changes with temperature even at constant moisture content because:",
+        "options": [
+          "Water is created by heat",
+          "RH is the ratio of actual vapor to the maximum air can hold, which rises with temperature",
+          "Sensors are inaccurate",
+          "Dew point is fixed"
+        ],
+        "answer": 1,
+        "explain": "Warmer air holds more vapor, so the same absolute moisture is a lower RH; dew point is the more temperature-independent measure of moisture content."
+      },
+      {
+        "q": "Compared to an optical encoder, a resolver's key advantage is:",
+        "options": [
+          "Higher resolution always",
+          "Ruggedness - tolerating heat, shock, and dirt with absolute position",
+          "Lower cost always",
+          "No excitation needed"
+        ],
+        "answer": 1,
+        "explain": "Resolvers are brushless rotary transformers that survive heat, vibration, and contamination and give absolute angle, though they need AC excitation and an RDC."
+      },
+      {
+        "q": "A proximity sensor whose output flickers on and off right at the trigger threshold most likely has:",
+        "options": [
+          "Too much hysteresis",
+          "Too little hysteresis (insufficient on/off gap)",
+          "Wrong color",
+          "No supply voltage"
+        ],
+        "answer": 1,
+        "explain": "Hysteresis is the deliberate gap between on-point and off-point; too little lets the output chatter at the threshold - a datasheet-explained fault."
       }
     ],
     "resources": [
@@ -3053,6 +3668,30 @@ MODULES = [
       {
         "h": "Energy Savings on Fans and Pumps: The Affinity Laws",
         "body": "The strongest economic case for VFDs is variable-torque loads - <b>centrifugal fans and pumps</b> - governed by the <b>affinity laws</b>. Flow is proportional to speed (Q &prop; N), pressure/head to speed squared (H &prop; N&sup2;), and - crucially - <b>power to speed cubed</b> (P &prop; N&sup3;). So running a fan at <b>80% speed</b> needs only 0.8&sup3; = 0.51, about <b>51% of full power</b> - roughly half the energy for 80% of the flow. Compare this to the traditional method of running full speed and <b>throttling with a damper or valve</b>, which wastes energy across the restriction; the VFD instead slows the motor to deliver exactly the needed flow. This cubic relationship means even modest speed reductions yield large savings, and it is why HVAC and process pumping are prime VFD retrofit targets with attractive paybacks. The same physics warns that pushing a fan/pump above rated speed raises power steeply and can overload the motor."
+      },
+      {
+        "h": "Servo Motors and Drives vs VFDs: When Closed-Loop Motion Is Needed",
+        "body": "A VFD spins an induction motor at a commanded speed, but a <b>servo</b> system precisely controls <b>position, velocity, and torque</b> in a tight closed loop. The differences: a servo motor (usually a permanent-magnet synchronous machine) has a high-resolution <b>feedback device</b> (encoder or resolver) and low rotor inertia for fast, accurate response; the <b>servo drive</b> closes nested control loops (position &rarr; velocity &rarr; torque/current) at high bandwidth, correcting error continuously. Choose a <b>VFD</b> when you need adjustable speed on a fan, pump, or conveyor and exact position does not matter. Choose a <b>servo</b> when the application demands precise positioning, fast dynamic moves, coordinated multi-axis motion, or accurate torque - indexing tables, robotics, pick-and-place, cut-to-length, and registration. Servos cost more and require tuning (loop gains, inertia matching) but deliver accuracy and responsiveness a VFD cannot. Modern <b>closed-loop vector VFDs with encoder feedback</b> blur the line, giving full torque at zero speed and better speed regulation, but true point-to-point positioning at high dynamics remains servo territory."
+      },
+      {
+        "h": "Motor Insulation Class, Winding Tests, and Insulation Resistance",
+        "body": "A motor's <b>insulation class</b> (A, B, F, H) defines the maximum winding temperature the insulation withstands - Class F (155 deg C) is the modern standard, Class H (180 deg C) for higher heat. Running hotter than the class rating roughly halves insulation life for each ~10 deg C over - so cooling and correct loading directly determine motor lifespan. Winding condition is assessed by tests: <b>insulation resistance</b> (megohmmeter/megger at 500-1000 VDC) checks for insulation breakdown to ground - a rule of thumb is at least 1 M&Omega; plus 1 M&Omega; per kV of rating, with values trended over time (a steadily falling reading warns of degradation). The <b>polarization index (PI)</b> - the ratio of the 10-minute to 1-minute IR reading - reveals moisture and contamination (a low PI near 1.0 indicates a wet/dirty winding). <b>Surge/hi-pot</b> testing finds turn-to-turn weaknesses megger cannot. Critically, <b>never megger through a VFD</b> - disconnect the motor leads, as the test voltage destroys drive electronics. Trended winding tests are a cornerstone of motor predictive maintenance."
+      },
+      {
+        "h": "VFD Output Filters: Line Reactors, dV/dt, and Sine-Wave Filters",
+        "body": "A VFD's fast IGBT switching creates two problems the drive alone does not solve, addressed by <b>filters</b>. On the <b>input</b>, a <b>line reactor</b> (or DC-bus choke) smooths current draw, reduces harmonic distortion (helping IEEE 519 compliance), and protects the drive from line transients. On the <b>output</b>, the steep voltage edges (high dV/dt) and cable capacitance cause <b>reflected-wave</b> voltage doubling that stresses motor insulation, plus high-frequency common-mode currents that damage bearings. A <b>load/output reactor</b> softens the edges for moderate cable lengths; a <b>dV/dt filter</b> further limits the rate of voltage rise for longer leads; and a <b>sine-wave filter</b> reconstructs a nearly sinusoidal output for very long cable runs or sensitive/older motors, essentially eliminating reflected-wave stress. The <b>cable-length threshold</b> (beyond which reflected-wave becomes damaging) depends on the drive's rise time and is a key application spec - exceeding it without a filter is a leading cause of premature motor winding failures on VFD-fed motors. Bearing protection (grounding rings, insulated bearings) complements output filtering."
+      },
+      {
+        "h": "Motor Enclosure and Cooling Types: TEFC, ODP, TENV",
+        "body": "A motor's <b>enclosure</b> determines how it is cooled and protected, matched to its environment. <b>ODP</b> (Open Drip-Proof) lets ambient air flow through the motor for cooling - efficient and cool-running but only for clean, dry indoor locations, since airborne dust/moisture enters. <b>TEFC</b> (Totally Enclosed Fan-Cooled) seals the interior and cools via an external shaft-mounted fan blowing over finned housing - the industrial workhorse, tolerating dusty, wet, and outdoor environments. <b>TENV</b> (Totally Enclosed Non-Ventilated) has no fan, relying on housing surface area, used for low-power or intermittent duty and where a fan cannot be used. <b>TEBC/blower-cooled</b> uses a separate constant-speed blower - important for <b>VFD-driven motors run at low speed</b>, where a shaft fan moves too little air and the motor overheats (a common VFD retrofit oversight). Specialized types include explosion-proof (XP) for hazardous areas and washdown-duty for food. Cooling method ties directly to the thermal/derating discussion: a TEFC motor slowed by a VFD may need a separate blower or derating to avoid thermal failure at reduced speed."
+      },
+      {
+        "h": "Synchronous Speed, Slip, and Pole-Count Calculations",
+        "body": "An AC induction motor's speed is set by the supply frequency and its <b>number of poles</b>. <b>Synchronous speed</b> (the rotating magnetic field speed) = 120 &times; frequency / poles. At 60 Hz: 2 poles = 3600 rpm, 4 poles = 1800 rpm, 6 poles = 1200 rpm, 8 poles = 900 rpm. The rotor always runs slightly slower than synchronous - the difference is <b>slip</b>, which is what induces rotor current and produces torque (a truly synchronous rotor would make none). Slip is small at no load and increases with load; <b>% slip</b> = (Ns - Nr)/Ns &times; 100, typically 2-5% at full load. So a '1800 rpm' 4-pole motor actually runs about 1750 rpm loaded - which is why nameplate full-load speed reads a slip-reduced value. On a VFD, changing frequency shifts synchronous speed proportionally (30 Hz halves it), the basis of speed control; the drive maintains torque by keeping the V/Hz ratio constant below base speed. Understanding this lets a technician verify a motor is running at the expected speed and diagnose slip-related overheating from overload."
+      },
+      {
+        "h": "Constant-Torque vs Variable-Torque VFD Applications and Sizing",
+        "body": "Matching a VFD and motor to the load requires knowing the load's <b>torque-speed characteristic</b>. <b>Variable-torque</b> loads - centrifugal fans and pumps - need torque that rises with the square of speed and power with the cube (affinity laws), so they draw little torque at low speed; a standard-duty (variable-torque-rated) VFD suffices and yields large energy savings. <b>Constant-torque</b> loads - conveyors, mixers, positive-displacement pumps, extruders, hoists - demand roughly full torque across the speed range, including at low speed, requiring a <b>constant-torque-rated (heavy-duty) drive</b> with higher overload capacity (often 150% for 60 s) and attention to low-speed cooling. <b>Constant-power</b> (field-weakening) operation above base speed trades torque for speed. Sizing rules: match the drive to the <b>motor FLA and the load profile</b>, not just horsepower; account for <b>overload/inrush</b> and starting torque (a loaded conveyor or high-inertia fan needs breakaway/acceleration torque); and verify low-speed cooling. Undersizing on a constant-torque load causes overcurrent trips on starts; misapplying a variable-torque drive to a constant-torque load leaves it unable to deliver low-speed torque."
       }
     ],
     "lab": {
@@ -3484,6 +4123,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Power varies with speed cubed: 0.8^3 = 0.512, about 51% of full power - the basis of large VFD energy savings on fans and pumps."
+      },
+      {
+        "q": "The key capability a servo system has that a basic VFD does not is:",
+        "options": [
+          "Spinning a motor",
+          "Precise closed-loop position control with high-resolution feedback",
+          "Using three-phase power",
+          "Having a DC bus"
+        ],
+        "answer": 1,
+        "explain": "A servo closes tight position/velocity/torque loops with encoder/resolver feedback for precise, dynamic positioning; a basic VFD only regulates speed."
+      },
+      {
+        "q": "A rule of thumb for minimum acceptable motor insulation resistance is:",
+        "options": [
+          "At least 1 kil-ohm total",
+          "At least 1 M-ohm plus 1 M-ohm per kV of rating, trended over time",
+          "Exactly 0 ohms",
+          "Any value is fine"
+        ],
+        "answer": 1,
+        "explain": "The common guideline is 1 M-ohm plus 1 M-ohm/kV; trending a falling reading warns of insulation degradation before failure."
+      },
+      {
+        "q": "Why must you never megger a motor through its VFD?",
+        "options": [
+          "It is too slow",
+          "The high test voltage destroys the drive's electronics - disconnect the motor leads",
+          "Meggers only work on DC motors",
+          "It improves the reading"
+        ],
+        "answer": 1,
+        "explain": "Megger/hi-pot test voltage will damage the VFD's semiconductors; always isolate the motor leads from the drive before insulation testing."
+      },
+      {
+        "q": "On a long VFD-to-motor cable run, reflected-wave voltage doubling is best eliminated with a:",
+        "options": [
+          "Larger breaker",
+          "Sine-wave (or dV/dt) output filter",
+          "Bigger motor",
+          "Longer cable"
+        ],
+        "answer": 1,
+        "explain": "Output filters (dV/dt for moderate lengths, sine-wave for long runs) soften the fast edges that cause reflected-wave insulation stress."
+      },
+      {
+        "q": "A TEFC motor driven by a VFD at low speed for long periods may overheat because:",
+        "options": [
+          "The DC bus is too high",
+          "Its shaft-mounted fan moves too little air at low rpm - it may need a separate blower",
+          "VFDs cannot run TEFC motors",
+          "Slip disappears"
+        ],
+        "answer": 1,
+        "explain": "A shaft fan's airflow falls with speed; sustained low-speed VFD operation often requires a separate constant-speed blower (TEBC) or derating."
+      },
+      {
+        "q": "The synchronous speed of a 4-pole motor on 60 Hz is:",
+        "options": [
+          "3600 rpm",
+          "1800 rpm",
+          "1200 rpm",
+          "900 rpm"
+        ],
+        "answer": 1,
+        "explain": "Ns = 120 x f / poles = 120 x 60 / 4 = 1800 rpm; the loaded rotor runs slightly slower (~1750 rpm) due to slip."
+      },
+      {
+        "q": "Slip in an induction motor is necessary because:",
+        "options": [
+          "It wastes energy for no reason",
+          "The rotor must run slower than the field to induce rotor current and produce torque",
+          "It increases synchronous speed",
+          "It eliminates heat"
+        ],
+        "answer": 1,
+        "explain": "Relative motion (slip) between the rotating field and rotor induces the rotor current that creates torque; a truly synchronous rotor would produce none."
+      },
+      {
+        "q": "A conveyor that needs full torque at low speed is a:",
+        "options": [
+          "Variable-torque load needing a standard drive",
+          "Constant-torque load needing a heavy-duty (constant-torque-rated) drive",
+          "Load that needs no drive",
+          "Constant-power load only"
+        ],
+        "answer": 1,
+        "explain": "Conveyors, mixers, and PD pumps are constant-torque loads requiring full torque across speed and a constant-torque-rated drive with higher overload capacity."
+      },
+      {
+        "q": "By the affinity laws, a centrifugal pump is a variable-torque load, meaning at low speed it:",
+        "options": [
+          "Needs full torque",
+          "Needs little torque (torque rises with speed squared)",
+          "Draws maximum current",
+          "Cannot be driven by a VFD"
+        ],
+        "answer": 1,
+        "explain": "Variable-torque loads need torque proportional to speed squared, so they demand little torque at low speed - allowing a standard drive and large energy savings."
       }
     ],
     "resources": [
