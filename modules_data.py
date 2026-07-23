@@ -158,6 +158,30 @@ MODULES = [
       {
         "h": "Energy Management and Sustainability in Automated Plants",
         "body": "Energy is often a plant's largest controllable cost and a growing sustainability mandate, and automation is central to managing it. <b>Sub-metering</b> (measuring energy by line, area, or machine rather than one plant meter) reveals where energy goes and enables accountability - you cannot manage what you do not measure. <b>ISO 50001</b> provides an energy-management-system framework (baseline, targets, continuous improvement). Automation reduces energy through <b>VFDs on variable-torque loads</b> (affinity-law cubic savings on fans/pumps), <b>demand management</b> (staggering start-ups and shedding non-critical load to avoid peak-demand charges), <b>compressed-air leak detection</b> (air is one of the most expensive utilities and typically 20-30% is lost to leaks), lighting controls, and idle/standby modes that power down equipment during no-production periods. <b>Power-factor correction</b> avoids utility penalties. Framing improvements in both kWh and carbon terms increasingly matters for ESG reporting, and the control system is where the data and the levers live."
+      },
+      {
+        "h": "Fundamental Physics for Automation: Force, Torque, Work, and Power",
+        "body": "Every automated machine moves mass, and the language for that motion is basic mechanics. <b>Force</b> (newtons) is mass times acceleration, F=ma. <b>Torque</b> (newton-metres) is rotational force, tau = F &times; r, so a motor turning a 0.1 m radius pulley with 50 N of belt tension makes 5 N&middot;m. <b>Work</b> (joules) is force acting over distance, W=F&middot;d, and <b>power</b> (watts) is work per unit time, P=W/t. For rotating machines the vital shortcut is P = tau &times; omega, where omega is angular speed in radians per second. A 1750 rpm motor spins at 1750 &times; 2&pi;/60 = 183 rad/s, so a 10 N&middot;m load needs 1830 W (about 2.45 hp) at the shaft. These relationships explain why gearboxes trade speed for torque: reducing output speed 10:1 multiplies torque roughly 10:1 (minus losses). Understanding force, torque, work, and power lets a technician sanity-check motor sizing, predict whether a conveyor can start a loaded belt, and interpret why an overloaded drive trips on current. It is the bedrock beneath every VFD parameter and mechanical spec you will meet."
+      },
+      {
+        "h": "Digital Logic Gates and Boolean Algebra Basics",
+        "body": "Underneath every PLC rung and every discrete I/O card sits Boolean logic. The three primitive gates are <b>AND</b> (output true only when all inputs are true), <b>OR</b> (output true when any input is true), and <b>NOT</b> (inversion). From these we build <b>NAND</b>, <b>NOR</b>, and <b>XOR</b> (exclusive-OR, true when inputs differ). A truth table lists every input combination and its result; for a 2-input gate there are 2&sup2; = 4 rows, for 3 inputs 2&sup3; = 8 rows. Boolean algebra gives simplification rules: A AND 1 = A, A OR 0 = A, A AND A' = 0, plus De Morgan's theorem, (A AND B)' = A' OR B'. This last identity is why a normally-closed contact in series can replace a NAND. In ladder logic, series contacts form an AND, parallel contacts form an OR, and a normally-closed examine-if-open instruction is a NOT. Mastering gates and their algebra means you can read a machine's safety interlock string, predict when an output energises, and simplify tangled rungs into fewer, clearer contacts. Every complex control decision decomposes into these elementary true/false operations."
+      },
+      {
+        "h": "Analog vs Digital Signals: Sampling, Resolution, and Quantization",
+        "body": "Automation deals with two signal worlds. A <b>digital</b> (discrete) signal has only two states, on or off, like a proximity switch. An <b>analog</b> signal varies continuously, like a 4-20 mA pressure transmitter. To use analog data a PLC must convert it with an analog-to-digital converter (ADC), and three ideas govern the fidelity of that conversion. <b>Resolution</b> is how many discrete steps the ADC divides the range into: a 12-bit converter gives 2&sup2; = 4096 counts, so a 0-100 psi span resolves to about 0.024 psi per count. <b>Quantization</b> is the rounding error introduced because the real value rarely lands exactly on a step. <b>Sampling</b> is how often the value is read; the Nyquist rule says you must sample at least twice the highest signal frequency to avoid aliasing, so a signal changing 10 times per second needs at least 20 samples per second. Too coarse a resolution hides small process changes; too slow a sample rate misses fast events. Knowing these limits helps a technician choose the right analog card, scale raw counts to engineering units, and understand why a noisy or jumpy analog reading may be a converter or sampling issue, not a bad sensor."
+      },
+      {
+        "h": "Open-Loop vs Closed-Loop Control: The Feedback Concept",
+        "body": "Control systems fall into two families. In <b>open-loop</b> control the command is issued and no measurement confirms the result, like a toaster that runs a timer regardless of how brown the bread gets. In <b>closed-loop</b> (feedback) control a sensor measures the actual result, the <b>process variable</b> (PV), and compares it to the desired <b>setpoint</b> (SP). The difference, error = SP &minus; PV, drives a controller that adjusts the output to shrink that error. A cruise-control system reading vehicle speed and adjusting throttle is closed-loop; so is a VFD holding tank level by modulating pump speed. The great advantage of feedback is that it corrects for disturbances and component drift automatically, but it can also oscillate or become unstable if tuned poorly. Open-loop is simpler and cheaper and works fine when the load is predictable and repeatable. Recognising which type of control a machine uses tells a technician where to look when output does not match expectation: on an open-loop system suspect the command or actuator; on a closed-loop system also suspect the feedback sensor, because a lying sensor makes the controller chase a phantom error."
+      },
+      {
+        "h": "Manufacturing Process Types: Discrete, Batch, and Continuous",
+        "body": "Automation strategy depends heavily on what kind of process is being run. <b>Discrete</b> manufacturing makes countable individual items, cars, cartons, circuit boards, and relies on part tracking, sequencing, and high-speed sensors; PLCs and motion control dominate here. <b>Batch</b> processing makes defined quantities by recipe, mixing a tank of paint or brewing a kettle of beer, then repeating; it needs recipe management, step sequencing, and standards like ISA-88 to structure phases and units. <b>Continuous</b> processing runs uninterrupted for days or weeks, refining oil or generating power, where distributed control systems (DCS) hold hundreds of loops steady and the enemy is any unplanned shutdown. Many plants are hybrids: a food line may batch-mix an ingredient then discretely package it. Knowing the process type frames every downstream decision, the choice between PLC and DCS, the importance of recipes, how failure is measured (units scrapped vs downtime hours vs off-spec product), and even the maintenance window available. A technician who identifies the process type quickly understands the plant's priorities and the likely architecture of its control system."
+      },
+      {
+        "h": "Measuring Performance: OEE, Availability, and Throughput",
+        "body": "Automation exists to improve output, and the standard yardstick is <b>Overall Equipment Effectiveness (OEE)</b>, the product of three factors each expressed as a fraction. <b>Availability</b> is run time divided by planned production time, hurt by breakdowns and changeovers. <b>Performance</b> is actual speed divided by rated speed, hurt by minor stops and slow cycles. <b>Quality</b> is good units divided by total units, hurt by scrap and rework. OEE = Availability &times; Performance &times; Quality. If a line is available 90%, runs at 95% of rated speed, and yields 98% good parts, OEE = 0.90 &times; 0.95 &times; 0.98 = 0.838, or about 84%. World-class discrete lines target 85% or higher. <b>Throughput</b> is the raw count of good units per hour and is what finance ultimately cares about. These metrics turn vague complaints (\"the line feels slow\") into data that pinpoints the biggest loss: an availability problem points maintenance at reliability, a performance problem points engineering at bottlenecks and micro-stops, a quality problem points at process control. A technician who can read the OEE breakdown knows exactly which lever to pull to raise output."
       }
     ],
     "lab": {
@@ -653,6 +677,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "The lean caution: automation amplifies whatever process it serves, so eliminate waste first, then automate - otherwise you just produce waste faster."
+      },
+      {
+        "q": "A motor produces 20 N&middot;m of torque at 1500 rpm. Approximately how much mechanical power is at the shaft?",
+        "options": [
+          "about 314 W",
+          "about 3140 W",
+          "about 30 kW",
+          "about 100 W"
+        ],
+        "answer": 1,
+        "explain": "omega = 1500 &times; 2&pi;/60 = 157 rad/s; P = tau &times; omega = 20 &times; 157 = 3140 W (about 4.2 hp)."
+      },
+      {
+        "q": "In ladder logic, two normally-open contacts wired in series implement which Boolean function?",
+        "options": [
+          "OR",
+          "AND",
+          "NOT",
+          "XOR"
+        ],
+        "answer": 1,
+        "explain": "Series contacts must all be closed (true) for power to pass, which is a logical AND. Parallel contacts form an OR."
+      },
+      {
+        "q": "A 12-bit ADC spans 0-100 psi. What is the approximate resolution per count?",
+        "options": [
+          "0.024 psi",
+          "0.24 psi",
+          "2.4 psi",
+          "0.0024 psi"
+        ],
+        "answer": 0,
+        "explain": "12 bits = 4096 counts; 100 psi / 4096 = about 0.024 psi per count."
+      },
+      {
+        "q": "Which statement best distinguishes closed-loop from open-loop control?",
+        "options": [
+          "Closed-loop is always cheaper",
+          "Closed-loop uses feedback of the measured process variable to correct error",
+          "Open-loop always uses a sensor",
+          "Open-loop cannot use a timer"
+        ],
+        "answer": 1,
+        "explain": "Closed-loop measures the actual result (PV), computes error = SP - PV, and adjusts output; open-loop issues a command with no confirming measurement."
+      },
+      {
+        "q": "A process that refines crude oil around the clock for weeks without stopping is best described as:",
+        "options": [
+          "Discrete",
+          "Batch",
+          "Continuous",
+          "Job-shop"
+        ],
+        "answer": 2,
+        "explain": "Continuous processes run uninterrupted; unplanned shutdown is the main threat, and DCS platforms typically control them."
+      },
+      {
+        "q": "A line is 90% available, runs at 95% performance, and yields 97% quality. What is its OEE?",
+        "options": [
+          "about 94%",
+          "about 83%",
+          "about 76%",
+          "about 90%"
+        ],
+        "answer": 1,
+        "explain": "OEE = 0.90 &times; 0.95 &times; 0.97 = 0.829, about 83%."
+      },
+      {
+        "q": "By De Morgan's theorem, (A AND B)' is equivalent to:",
+        "options": [
+          "A' AND B'",
+          "A' OR B'",
+          "A OR B",
+          "A AND B"
+        ],
+        "answer": 1,
+        "explain": "De Morgan: the complement of an AND equals the OR of the complements, (A AND B)' = A' OR B'."
+      },
+      {
+        "q": "The Nyquist rule requires that to capture a signal changing 10 times per second you sample at least:",
+        "options": [
+          "10 times per second",
+          "5 times per second",
+          "20 times per second",
+          "2 times per second"
+        ],
+        "answer": 2,
+        "explain": "Nyquist requires sampling at a minimum of twice the highest signal frequency, so 2 &times; 10 = 20 samples per second."
+      },
+      {
+        "q": "On a closed-loop level system the output is wrong but the valve and pump test fine. What should you also suspect?",
+        "options": [
+          "The setpoint units only",
+          "The feedback level sensor lying to the controller",
+          "The power supply fuse",
+          "The HMI backlight"
+        ],
+        "answer": 1,
+        "explain": "In closed-loop control a faulty feedback sensor makes the controller chase a phantom error, so the level transmitter is a prime suspect when actuators check out."
       }
     ],
     "resources": [
@@ -843,6 +966,30 @@ MODULES = [
       {
         "h": "Surge Protection and Lightning Mitigation",
         "body": "Transient overvoltages - from lightning, utility switching, or large inductive loads switching - can destroy electronics and degrade insulation over time. <b>Surge Protective Devices (SPDs)</b>, formerly called TVSS, clamp these transients by diverting surge current to ground, typically using metal-oxide varistors (MOVs). SPDs are rated by <b>type</b>: Type 1 (at the service entrance, line side of main), Type 2 (load side, at panelboards), Type 3 (point-of-use at the equipment). A layered approach - Type 1/2 at distribution plus Type 3 at sensitive equipment - gives cascaded protection. Key specs are the <b>maximum continuous operating voltage (MCOV)</b>, surge current rating (kA), and clamping/let-through voltage. SPDs are sacrificial and degrade with each hit, so many include end-of-life indicators. Proper <b>grounding and bonding</b> with short, low-impedance leads is essential - a long ground lead adds inductance that defeats the SPD. For control panels and networks, dedicated signal-line surge protectors guard sensor and communication circuits, where even small transients cause data corruption or device damage."
+      },
+      {
+        "h": "AC Impedance, Reactance, and Phasor Analysis",
+        "body": "In DC circuits opposition to current is pure resistance, but in AC circuits capacitors and inductors add frequency-dependent opposition called <b>reactance</b>. Inductive reactance is X_L = 2&pi;fL, so an inductance grows with frequency; capacitive reactance is X_C = 1/(2&pi;fC), which shrinks with frequency. The total opposition, combining resistance and net reactance, is <b>impedance</b> Z, measured in ohms. Because current and voltage in reactive elements are shifted in time, we cannot simply add them arithmetically; instead we use <b>phasors</b>, rotating vectors that capture both magnitude and phase angle. Impedance combines as Z = R + j(X_L &minus; X_C), and its magnitude is |Z| = sqrt(R&sup2; + (X_L &minus; X_C)&sup2;). In a series RLC circuit at 60 Hz with R=10 &Omega;, X_L=15 &Omega;, X_C=7 &Omega;, the net reactance is 8 &Omega; inductive, so |Z| = sqrt(100 + 64) = 12.8 &Omega;. When X_L equals X_C the circuit is at <b>resonance</b>, reactances cancel, and impedance drops to just R, allowing maximum current. This theory underlies motor power factor, VFD filter design, and why long motor cables behave capacitively at the drive's switching frequency."
+      },
+      {
+        "h": "Electromagnetic Induction: Faraday, Lenz, and Back-EMF",
+        "body": "Nearly every motor, generator, and transformer runs on <b>electromagnetic induction</b>. Faraday's law states that a changing magnetic flux through a coil induces a voltage proportional to the rate of change and the number of turns, EMF = &minus;N &middot; d&Phi;/dt. Lenz's law supplies the minus sign: the induced current always opposes the change that created it, which is why a spinning motor generates a <b>back-EMF</b> that opposes the applied voltage. At standstill a motor has no back-EMF, so inrush current is high (often 6-8 times full-load); as it accelerates, back-EMF rises and current falls to its running value. This same principle explains why opening an inductive circuit (a contactor coil or solenoid) produces a damaging voltage spike, the collapsing field induces a large EMF, and why we fit flyback diodes or snubbers to tame it. It explains transformer action, where a changing primary flux induces secondary voltage, and eddy-current braking, where induced currents in a moving conductor create a retarding force. Understanding induction lets a technician reason about inrush, coil suppression, generator regeneration on a decelerating VFD, and the very origin of the torque that turns every AC motor."
+      },
+      {
+        "h": "Semiconductor Power Devices: Diodes, SCRs, and IGBTs",
+        "body": "Modern drives and power supplies are built from solid-state switches. The simplest is the <b>diode</b>, which conducts in one direction only; six diodes form the rectifier bridge that turns three-phase AC into the DC bus of a VFD. The <b>thyristor or SCR</b> (silicon-controlled rectifier) is a diode that stays off until a gate pulse triggers it, then latches on until current drops to zero; SCRs run soft starters and DC drives by phase-angle control, firing later in each half-cycle to deliver less voltage. The workhorse of modern inverters is the <b>IGBT</b> (insulated-gate bipolar transistor), a fully controllable switch that turns on and off thousands of times per second on command, letting the drive synthesise a variable-frequency output through pulse-width modulation. Each device has limits: peak reverse voltage, forward current, and switching speed, and each generates heat that must be removed by heatsinks and fans. Fast IGBT switching creates steep voltage edges (high dV/dt) that stress motor insulation and demand snubbers or output filters. Knowing which device does what helps a technician interpret drive fault codes, understand why a shorted IGBT trips the DC bus, and appreciate the trade-off between switching speed, efficiency, and electromagnetic noise."
+      },
+      {
+        "h": "Rectifiers and DC Power Supply Topologies",
+        "body": "Most control equipment needs clean DC, so converting AC is a core skill. A <b>half-wave rectifier</b> uses one diode and passes only half of each cycle, giving pulsed, inefficient DC. A <b>full-wave bridge</b> uses four diodes (single-phase) or six (three-phase) to use both halves, producing smoother output; the three-phase bridge is what feeds a VFD's DC bus and gives relatively low ripple even before filtering. After rectification a <b>filter capacitor</b> stores charge and fills the valleys between peaks, reducing ripple voltage; larger capacitance means less ripple but higher inrush at power-up, which is why drives use precharge resistors or soft-charge circuits. A <b>linear regulator</b> then holds a steady voltage by dissipating excess as heat, simple but inefficient. Modern control supplies instead use <b>switch-mode</b> topologies (buck, boost, flyback) that chop the input at high frequency and regulate by duty cycle, achieving 85-95% efficiency in a small package, the ubiquitous 24 VDC DIN-rail supply is switch-mode. Understanding these topologies helps a technician diagnose a sagging 24 V rail, recognise that a failed DC-bus capacitor causes ripple and nuisance trips, and choose a supply with enough headroom and inrush tolerance for the load."
+      },
+      {
+        "h": "Motor Nameplate Interpretation and NEMA Design Letters",
+        "body": "The motor nameplate is a compact data sheet that drives every wiring, protection, and drive-setup decision. Key fields include <b>rated voltage</b> and <b>full-load amps (FLA)</b>, used to size conductors and overloads; <b>horsepower or kW</b>; <b>rated speed</b> in rpm, which reveals pole count (a 4-pole 60 Hz motor runs near 1750 rpm); <b>service factor (SF)</b>, a multiplier (commonly 1.15) showing how much continuous overload the motor tolerates; <b>insulation class</b> (B, F, H) setting the allowable winding temperature; and <b>frame size</b>, a NEMA standard dimension code. The <b>NEMA design letter</b> (A, B, C, D) describes the torque-speed curve: Design B is the general-purpose default with normal starting torque and low slip; Design C gives high starting torque for loaded conveyors and compressors; Design D gives very high starting torque and high slip for punch presses and cranes. The <b>code letter</b> indicates locked-rotor kVA per horsepower, used to calculate inrush. Reading the nameplate correctly lets a technician set VFD parameters (base frequency, FLA, motor poles), size branch-circuit protection per NEC 430, and match a replacement motor's torque characteristics to the driven load."
+      },
+      {
+        "h": "Raceway Systems: Conduit, Cable Tray, and Wireways",
+        "body": "Conductors between panels and field devices must be protected and organised by <b>raceway systems</b>, and each type suits a different job. <b>Rigid metal conduit (RMC)</b> and <b>intermediate metal conduit (IMC)</b> give the toughest mechanical and EMI protection for exposed runs. <b>Electrical metallic tubing (EMT)</b> is thin-wall, lighter, and common indoors. <b>Liquidtight flexible metal conduit (LFMC)</b> makes the vibration-tolerant, watertight final connection to a motor or sensor. <b>Cable tray</b> is an open ladder or trough that carries many cables along a plant's backbone, easy to add to and inspect. <b>Wireway (gutter)</b> is a rectangular sheet-metal trough with a removable cover used to fan out and organise conductors around panels. NEC rules govern <b>conduit fill</b> (generally 40% for three or more conductors) to allow heat dissipation and pulling room, and <b>bend limits</b> (no more than 360 degrees total between pull points). Grounding continuity through metal raceway can serve as the equipment grounding path if properly bonded. Choosing and installing raceway correctly protects wiring from damage, controls electrical noise around VFD cables, eases future changes, and keeps an installation code-compliant and inspectable."
       }
     ],
     "lab": {
@@ -1372,6 +1519,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Long ground leads add inductance that raises let-through voltage; SPDs need short, low-impedance bonding to be effective."
+      },
+      {
+        "q": "A series RLC circuit at 60 Hz has R=10 &Omega;, X_L=15 &Omega;, X_C=7 &Omega;. What is the impedance magnitude?",
+        "options": [
+          "about 12.8 &Omega;",
+          "about 32 &Omega;",
+          "about 8 &Omega;",
+          "about 10 &Omega;"
+        ],
+        "answer": 0,
+        "explain": "Net reactance = 15 - 7 = 8 &Omega;; |Z| = sqrt(10&sup2; + 8&sup2;) = sqrt(164) = 12.8 &Omega;."
+      },
+      {
+        "q": "Inductive reactance X_L as frequency increases will:",
+        "options": [
+          "Decrease",
+          "Stay constant",
+          "Increase",
+          "Become negative"
+        ],
+        "answer": 2,
+        "explain": "X_L = 2&pi;fL rises directly with frequency; capacitive reactance X_C = 1/(2&pi;fC) instead falls with frequency."
+      },
+      {
+        "q": "Why is a motor's inrush current high at the instant of starting?",
+        "options": [
+          "The nameplate FLA is wrong",
+          "There is no back-EMF at standstill to oppose the applied voltage",
+          "The overload relay is faulty",
+          "Capacitance is too high"
+        ],
+        "answer": 1,
+        "explain": "At zero speed the motor generates no back-EMF, so only winding impedance limits current, giving 6-8x FLA inrush until it accelerates."
+      },
+      {
+        "q": "Which semiconductor device is the fully controllable high-frequency switch used in a VFD inverter section?",
+        "options": [
+          "Diode",
+          "SCR/thyristor",
+          "IGBT",
+          "Zener diode"
+        ],
+        "answer": 2,
+        "explain": "The IGBT can be switched on and off on command thousands of times per second, enabling PWM synthesis of variable-frequency output."
+      },
+      {
+        "q": "In a DC power supply, the filter capacitor's main job is to:",
+        "options": [
+          "Increase the voltage",
+          "Reduce ripple by filling the valleys between rectified peaks",
+          "Rectify the AC",
+          "Provide overcurrent protection"
+        ],
+        "answer": 1,
+        "explain": "The capacitor stores charge and supplies the load during the gaps between peaks, smoothing ripple; larger caps mean less ripple but higher inrush."
+      },
+      {
+        "q": "A NEMA Design C motor is chosen primarily for:",
+        "options": [
+          "Lowest cost",
+          "High starting torque for hard-to-start loads",
+          "Highest running speed",
+          "Variable-frequency operation only"
+        ],
+        "answer": 1,
+        "explain": "Design C provides high locked-rotor (starting) torque suited to loaded conveyors and compressors; Design B is the general-purpose default."
+      },
+      {
+        "q": "A 4-pole induction motor on a 60 Hz supply runs at a nameplate speed nearest to:",
+        "options": [
+          "3600 rpm",
+          "1750 rpm",
+          "1200 rpm",
+          "900 rpm"
+        ],
+        "answer": 1,
+        "explain": "Synchronous speed = 120 &times; 60 / 4 = 1800 rpm; with slip the nameplate full-load speed is about 1750 rpm."
+      },
+      {
+        "q": "General NEC conduit fill for three or more conductors is limited to about:",
+        "options": [
+          "20%",
+          "40%",
+          "60%",
+          "100%"
+        ],
+        "answer": 1,
+        "explain": "The 40% fill limit for three or more conductors allows heat dissipation and room to pull without damaging insulation."
+      },
+      {
+        "q": "At resonance in a series RLC circuit, the impedance:",
+        "options": [
+          "Rises to a maximum",
+          "Drops to just the resistance R",
+          "Becomes infinite",
+          "Equals X_L + X_C"
+        ],
+        "answer": 1,
+        "explain": "At resonance X_L = X_C, the reactances cancel, so impedance equals R alone and current is maximum."
       }
     ],
     "resources": [
@@ -1554,6 +1800,30 @@ MODULES = [
       {
         "h": "Reading the PLC's Own Diagnostics: Status LEDs and Fault Codes",
         "body": "Before diving into logic, read what the controller is telling you. Every PLC and I/O module has <b>status LEDs</b>: a controller RUN/FAULT/FORCE indicator, module OK/fault LEDs, and per-point I/O LEDs that show the actual state of each input/output at the module - an invaluable first check (does the input LED light when you actuate the field device? if not, the problem is field-side, not in the logic). A <b>major fault</b> halts the controller and populates a <b>fault code</b> and fault routine data identifying the type (e.g. I/O fault, watchdog/scan overrun, math error, addressing fault) - reading that code points straight at the cause. <b>Minor faults</b> log without stopping. <b>Force</b> indicators warn that I/O is being overridden (a safety hazard if forgotten). Communication modules show link/activity and connection status. Systematic troubleshooting starts here: RUN state, module health, forces active, then trace the specific I/O point via its LED and the cross-reference - a huge fraction of faults are diagnosed at the LED and fault-code level before ever reading a rung."
+      },
+      {
+        "h": "Boolean Rung Solving: How the PLC Evaluates a Ladder Rung",
+        "body": "To troubleshoot ladder logic you must know exactly how the processor solves a rung. Each rung is evaluated left to right, top to bottom, once per scan. The processor tracks a single running result called <b>rung condition</b>: it starts true at the left power rail, and each instruction either passes or blocks that logical power. An <b>examine-if-closed (XIC)</b> instruction passes power when its bit is 1; an <b>examine-if-open (XIO)</b> passes power when its bit is 0. Contacts in <b>series</b> form a logical AND, so all must pass; contacts in <b>parallel branches</b> form an OR, so any true branch passes. When rung condition reaches an output instruction (OTE), that output's bit is set to match the rung condition, energised if true, de-energised if false, every scan. This is why a coil with no seal-in drops the instant its enabling contact opens. It is also why <b>double-coil</b> programming (the same OTE address on two rungs) is dangerous: the last rung solved each scan wins, masking the first. Mentally solving a rung, tracing power flow through each contact, is the single most useful skill for online debugging: you can predict an output's state from the input bits and instantly spot the contact that is blocking power."
+      },
+      {
+        "h": "Wiring a PLC From Scratch: Power, I/O, and Commissioning",
+        "body": "Installing a PLC follows a repeatable sequence. First provide <b>control power</b>: a switch-mode 24 VDC supply on a DIN rail, fed through a fuse or breaker, feeds the processor and I/O; verify polarity and voltage before energising anything. Next wire <b>discrete inputs</b>: field devices (push-buttons, proximity switches) connect between the supply and input terminals, matching the module's sinking or sourcing convention; a common bus (return) ties back to the supply. Wire <b>discrete outputs</b> to loads (pilot lights, relays, solenoids) with the module's rated voltage and current respected, and add interposing relays where load current exceeds the card rating. <b>Analog</b> wiring uses shielded twisted pair with the shield grounded at one end only to avoid ground loops. Land the <b>equipment ground</b> and bond the panel. Before power-up, ring out each conductor against the wiring diagram and check for shorts. At commissioning, force each input and confirm the correct bit toggles, then force each output and confirm the field device actuates, proving the wiring before the program ever runs. This disciplined build-and-verify method catches wiring faults early, when they are cheap to fix, rather than during a chaotic startup."
+      },
+      {
+        "h": "PLC, DCS, and SCADA: Comparing System Architectures",
+        "body": "Three overlapping architectures dominate industrial control, and knowing their strengths guides both design and troubleshooting. A <b>PLC</b> (programmable logic controller) is a fast, rugged, deterministic box optimised for discrete and high-speed machine control, a single controller handling one machine or cell. A <b>DCS</b> (distributed control system) is an integrated plant-wide system with many controllers, redundant by design, engineered as one database for hundreds or thousands of analog loops in continuous processes like refining and power; its strength is loop stability, redundancy, and unified engineering rather than raw speed. <b>SCADA</b> (supervisory control and data acquisition) is not a controller at all but a supervisory layer, software and servers that gather data from many PLCs or RTUs across a wide area (pipelines, water utilities, substations), display it, log history, and let operators issue setpoints. The lines blur: modern PACs blend PLC speed with DCS-style tag databases, and SCADA HMIs sit atop PLC networks. A technician who identifies the architecture knows where control logic actually executes, whether redundancy exists, and whether a fault is in a local controller, the supervisory network, or the operator interface."
+      },
+      {
+        "h": "Instruction Execution Time and Scan Optimization",
+        "body": "A PLC's usefulness depends on completing its scan fast enough to respond to the process. <b>Scan time</b> is the sum of input read, program execution, output update, and housekeeping. Each instruction costs a small, documented amount of time; bit instructions are cheapest, while math on floating-point, block moves, and message (MSG) instructions cost far more. A program with heavy math in the continuous task can stretch scan time from under a millisecond to tens of milliseconds. Long scans mean the controller sees inputs less often, which can miss fast pulses or slow a control loop's response. Optimisation techniques include: moving rarely needed code into subroutines called conditionally rather than every scan; using periodic or event tasks for time-critical logic so it runs on a fixed interval independent of the main scan; placing high-speed counting in dedicated hardware rather than polling in ladder; and simplifying rungs by removing redundant contacts. A <b>watchdog timer</b> guards against runaway scans by faulting the processor if the scan exceeds a limit. Understanding execution time lets a technician diagnose why a machine reacts sluggishly, budget scan time when adding logic, and structure a program so the important work always finishes on time."
+      },
+      {
+        "h": "Latching, Sealing, and Set/Reset Output Patterns",
+        "body": "Outputs often must remember a state after the triggering condition disappears, and there are two standard ways to do it. The <b>seal-in (holding) circuit</b> uses a normal output (OTE) with a parallel branch of its own contact around the start condition: pressing Start energises the coil, whose auxiliary contact then keeps the rung true even after Start is released; a series normally-closed Stop contact breaks the seal. This is the classic three-wire motor-starter logic and it is self-documenting on one rung. The alternative is the <b>latch/unlatch pair</b> (OTL/OTU) or set/reset: a Latch instruction turns the bit on and it stays on, retained even through the rung going false, until a separate Unlatch instruction clears it. Latches are compact and survive power cycles if the bit is retentive, but their behaviour is split across two rungs, making them harder to trace and prone to being left set unexpectedly. Choosing between them matters: use seal-in for safety-relevant stops so a power loss drops the output, and use latch/unlatch for state flags and step sequencers where retention is desired. A technician must recognise both patterns instantly, because a motor that will not stop or an output stuck on is almost always a seal-in or latch behaving exactly as written."
+      },
+      {
+        "h": "Emulating and Testing PLC Logic Before Field Deployment",
+        "body": "Deploying untested logic to a live machine risks damage and downtime, so professionals test first in a safe environment. Most platforms offer a software <b>emulator</b> (such as Studio 5000 Emulate or Siemens PLCSIM) that runs the actual program on a PC without hardware, letting you toggle input bits, watch outputs, and step through logic. For discrete sequences you build a simple <b>simulation routine</b> inside the program itself: fake feedback bits that mimic what field devices would do, for example setting a \"cylinder extended\" input a half-second after the \"extend\" output turns on, so the sequence advances realistically on the bench. This exposes logic errors, missing interlocks, and race conditions before wiring is even complete. Testing should cover normal operation, every fault and abort path, and boundary conditions like power-up state and recovery after an E-stop. Document expected versus observed behaviour for each test case. When moving to real hardware, keep the simulation code but gate it behind a \"simulate\" switch so it can be disabled for production. This disciplined emulate-then-commission workflow catches the majority of programming defects in the office, turning a tense multi-hour startup into a quick confirmation that hardware matches the already-proven logic."
       }
     ],
     "lab": {
@@ -2083,6 +2353,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "If the point LED does not light when the field device actuates, the fault is field-side (wiring/device); if it lights but logic ignores it, the issue is in the program."
+      },
+      {
+        "q": "When the PLC solves a rung, an examine-if-open (XIO) instruction passes logical power when its bit is:",
+        "options": [
+          "1 (true)",
+          "0 (false)",
+          "toggling",
+          "forced"
+        ],
+        "answer": 1,
+        "explain": "XIO passes power when its bit is 0 (open/false); XIC passes power when its bit is 1."
+      },
+      {
+        "q": "Why is double-coil programming (same OTE address on two rungs) dangerous?",
+        "options": [
+          "It uses too much memory",
+          "The last rung solved each scan overrides the earlier one, masking it",
+          "It slows the scan below the watchdog",
+          "It cannot be forced"
+        ],
+        "answer": 1,
+        "explain": "Because rungs solve top to bottom each scan, the last write to a duplicated output wins, hiding the earlier rung's effect."
+      },
+      {
+        "q": "Which architecture is a supervisory software layer that gathers data from many PLCs/RTUs over a wide area but does not itself execute the control logic?",
+        "options": [
+          "PLC",
+          "DCS",
+          "SCADA",
+          "PAC"
+        ],
+        "answer": 2,
+        "explain": "SCADA supervises, displays, logs, and issues setpoints across dispersed controllers; the actual logic runs in the field PLCs or RTUs."
+      },
+      {
+        "q": "To run time-critical logic on a fixed interval independent of main-scan load, you should use a:",
+        "options": [
+          "Longer continuous task",
+          "Periodic or event task",
+          "Double coil",
+          "Larger data table"
+        ],
+        "answer": 1,
+        "explain": "A periodic (or event) task executes at a defined interval regardless of the continuous scan's length, giving deterministic timing for critical logic."
+      },
+      {
+        "q": "Which output pattern is preferred for a safety-relevant motor stop so that loss of power drops the output?",
+        "options": [
+          "Latch/unlatch (OTL/OTU)",
+          "Seal-in with a series NC stop and OTE",
+          "Retentive timer",
+          "Double coil"
+        ],
+        "answer": 1,
+        "explain": "A seal-in OTE de-energises on power loss and when the NC stop opens; latched bits can remain set (retained) and are less fail-safe for stops."
+      },
+      {
+        "q": "On a discrete input module configured as sinking, the field device connects the input to:",
+        "options": [
+          "The DC positive and the module sinks current to common",
+          "Two analog channels",
+          "The chassis ground only",
+          "The output card"
+        ],
+        "answer": 0,
+        "explain": "Sinking/sourcing conventions must match; wiring polarity and the common bus must agree with the module type verified before power-up."
+      },
+      {
+        "q": "Which instruction type typically costs the MOST scan time?",
+        "options": [
+          "Bit examine (XIC)",
+          "Output energise (OTE)",
+          "Message (MSG) and floating-point math",
+          "Normally-closed contact"
+        ],
+        "answer": 2,
+        "explain": "Communication (MSG) and floating-point/block operations are far more expensive than simple bit instructions, and heavy use can stretch scan time significantly."
+      },
+      {
+        "q": "A software emulator like PLCSIM or Emulate lets you:",
+        "options": [
+          "Replace the field wiring permanently",
+          "Run the actual program on a PC and test logic without hardware",
+          "Increase motor torque",
+          "Bypass the watchdog"
+        ],
+        "answer": 1,
+        "explain": "Emulators execute the real program on a PC so you can toggle inputs and verify outputs and sequences safely before touching hardware."
+      },
+      {
+        "q": "During PLC commissioning, before running the program you should:",
+        "options": [
+          "Skip continuity checks to save time",
+          "Ring out each conductor against the diagram and force each I/O point to verify wiring",
+          "Set all outputs on permanently",
+          "Disable the ground"
+        ],
+        "answer": 1,
+        "explain": "Verifying wiring by continuity and forcing each input/output proves the field connections before the program runs, catching faults cheaply."
       }
     ],
     "resources": [
@@ -2261,6 +2630,30 @@ MODULES = [
       {
         "h": "Debugging Logic Online: Trends, Watch Tables, and Logic Analysis",
         "body": "Beyond reading rungs, the programming environment offers powerful online debugging. <b>Watch/data tables</b> let you monitor and (carefully) modify a chosen set of tags in real time - far faster than hunting through rungs for each value. <b>Trends</b> chart tag values over time, essential for catching intermittent events, watching a sequence step through states, or diagnosing a control loop's oscillation - you see the relationship between a command and the response. <b>Histogram/tag monitor</b> tools capture fast changes. For timing-critical or elusive faults, capturing a <b>trend around a fault trigger</b> (a snapshot buffer) reveals what happened in the milliseconds before a trip. <b>Forcing</b> an I/O point tests logic or wiring but is a serious action - a forced output can move real equipment, and forgotten forces are a safety hazard flagged by the FORCE indicator. Disciplined debugging: reproduce the fault, watch the relevant tags/trend, change one thing at a time, and remove all forces when done. These tools turn 'the machine acts weird sometimes' into a captured, understood event."
+      },
+      {
+        "h": "Building a Batch Sequence: Step Logic with Timers and Transitions",
+        "body": "Many machines execute a repeating series of steps, fill, mix, drain, rinse, and the cleanest way to code this is <b>step logic</b> using an integer step register. A single tag, say StepNum, holds the current step number. Each step lives on its own rung guarded by an equality comparison (EQU StepNum N); inside that rung the step-entry actions run (turn on the fill valve, start a timer), and a transition condition (level reached, timer done) increments StepNum to advance. Only one step is active at a time, which makes the sequence self-documenting: online monitoring shows exactly where the machine is. Timers inside each step give a <b>timeout guard</b>: if the transition condition is not met within an expected time, the sequence branches to a fault step that alarms and halts. On abort or E-stop, the sequence forces StepNum to 0 or a defined safe step. This pattern is the ladder-logic equivalent of a state machine and is the foundation of ISA-88 batch procedures; it scales from a two-step wash cycle to a hundred-step recipe. A technician who recognises step logic can quickly find why a machine is stuck: read StepNum, inspect that step's transition rung, and identify the missing condition."
+      },
+      {
+        "h": "Totalizing, Rate, and Production Counting Applications",
+        "body": "Counting parts and calculating rates are ubiquitous ladder tasks. A <b>totalizer</b> is a counter (CTU) whose accumulator holds parts produced since last reset, incremented by a photoeye pulse on the exit conveyor. A <b>batch counter</b> holds parts in the current batch, resetting when batch size is reached and pulsing a batch-complete output. A <b>rate</b> (parts per minute) is not a counter but a computed value: latch the accumulator at the start of a fixed window, subtract at the end, and divide by the window length; for smoother display use a <b>rolling window</b> of the last 60 seconds. A common trick is to run a 1-second timer and store the past 60 one-second deltas in an array, summing them for parts-per-minute; the sum updates every second, giving fast response with minimal jitter. For high-speed lines a hardware <b>high-speed counter (HSC)</b> handles pulses too fast for the scan and reports counts to ladder at scan rate. Overflow needs handling: if a totalizer's counter data type is 16-bit signed, it rolls at 32767; using a DINT gives room to 2.1 billion. Correct counting logic keeps production reports honest and lets operators see immediately when throughput slips."
+      },
+      {
+        "h": "Signal Debounce and Qualification Using Timers",
+        "body": "Field inputs rarely give clean transitions. A mechanical push-button bounces on make and break for a few milliseconds; a proximity switch at the edge of its sensing range may chatter; a vibrating limit switch may pulse rapidly. Feeding these signals directly to counters or step logic causes false counts and premature transitions. The classic ladder cure is a <b>debounce timer</b>: only accept an input as \"true\" after it has been continuously true for a qualification time (say 50 ms). Implement it as a TON energised by the raw input, whose done bit becomes the qualified input; when the raw input drops the timer resets. Symmetric debounce uses two timers, one for on-transitions and one for off-transitions, so you can require, for example, 20 ms to accept an on state but 200 ms to accept an off state, filtering flicker without slowing pickup. For analog inputs the equivalent is a <b>deadband</b>: only act on a change larger than a threshold, or use a first-order lag filter. Choose the qualification time to comfortably exceed the noise you have measured but stay short of any real transition you must catch. Well-tuned qualification eliminates a huge class of \"intermittent\" faults that are actually just noisy inputs."
+      },
+      {
+        "h": "Rolling Averages and Moving-Window Filtering in Ladder",
+        "body": "Raw analog readings jump around from sensor noise and process turbulence, so control and display often need a smoothed value. A <b>simple average</b> over the last N samples uses an array: on each scan or timed interval, shift a new sample into slot 0 (or use a circular index), sum all N slots with a FAL/COP-based loop or SUM instruction, and divide by N. N of 10 to 30 is common; larger N smooths more but lags real change. A <b>first-order lag</b> filter avoids the array: Filtered_new = Filtered_old + K &times; (Raw &minus; Filtered_old), where K between 0 and 1 sets responsiveness (K=1 no filtering, K=0.1 strong smoothing). This costs one multiply and one add per scan and gives an exponential response very similar to an RC low-pass. Filtering is essential ahead of a PID loop where noise would drive the derivative term into oscillation, and for any HMI value that operators read, jittery displays make good process look bad. Every filter adds phase lag, so a value that changes at 1 Hz through a filter with 200 ms time constant will visibly lag reality; tune the filter aggressive enough to hide noise but light enough to preserve process response."
+      },
+      {
+        "h": "Runtime and Elapsed-Time Tracking for Maintenance Scheduling",
+        "body": "Time-based preventive maintenance depends on knowing how long each motor and machine has actually run, not calendar days. A ladder <b>runtime counter</b> is easy: a retentive timer (RTO) enabled by the motor-run signal accumulates on-time; when its accumulator crosses a threshold (say 1 hour = 3,600,000 ms) it pulses a counter (CTU) and resets. The counter's accumulator is hours-run and, being retentive, survives power loss. Compare the running total to a service target (e.g. 8000 hours to bearing greasing) and set an <b>PM-due</b> bit that pops an HMI message; when the technician acknowledges completion, a reset button clears the counter. For higher resolution, accumulate seconds in a DINT to avoid overflow (a DINT holds 68 years of seconds). Log the reset events with a timestamp so history is preserved. The same pattern tracks <b>starts</b> per motor (contactor cycle count, useful for contact wear) and <b>faulted time</b> per line (uptime KPI). This turns the PLC into a lightweight EAM: technicians can pull a report on any asset's hours and starts, plan maintenance in slack periods, and prevent unplanned failures that show up as unexpected downtime on the daily production numbers."
+      },
+      {
+        "h": "Handshaking and Data Exchange Sequencing Between Devices",
+        "body": "When two controllers, or a PLC and a smart device (weigh scale, printer, robot), exchange data, both sides must agree not just on the numbers but on <b>when</b> to send and when to read, a protocol called <b>handshaking</b>. The simplest three-signal handshake uses a REQUEST bit from the master, a NEW_DATA bit and payload from the slave, and an ACK bit from the master. Sequence: master pulses REQUEST; slave loads the payload registers and raises NEW_DATA; master detects NEW_DATA, latches the payload, and pulses ACK; slave sees ACK and drops NEW_DATA, ready for the next cycle. Timeouts on each wait state prevent lockups: if NEW_DATA never rises within, say, 500 ms, the master faults and alarms. Without handshaking the master might read the slave's registers mid-update and get half-old, half-new data, a classic hard-to-find defect that produces one bad reading in a thousand. Handshaking scales to any data size (a single scale reading or a 100-word recipe) and works across any transport, hardwired discretes, MSG instructions, produced/consumed tags, or Modbus registers. Recognising a handshake in code, and diagnosing which side is stuck when data stops flowing, is a core skill for anyone integrating multiple controllers or third-party devices."
       }
     ],
     "lab": {
@@ -2791,6 +3184,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Trends chart tag values over time, revealing the command-vs-response relationship and capturing intermittent/elusive events like oscillation."
+      },
+      {
+        "q": "In step-logic programming, only one step's actions run at a time because each step rung is guarded by:",
+        "options": [
+          "A timer preset",
+          "An equality comparison against the step register",
+          "A counter overflow bit",
+          "A watchdog"
+        ],
+        "answer": 1,
+        "explain": "EQU StepNum N gates each step's rung so only the current step executes; transitions advance StepNum to the next step."
+      },
+      {
+        "q": "A totalizer stored in a 16-bit signed integer will roll over at:",
+        "options": [
+          "255",
+          "32767",
+          "65535",
+          "2147483647"
+        ],
+        "answer": 1,
+        "explain": "A 16-bit signed integer maxes at 32767; use a DINT (max 2,147,483,647) for high-volume production counting to avoid rollover."
+      },
+      {
+        "q": "The classic ladder debounce for a bouncy input uses a timer to require the signal be true continuously for:",
+        "options": [
+          "Zero time",
+          "A qualification time such as 50 ms before accepting it as true",
+          "10 seconds minimum",
+          "The full scan time only"
+        ],
+        "answer": 1,
+        "explain": "A TON enabled by the raw input yields a \"done\" qualified bit only after continuous truth for the preset, filtering bounce without slowing genuine transitions."
+      },
+      {
+        "q": "In the first-order lag filter Filtered_new = Filtered_old + K &times; (Raw - Filtered_old), setting K to a very small value like 0.05 will:",
+        "options": [
+          "Provide no filtering",
+          "Smooth heavily with more phase lag",
+          "Amplify the raw signal",
+          "Cause overflow"
+        ],
+        "answer": 1,
+        "explain": "Small K weights the old value strongly, giving strong smoothing but more phase lag; large K approaches raw pass-through."
+      },
+      {
+        "q": "A retentive timer (RTO) is used for runtime tracking because it:",
+        "options": [
+          "Runs faster than TON",
+          "Holds its accumulator through power loss and when enable drops",
+          "Never resets",
+          "Uses less memory"
+        ],
+        "answer": 1,
+        "explain": "Retentive timers preserve accumulated time across power cycles and when the enable is broken, essential for a total-hours counter."
+      },
+      {
+        "q": "In a REQUEST/NEW_DATA/ACK handshake, why is a timeout on each wait state important?",
+        "options": [
+          "To make the code shorter",
+          "To prevent the master from hanging forever if the slave never responds",
+          "To skip the handshake entirely",
+          "To increase throughput automatically"
+        ],
+        "answer": 1,
+        "explain": "A timeout converts a stuck partner into an alarmable fault; without it the sequence would wait indefinitely and appear frozen."
+      },
+      {
+        "q": "Which technique gives the smoothest parts-per-minute display with quick response to real rate changes?",
+        "options": [
+          "A one-shot on each part",
+          "A rolling 60-second sum of one-second increments",
+          "No filtering at all",
+          "Reading the raw photoeye bit"
+        ],
+        "answer": 1,
+        "explain": "Summing the last 60 one-second bins updates every second, giving fast yet smooth PPM without waiting a whole minute for one sample."
+      },
+      {
+        "q": "Why is filtering usually applied to an analog input before its PID loop?",
+        "options": [
+          "To reduce accuracy",
+          "So noise does not drive the derivative term into oscillation",
+          "To increase scan time",
+          "Because PID cannot use analog values"
+        ],
+        "answer": 1,
+        "explain": "Noise on the PV especially inflates the derivative term; a light lag filter tames noise-driven output kicks and improves stability."
+      },
+      {
+        "q": "When integrating a scale that updates registers over 20 ms, the PLC should:",
+        "options": [
+          "Read the registers every scan and use whatever it sees",
+          "Handshake so the scale signals when a fresh reading is ready",
+          "Ignore the scale",
+          "Read only after power-up"
+        ],
+        "answer": 1,
+        "explain": "Without handshaking the PLC can catch the scale mid-update and read half-old data; a NEW_DATA/ACK sequence ensures consistent samples."
       }
     ],
     "resources": [
@@ -2973,6 +3465,30 @@ MODULES = [
       {
         "h": "Reading a Sensor Datasheet: Response Time, Hysteresis, and Repeatability",
         "body": "Selecting and troubleshooting sensors requires reading the <b>datasheet</b> critically. Key parameters: <b>sensing range/distance</b> and how it derates with target material (the correction factor for a proximity sensor on aluminum vs steel); <b>response time / switching frequency</b> - a slow sensor misses fast targets, and switching frequency (Hz) limits how many objects per second it can detect; <b>hysteresis</b> - the deliberate gap between the on-point and off-point that prevents chattering at the threshold (too little causes output flicker, too much loses precision); <b>repeatability</b> - how consistently it triggers at the same point (the Rn spec); <b>output type</b> (NPN/PNP, NO/NC, analog, IO-Link); supply voltage, current rating, and short-circuit protection; and <b>environmental ratings</b> (IP, temperature, EMC). Also note the <b>correction factors</b>, hysteresis, and temperature drift that explain field behavior. A mismatch - a sensor whose switching frequency is too low for line speed, or whose hysteresis causes flicker feeding a fast counter - produces intermittent faults that make sense only once you have read the specs. Datasheet literacy turns 'the sensor is flaky' into a specific, correctable selection or setup issue."
+      },
+      {
+        "h": "Thermowells: Selection, Insertion Length, and Response Time",
+        "body": "Process temperature sensors, RTDs and thermocouples, are almost never dropped bare into a pipe. They ride inside a <b>thermowell</b>, a closed-end tube that isolates the sensor from the process so it can be replaced without shutdown and protects it from pressure, corrosion, and flow-induced vibration. Wells come in threaded, socket-weld, and flanged connections. The <b>insertion length U</b> is critical: the tip must sit in the flowing stream, typically at the pipe centreline, so it reads bulk fluid temperature rather than pipe wall. Too shallow reads low; too deep can vibrate. Standard immersion is 10 times the well outside diameter for gases and 5 times for liquids. <b>Response time</b> suffers because heat must pass through the well wall before reaching the sensor: a bare thermocouple responds in seconds, a stepped-shank well doubles or triples that; heat-transfer paste inside the well and a spring-loaded sensor tip that contacts the well bottom help minimise the lag. Wake-frequency (Karman vortex) analysis per ASME PTC 19.3 TW-2016 checks that the well's natural frequency is safely above shedding frequency at maximum flow, well failures from resonance have caused catastrophic releases. Choose material for the process (316 SS for most, Hastelloy for chloride streams), and match rating to line pressure."
+      },
+      {
+        "h": "Sensor Redundancy and Voting: 1oo2, 2oo2, and 2oo3 Architectures",
+        "body": "Safety-critical measurements often use more than one sensor and a <b>voting logic</b> to decide when to act. The notation MooN means \"M out of N\" must agree. <b>1oo2</b> (one out of two): the safety action fires if EITHER sensor calls for trip; high safety availability (both must fail to hide a real demand) but low process availability (a single spurious reading trips the plant). <b>2oo2</b>: BOTH must agree; low nuisance trips but low safety availability (a single failed-safe sensor prevents a real trip from firing). <b>2oo3</b>: two of three sensors must agree; combines high safety availability with high process availability because a single failure of any type is outvoted. 2oo3 is the standard for critical trips on fired heaters, boilers, and reactor systems. Beyond voting, the sensors themselves should be <b>diverse</b> where possible (different manufacturers or measuring principles) to defeat common-cause failures like a bad batch of transmitters. IEC 61511 governs SIS design; the achieved SIL depends on both the voting architecture and the individual sensor's proof-tested failure rates. A technician replacing a voted sensor must check that the voting-logic bypass procedure is followed to prevent an unintended trip during maintenance."
+      },
+      {
+        "h": "Analytical Sensors: pH, Conductivity, and Dissolved Oxygen",
+        "body": "Water-treatment, food, pharma, and chemical plants rely on <b>analytical</b> sensors that measure the chemistry, not the physics, of a fluid. A <b>pH</b> probe uses a glass bulb whose voltage against a reference electrode is 59.16 mV per pH unit at 25 deg C; it needs temperature compensation, regular two-point buffer calibration (pH 4 and 7 or 7 and 10), and lives 6-24 months before glass ageing skews readings. A dirty or dry probe reads sluggishly. <b>Conductivity</b> measures a fluid's ability to carry current, proportional to dissolved ion concentration, using either a two-electrode contacting cell for low conductivity (ultrapure water, microsiemens/cm) or a toroidal (inductive) sensor for high conductivity or fouling streams; calibration uses NIST-traceable KCl solutions. <b>Dissolved oxygen (DO)</b> in water is measured by either a galvanic or polarographic membrane cell (with electrolyte that needs periodic refill) or a modern <b>optical (luminescent) DO</b> sensor whose fluorophore lifetime shifts with oxygen, requiring far less maintenance. Analytical sensors demand cleaning schedules and a scheduled calibration cadence; their failure mode is drift rather than a hard fault, so periodic verification against a lab sample is the only trustworthy check."
+      },
+      {
+        "h": "Draw-Wire and Cable-Extension Linear Position Sensors",
+        "body": "Measuring linear position over long strokes, several metres of hydraulic cylinder travel, elevator car height, or crane hoist, is often done with a <b>draw-wire (string potentiometer or cable-extension) transducer</b>. A stainless cable wraps around a spring-loaded drum and pays out as the moving mass extends; the drum couples to a rotary encoder (incremental or absolute) or a precision potentiometer whose signal is proportional to the length paid out. Resolution can reach millimetres over strokes from 100 mm to 30 m or more. Advantages are simple mounting (attach one end to the frame, hook the other to the load) and immunity to misalignment, unlike an LVDT the wire tolerates a modest angle. Limits: the wire must remain in tension (spring return applies a light continuous pull), fast retraction can overrun the spring, and cycle life is finite (typically 5-10 million cycles depending on model and stroke). Environmental hazards, dust, cutting fluid, weld spatter, can foul the drum; sealed or IP67 models exist for harsh sites. Output types include analog 0-10 V or 4-20 mA (potentiometer version) and quadrature, SSI, or industrial-Ethernet position (encoder version). Draw-wire sensors give a robust, low-cost alternative to laser distance or magnetostrictive rods on long-stroke machinery."
+      },
+      {
+        "h": "Torque and Strain Measurement in Rotating Equipment",
+        "body": "Direct torque measurement on a shaft is done with a <b>rotary torque transducer</b> or by bonding <b>strain gauges</b> to a shaft segment. A metal foil strain gauge changes resistance in proportion to elongation, and a four-gauge Wheatstone bridge oriented at 45 degrees to the shaft axis converts torsional strain into a differential millivolt signal. On a rotating shaft this signal must be brought off via <b>slip rings</b>, <b>telemetry (wireless)</b>, or a <b>rotary transformer</b>. Range and calibration relate strain to torque through the shaft's polar moment of inertia and shear modulus. Applications include engine and pump test benches, gearbox condition monitoring, and closed-loop torque control on presses and drives. Static structural applications use the same gauges to measure <b>strain</b> directly, hoist beams, load pins in cranes, and bolt-tension studs; the same bridge circuit reads force via the material's known elastic modulus. Calibration is by dead-weight or hydraulic reference load. Temperature affects zero and gain, so gauges use self-temperature-compensated types and dummy gauges in the bridge cancel thermal drift. A technician diagnosing a torque or force loop must know whether the fault is the gauge (broken bond, moisture), the excitation supply (typically 5 or 10 VDC), or the transmitter's gain and zero calibration."
+      },
+      {
+        "h": "Application-Driven Sensor Selection: A Decision Framework",
+        "body": "Selecting a sensor is a structured trade-off, not a catalogue pick. Start with the <b>measurand and range</b>: what property (position, temperature, level, flow), and over what span with what resolution. Add <b>environment</b>: temperature, moisture, dust, chemicals, vibration, hazardous-area classification, all of which drive IP rating, materials, and enclosure. Next <b>target properties</b>: is the target metal, plastic, transparent, at variable distance, moving fast? A photoeye works on nearly anything but reflective foils need polarised retro-reflective; an inductive proxy only sees metal but is immune to dust. <b>Interface</b>: does the receiving device want a discrete 24 V signal, an analog 4-20 mA, a communication protocol like IO-Link, or an industrial-Ethernet node? <b>Response time</b> must exceed the process's fastest event by a comfortable margin. <b>Accuracy and repeatability</b> should be honestly matched to what the process controls to; buying 0.1% accuracy for a valve that positions to 5% wastes money. Finally <b>lifecycle</b>: is the manufacturer supported, are spares stocked, is the connector standard (M8, M12), and is the calibration procedure realistic on-site? A good selection matrix prevents the two most common mistakes, over-specifying (wasted budget) and under-specifying (nuisance trips and rework)."
       }
     ],
     "lab": {
@@ -3502,6 +4018,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Hysteresis is the deliberate gap between on-point and off-point; too little lets the output chatter at the threshold - a datasheet-explained fault."
+      },
+      {
+        "q": "A thermowell's insertion length is generally chosen so the tip:",
+        "options": [
+          "Touches only the pipe wall",
+          "Sits near the centreline of the flowing stream",
+          "Extends past the far pipe wall",
+          "Stays outside the pipe entirely"
+        ],
+        "answer": 1,
+        "explain": "Locating the tip in the bulk flow reads representative fluid temperature; wall measurement lags and reads low."
+      },
+      {
+        "q": "Which voting architecture is standard for a highly critical safety trip where BOTH nuisance trips and missed demands must be minimised?",
+        "options": [
+          "1oo1",
+          "1oo2",
+          "2oo2",
+          "2oo3"
+        ],
+        "answer": 3,
+        "explain": "2oo3 requires two of three sensors to agree, tolerating a single failure of any kind, giving high safety availability AND high process availability."
+      },
+      {
+        "q": "A pH probe produces roughly how many millivolts per pH unit at 25 deg C?",
+        "options": [
+          "about 5.9 mV",
+          "about 59 mV",
+          "about 590 mV",
+          "about 1000 mV"
+        ],
+        "answer": 1,
+        "explain": "The Nernst equation gives 59.16 mV per pH unit at 25 deg C; temperature compensation is essential because the slope changes with T."
+      },
+      {
+        "q": "A draw-wire (cable-extension) transducer measures linear position by:",
+        "options": [
+          "Emitting ultrasound",
+          "Coupling a spring-loaded cable to a rotary encoder or potentiometer",
+          "Using capacitance to a plate",
+          "Sending an eddy current"
+        ],
+        "answer": 1,
+        "explain": "The cable pays out from a spring-loaded drum whose rotation is measured by an encoder or precision pot, giving linear-to-rotary conversion."
+      },
+      {
+        "q": "Strain gauges bonded on a shaft measure torque by detecting:",
+        "options": [
+          "Shaft temperature",
+          "Torsional strain converted to resistance change in a Wheatstone bridge",
+          "Air pressure",
+          "Magnetic field only"
+        ],
+        "answer": 1,
+        "explain": "Gauges oriented at 45 deg to the axis convert torsional strain to differential resistance; a bridge yields a millivolt signal proportional to torque."
+      },
+      {
+        "q": "For measuring dissolved oxygen in water with the LOWEST ongoing maintenance, which sensor should you specify?",
+        "options": [
+          "Galvanic membrane cell",
+          "Polarographic membrane cell",
+          "Optical (luminescent) DO sensor",
+          "Bare platinum electrode"
+        ],
+        "answer": 2,
+        "explain": "Optical DO sensors have no membrane or electrolyte to service; their luminescent film lasts much longer and needs less frequent calibration than membrane cells."
+      },
+      {
+        "q": "Which factor makes 2oo3 preferable to 1oo2 in a critical safety trip?",
+        "options": [
+          "Lower cost",
+          "A single failure of any kind does not both trip nuisance-wise and hide a real demand",
+          "Fewer sensors to install",
+          "Removes the need for periodic testing"
+        ],
+        "answer": 1,
+        "explain": "2oo3 tolerates one failed sensor without either false-tripping or missing a real trip; 1oo2 improves safety availability but is prone to nuisance trips."
+      },
+      {
+        "q": "When specifying a sensor, the correct order of trade-offs is best summarised as:",
+        "options": [
+          "Cheapest first, then everything else",
+          "Measurand and range, environment, target, interface, response, accuracy, lifecycle",
+          "Only accuracy matters",
+          "Only the connector matters"
+        ],
+        "answer": 1,
+        "explain": "A structured framework prevents over- or under-specifying by making each dimension an explicit choice rather than defaulting to catalog convenience."
+      },
+      {
+        "q": "A conductivity sensor for a heavily fouling stream is best implemented as:",
+        "options": [
+          "A bare two-electrode contacting cell",
+          "A toroidal (inductive) sensor",
+          "A pH probe",
+          "A thermocouple"
+        ],
+        "answer": 1,
+        "explain": "Toroidal sensors have no exposed electrodes to foul; contacting cells suit clean, low-conductivity streams like ultrapure water."
       }
     ],
     "resources": [
@@ -3692,6 +4307,30 @@ MODULES = [
       {
         "h": "Constant-Torque vs Variable-Torque VFD Applications and Sizing",
         "body": "Matching a VFD and motor to the load requires knowing the load's <b>torque-speed characteristic</b>. <b>Variable-torque</b> loads - centrifugal fans and pumps - need torque that rises with the square of speed and power with the cube (affinity laws), so they draw little torque at low speed; a standard-duty (variable-torque-rated) VFD suffices and yields large energy savings. <b>Constant-torque</b> loads - conveyors, mixers, positive-displacement pumps, extruders, hoists - demand roughly full torque across the speed range, including at low speed, requiring a <b>constant-torque-rated (heavy-duty) drive</b> with higher overload capacity (often 150% for 60 s) and attention to low-speed cooling. <b>Constant-power</b> (field-weakening) operation above base speed trades torque for speed. Sizing rules: match the drive to the <b>motor FLA and the load profile</b>, not just horsepower; account for <b>overload/inrush</b> and starting torque (a loaded conveyor or high-inertia fan needs breakaway/acceleration torque); and verify low-speed cooling. Undersizing on a constant-torque load causes overcurrent trips on starts; misapplying a variable-torque drive to a constant-torque load leaves it unable to deliver low-speed torque."
+      },
+      {
+        "h": "Motor Starting Methods Compared: DOL, Star-Delta, Autotransformer, and Part-Winding",
+        "body": "Before VFDs dominated, engineers picked from several <b>reduced-voltage starting</b> methods to tame the 6-8x inrush and mechanical shock of full-voltage (across-the-line, or DOL) starts. <b>Direct-on-line (DOL)</b> is the simplest and cheapest: a single contactor connects the motor to full line voltage, giving full starting torque but also full inrush; fine for small motors on stiff supplies. <b>Star-delta (wye-delta)</b> uses three contactors to start the motor windings in wye (line voltage across sqrt3 = 58% of design phase voltage), then transitions to delta at speed; starting current and torque both drop to about 33% of DOL values. Requires a motor with all six leads brought out. <b>Autotransformer</b> starting taps the motor at 65% or 80% of line voltage through a starting autotransformer, giving proportionally lower inrush; smoother than star-delta but bulkier and more expensive. <b>Part-winding</b> starts uses two winding sections energised in sequence; inrush is about 65% of DOL but starting torque is only 45%. Modern <b>soft starters</b> use SCRs to ramp voltage smoothly and have largely replaced the electromechanical methods; VFDs, when speed control is desired, provide the lowest inrush and highest control at the highest cost. Choosing among these depends on load characteristics, supply capacity, and whether speed control is needed downstream."
+      },
+      {
+        "h": "Reading the VFD Keypad: Parameter Groups, Cloning, and Backup",
+        "body": "Every VFD hides its personality in parameters, and mastering the keypad is essential to setup and troubleshooting. Parameters are organised into <b>groups</b>: Motor Data (nameplate, poles), Application (accel/decel ramps, torque limits), I/O (function of each digital and analog input/output), Communications (drive-network settings), Protection (thermal, overload, undervoltage), and Faults (fault history, causes). Setting motor data first, voltage, FLA, base frequency, base speed, then running an <b>auto-tune</b> is the standard sequence: the drive measures winding resistance and inductance and adjusts its internal motor model for accurate vector control. Once commissioned, use the keypad's <b>copy or cloning</b> function (or the drive's memory chip like PowerFlex HIM CopyCat, Yaskawa LED keypad copy, Siemens memory card) to save the full parameter set. Store the backup file offline: on a laptop, network share, or paper printout. When a drive dies, the replacement can be commissioned in minutes by copying the parameters instead of re-entering hundreds of values. Some drives support parameter compare between the running drive and a saved file, useful for auditing that no one has changed a critical setting. Discipline around backups turns a catastrophic drive failure into a routine swap-and-restore."
+      },
+      {
+        "h": "Application Sizing Worksheet: Matching Motor and Drive to the Load",
+        "body": "Correct motor and drive sizing starts from the <b>load</b>, not the horsepower on the old nameplate. The load has a torque-vs-speed profile: <b>constant torque</b> (conveyors, positive-displacement pumps) needs full torque from low speed up, sizing the drive for peak; <b>variable torque</b> (centrifugal fans and pumps) follows the affinity laws where torque drops with the square of speed, letting a smaller drive suit large motors at reduced speeds. Compute required <b>power at speed</b>: P (kW) = torque (N&middot;m) &times; speed (rpm) / 9549. For rotating loads add <b>acceleration torque</b> from inertia: T_acc = J &times; alpha, where J is the reflected inertia through any gearing and alpha is the acceleration in rad/s&sup2;. The drive's continuous-current rating must exceed motor FLA, its short-time overload (typically 150% for 60 s on constant-torque drives, 110% for 60 s on variable-torque) must exceed peak demand, and the DC-bus and dynamic-braking capacity must handle any regenerative energy on deceleration. Consider <b>ambient</b> and <b>altitude</b> derating (typically 1% per 100 m above 1000 m, and by temperature above 40 deg C). A sizing worksheet forces every assumption into the open and prevents the two common errors, buying too small (nuisance overload trips) or too big (poor low-speed torque control, wasted spend)."
+      },
+      {
+        "h": "VFD Preventive Maintenance: DC Bus Caps, Cooling Fans, and Reforming",
+        "body": "Drives seem set-and-forget until they aren't. Two aging mechanisms drive most failures. <b>DC bus electrolytic capacitors</b> dry out with heat and time; typical service life is 5-10 years at rated ambient, halved for every 10 deg C above. Symptoms of aged caps are DC bus ripple, undervoltage faults on load steps, and eventually catastrophic failure. Many drives track capacitor life and display a remaining-life estimate. Spare drives held in storage need <b>capacitor reforming</b>, applying reduced voltage for a few hours annually, to re-establish the oxide layer, or they will fail on first energisation after 2+ years of shelf storage. <b>Cooling fans</b> are the second wear item: DC brushless axial fans typically last 40,000-60,000 hours; a stalled or slow fan raises heatsink temperature and eventually causes IGBT overtemp trips. Vacuum out dust from heatsink fins annually, replace fans as scheduled or on speed alarms, and keep enclosure filters clean. <b>Torque check</b> all power terminations to the manufacturer's spec at commissioning and after the first year; loose lugs are a leading cause of arcing and single-phase-of-input faults. A short annual PM, visual, fan test, capacitor life check, torque verification, capacitor reform on spares, extends drive life from typical 7 years to 15+ and prevents almost all in-service failures."
+      },
+      {
+        "h": "Multi-Speed and Preset-Speed Control Using Digital Inputs",
+        "body": "Not every application needs continuous speed control. Many machines run at two or three fixed speeds, jog-slow, run-fast, cleaning-medium, and the classic solution is <b>preset (multi-speed) frequency</b> selection via digital inputs. In the drive parameters you configure up to 7 or 15 preset speeds (Freq_1 through Freq_N). Two or three digital inputs are assigned as \"preset speed select bits\" and their binary combination picks which preset commands the drive: 000 selects Freq_0, 001 selects Freq_1, 010 selects Freq_2, 011 selects Freq_3, and so on. Selector switches, PLC outputs, or discrete pilot devices drive the input pins; a separate Run input starts the drive at whichever speed is selected. This scheme needs no analog signal or fieldbus, making it robust and simple to wire, ideal for retrofits or when the drive sits far from the controller. Ramps between presets follow the same accel/decel parameters as any other speed change. Common patterns: jog input plus one preset for maintenance mode; two-of-three-position selector for slow/medium/fast on a conveyor. Preset speeds also serve as fallback when the primary analog reference is lost; the drive can be configured to hold a safe preset speed or coast on loss of the 4-20 mA input."
+      },
+      {
+        "h": "Motor Current Signature Analysis (MCSA) for Rotor Bar and Air-Gap Faults",
+        "body": "<b>Motor Current Signature Analysis (MCSA)</b> is a non-intrusive predictive-maintenance technique that spots motor mechanical faults by examining the frequency spectrum of the stator current, no shutdown, no shaft access required. A clamp-on CT captures line current; a spectrum analyzer (or a permanently-installed monitor) computes the FFT. Certain fault mechanisms create characteristic sideband frequencies around the supply frequency f_s. <b>Broken rotor bars</b> produce sidebands at f_s &plusmn; 2sf_s, where s is slip. A healthy motor shows sidebands 45-50 dB below the line frequency component; broken bars raise them to within 30 dB or less, and each 6 dB rise doubles the sideband amplitude. <b>Air-gap eccentricity</b> (rotor not centred, bent shaft) creates sidebands at f_s &plusmn; f_r, where f_r is rotational frequency. <b>Bearing defects</b> generate sidebands at the standard bearing fault frequencies (BPFO, BPFI) modulated onto the line frequency. Interpretation needs a clean load, MCSA is unreliable at very light load because slip is too small to separate the sidebands. Trending sideband amplitude over months is more diagnostic than a single reading, catching bars fracturing over time. MCSA complements vibration analysis, catching electrical and inside-the-rotor faults that vibration alone cannot see, and it works fully online without opening the motor."
       }
     ],
     "lab": {
@@ -4222,6 +4861,105 @@ MODULES = [
         ],
         "answer": 1,
         "explain": "Variable-torque loads need torque proportional to speed squared, so they demand little torque at low speed - allowing a standard drive and large energy savings."
+      },
+      {
+        "q": "A star-delta starter's starting current is approximately what fraction of a DOL start's current?",
+        "options": [
+          "about 100%",
+          "about 58%",
+          "about 33%",
+          "about 10%"
+        ],
+        "answer": 2,
+        "explain": "Wye connection places 58% of line voltage across each winding; both current and torque drop to about 33% of DOL values."
+      },
+      {
+        "q": "After commissioning a VFD, the SINGLE most important operational discipline is to:",
+        "options": [
+          "Reset the fault history daily",
+          "Save (backup/clone) the parameter set offline so replacement is fast",
+          "Disable all protection to prevent nuisance trips",
+          "Set accel and decel to zero"
+        ],
+        "answer": 1,
+        "explain": "A saved parameter set turns a failed drive into a copy-and-run swap; without a backup you re-enter dozens or hundreds of settings under pressure."
+      },
+      {
+        "q": "On a centrifugal fan, torque required varies with speed approximately as:",
+        "options": [
+          "Constant",
+          "Speed squared",
+          "Speed cubed",
+          "Linearly with speed"
+        ],
+        "answer": 1,
+        "explain": "Affinity laws: torque scales with speed squared and power with speed cubed on centrifugal (variable-torque) loads."
+      },
+      {
+        "q": "A VFD sitting on a shelf for 3+ years should have its DC-bus capacitors what before energising?",
+        "options": [
+          "Discarded",
+          "Reformed by applying reduced voltage for several hours",
+          "Replaced with new immediately",
+          "Frozen"
+        ],
+        "answer": 1,
+        "explain": "Capacitor oxide layers degrade in storage; reforming with reduced voltage rebuilds them and prevents catastrophic first-power failure."
+      },
+      {
+        "q": "To select one of 4 preset frequencies with digital inputs you need at least how many binary-select inputs?",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "answer": 1,
+        "explain": "Two binary bits give 2&sup2; = 4 combinations (00, 01, 10, 11), enough to select four presets."
+      },
+      {
+        "q": "In MCSA, broken rotor bars produce sidebands around f_s at:",
+        "options": [
+          "f_s only",
+          "f_s &plusmn; 2sf_s (twice slip frequency)",
+          "10 &times; f_s",
+          "DC"
+        ],
+        "answer": 1,
+        "explain": "The signature sidebands sit at f_s &plusmn; 2sf_s; magnitude relative to the fundamental indicates fault severity (rise from -45 dB to -30 dB is significant)."
+      },
+      {
+        "q": "A conveyor that must produce full torque from zero speed onward is a:",
+        "options": [
+          "Variable-torque load",
+          "Constant-torque load",
+          "No-load application",
+          "Regenerative-only load"
+        ],
+        "answer": 1,
+        "explain": "Conveyors, positive-displacement pumps, and hoists are constant-torque loads and need drive sizing for full torque from zero speed up."
+      },
+      {
+        "q": "The typical service life of a VFD's DC bus electrolytic capacitors at rated ambient is about:",
+        "options": [
+          "6 months",
+          "5-10 years",
+          "30 years",
+          "1 week"
+        ],
+        "answer": 1,
+        "explain": "Rated life is commonly 5-10 years and roughly halves for every 10 deg C above rated ambient; drives often estimate remaining life on the display."
+      },
+      {
+        "q": "Compared to DOL, a soft starter (SCR-based) primarily reduces:",
+        "options": [
+          "Motor efficiency at running speed",
+          "Inrush current and mechanical shock during starting",
+          "Motor top speed",
+          "The number of contactors permanently"
+        ],
+        "answer": 1,
+        "explain": "SCRs ramp voltage from a reduced start value to full over a set time, cutting inrush and mechanical shock; a bypass contactor typically closes at speed."
       }
     ],
     "resources": [

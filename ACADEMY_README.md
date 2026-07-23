@@ -1,5 +1,9 @@
 # AET Academy - Build Changelog
 
+## v13.72 (2026-07-22) - Wave 6: THIRD deepening pass on all 22 modules
+Content: sections 835 -> 967 (+132), quiz 1013 -> 1211 (+198). Every module received a third +6 sec / +9 quiz deepening pass. Doubling target 1132 sec / 1224 quiz: sections 85%, quiz 99%. Audit ERRORS=0, ruff clean, py_compile clean. Build modules=22 glossary=131 flashcards+gloss=187 sims=11 ladderlabs=236. Ship zip v13.72 (5 members, testzip None).
+
+
 Automation Engineering Technology training kiosk - single-file offline HTML trainer.
 Steady build: 19 modules, 107 glossary terms, 5 tracks, 22 achievements, 137 flashcards, 11 simulators, 171-question exam pool.
 

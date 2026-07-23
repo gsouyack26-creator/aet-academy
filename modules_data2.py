@@ -166,6 +166,30 @@ MODULES_2 = [
       {
         "h": "Load-Sensing and Variable-Displacement Pump Control",
         "body": "Traditional fixed-displacement hydraulic systems waste enormous energy: the pump always delivers full flow, and whatever the actuators do not use is dumped over the relief valve as <b>heat</b>. Efficient modern systems use <b>variable-displacement pumps</b> with smart control. A <b>pressure-compensated</b> pump reduces its displacement to hold a set pressure, delivering only the flow demanded - no continuous relief dumping. <b>Load-sensing</b> goes further: the pump senses the actual load pressure (via a sense line from the control valve) and maintains just enough pressure above the load (a small 'margin' pressure, e.g. 200-300 psi) to move the flow needed - so pump output continuously matches both the flow AND pressure the work requires. This slashes wasted energy and heat, shrinks cooling needs, and is standard on mobile equipment and efficient industrial HPUs. Even more advanced are <b>electrohydraulic</b> and variable-speed-drive-on-pump systems that idle the prime mover when idle. The tradeoff is complexity and cost, and load-sensing circuits require correct margin setting and clean fluid. Recognizing whether a system is fixed or load-sensing changes both efficiency expectations and how you troubleshoot pressure/flow behavior."
+      },
+      {
+        "h": "Air Consumption Calculation and Sizing Compressor Capacity",
+        "body": "Sizing shop air demands a numeric estimate, not a guess. Each pneumatic cylinder's consumption per cycle is (bore area &times; stroke &times; number of strokes per minute) at working pressure, corrected to standard conditions. For a 50 mm bore &times; 200 mm stroke cylinder at 6 bar making 30 double-strokes per minute the free-air consumption is about 0.42 SCFM per cylinder (or roughly 12 L/min). Sum across all cylinders, blow-off nozzles, tools, and add a <b>diversity factor</b> (typically 0.5-0.8, since not everything runs simultaneously) plus a <b>leak allowance</b> of 10-20% for a well-maintained plant and up to 30% for older systems. The total gives required <b>demand SCFM</b>. Compressor <b>capacity</b> should exceed demand with headroom for growth, commonly 25%. A receiver tank (rule of thumb: 1 gallon per SCFM for reciprocating, 3-5 gallons per SCFM for screw compressors) smooths short peaks and lets the compressor cycle efficiently. Undersized compressors run continuously, overheat, and cannot recover pressure after peaks; oversized ones short-cycle and waste energy. A load survey with a portable flow meter is the surest way to right-size before purchase; sizing worksheets from ISO 6358 and manufacturer tools help translate cycle data into required kW."
+      },
+      {
+        "h": "Hydraulic Circuit Center Configurations: Open, Closed, and Tandem",
+        "body": "The <b>center condition</b> of a directional-control valve, what happens when the valve is in neutral, defines the whole circuit's character. <b>Open center</b> ports all four connections (P, T, A, B) together in neutral, letting pump flow return unrestricted to tank; used with fixed-displacement pumps because it keeps pressure low when actuators are stationary, minimising heat. Actuators drift freely under load. <b>Closed center</b> blocks all four ports in neutral, holding the actuator locked and letting a variable-displacement or load-sensing pump destroke to standby pressure; standard in modern efficient systems. <b>Tandem center</b> connects P to T (dumping pump flow to tank) but blocks A and B, holding the actuator while unloading the pump; common on fixed-pump systems where load holding is needed but you still want to unload. <b>Float center</b> blocks P but connects A, B, and T, letting the actuator float freely, used on log splitters and some machine tools. Choosing the wrong center produces surprising behaviour: an operator lets go of the joystick expecting the load to hold, and it drops (or vice versa). Reading a valve symbol on a schematic, identifying its center, tells you the machine's neutral behaviour and shapes the entire troubleshooting hypothesis."
+      },
+      {
+        "h": "Pilot-Operated Check Valves and Load-Holding Circuits",
+        "body": "A standard check valve allows flow one way. A <b>pilot-operated check</b> allows a controlled reverse flow: an external pilot pressure lifts the poppet off its seat, letting oil back through the valve. This creates the classic <b>load-holding circuit</b> for cylinders holding weight against gravity (log splitters, hoists, tipping cylinders, presses). A pilot-operated check on the load-holding side of the piston seals the trapped oil until the directional valve commands retract; the pilot pressure from the opposite port unlatches the check, releasing the load smoothly. This provides <b>positive load holding</b> even when hoses burst downstream of the check, a major safety improvement over relying on a directional valve's overlap or a metering valve. A <b>counterbalance valve</b> is a related component that combines a pilot-opened check with an integrated relief, giving controlled lowering with pressure setting above load pressure (e.g., 130% of holding pressure); it prevents run-away lowering when gravity would exceed pump demand. Always locate load-holding valves as close to the cylinder port as possible, ideally screwed directly into the cylinder body, so a hose failure between the valve and cylinder cannot drop the load. Understanding these circuits is essential to any hydraulic system that lifts a heavy load."
+      },
+      {
+        "h": "Pneumatic Air Quality: ISO 8573-1 Purity Classes",
+        "body": "Compressed air is a contaminated fluid unless treated. <b>ISO 8573-1</b> defines purity classes for three contaminants: <b>solid particulate</b>, <b>water (dew point)</b>, and <b>total oil (aerosol plus vapour)</b>. Each is a class number from 1 (cleanest) through higher numbers to Class X (uncontrolled). A typical general-shop specification is 5:4:5 (class 5 particulate, class 4 water at +3 deg C pressure dew point, class 5 oil at 25 mg/m&sup3;); paint-spray, precision instrument, and food-contact applications demand tighter classes, often 2:2:2 or better. Achieving each class needs specific treatment: cyclonic separators and coalescing filters for particulate and oil aerosols, activated-carbon filters for oil vapour, refrigerated dryers for pressure dew points down to +3 deg C or desiccant dryers for pressure dew points below zero. Pipework material matters, galvanised or aluminium pipe adds less rust than black iron. Failing to meet the specified class shows as clogged pilot valves (particulate), rusted or frozen field devices (water), and premature seal swelling or gummy manifolds (oil). Reading a machine's compressed-air spec on the drawing and confirming the plant supply matches those classes is a step often skipped and often the root cause of chronic pneumatic reliability issues."
+      },
+      {
+        "h": "Fluid Power Energy Efficiency: Leaks, Idling, and Recovery",
+        "body": "Compressed air is one of the most expensive utilities per unit of delivered work, only 10-15% of electric energy input reaches the tool; the rest is heat. That makes efficiency a real cost lever. <b>Leak audits</b> with an ultrasonic detector routinely find 20-30% of shop air lost to leaks: a single 3 mm hole at 7 bar leaks 25 L/s and costs about $1500/year at typical electricity prices. Fix leaks, tag them for maintenance, and re-audit; a formal program pays back in months. <b>Idling losses</b>: many machines leave solenoids energised and manifolds pressurised on breaks and shifts. A shift-timer that shuts an isolation valve during scheduled downtime cuts consumption 15-25%. <b>Pressure setting</b>: run the plant at the lowest pressure that satisfies the highest-pressure user; every 1 bar reduction cuts input energy about 7%. <b>Regenerative circuits</b> on hydraulic cylinders route rod-side flow back to the cap side during extension, roughly doubling extend speed without more pump flow. <b>Variable-speed compressor drives</b> match output to demand, saving 15-30% versus fixed-speed with load/unload cycling. Energy management under ISO 50001 makes efficiency a measured KPI. A technician who logs pressure profiles, audits leaks, and challenges pressure setpoints saves thousands of dollars a year at zero capital cost."
+      },
+      {
+        "h": "Reading a Machine's Fluid Power Schematic and Bill of Materials",
+        "body": "When a machine breaks, the drawings should tell you what the components are and where they fit. A complete fluid-power drawing package has three parts. The <b>circuit schematic</b> (ISO 1219) shows every valve, cylinder, filter, and gauge with standardised symbols, tagged with component IDs (V1, C2, F3, etc.) and port labels (P, T, A, B); flow paths are drawn without regard to physical layout. The <b>bill of materials (BOM)</b> lists each tagged component with its manufacturer part number, description, and quantity, letting you look up the exact spare needed. The <b>installation or piping diagram</b> shows physical layout and hose runs, with hose part numbers, lengths, and end fittings. Reading a fault: locate the misbehaving cylinder on the schematic, trace its flow paths through directional valves and pressure controls to the pump, checking each element you meet against the BOM to know what to inspect (a Rexroth 4WE valve, a 210-bar relief, a 25-micron return filter). Modern machines add electrical overlays (which solenoid is on which PLC output) so you can move between electrical and hydraulic domains. A technician who cannot read a fluid-power drawing is limited to trial-and-error; one who can slashes diagnostic time and orders the right spare the first time."
       }
     ],
     "lab": {
@@ -696,6 +720,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Load-sensing maintains just a small margin above the sensed load pressure and delivers only the flow needed, eliminating the continuous relief-dumping heat loss."
+      },
+      {
+        "q": "A cylinder consumes 0.42 SCFM. A plant has 20 similar cylinders, diversity factor 0.7, and 20% leak allowance. Estimated shop demand is closest to:",
+        "options": [
+          "about 5 SCFM",
+          "about 7 SCFM",
+          "about 15 SCFM",
+          "about 60 SCFM"
+        ],
+        "answer": 1,
+        "explain": "20 &times; 0.42 &times; 0.7 &asymp; 5.88 SCFM, plus 20% leaks &asymp; 7.06 SCFM total demand."
+      },
+      {
+        "q": "A valve with tandem center connects P to T in neutral, blocks A and B. This means in neutral:",
+        "options": [
+          "The actuator floats",
+          "The actuator is locked while pump flow returns to tank",
+          "The actuator drifts freely",
+          "Pump pressure builds against a closed circuit"
+        ],
+        "answer": 1,
+        "explain": "Tandem center holds the load (A and B blocked) while unloading the pump (P-to-T open), useful with fixed-displacement pumps."
+      },
+      {
+        "q": "A pilot-operated check valve for holding a heavy load should be mounted:",
+        "options": [
+          "At the pump outlet",
+          "At the tank return",
+          "As close as possible to the cylinder port, ideally screwed into the cylinder body",
+          "On the accumulator only"
+        ],
+        "answer": 2,
+        "explain": "Locating the valve directly at the cylinder means a hose failure downstream cannot drop the load; the trapped oil column between valve and piston is minimal."
+      },
+      {
+        "q": "An ISO 8573-1 specification of 5:4:5 refers to classes for:",
+        "options": [
+          "Voltage, current, and phase",
+          "Solid particulate, water (dew point), and total oil",
+          "Flow, pressure, and viscosity",
+          "Length, weight, and time"
+        ],
+        "answer": 1,
+        "explain": "ISO 8573-1 rates each of solid particulate, water dew point, and total oil on class 1-9 (plus X); 5:4:5 is a typical general-shop spec."
+      },
+      {
+        "q": "A single 3 mm compressed-air leak at 7 bar wastes on the order of:",
+        "options": [
+          "About 25 L/s",
+          "About 0.1 L/s",
+          "About 500 L/s",
+          "About 0.001 L/s"
+        ],
+        "answer": 0,
+        "explain": "A 3 mm hole at 7 bar leaks roughly 25 L/s (60 SCFM), costing about $1500/year at typical electricity prices."
+      },
+      {
+        "q": "Reducing plant compressed-air pressure by 1 bar typically cuts compressor input energy by about:",
+        "options": [
+          "1%",
+          "7%",
+          "30%",
+          "50%"
+        ],
+        "answer": 1,
+        "explain": "Rule of thumb: about 7% energy reduction per 1 bar of system pressure reduction, from lower compression work."
+      },
+      {
+        "q": "An open-center directional valve is commonly used with:",
+        "options": [
+          "Variable-displacement pumps only",
+          "Fixed-displacement pumps to unload flow to tank at low pressure in neutral",
+          "Servo motors",
+          "Vacuum ejectors only"
+        ],
+        "answer": 1,
+        "explain": "Open center dumps pump flow to tank in neutral, keeping pressure and heating low with a fixed-displacement pump."
+      },
+      {
+        "q": "On a hydraulic schematic, the abbreviation \"BOM\" refers to:",
+        "options": [
+          "Ball on machine",
+          "Bill of materials listing tagged components and part numbers",
+          "Backup oil manifold",
+          "Bar oil measure"
+        ],
+        "answer": 1,
+        "explain": "The BOM cross-references each tagged component on the schematic to a manufacturer part number for ordering and identification."
+      },
+      {
+        "q": "A regenerative hydraulic circuit works by:",
+        "options": [
+          "Routing rod-side flow to cap side during extension, increasing extend speed",
+          "Reversing the pump automatically",
+          "Adding a battery",
+          "Bypassing all filters"
+        ],
+        "answer": 0,
+        "explain": "During extension, rod-side oil is combined with pump flow to the cap side, roughly doubling extend speed at reduced extend force."
       }
     ],
     "resources": [
@@ -878,6 +1001,30 @@ MODULES_2 = [
       {
         "h": "Alarm Annunciation: Shelving, Suppression, Sounds, and Priorities",
         "body": "Effective alarm annunciation follows <b>ANSI/ISA-18.2</b>. Every alarm carries a <b>priority</b> (typically Low/Medium/High/Critical or Urgent) that drives its color, sound, and required response time - priority should reflect consequence and time-to-respond, not be assigned to everything as High. <b>Shelving</b> lets an operator temporarily silence a known nuisance alarm for a bounded time (it auto-unshelves), documented in the audit trail - unlike a permanent disable, which is a change-managed action. <b>Suppression by design</b> (state-based or shed) automatically hides alarms that are meaningless in the current mode - for example, suppressing 'low flow' alarms while a pump is intentionally stopped - to prevent an <b>alarm flood</b> (more than 10 alarms in 10 minutes per operator, per ISA-18.2). Distinct <b>audible tones</b> per priority let operators triage without looking. The goal is a manageable alarm rate - a target of roughly one alarm per 10 minutes in steady state - so that every annunciated alarm genuinely means 'act now.'"
+      },
+      {
+        "h": "HMI User Roles, Permission Levels, and Audit Trails",
+        "body": "Any HMI that lets an operator make a change needs an <b>access control system</b> so that only qualified personnel can perform sensitive actions. The standard model is <b>role-based access control (RBAC)</b>: define roles (Operator, Lead, Engineer, Maintenance, Administrator) and assign each role a set of permissions (view screens, acknowledge alarms, change setpoints, edit recipes, download PLC). Each individual user logs in with a unique credential and receives their role's permissions. This is far better than a shared password because actions can be attributed to the person who performed them. An <b>audit trail</b> logs each significant action, who acknowledged which alarm, who changed which setpoint from what to what value, timestamped and stored in a database or historian. FDA 21 CFR Part 11 (life-sciences) and IEC 62443 (industrial cyber) both require audit trails on critical systems. Good HMIs also enforce <b>password policy</b> (minimum length, complexity, expiration), <b>session timeout</b> that auto-logs-out an unattended terminal, and <b>account lockout</b> after failed attempts. Practical tip: never let \"Administrator\" be shared, and never leave a debug or vendor default password installed after commissioning, these are the most common cyber footholds found on plant HMIs during security audits."
+      },
+      {
+        "h": "HMI Multi-Language and Localization",
+        "body": "Global operations run HMIs in many languages, and modern platforms support runtime <b>language switching</b> without redeployment. The design pattern is to replace hard-coded text with <b>language-key references</b>: instead of a button captioned \"Start\", place a caption tag @start_btn whose value is looked up in a language table. A single string table (spreadsheet or database) has columns for English, Spanish, French, Mandarin, and any other target language; at runtime a language-selector button switches the lookup column. Best practice: leave <b>10-30% extra width</b> in labels and buttons because German and French are often longer than English; use icons alongside text where possible to help operators when a translation is ambiguous. <b>Unit conversion</b> is a related concern: display a temperature as either deg C or deg F based on a user setting, using stored SI internally and converting only for display. Date and time formats also vary (DD/MM/YYYY vs MM/DD/YYYY). Have a native speaker verify translations before deployment; machine translation confuses domain terms (\"temper\" the metallurgical operation is not the emotional \"temper\"). A localised HMI is not just courtesy, it reduces operator errors, meets local labour requirements, and speeds troubleshooting because operators can read alarms in their own language."
+      },
+      {
+        "h": "Screen Design for Colorblind and Low-Vision Operators",
+        "body": "Roughly 8% of male operators have some form of red-green colour deficiency, so any HMI that conveys critical state <b>only by colour</b> is inaccessible and unsafe. ISA-101 explicitly requires that state be communicated through <b>multiple visual channels</b>: colour, shape, position, and text label. A running pump can be green fill AND a distinctive rotating symbol AND a text \"RUN\" tag; a fault is red AND a triangle AND \"FAULT\" text. Use colour-blind-safe palettes: the Okabe-Ito or ColorBrewer scales are engineered to be distinguishable by protanopes and deuteranopes. Avoid red-and-green as the sole distinction; blue-orange or yellow-purple pairs are far more accessible. Contrast matters too: WCAG accessibility guidelines call for at least 4.5:1 contrast between text and background for normal size and 3:1 for large; grey background with dark text (ISA-101 \"high-performance HMI\" style) both improves contrast and reduces glare. Larger fonts (minimum 12 pt), bold on-alarm text, and generous target sizes for touchscreen buttons help older operators and glove use. Testing screens with a colour-vision simulator (many free tools exist) catches accessibility issues before deployment when they cost nothing to fix."
+      },
+      {
+        "h": "HMI Backup, Restore, and Project Version Control",
+        "body": "An HMI whose project file lives only on the panel or on one engineer's laptop is one failed hard drive away from a total rebuild. Discipline for HMI backups mirrors PLC backups. Store the master project in a <b>version-control system</b> (Git, SVN, or a vendor-specific system like Rockwell's FactoryTalk AssetCentre or Siemens TIA Multiuser): every change gets a commit with author, timestamp, and description. Tag releases (v1.0, v1.1, v2.0) to production so any point can be recreated exactly. Nightly automated backups pull the running panel's project to a network share; weekly copies go to offsite storage. When a panel fails, the replacement is imaged from the last known-good project in minutes rather than hours. Before pushing an updated project to production, do a diff or compare against the current running version to review exactly what changed, and test the new version on a spare panel or emulator. Never edit directly on a running production panel; that path leads to divergent copies and untraceable changes. Include HMI project files in the plant's disaster recovery plan alongside PLC and drive backups; too many recovery plans focus on the PLC and leave the HMI as a rebuild-from-scratch afterthought."
+      },
+      {
+        "h": "Runtime Deployment: Publishing HMI Projects to Panels",
+        "body": "Getting an updated HMI project onto a live panel needs a repeatable, low-risk procedure. Most platforms build the project into a <b>runtime file</b> (a compiled .mer, .apa, or similar) that is then transferred to the panel via USB, network share, or the platform's deployment tool. The essential steps: <b>1.</b> Build the runtime and note its build number. <b>2.</b> Backup the current running project so rollback is possible. <b>3.</b> Schedule the deployment in a maintenance window (some panels require restart on load). <b>4.</b> Transfer the new runtime and load it, watching for load errors. <b>5.</b> Restart the runtime and verify: alarms populate, tags read live values, screens navigate, user login works. <b>6.</b> Have production run through a normal cycle with the new HMI to catch anything that failed in test. <b>7.</b> Log the deployment in the change record with build number, author, and time. If a fault appears after go-live, rollback is a matter of loading the previous backup rather than debugging under pressure. Automated deployment tools (Rockwell FactoryTalk Directory, Ignition Gateway push, TIA WinCC RT auto-deploy) reduce manual steps and enforce checksum verification, catching corrupted transfers. Treat deployment as a formal task, not a hurried \"just push it\" event, and HMI upgrades stop being feared incidents."
+      },
+      {
+        "h": "OPC Tag Browsing, Address Space, and Client-Server Basics",
+        "body": "<b>OPC</b> (Open Platform Communications) is the standard bridge between HMI/SCADA clients and controllers of every brand. Every OPC server exposes an <b>address space</b>: a hierarchical namespace of <b>nodes</b> representing tags (variables), objects (grouped tags), and metadata (data types, ranges, engineering units). A client browses this space (like a file explorer for tags), picks the nodes it needs, and subscribes to their values. The classic <b>OPC-DA</b> (Data Access) protocol runs on Windows COM/DCOM, is easy to use inside a plant but painful to route across firewalls and unsuitable for internet-scale use. Its successor <b>OPC-UA</b> (Unified Architecture) uses TCP with strong security (X.509 certificates, message signing, encryption), object-oriented information models, and platform-independent stacks (C, .NET, Java, Python), making it suitable for cloud and IIoT deployments. Whichever protocol, three practical concerns dominate: <b>subscription rate</b> (update every 100 ms is common; asking for 10 ms on 10,000 tags floods the network), <b>deadband</b> (only report analog changes above a threshold to reduce chatter), and <b>quality codes</b> (Good, Bad, Uncertain) that indicate whether a value is trustworthy. Any HMI/SCADA architect must be fluent in OPC because it dictates how much data flows and how securely."
       }
     ],
     "lab": {
@@ -1408,6 +1555,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Logging tags, alarms, and audit events to a SQL database decouples long-term storage from the HMI runtime and lets IT/reporting tools query it."
+      },
+      {
+        "q": "The primary reason to use per-user login rather than a shared password on an HMI is:",
+        "options": [
+          "Faster typing",
+          "Actions in the audit trail can be attributed to a specific person",
+          "No password is required",
+          "Fewer keys on the panel"
+        ],
+        "answer": 1,
+        "explain": "Per-user credentials plus a role-based audit trail links every change to an identified person, meeting IEC 62443 and 21 CFR Part 11 traceability."
+      },
+      {
+        "q": "For multi-language HMI screens, best practice is to:",
+        "options": [
+          "Hard-code English and let others translate on paper",
+          "Store text in a language table with key references and switch column at runtime",
+          "Use flags as the only label",
+          "Only support one language"
+        ],
+        "answer": 1,
+        "explain": "Language-key references let the same screen change language at runtime; leave 10-30% extra width for longer translations."
+      },
+      {
+        "q": "Why should HMI state NEVER be communicated by colour alone?",
+        "options": [
+          "Colour is expensive",
+          "About 8% of male operators have colour-vision deficiency, so shape/text/position are also needed",
+          "Colour cannot render on modern panels",
+          "Colour is illegal"
+        ],
+        "answer": 1,
+        "explain": "ISA-101 mandates multiple visual channels; colour-blind-safe palettes and text labels ensure everyone can read state."
+      },
+      {
+        "q": "HMI project files should ideally be stored in:",
+        "options": [
+          "Only on the panel",
+          "A version-control system with tagged releases and offsite backups",
+          "Random USB sticks",
+          "Email attachments only"
+        ],
+        "answer": 1,
+        "explain": "VCS gives change history and rollback; nightly automated backup plus offsite copy protects against panel failure and disaster."
+      },
+      {
+        "q": "During HMI runtime deployment, the FIRST step that protects against a bad load is to:",
+        "options": [
+          "Delete the old project",
+          "Backup the current running project before installing the new one",
+          "Turn off the panel",
+          "Skip verification"
+        ],
+        "answer": 1,
+        "explain": "A backup enables rapid rollback if the new project misbehaves; skipping it turns a small defect into extended downtime."
+      },
+      {
+        "q": "OPC-UA improves on OPC-DA primarily by:",
+        "options": [
+          "Being COM/DCOM based only",
+          "Using TCP with strong security (certificates) and platform-independent stacks",
+          "Removing all security",
+          "Being slower"
+        ],
+        "answer": 1,
+        "explain": "OPC-UA runs cross-platform over TCP with X.509 certificates and encrypted, signed messaging, and it defines rich information models."
+      },
+      {
+        "q": "WCAG accessibility guidelines call for a minimum text-to-background contrast ratio of about:",
+        "options": [
+          "1.5:1",
+          "4.5:1 for normal size text",
+          "10:1 always",
+          "No specific ratio"
+        ],
+        "answer": 1,
+        "explain": "WCAG 4.5:1 for normal text (3:1 for large text) improves readability; ISA-101 grey backgrounds naturally push contrast up for critical elements."
+      },
+      {
+        "q": "On an OPC subscription, the \"deadband\" setting is used to:",
+        "options": [
+          "Silence all alarms",
+          "Suppress reporting of analog changes smaller than a threshold to reduce chatter",
+          "Disable authentication",
+          "Slow down the entire server"
+        ],
+        "answer": 1,
+        "explain": "Deadbands filter tiny fluctuations from noise so the server does not flood the client with meaningless updates; only meaningful changes propagate."
+      },
+      {
+        "q": "The reason to leave extra label width when localizing an HMI is that:",
+        "options": [
+          "Colours differ by language",
+          "Translations in German or French are often 10-30% longer than English",
+          "Font size changes",
+          "Buttons shrink"
+        ],
+        "answer": 1,
+        "explain": "Character-per-word varies by language; sizing labels only to English text leads to truncated or wrapped translated captions."
       }
     ],
     "resources": [
@@ -1590,6 +1836,30 @@ MODULES_2 = [
       {
         "h": "Industrial Network Cable Grounding, Shielding, and EMI Mitigation",
         "body": "Industrial networks live in a hostile electromagnetic environment - VFDs, contactors, and welders inject noise that can corrupt packets. <b>Shielded twisted pair (STP/FTP)</b> wraps the conductors in a foil or braid drain that must be <b>bonded to a clean ground</b>. The rule that trips people up: for most industrial signal/network cable the shield is grounded at <b>one end only</b> to prevent a <b>ground loop</b> - a difference in ground potential between two panels driving circulating current through the shield, which itself becomes a noise source. (High-frequency EtherNet/IP cabling sometimes bonds both ends through a capacitor for HF while blocking the DC loop.) Route network cable in <b>separate trays or with physical separation</b> from power and motor leads - a common spec is at least 200 mm from VFD output cables, crossing them at 90 degrees when unavoidable. Use <b>VFD-rated shielded motor cable</b> so the drive's own noise stays contained. Keep <b>bond conductors short and low-impedance</b>; a long pigtail on a shield defeats it at high frequency. Symptoms of bad shielding/grounding are CRC errors and dropped connections that correlate with a nearby motor starting."
+      },
+      {
+        "h": "Ethernet Frame Anatomy: Preamble, MAC, VLAN Tag, Payload",
+        "body": "Every packet on an industrial Ethernet network is a <b>frame</b> with a defined structure. It begins with a 7-byte <b>preamble</b> plus 1-byte <b>start-of-frame delimiter</b> that synchronises the receiver. Next come two 6-byte <b>MAC addresses</b>: destination first, then source. An optional 4-byte <b>VLAN tag</b> (IEEE 802.1Q) inserts a 12-bit VLAN ID and a 3-bit priority (PCP) used for traffic-class prioritisation, essential for keeping control traffic ahead of file transfers. The 2-byte <b>EtherType</b> identifies the payload protocol (0x0800 = IPv4, 0x8100 = VLAN-tagged, 0x8892 = PROFINET, 0x88CD = SERCOS III). The <b>payload</b> is 46-1500 bytes for standard Ethernet, followed by a 4-byte <b>CRC</b> for error detection. Understanding this structure is essential when reading a Wireshark capture: you can see whether frames are properly VLAN-tagged, if a bad CRC indicates cable trouble, or whether QoS priority markings arrive intact at the destination. Jumbo frames (up to 9000 bytes) allow more payload per header overhead but must be supported end-to-end. Small-payload real-time traffic (motion control) benefits from short cyclic frames; large data transfers (file logging) benefit from larger frames. Frame anatomy is the alphabet from which every diagnosis starts."
+      },
+      {
+        "h": "Network Latency Sources and Deterministic Delivery",
+        "body": "On a control network, <b>latency</b>, the delay between transmit and deliver, is often more important than throughput. Total latency has several components: <b>serialisation delay</b> (time to clock the bits out of a NIC, about 1.2 microseconds per KB at 1 Gbps), <b>propagation delay</b> (5 ns per metre of copper), <b>switching delay</b> in each hop (typically 3-10 microseconds for cut-through switches, tens of microseconds for store-and-forward), and <b>queueing delay</b> when higher-priority traffic delays other frames. On congested best-effort Ethernet, latency can spike to tens of milliseconds unpredictably, unacceptable for motion or drives. <b>Determinism</b> is achieved by combining <b>QoS priority</b> (802.1p / DSCP tagging) with limited hop counts, dedicated VLANs for real-time traffic, and often <b>Time-Sensitive Networking (TSN)</b> features (IEEE 802.1Qbv scheduled traffic, 802.1AS time sync). PROFINET IRT and EtherCAT go further with hardware-scheduled cyclic slots that guarantee microsecond determinism. When troubleshooting a jittery motion axis or dropping I/O, measure round-trip latency with a network analyser at each hop; a single overloaded switch or a non-managed switch dropped into the path can wreck determinism for the whole system."
+      },
+      {
+        "h": "Serial Termination and Biasing on RS-485 Networks",
+        "body": "<b>RS-485</b> is still the workhorse of Modbus RTU, Profibus, and many drive networks despite Ethernet's rise. Its two-wire differential signalling tolerates long distances (up to 1200 m at low speeds) and rejects noise, but only if <b>termination</b> and <b>biasing</b> are correct. Signal reflections off unterminated ends cause data errors that get worse at higher baud rates. The rule: place a <b>120 ohm resistor</b> across A and B at each of the two extreme ends of the bus, exactly two terminations, not one, not three, not one on every node. Stubs off the trunk should be short (under 300 mm). <b>Biasing</b> resistors (typically 680 ohm from B to +5 V and 680 ohm from A to ground) hold the idle line in a defined state, without them, when no device is transmitting, the line floats and receivers see random data. Many masters have built-in bias; if not, add external biasing at one end only. <b>Grounding</b> the shield to a single point prevents ground-loop currents. Common failure symptoms of bad termination: intermittent packet errors, worse at higher speeds; adding a node makes things worse (or better) unpredictably; the network works at 9600 baud but fails at 115200. A cheap termination check with a multimeter (approximately 60 ohm across A-B with power off if both ends terminated with 120 ohm) verifies correct wiring instantly."
+      },
+      {
+        "h": "Diagnosing Duplicate IP Address Faults",
+        "body": "A <b>duplicate IP address</b> on an industrial network causes some of the strangest, hardest-to-trace faults: intermittent communication, devices randomly \"disappearing\" from HMI, and packets seemingly answered by the wrong device. When two nodes share an IP, the ARP (Address Resolution Protocol) tables at other devices flip-flop between the two MAC addresses, so replies get sent to whichever device most recently spoke. To find a duplicate: use a laptop with Wireshark to send an ARP probe (or ping the suspect IP) and inspect the responses; two different source-MAC responses reveal the duplicate. Managed switches with <b>gratuitous ARP detection</b> log duplicate-IP events. Some drives and PLCs will flash a red \"DUP_IP\" light and refuse to come online. Prevention: maintain a live <b>IP address plan</b> spreadsheet or use DHCP with static reservations so no two devices can be assigned the same address. When adding equipment, run a nmap ping-sweep first to confirm the target IP is free. If a duplicate is found, correct it via the local HMI or DIP switches; power-cycle the affected devices to force ARP-table refresh across the network. A five-minute plan-check up front saves hours of \"phantom\" troubleshooting later."
+      },
+      {
+        "h": "Setting Up a Managed Switch for Industrial Automation",
+        "body": "Unmanaged switches are simple but a managed switch is essential for real-time and mission-critical control. Basic setup steps: <b>1. Assign a management IP</b> so the switch itself can be reached via web or CLI. <b>2. Configure VLANs</b>, at least separate the control-cell VLAN from any office or telemetry VLAN, so broadcast storms in one cannot flood the other. <b>3. Set QoS priorities</b>: mark real-time protocols (PROFINET RT, EtherNet/IP CIP class 1) with higher DSCP/802.1p priority than best-effort traffic. <b>4. Enable IGMP snooping</b> for multicast-heavy protocols (EtherNet/IP produced/consumed, CIP Motion) so multicast frames only reach nodes that subscribed, preventing flood. <b>5. Configure port security</b>: lock each port to the expected device's MAC address so an unauthorized laptop plugged in cannot join. <b>6. Enable ring redundancy</b> (DLR, MRP, or RSTP) if the topology is a ring for automatic sub-50 ms failover. <b>7. Turn on SNMP and syslog</b> pointing at the plant's monitoring server, so link changes and errors are visible. <b>8. Save the config</b> to a network share and version it. Skipping steps produces networks that \"work\" until the day a broadcast storm or a bad port takes them down at 2 AM; a proper managed-switch config catches problems early and isolates them fast."
+      },
+      {
+        "h": "Firewall Rules and Deep Packet Inspection at the IT/OT Boundary",
+        "body": "The industrial DMZ (see Purdue Levels 3-4 boundary) is enforced by firewalls that permit only defined traffic between operations technology (OT) and information technology (IT). Rule design follows <b>default-deny</b>: everything is blocked unless a specific rule allows it. Typical allowed flows: historian data from OT to IT via OPC-UA on TCP 4840; MES-to-DCS commands over defined protocol/ports; NTP time-sync from IT to OT clock; and Windows domain-controller traffic for OT workstations. Each rule specifies source IP or subnet, destination IP or subnet, protocol, port, and often direction and stateful tracking. <b>Deep Packet Inspection (DPI)</b> firewalls (like Palo Alto, Fortinet, and OT-specialised Cisco Cyber Vision or Claroty CTD) go beyond port matching and examine the protocol payload; they can, for example, permit Modbus reads (function codes 3, 4) but block writes (function code 6, 16), a huge safety improvement over allow-all-Modbus. DPI also detects protocol anomalies, malformed frames, unexpected function codes, that often indicate reconnaissance or attack. Any rule that opens Level 3-4 without stateful inspection and DPI leaves the OT network exposed; every industrial cyber incident of the past decade has traversed a permissive IT/OT boundary. Regularly audit the ruleset: unused rules should be removed, and each rule should be traceable to a business need approved by both IT and OT owners."
       }
     ],
     "lab": {
@@ -2119,6 +2389,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "A TDR sends a pulse and times its reflection to locate the distance to an open, short, or impedance discontinuity - e.g. a crushed cable in a tray."
+      },
+      {
+        "q": "Which field in an Ethernet frame identifies the payload protocol (e.g., 0x0800 for IPv4)?",
+        "options": [
+          "Preamble",
+          "MAC destination",
+          "EtherType",
+          "CRC"
+        ],
+        "answer": 2,
+        "explain": "The 2-byte EtherType field after the source MAC (or after VLAN tag) identifies the payload protocol."
+      },
+      {
+        "q": "On a 1 Gbps link, how many terminations should an RS-485 network have?",
+        "options": [
+          "Never any",
+          "One on the master only",
+          "Exactly two, at each of the two extreme ends of the bus",
+          "One per node"
+        ],
+        "answer": 2,
+        "explain": "Reflections are eliminated with two 120 ohm terminations, one at each far end; more or fewer creates errors that worsen with baud rate."
+      },
+      {
+        "q": "Which of the following contributes MOST to unpredictable variable latency on a congested control network?",
+        "options": [
+          "Propagation delay",
+          "Serialisation of a single small frame",
+          "Queueing behind higher-priority traffic",
+          "CRC checking"
+        ],
+        "answer": 2,
+        "explain": "Queueing waiting for other frames to serialise ahead is highly variable and dominates jitter on congested best-effort Ethernet."
+      },
+      {
+        "q": "When two industrial devices share the same IP address, the typical symptom is:",
+        "options": [
+          "Both stop working immediately",
+          "Random intermittent comms as ARP tables flip between their MACs",
+          "Higher throughput",
+          "Perfect operation"
+        ],
+        "answer": 1,
+        "explain": "ARP tables on peers flip-flop between MACs of the two duplicates, so responses seemingly go to the wrong device intermittently."
+      },
+      {
+        "q": "When commissioning a managed switch for control traffic, IGMP snooping is enabled to:",
+        "options": [
+          "Reduce power consumption",
+          "Direct multicast frames only to ports whose devices subscribed, preventing flood",
+          "Increase broadcast traffic",
+          "Block all Ethernet traffic"
+        ],
+        "answer": 1,
+        "explain": "Multicast-heavy protocols (CIP produced/consumed, motion) benefit from IGMP snooping so multicast is not flooded to every port."
+      },
+      {
+        "q": "Deep Packet Inspection at the IT/OT firewall can improve safety by:",
+        "options": [
+          "Blocking all Modbus regardless of content",
+          "Permitting Modbus reads while blocking write function codes, per operational need",
+          "Ignoring protocol content",
+          "Increasing latency deliberately"
+        ],
+        "answer": 1,
+        "explain": "DPI inspects payload (Modbus function codes, CIP services) so policy can allow safe reads and deny risky writes without blocking the protocol entirely."
+      },
+      {
+        "q": "An RS-485 network works fine at 9600 baud but corrupts data at 115200. The MOST likely cause is:",
+        "options": [
+          "Broken cable",
+          "Missing or wrong termination reflecting high-frequency edges",
+          "Wrong voltage",
+          "Wrong MAC address"
+        ],
+        "answer": 1,
+        "explain": "Higher baud rates make reflections from missing terminations more damaging; verifying the 60 ohm across A-B (two 120 ohm in parallel) is the fastest check."
+      },
+      {
+        "q": "On an IT/OT firewall, the safe default rule policy is:",
+        "options": [
+          "Default-allow, block specific known threats",
+          "Default-deny, allow only defined and approved flows",
+          "Turn off the firewall",
+          "Log only, never block"
+        ],
+        "answer": 1,
+        "explain": "Default-deny (whitelist) ensures no untracked service crosses the boundary; each allowance must be justified by a documented business need."
+      },
+      {
+        "q": "A VLAN tag (802.1Q) is 4 bytes inserted between the source MAC and:",
+        "options": [
+          "The preamble",
+          "The CRC",
+          "The EtherType field",
+          "The destination MAC"
+        ],
+        "answer": 2,
+        "explain": "802.1Q inserts the tag before EtherType; it carries a 12-bit VLAN ID plus a 3-bit priority (PCP) for QoS."
       }
     ],
     "resources": [
@@ -2301,6 +2670,30 @@ MODULES_2 = [
       {
         "h": "Robot Maintenance: Harmonic Drives, Grease, Backlash, and Encoder Batteries",
         "body": "Industrial arms concentrate reduction in <b>harmonic (strain-wave) gears</b> and RV reducers at each joint - compact, high-ratio, and near-zero backlash when healthy. Their wear mode is gradual <b>backlash and lost motion</b> from flex-spline fatigue and grease degradation, which shows up as declining repeatability and, late in life, as noise or torque ripple. <b>Lubrication</b> is the number-one PM: each joint has a specified grease type, quantity, and interval, and mixing incompatible greases or over-filling (which raises internal pressure and blows seals) causes failures. <b>Grease sampling/analysis</b> can trend metal content to catch a failing reducer early. <b>Mastering/zeroing</b> (re-establishing each axis's reference) is required after a motor or encoder replacement or a collision, using dial indicators or witness marks - a robot that lost its master will move to wrong absolute positions. Critically, many robots use <b>absolute encoders backed by a battery</b> that retains position while powered off; a <b>low encoder-battery warning</b> must be serviced promptly, because a dead battery loses the mastering data and forces a full re-master. Other PM items: checking <b>cable dress</b> for wear at the wrist, verifying <b>brake</b> function on vertical axes, and inspecting for oil weep at joint seals."
+      },
+      {
+        "h": "Pick-and-Place Cell Cycle Time Analysis",
+        "body": "A robotic pick-and-place cell's throughput is set by <b>cycle time</b>: the seconds required from one pick's start to the next. Breaking cycle time into elements exposes optimisation opportunities. A typical cycle has: <b>approach to part</b> (move above pick point), <b>descend and pick</b> (gripper close or vacuum on), <b>retract</b>, <b>transport to place</b>, <b>descend and place</b>, <b>retract</b>, and <b>return to home</b>. Each has an accel, cruise, and decel phase governed by motion parameters, plus a gripper-actuation time (vacuum settle: 100-300 ms, mechanical: 100-500 ms). A worksheet listing each segment's time and total per cycle lets an engineer target the biggest losers first. Common accelerators: <b>motion blending</b> (chaining moves so the robot passes through a via-point rather than stopping), <b>early gripper actuation</b> (start closing while still approaching), <b>via-points closer to the target</b> so the robot doesn't over-travel, and <b>increased acceleration</b> (limited by robot rating and payload). Payload matters heavily: a robot rated for 10 kg carrying 3 kg can often accelerate 2-3x faster than at rated payload. Modern controllers include an <b>optimisation</b> mode that automatically tunes accel/decel to program cycle time under motor and structural limits. Consistent, measured cycle time is also the leading indicator of wear (bearings, harmonic drives, belts) as it drifts up over time."
+      },
+      {
+        "h": "Robot Selection: Payload, Reach, Repeatability, and Duty Cycle",
+        "body": "Picking the right robot for the job means matching four core specs. <b>Payload</b> is the maximum load at the tool flange, including the end-effector; oversizing payload is common and wise if the gripper is heavy or if the load changes. <b>Reach</b> is the maximum radius from the base to the wrist; measure from the mounting point to the farthest work location and add margin. <b>Repeatability</b> is how tightly the robot returns to a taught point (typically 0.02-0.1 mm for industrial arms), while <b>accuracy</b> is how close it gets to a commanded coordinate (usually worse than repeatability). For teach-and-repeat production, repeatability is what matters. <b>Duty cycle</b> and speed rating tell you if the robot can sustain the required cycles per hour without overheating; palletising robots at max payload and max speed can enter thermal derating. Secondary considerations: reach limits at wrist orientations (a robot may reach 1600 mm horizontally but only 1400 mm when the wrist must point down), floor mount vs inverted vs wall mount, environmental protection (IP67 for washdown, IP54 general), and controller options (CIP Safety, PROFINET, VGR readiness). Over-picking on payload or reach costs money; under-picking on repeatability, duty cycle, or environmental rating costs downtime. Selection is best done from a tabulated requirements matrix, not a hunch."
+      },
+      {
+        "h": "Servo Homing Sequences and Reference Marks",
+        "body": "Absolute encoders remember position through power loss; incremental encoders do not, so any machine with incremental feedback must <b>home</b> at power-up. A homing sequence drives an axis to a known reference and zeroes the position register. Common methods: <b>hard stop</b> (drive into a mechanical end and monitor torque, then back off, cheap but stressful on mechanics); <b>limit switch</b> (approach in fast direction until switch trips, back off, approach slowly to catch the switch edge, then zero); <b>index pulse (Z marker)</b> on the encoder for the highest accuracy, homes to the exact rotation of the motor; and <b>combined switch-plus-index</b>, using a coarse limit switch to define which encoder revolution counts, then the Z marker for fine repeatability, achieving encoder-count precision. A homing routine must protect against jamming (torque-limited approach), out-of-range motion (soft stops), and wrong-direction faults (limit switch on the wrong end). Backlash and belt stretch mean the homing direction should match the working motion direction to preload consistently. Once homed, <b>soft limits</b> (values in the drive or PLC that bound legal position) protect the machine even when the hardware limits are healthy. Never skip homing after an E-stop or drive fault: an axis whose position was lost during the fault can drive into equipment or people at power-up if the position register is stale."
+      },
+      {
+        "h": "Cable Track (Energy Chain) Design and Failure Modes",
+        "body": "On any moving axis with power, encoder, or fluid connections between the moving side and the stationary frame, an <b>energy chain (cable track, cable carrier, Igus Energy Chain)</b> supports and guides the cables. It is essentially a segmented plastic or steel channel that flexes at each joint, keeping cables in an organised radius rather than trailing loose. Design specs include <b>bending radius</b>: cables must never bend below their manufacturer's minimum radius (commonly 8-10x cable OD static, 12-15x dynamic), and the energy chain enforces it. <b>Fill ratio</b> should stay below 60% of inner cross-section so cables can shift freely; friction from over-packing accelerates jacket wear. <b>Cable orientation</b> matters: high-voltage power cables should be separated from encoder and signal cables by dividers, or better still routed in parallel chains, to reduce inductive coupling and encoder errors. Common failure modes: jacket abrasion (visible before conductor failure, inspect regularly), <b>corkscrew</b> twisting from allowing cables to rotate in the chain, and <b>strain relief</b> failure at both ends. Design life is quoted in cycles (millions typical); high-flex servo cables cost 2-4x standard cable but survive far longer in energy chains. Regular inspection (walk the chain, look for outer segments' scuffing or a stiff bend point) catches problems weeks before failure and prevents surprise machine stops."
+      },
+      {
+        "h": "Torque Motors and Direct-Drive Motion",
+        "body": "Traditional servo-plus-gearbox architectures are compact and cheap but introduce backlash, elasticity, and inertia that limit precision and dynamic response. <b>Torque motors</b> (also called direct-drive motors, or DDR/DDL) skip the gearbox entirely: a large-diameter, low-speed motor couples directly to the load, so what the motor does is what the load does. Because torque = force &times; radius, a large diameter yields high torque at low speed without gearing. Direct drive brings advantages: <b>zero backlash</b> (nothing to shift on reversal), <b>high bandwidth</b> (low mechanical filter means the controller can push higher gains for tighter tracking), <b>silent</b> (no meshing), and <b>maintenance-free</b> (no gear oil or wear parts). Applications include high-precision indexing tables, telescope mounts, wafer-handling robots, and machine-tool rotary axes. Trade-offs: torque motors are physically larger and heavier than a small motor with a big gearbox producing the same output torque, cooling often needs liquid or forced-air ducting, and the motor's high torque near stall can damage things if a control fault commands a full-torque move. <b>Linear direct-drive</b> (linear motors, DDL) similarly replaces ballscrew-plus-rotary-motor with a permanent-magnet track and coil forcer, enabling clean straight-line motion at high speed and acceleration; used in semiconductor manufacturing and pick-and-place cells. When precision and dynamic response justify the cost, direct drive is transformative."
+      },
+      {
+        "h": "Return-to-Home After Emergency Stop: Recovery Protocols",
+        "body": "Recovering a robot cell or motion system from an <b>E-stop</b> is a defined procedure, not a fumble in the moment. When the E-stop is pressed, the safety system commands STO (Safe Torque Off) on all drives, freezing the mechanism where it is; brakes engage on axes with load-holding brakes. First, secure the scene: identify why the E-stop was pressed, and correct the trigger (an operator inside the cell, a fault, a jam). Only after that reset the E-stop and clear any latched safety-relay faults. Now the recovery <b>homing</b>: incremental-encoder axes have lost their position reference during power-off brake time; some drives use battery-backed absolute encoders and remember. Any axis needing home returns via a defined sequence to its safe home. Then check <b>program state</b>: some controllers auto-resume where they left off (dangerous if a workpiece has been removed or the gripper is holding something); others require the operator to explicitly command \"resume\" or restart the cycle from a known start step. Best practice: after any E-stop, take the machine to a defined <b>safe start position</b> before resuming, so operators can visually verify everything is where it should be. Document the recovery procedure clearly on the panel and in training; well-trained operators clear an E-stop in a minute rather than calling maintenance for every event."
       }
     ],
     "lab": {
@@ -2831,6 +3224,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "A tool changer (coupler with pass-through air/power/network) lets the robot swap tools autonomously, letting one cell handle multiple products or tasks."
+      },
+      {
+        "q": "Motion blending in a robot program reduces cycle time by:",
+        "options": [
+          "Adding delays between moves",
+          "Passing through via-points without stopping between segments",
+          "Slowing acceleration",
+          "Skipping the pick"
+        ],
+        "answer": 1,
+        "explain": "Blended (fly-by) motion lets the robot pass through a via-point on a curve without decelerating to zero, shaving fractions of a second per move."
+      },
+      {
+        "q": "Which robot specification matters MOST for a teach-and-repeat production task returning to the same taught points every cycle?",
+        "options": [
+          "Repeatability",
+          "Absolute accuracy",
+          "Colour of the arm",
+          "Maximum reach only"
+        ],
+        "answer": 0,
+        "explain": "Repeatability measures how tightly the robot returns to the SAME point; teach-and-repeat programs care about that far more than absolute coordinate accuracy."
+      },
+      {
+        "q": "An axis with an incremental encoder must be HOMED after power-up because:",
+        "options": [
+          "The encoder loses position through power loss",
+          "The motor overheats",
+          "The brake fails",
+          "The gearbox needs lubrication"
+        ],
+        "answer": 0,
+        "explain": "Incremental encoders lose their reference at power off; homing to a switch or index mark re-establishes the zero point."
+      },
+      {
+        "q": "A cable in an energy chain should NEVER bend below:",
+        "options": [
+          "100 mm regardless of diameter",
+          "Its manufacturer's minimum bending radius, typically 12-15x cable OD dynamic",
+          "Any radius at all",
+          "The chain outer radius"
+        ],
+        "answer": 1,
+        "explain": "Bending below minimum radius stresses conductors and jacket; the chain's inner radius is chosen to enforce that limit."
+      },
+      {
+        "q": "A direct-drive (torque motor) provides high performance mainly because it:",
+        "options": [
+          "Uses a very large gearbox",
+          "Eliminates gearbox backlash and elasticity, enabling higher control bandwidth",
+          "Runs at extremely high speed",
+          "Requires no cooling ever"
+        ],
+        "answer": 1,
+        "explain": "No mechanical stage between motor and load means zero backlash and low mechanical filter, so servo gains can be pushed higher for tighter tracking."
+      },
+      {
+        "q": "After an E-stop, best practice is to:",
+        "options": [
+          "Immediately resume the interrupted move",
+          "Identify the cause, reset, home the axes, and take the machine to a defined safe start position before resuming",
+          "Restart from a random point",
+          "Skip homing to save time"
+        ],
+        "answer": 1,
+        "explain": "Recovery sequences protect both people and equipment; auto-resuming a program with unknown state is a common cause of collisions after E-stops."
+      },
+      {
+        "q": "Combining a limit switch AND the encoder's index (Z) pulse for homing gives:",
+        "options": [
+          "Lower precision than either alone",
+          "The switch's coarse detection PLUS the index pulse's encoder-count precision",
+          "No repeatability",
+          "Only mechanical stops"
+        ],
+        "answer": 1,
+        "explain": "The switch narrows down the reference revolution; the Z-pulse then provides fine, encoder-count-repeatable home position."
+      },
+      {
+        "q": "The fill ratio inside an energy chain should stay below approximately:",
+        "options": [
+          "10%",
+          "60%",
+          "95%",
+          "100% is fine"
+        ],
+        "answer": 1,
+        "explain": "Above about 60% fill cables cannot shift relative to each other, and friction accelerates jacket wear and can seize the chain."
+      },
+      {
+        "q": "A robot rated for 10 kg carrying only 3 kg can typically accelerate:",
+        "options": [
+          "The same as at rated payload",
+          "Slower than at rated payload",
+          "2-3x faster than at rated payload",
+          "Never in that condition"
+        ],
+        "answer": 2,
+        "explain": "Motor and structural limits set the peak; at low payload the inertia and torque required drop so the same peak torque yields higher acceleration."
       }
     ],
     "resources": [
@@ -3013,6 +3505,30 @@ MODULES_2 = [
       {
         "h": "Multivariable Interaction and Loop Decoupling",
         "body": "In real units, control loops are rarely independent - adjusting one affects others, called <b>loop interaction</b>. A classic case is a tank or header where a flow loop and a pressure loop share the same valve region, or a blend where two feed valves both influence composition and total flow. When interacting loops are tuned aggressively, they can <b>fight each other</b> and drive a sustained oscillation neither loop would produce alone. The <b>Relative Gain Array (RGA)</b> is the analysis tool: it quantifies how much each manipulated variable affects each controlled variable and tells you the <b>best pairing</b> - which valve to assign to which measurement - so interaction is minimized (an RGA element near 1 is an ideal, nearly independent pairing; near 0 or negative signals a bad or unstable pairing). Where interaction cannot be avoided by pairing alone, a <b>decoupler</b> adds compensating feedforward terms so a move in one loop pre-corrects the other. The practical mitigation, though, is often simpler: <b>tune the interacting loops at different speeds</b> (make one fast and one slow) so they operate on separate timescales and stop fighting."
+      },
+      {
+        "h": "PID Loop Auditing: Finding Loops Left in Manual or Mistuned",
+        "body": "Every control room has loops silently failing to control. <b>Loop auditing</b> systematically identifies them. A monthly report from the DCS or historian can list, for each loop: percentage of time in <b>MANUAL</b> mode (target: under 5% for regulatory loops; anything over 20% is a candidate for review), percentage of time <b>output saturated</b> (against high or low limit), <b>variability index</b> (standard deviation of PV divided by mean, or oscillation index from autocorrelation), <b>alarm count</b>, and <b>setpoint change count</b>. A loop stuck in manual is not a control loop, it is an operator running the plant with a mouse. Diagnose why: is the tuning bad, causing oscillation the operator escaped by switching to manual? Is the valve stuck or drifting? Is the process itself outside the linear range? Loops in output saturation are undersized (valve too small, VFD range wrong) or facing an abnormal load. High variability suggests a tuning issue or noisy PV. The audit produces a prioritised list, tackle the noisiest, most-in-manual loops first, and every loop returned to auto and well-tuned pays back in less variability and less operator burden. Software tools (PlantTriage, Aspen Watch, Emerson EnTech) automate this; a spreadsheet against historian trends works too."
+      },
+      {
+        "h": "Deadband, Deadtime, and Their Different Effects on Control",
+        "body": "Two similarly-named phenomena wreck loops in very different ways. <b>Deadband</b> is a range of input change that produces NO output change: a control valve with 5% mechanical deadband requires that the controller change output by 5% before the stem moves at all. Deadband is a nonlinearity caused by mechanical backlash, valve stiction, or a controller's intentional filter setting; it causes limit-cycle oscillation around setpoint, the loop cannot settle. Fix: repair or replace the mechanically deadband-heavy valve, or add a positioner. <b>Deadtime (or dead time, or process time delay)</b> is the delay between a controller output change and the first response of the process variable: a slug of hot fluid takes time to travel down a pipe to the temperature sensor. Deadtime is a linear-dynamics phenomenon that limits how aggressively you can tune (the tuning must be slower than roughly deadtime/(deadtime + tau)) and causes ringing and instability when tuning is pushed. Fix: relocate the sensor closer to the actuator, shorten pipe runs, or add <b>deadtime compensation</b> (Smith predictor) that models the delay and lets the controller pre-empt it. Distinguishing them in a trend, deadband gives a stair-step response; deadtime gives a flat-line delay before the ramp, guides the correct remedy."
+      },
+      {
+        "h": "Interlocks Between Continuous Control and Sequence Logic",
+        "body": "Real plants blend continuous PID control (temperatures, pressures, flows) with discrete sequence logic (start pump, open valve, run for 5 minutes). Coordinating the two safely requires deliberate <b>interlocks</b>. When a sequence step commands \"start heating\", the controller output must not slam full-on: instead the sequence should first put the temperature loop in AUTO and then ramp the setpoint from ambient to target, allowing the loop to control the rise. When the sequence commands \"stop\", the loop should be placed in MANUAL with output zero (bumpless), rather than left in AUTO chasing a phantom setpoint. Cross-interlocks: <b>runtime permissives</b> allow the PID output to a valve only while a specific pump runs; <b>flow-fail interlocks</b> force a heater loop to zero output if a cooling-flow proximity switch drops; <b>high-high pressure interlocks</b> take the loop to output zero and lock in manual regardless of loop mode. Bad coordination causes wind-up, latch-up, and dangerous behaviour, e.g., a loop tracking a stale setpoint from hours ago when the sequence restarts. ISA-88 batch procedures formalise this: each phase defines its loop states, setpoints, and interlock conditions, so the transition from one phase to the next is deterministic. Reading a phase logic diagram alongside the loop schematic is essential to understand a batch plant's actual behaviour."
+      },
+      {
+        "h": "Analyzer Loops: Sample System Design and Time Delay",
+        "body": "Composition analyzers (chromatographs, mass specs, oxygen sensors) create some of the most challenging control loops because the <b>sample system</b>, the plumbing that gets a representative sample from the process to the analyzer, adds substantial deadtime and can bias the reading. A poorly designed sample line can add 30-120 seconds of transport lag, killing the achievable loop performance. Design principles: <b>fast-loop</b> (bypass) that continuously flows process fluid past the sample take-off at high velocity, so the small tap to the analyzer draws from fresh material rather than stagnant fluid; <b>heated or traced lines</b> to prevent condensation of moisture or heavy hydrocarbons; <b>filters and coalescers</b> to remove particulate and free water; <b>pressure regulation</b> to feed the analyzer at its rated pressure; and <b>fast-response valves</b> to switch calibration gas in and out. Every additional metre of tubing and every dead volume in a filter adds seconds of deadtime. When tuning an analyzer-based composition loop, first measure sample-system delay by an injected step-test at the take-off and time the analyzer's response; that number bounds achievable performance. If deadtime is more than 30% of the process time constant, model-based control (MPC, Smith predictor) beats plain PID, sometimes dramatically."
+      },
+      {
+        "h": "Regulatory Control vs Supervisory Control Layers",
+        "body": "Modern process control organises functions into layers so responsibilities and tuning are clearly separated. The <b>regulatory layer</b> (Level 1 in ISA-95) contains the many PID loops that keep individual measurements at their setpoints: flows, temperatures, pressures, levels. These loops run continuously at fast sample rates (100 ms - 1 s) and are tuned for stability first, disturbance rejection second. The <b>supervisory layer</b> (Level 2) sits above regulatory control and provides the setpoints to regulatory loops based on unit-level objectives: an economic target, a production rate, a quality specification. Supervisory tools include <b>model predictive control (MPC)</b>, <b>real-time optimisation (RTO)</b>, and rule-based systems that observe multiple regulatory loops together and coordinate their setpoints. Supervisory loops run slower (minutes) because they optimise across constraints and rely on regulatory-layer stability. This layered structure means a tuning problem in a temperature loop is fixed at the regulatory layer, while an efficiency problem across a unit is addressed at the supervisory layer. Confusing the layers, trying to tune MPC to fix a bad flow loop, or letting supervisory move setpoints faster than regulatory can react, produces oscillation and instability. Understanding the layer boundary lets a technician diagnose whether a control problem is a local loop or a supervisory strategy issue."
+      },
+      {
+        "h": "Model Predictive Control (MPC): When and Why",
+        "body": "<b>Model Predictive Control (MPC)</b> is the workhorse of modern supervisory control on units with many interacting variables and constraints (distillation columns, catalytic crackers, cement kilns). Unlike PID, which acts on the current error, MPC uses a <b>dynamic model</b> of the process to predict future behaviour over a horizon (say 60 minutes ahead in 1-minute steps) and then computes the sequence of moves in the manipulated variables that minimises predicted deviation from setpoint while respecting constraints on inputs, outputs, and rates of change. Only the first move is applied, then the whole calculation repeats each cycle (receding-horizon control). Advantages: MPC handles <b>multi-variable interactions</b> (moving one control valve affects several PVs), <b>hard constraints</b> (never let this pressure exceed 50 psig), <b>deadtime</b> (the model predicts the delayed effect), and <b>economic optimisation</b> layered onto stability. Costs: MPC requires a good model (built from step-tests), commissioning takes weeks, and maintenance requires an engineer trained in model tuning. Payback on a well-implemented MPC on a distillation column can be millions of dollars a year through tighter operation closer to product-quality limits. Any operator running a complex unit should understand MPC's principles even if they don't design it, because when MPC misbehaves it can drive multiple loops off simultaneously in ways plain PID cannot."
       }
     ],
     "lab": {
@@ -3545,6 +4061,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "The instrument index is the master spreadsheet of all instruments with their key attributes and references - the backbone tying the documentation set together."
+      },
+      {
+        "q": "On a PID audit report, a loop showing 60% of time in MANUAL mode is:",
+        "options": [
+          "Well tuned",
+          "A candidate for review, probably fighting bad tuning or a stuck valve",
+          "Optimal",
+          "In alarm suppression"
+        ],
+        "answer": 1,
+        "explain": "Loops spending large fractions of time in manual are not controlling automatically; the reason (tuning, valve, saturation) should be diagnosed and fixed."
+      },
+      {
+        "q": "A control valve with mechanical backlash causing a range of controller output change that produces NO stem movement suffers from:",
+        "options": [
+          "Deadtime",
+          "Deadband",
+          "Windup",
+          "Bumpless transfer"
+        ],
+        "answer": 1,
+        "explain": "Deadband is a range of input with zero output response, producing limit-cycling oscillation around setpoint; it is a nonlinearity."
+      },
+      {
+        "q": "Deadtime in a control loop mainly limits how:",
+        "options": [
+          "Fast and aggressive tuning can be without ringing/instability",
+          "Big the process variable can be",
+          "Precise the measurement is",
+          "Long the trend is"
+        ],
+        "answer": 0,
+        "explain": "Deadtime bounds achievable loop bandwidth; pushing tuning faster than the delay allows causes ringing and eventually instability."
+      },
+      {
+        "q": "When a sequence step ends and a heating loop should stop, best practice is to:",
+        "options": [
+          "Leave the loop in AUTO chasing the old setpoint",
+          "Place the loop in MANUAL with output zero (bumpless), avoiding wind-up",
+          "Disable the sensor",
+          "Force the valve wide open"
+        ],
+        "answer": 1,
+        "explain": "Leaving loops in AUTO after a sequence stop leads to wind-up and unwanted output; a clean MANUAL zero handoff avoids surprises when the sequence restarts."
+      },
+      {
+        "q": "On an analyzer loop, sample-system transport lag from take-off to analyzer typically adds:",
+        "options": [
+          "Nothing",
+          "Seconds to minutes of deadtime that dominate achievable performance",
+          "Only noise, no delay",
+          "Only gain"
+        ],
+        "answer": 1,
+        "explain": "Sample-line volume and analyzer cycle time add tens to hundreds of seconds of deadtime; poor design kills achievable control performance."
+      },
+      {
+        "q": "In a layered control architecture, MPC typically resides at the:",
+        "options": [
+          "Regulatory layer, replacing PID",
+          "Supervisory layer, sending setpoints to regulatory PID loops",
+          "Field-instrument layer",
+          "HMI layer only"
+        ],
+        "answer": 1,
+        "explain": "MPC is supervisory: it computes setpoints or moves that regulatory PID loops execute, coordinating multi-variable interactions and constraints."
+      },
+      {
+        "q": "MPC's key structural advantage over PID is:",
+        "options": [
+          "Simpler tuning",
+          "Handling of multi-variable interactions, hard constraints, and deadtime via an explicit process model",
+          "No need for measurement",
+          "Faster sample rate"
+        ],
+        "answer": 1,
+        "explain": "MPC uses a model to predict future outputs and optimise input moves subject to constraints; PID considers only current error and cannot inherently handle multi-variable or constraint problems."
+      },
+      {
+        "q": "A loop that shows a stair-step response to setpoint changes exhibits:",
+        "options": [
+          "Pure deadtime",
+          "Deadband (nonlinearity)",
+          "Perfect control",
+          "Only random noise"
+        ],
+        "answer": 1,
+        "explain": "Deadband produces stair-step or limit-cycle behaviour because small commanded changes produce no movement; deadtime instead produces a flat delay before the ramp."
+      },
+      {
+        "q": "Which is a symptom that regulatory-supervisory coordination is failing?",
+        "options": [
+          "Loops are stable and setpoints track economics",
+          "Supervisory changes setpoints faster than regulatory loops can respond, causing oscillation",
+          "Operators press E-stop for fun",
+          "Historian is offline"
+        ],
+        "answer": 1,
+        "explain": "When supervisory rate exceeds regulatory bandwidth, the lower loops chase moving setpoints and destabilise; supervisory moves must respect the regulatory time constants."
       }
     ],
     "resources": [
@@ -3727,6 +4342,30 @@ MODULES_2 = [
       {
         "h": "Risk Assessment Methods: ISO 12100, Risk Scoring, and Risk Reduction",
         "body": "All machine safety starts with a <b>risk assessment</b> per <b>ISO 12100</b>, the foundational standard. The process is: <b>identify the machine limits</b> (use, space, time/lifecycle), <b>identify the hazards</b> at every task and lifecycle phase (not just normal running - also setup, cleaning, jam clearing, maintenance, where most injuries occur), <b>estimate the risk</b> of each, and <b>evaluate</b> whether it is acceptable. Risk is estimated from <b>severity of harm</b>, <b>frequency/duration of exposure</b>, and <b>probability of occurrence and possibility of avoidance</b>. Scoring tools structure this: a <b>risk matrix</b> plots severity against likelihood, and the <b>Hazard Rating Number (HRN)</b> multiplies factors (likelihood of contact &times; frequency &times; severity &times; number of people) into a single ranked number to prioritize action. The output drives the <b>hierarchy of controls</b> - eliminate/design out first, then safeguarding and complementary measures (guards, interlocks, ESPE), then information for use (warnings, PPE, training) last. After controls are applied, you <b>re-assess the residual risk</b> to confirm it is acceptable and that the control did not introduce a new hazard. The whole cycle is <b>iterative and documented</b>, and it is what determines the required Performance Level (PLr) each safety function must achieve."
+      },
+      {
+        "h": "Machine Guarding Types: Fixed, Interlocked, Adjustable, Self-Adjusting",
+        "body": "OSHA 1910.212 and ISO 14120 classify machine guarding by how the guard behaves. <b>Fixed guards</b> permanently enclose a hazard with panels or fencing; opening requires tools. Preferred where routine access is not needed; cheapest and most reliable, but useless if the guard is left off. <b>Interlocked guards</b> can be opened but doing so opens a monitored interlock switch that stops the machine; used where routine access is required (loading, cleaning). The interlock circuit must meet the required Performance Level (PL) or Category from ISO 13849-1 for the risk. <b>Adjustable guards</b> can be manually positioned to accommodate different workpieces (e.g., adjustable bandsaw upper guide). <b>Self-adjusting guards</b> conform automatically to the workpiece and open only enough to admit it (spring-loaded blade guards on saws). The <b>hierarchy of choice</b> is: eliminate the hazard by design; substitute with safer process; use fixed guards; then interlocked; then adjustable; then self-adjusting; and finally administrative controls (procedures) and PPE. A good risk assessment starts by asking whether the hazard can be eliminated (relocating a pinch point), and only when it cannot moves down to guards. Common mistakes are relying on procedure or PPE where a fixed guard would work, or defeating interlocks with magnets because the guard is inconvenient, both catch OSHA inspectors' attention and cause the worst injuries."
+      },
+      {
+        "h": "Perimeter Guarding Design and Access Doors",
+        "body": "Where an entire cell contains hazards (a robot cell, a large press area), <b>perimeter fencing</b> encloses the whole zone. Fence panels must resist the loads expected: ISO 14120 gives impact and containment requirements based on the process (a robot cell fence resists a rejected part; a spinning grinder fence resists a fragment). Height must extend from floor to at least 1.4 m (in-reach applications) or higher, and gap to floor should be under 180 mm to prevent crawling under. <b>Access doors</b> must interlock and, for high-consequence hazards where energy takeover is slow (a robot at speed cannot stop in the time a human reaches the danger point through a doorway), must also use <b>guard locking</b>: the door is physically held shut until the interlock verifies the hazardous condition has ended (drives stopped, motion below safe-speed limit). Reach-through distances (ISO 13857) determine how far inside the fence the hazard must sit: for a 40 mm opening, hazards must be at least 200 mm away; for standard chain-link, mount hazards at least 850 mm inside. <b>Muting</b> at conveyor entries prevents nuisance stops from product passing through while still detecting a person: paired muting sensors verify the object shape is not a limb. Perimeter design mistakes are common (climbable fence, unlocked door, hazard within reach) and are found on nearly every risk-assessment audit."
+      },
+      {
+        "h": "Safety Requirements Specification (SRS) and Documentation",
+        "body": "Every safety function on a modern machine should be documented in a <b>Safety Requirements Specification (SRS)</b>. Required by IEC 61511 (process industry) and standard practice for machinery under IEC 62061 and ISO 13849-2, the SRS captures for each safety function: the <b>function description</b> (\"pressing E-stop stops all cutting motors within 500 ms\"), the <b>hazards addressed</b>, the required <b>Performance Level (PL) or Safety Integrity Level (SIL)</b> from the risk assessment, the <b>architecture</b> (Category 3 dual-channel monitored), the <b>reaction time budget</b> (breakdown of sensor delay + logic + drive stop time), the <b>proof-test interval</b> (how often the function is manually verified), and any <b>bypass conditions</b> (mode-selector to allow guarded jog, with what conditions). The SRS becomes the contract between the risk assessment and the implementation: verification and validation testing at the end proves each specified function meets its requirements. Without an SRS, safety functions accrete by tribal knowledge, get modified without tracing back to the assessment, and eventually fail during audits or, worse, during incidents. Reviewing the SRS is the fastest way for a new technician to learn what a machine's safety architecture is supposed to be, and to spot any drift between the paperwork and reality."
+      },
+      {
+        "h": "Presence-Sensing Devices Beyond Light Curtains: Radar and Vision",
+        "body": "Light curtains dominate perimeter presence-sensing but they have limits: they are affected by dust and smoke, cannot see around corners, and they draw fixed straight lines. Modern alternatives extend coverage. <b>Safety radar</b> (SICK RMS, ifm safeRADAR) emits mm-wave pulses and detects reflections, generating a 2D or 3D safety zone that can be shaped in software and works through dust, steam, and light debris. Radars are certified up to PL d or PL e and are increasingly used in outdoor material-handling and heavy industry where optical devices struggle. <b>Safety vision systems</b> (Pilz SafetyEYE, ifm Safety Camera) use stereo cameras plus certified processing to detect people entering user-defined 3D zones, allowing free-form and layered protection (warning zone at 3 m, slow-down at 2 m, stop at 1 m). Vision systems reject non-human objects and can distinguish a person from a passing box, reducing nuisance stops. Costs are higher and commissioning takes more time (defining zones, verifying detection, seasonal lighting), but for complex cells with mixed pedestrian and vehicle traffic they are transformative. <b>Radar tag systems</b> for lift trucks read a proximity token on each pedestrian to slow or stop the vehicle. Any of these must integrate with the safety controller through certified digital or safety-fieldbus outputs; they are not a replacement for a risk assessment but new tools that assessment can specify."
+      },
+      {
+        "h": "Category of Control Wiring: Redundancy, Diversity, and Monitoring",
+        "body": "ISO 13849-1's Category 1 through Category 4 describe the <b>structural architecture</b> a safety function's electronics must have to reach a given Performance Level. <b>Category 1 (single channel, well-tried)</b> uses one channel of good components; a single fault can defeat the function, PL up to c. <b>Category 2 (single channel, tested)</b> adds periodic testing that catches failures; PL up to d in some cases. <b>Category 3 (dual channel with monitoring)</b> uses two independent channels; a single fault does not lose the function AND is detected on the next cycle; PL up to d and, with good diagnostics, PL e. <b>Category 4 (dual channel with continuous monitoring)</b> continuously cross-checks the two channels; a single fault is detected immediately and does not lose the function; PL e. Wiring practices: dual-channel E-stops use two normally-closed contacts on the same button, feeding two separate inputs on the safety relay; cross-monitoring detects a stuck-closed contact by comparing channel timings. <b>Diversity</b> (different technology per channel: mechanical switch plus magnetic sensor) further reduces common-cause failures. Every safety-function wiring diagram should state its Category and PL, and every technician working on the circuit must understand that adding a jumper or replacing a dual-contact switch with a single kills the Category and drops the PL, sometimes below the level required by the risk assessment."
+      },
+      {
+        "h": "Machinery Directive vs OSHA: EU and US Regulatory Comparison",
+        "body": "Two very different regulatory frameworks govern machine safety worldwide. In the <b>European Union</b>, the <b>Machinery Directive 2006/42/EC</b> requires that any machine placed on the EU market has been designed to <b>Essential Health and Safety Requirements (EHSRs)</b>, has undergone a documented risk assessment, is accompanied by a <b>Technical File</b> and a <b>Declaration of Conformity</b>, bears the <b>CE mark</b>, and is delivered with instructions in the user's language. Manufacturers self-certify most machines; a small subset (\"Annex IV\" machines, e.g., presses, saws) require third-party notified-body approval. Enforcement is via market surveillance and complaints. In the <b>United States</b>, <b>OSHA</b> regulates workplace safety with performance-based standards (1910.212 general machine guarding, 1910.147 LOTO, 1910.219 mechanical power transmission). There is no equivalent to CE marking; manufacturers do not \"certify\" a machine to OSHA before sale, and the burden of a compliant installation falls largely on the user/employer. Voluntary consensus standards (ANSI B11 series for machine tools, RIA/R15.06 for robots, NFPA 79 for electrical, UL 508A for panels) fill in specifics and are commonly required by insurers and best-practice buyers. Global manufacturers typically design once to the stricter EU standard and use that for both markets. A technician working across regions must know which framework governs each site and where the compliance line runs."
       }
     ],
     "lab": {
@@ -4257,6 +4896,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "HRN multiplies exposure factors into a single score so risks can be ranked and the highest addressed first via the hierarchy of controls, then re-assessed as residual risk."
+      },
+      {
+        "q": "In the machine-guarding hierarchy, which is preferred FIRST when a hazard cannot be eliminated by design?",
+        "options": [
+          "PPE",
+          "Administrative procedures",
+          "Fixed guards",
+          "Warning signs"
+        ],
+        "answer": 2,
+        "explain": "After elimination and substitution, fixed guards are the preferred engineering control; interlocked guards follow when access is required."
+      },
+      {
+        "q": "Guard locking (physical hold-shut of a door) is required when:",
+        "options": [
+          "The machine is quiet",
+          "Coasting time or hazard energy makes standard interlocking insufficient to stop hazard before access",
+          "There is no hazard",
+          "The door is small"
+        ],
+        "answer": 1,
+        "explain": "If a person can reach the hazard before it has stopped after opening, the door must lock until safe conditions are verified (drives stopped, safe-speed reached)."
+      },
+      {
+        "q": "A Safety Requirements Specification (SRS) captures each function's:",
+        "options": [
+          "Only the manufacturer name",
+          "Description, required PL/SIL, architecture, reaction-time budget, proof-test interval, and bypass conditions",
+          "Colour of the E-stop",
+          "Weight of the machine"
+        ],
+        "answer": 1,
+        "explain": "The SRS documents each safety function's requirements as the contract between risk assessment and implementation; verification testing proves conformance."
+      },
+      {
+        "q": "A safety radar (mm-wave) compared with a light curtain works BETTER in:",
+        "options": [
+          "Perfect optical conditions only",
+          "Dusty or steamy environments and around obstructions where light curtains struggle",
+          "Zero-visibility fog only",
+          "Silent environments only"
+        ],
+        "answer": 1,
+        "explain": "Radar propagates through dust and steam and can shape non-straight zones, extending safety sensing where optics fail; certified up to PL d/e."
+      },
+      {
+        "q": "An ISO 13849-1 Category 3 architecture guarantees:",
+        "options": [
+          "A single fault always disables the function",
+          "A single fault does NOT lose the function AND is detected on the next cycle",
+          "Zero faults ever occur",
+          "Only manual reset is possible"
+        ],
+        "answer": 1,
+        "explain": "Category 3 requires redundancy and monitoring so that a single fault does not defeat the function AND is detected in the next operating cycle."
+      },
+      {
+        "q": "CE marking under the Machinery Directive means the manufacturer has:",
+        "options": [
+          "Applied for a US patent",
+          "Self-certified (or, for Annex IV, been assessed) that the machine meets EHSRs, backed by a Technical File and Declaration",
+          "Registered with OSHA",
+          "Marked the machine with its price"
+        ],
+        "answer": 1,
+        "explain": "CE marking indicates conformity with EU EHSRs; most machines are self-certified, Annex IV categories need notified-body involvement."
+      },
+      {
+        "q": "OSHA regulates US workplace safety with:",
+        "options": [
+          "Pre-market machine certification like CE",
+          "Performance-based standards enforced through inspections; consensus standards (ANSI, NFPA, UL, RIA) fill in specifics",
+          "No requirements",
+          "Only paperwork"
+        ],
+        "answer": 1,
+        "explain": "OSHA relies on performance standards and inspection; consensus standards like ANSI B11, NFPA 79, UL 508A and RIA R15.06 provide the design specifics."
+      },
+      {
+        "q": "Adding a magnet to defeat an interlocked guard:",
+        "options": [
+          "Is best practice for productivity",
+          "Violates OSHA and EU rules and is a leading cause of severe injuries",
+          "Requires no permit",
+          "Improves safety"
+        ],
+        "answer": 1,
+        "explain": "Interlock defeat is a documented cause of severe machine injuries and a violation of guarding requirements; the fix is redesigning the process, not defeating the safety."
+      },
+      {
+        "q": "For dual-channel safety wiring, using a mechanical switch AND a magnetic sensor as the two channels adds:",
+        "options": [
+          "Nothing",
+          "Diversity that reduces common-cause failure probability",
+          "More failure modes",
+          "Reduced reliability"
+        ],
+        "answer": 1,
+        "explain": "Different sensing technologies do not share a common failure mechanism (e.g., dirt fouling both), lowering the beta-factor for common-cause failure."
       }
     ],
     "resources": [
@@ -4443,6 +5181,30 @@ MODULES_2 = [
       {
         "h": "Lifecycle Costing, ROI Justification, and the Automation Business Case",
         "body": "Automation competes for capital, so a technician who can build a <b>business case</b> is far more effective than one who only speaks in volts and amps. The core tool is <b>Total Cost of Ownership (TCO)</b> and <b>lifecycle costing</b>: not just the purchase price, but installation, integration, training, energy, spare parts, maintenance labor, downtime cost, and eventual decommissioning over the asset's life - a cheaper drive that fails often and lacks spares can cost far more than a premium one. <b>Return on investment (ROI)</b> and <b>payback period</b> quantify the benefit: an upgrade that cuts labor, scrap, energy, or downtime saves a calculable amount per year, and payback = investment / annual savings tells management how fast the money returns (many capital thresholds require a payback under 2-3 years). More rigorous analyses use <b>Net Present Value (NPV)</b>, discounting future savings to today's dollars because money now is worth more than money later. Beyond hard savings, the case includes <b>OEE improvement</b>, quality/yield gains, safety-incident reduction, and capacity - benefits that are real but must be credibly estimated. Framing a reliability fix or automation upgrade as 'this saves X dollars per year and pays back in Y months' is the language that gets projects funded."
+      },
+      {
+        "h": "Project Kickoff Meetings: Scope, Roles, and Success Criteria",
+        "body": "An automation project's first hour often determines its outcome. The <b>kickoff meeting</b> assembles owner, engineering, operations, maintenance, safety, IT, and integrator to agree on the fundamentals before design begins. Essential outputs: a one-page <b>project charter</b> stating the business problem, the scope boundary (what is IN and, equally important, what is OUT), the success criteria (\"achieves 90 units per hour with less than 2% scrap within 60 days of go-live\"), the budget and schedule outline, and the RACI matrix (who is Responsible, Accountable, Consulted, Informed for each major deliverable). Skipping this produces the classic scope creep, decisions in email that nobody remembers, and finger-pointing at go-live. Set up the <b>communication cadence</b> at kickoff: weekly progress meetings, monthly steering-committee reviews, a shared document repository, and a change-control process for scope changes. Identify <b>risks and assumptions</b> in writing, dependencies on other projects, uncertain specs, single points of contact whose absence would stop work. A well-run kickoff turns the fuzzy request \"we need to automate the packing line\" into concrete deliverables everyone has agreed to, so when the integrator hands over the finished cell, everyone measures success against the same yardstick. Any automation professional who wants to lead projects must master facilitating this meeting."
+      },
+      {
+        "h": "Design Reviews: 30/60/90% Milestone Gates",
+        "body": "Big automation projects that skip formal <b>design reviews</b> repeatedly discover late that a critical drawing has an error, a chosen PLC platform is not on the plant standard, or a safety function was omitted. The <b>30/60/90 review model</b> catches those problems while they are cheap to fix. At <b>30% design</b>, the review focuses on concept and architecture: is the overall control system layout right, are the major components chosen from approved lists, have the risk assessment and safety functions been drafted, does the layout drawing fit the physical space? At <b>60% design</b>, detailed schematics, panel layouts, and I/O lists are reviewed: are conductor sizes correct, does every field device have an I/O point, are naming conventions consistent, does the HMI screen navigation follow standards? At <b>90% design</b>, everything is essentially final and the review is a last-check for correctness: FAT test plan is complete, spares list is realistic, SAT and commissioning schedule aligns with plant availability. Each review has a defined set of <b>reviewers</b> (engineering, operations, maintenance, safety, IT for cyber) and produces a <b>comment log</b> tracked to closure before the next phase gate opens. Formal reviews often feel like bureaucracy but consistently reduce project rework by 20-40% and are the sign of a mature engineering culture."
+      },
+      {
+        "h": "Building a Test Environment: The Value of a Bench Rig",
+        "body": "Every capable automation team invests in a <b>test environment</b> where new logic, drives, and networks can be exercised safely without a live production machine. A bench rig can be as simple as a spare PLC, a small HMI, a couple of servo drives on motor test stands, some pilot devices, and a switch. On the bench engineers test new logic, verify firmware upgrades before pushing them to production, exercise recovery procedures after simulated faults, and train new hires on hardware they can safely break. For network testing, a mirrored copy of a production switch and a small VLAN topology lets you rehearse cutovers, verify firewall rules, and reproduce a customer's issue without touching their live systems. Investing a few thousand dollars in a rig pays back many times over: one avoided production outage from a bad firmware push justifies the whole setup. Beyond capital, a bench rig accelerates learning, technicians who could never risk trying a new instruction or a strange protocol on the plant floor freely experiment on the bench and become far more capable. A team without a test environment operates with one hand behind its back; investing in one is one of the highest-return decisions an automation lead can make."
+      },
+      {
+        "h": "Managing Site Turnovers: From Construction to Operations",
+        "body": "A successful automation project doesn't just get commissioned, it gets <b>turned over</b> from the construction/integration team to the operations/maintenance team, and the turnover determines long-term success. The turnover package includes: <b>final as-built drawings</b> (updated to reflect any field changes during install), <b>backup files</b> for every controller and HMI, <b>parts lists with vendor part numbers and criticality rankings</b>, <b>calibration records</b> for every instrument, <b>fault codes and troubleshooting flowcharts</b>, <b>SOPs</b> for normal operation and abnormal recovery, and <b>training records</b> proving operators and maintainers were trained. A <b>punch list</b> of remaining minor defects gets a target closure date and owner. Warranty terms and vendor contacts are documented. A formal <b>turnover meeting</b> walks operations through the system in person: showing where the electrical prints live, opening a panel and identifying components, walking through startup and shutdown. The subtle handover of tribal knowledge, why parameter X is set to Y, why a particular alarm is important, gets captured in a wiki or notebook that maintenance can consult later. Projects that skip this discipline leave operations to reverse-engineer the machine when it fails; projects that invest in turnover retain their capability advantage for years after go-live."
+      },
+      {
+        "h": "Postmortems and Blameless Root-Cause Reviews",
+        "body": "When something goes wrong, a serious incident, an unexpected trip, a near-miss, the temptation is to blame an operator or engineer and move on. A mature culture instead runs a <b>blameless postmortem</b>: a facilitated meeting whose stated goal is to understand what happened and prevent recurrence, without punishing individuals for honest actions in a flawed system. The format: a factual <b>timeline</b> reconstructed from logs, alarms, and interviews; <b>contributing factors</b> categorised into equipment, procedure, training, and organisational; <b>immediate causes</b> vs <b>root causes</b> (using tools like 5-Whys or Fishbone diagrams); and <b>action items</b> owned by specific people with target dates. Blameless does not mean consequence-free: if someone deliberately violated a rule that matters. But when the mode is \"how did our system make this failure easy?\", people share information openly, and the organisation learns. Every action item should have a follow-up date to confirm implementation, unresolved actions are worse than not identifying them. Trend patterns across incidents: three near-misses on the same class of interlock in a year is a system-level problem, not three individual errors. Postmortems are the mechanism by which an automation team compounds learning, becoming better every year rather than repeating the same failures."
+      },
+      {
+        "h": "Building Your Personal Brand as an Automation Professional",
+        "body": "Technical skill alone rarely determines an automation career: <b>professional visibility</b> and <b>reputation</b> do. A strong personal brand within a company means peers and managers know you as the person who solved the tricky drive-comms issue, the go-to for safety, or the one who introduced Git for PLC backups. Building that brand: <b>write things down</b> in shared spaces, quick documents on how you fixed a problem, comparison of two products you evaluated, a runbook for a routine task; over years these accumulate into a body of work colleagues use. <b>Mentor</b> junior technicians visibly; the ability to teach is the ability to lead. Present at internal <b>lunch-and-learns</b> or department reviews; even 15-minute talks build a track record. Outside the company, contribute to <b>industry forums</b> (PLCTalk, Reddit r/PLC, LinkedIn engineering groups), attend <b>trade shows</b> (Automate, Pack Expo, Hannover Messe), and pursue <b>certifications</b> (CAP, CFSE, CCST) that both learn and prove skill. A personal <b>portfolio</b>, a professional website or LinkedIn page showcasing projects (respecting employer IP), gives an interview or a promotion committee something concrete to review. None of this happens in one evening; it's a five- to ten-year investment. But the professional visible for solving hard problems ends up leading interesting projects, being pulled into promotions, and being the first name colleagues recommend when opportunities open elsewhere. Brand-building is the multiplier on top of technical skill."
       }
     ],
     "lab": {
@@ -4974,6 +5736,105 @@ MODULES_2 = [
         ],
         "answer": 1,
         "explain": "Long-lead items (often 12-30+ weeks) must be ordered early; a single late critical component can stall installation and cascade delays down the critical path."
+      },
+      {
+        "q": "The single most important output of an automation project kickoff meeting is:",
+        "options": [
+          "The location of the coffee",
+          "A one-page charter documenting scope, success criteria, and RACI so all stakeholders align",
+          "The colour of the panel",
+          "The IP of one PLC"
+        ],
+        "answer": 1,
+        "explain": "Aligning stakeholders on scope, success criteria, and roles at kickoff prevents scope creep and finger-pointing later; charter and RACI are the enduring artefacts."
+      },
+      {
+        "q": "In a 30/60/90% design review model, the 30% review focuses on:",
+        "options": [
+          "Final punch-list items",
+          "Concept and architecture correctness before detailed design begins",
+          "Warranty return",
+          "Vendor invoicing"
+        ],
+        "answer": 1,
+        "explain": "30% catches architectural mistakes cheaply; 60% checks detailed correctness; 90% is a last-look before FAT and installation."
+      },
+      {
+        "q": "A bench rig (test environment) in an automation team is valuable primarily because:",
+        "options": [
+          "It replaces the need for training",
+          "Firmware upgrades, new logic, and recovery procedures can be exercised safely without a live production machine",
+          "It generates revenue",
+          "It stores spare tools"
+        ],
+        "answer": 1,
+        "explain": "A separate test environment lets engineers experiment and validate before touching production, preventing avoidable outages and accelerating skill growth."
+      },
+      {
+        "q": "Which is typically part of a site turnover package?",
+        "options": [
+          "Only the invoice",
+          "Final as-built drawings, backup files, parts list, SOPs, calibration records, and training records",
+          "Nothing formal",
+          "Only the marketing brochure"
+        ],
+        "answer": 1,
+        "explain": "A complete turnover captures the operational knowledge (drawings, backups, spares, procedures, training) so operations/maintenance can sustain the system."
+      },
+      {
+        "q": "A blameless postmortem's primary goal is to:",
+        "options": [
+          "Identify a person to punish",
+          "Understand the failure mechanism and prevent recurrence through system-level actions",
+          "Close the incident quickly with no learning",
+          "Force overtime"
+        ],
+        "answer": 1,
+        "explain": "Blameless reviews create the conditions for open information sharing so real root causes emerge and are addressed, not the same individual failure repeated with a new person."
+      },
+      {
+        "q": "In a 30/60/90% review model, the 60% review is best used to verify:",
+        "options": [
+          "The concept and architecture at the highest level",
+          "Detailed schematics, panel layouts, and I/O lists for correctness",
+          "The invoice number",
+          "Ceiling paint colour"
+        ],
+        "answer": 1,
+        "explain": "By 60%, architecture is set and details fill in; the review catches conductor sizing, tag naming, and I/O completeness errors while still cheap to fix."
+      },
+      {
+        "q": "An automation professional's PERSONAL BRAND is best built by:",
+        "options": [
+          "Working silently in a corner",
+          "Writing shared documents, mentoring, presenting at lunch-and-learns, and pursuing certifications over years",
+          "Ignoring peers",
+          "Refusing to teach"
+        ],
+        "answer": 1,
+        "explain": "Consistent visibility through writing, teaching, and demonstrated learning compounds over years into reputation as the go-to person for a domain."
+      },
+      {
+        "q": "A weekly progress meeting cadence and a change-control process should be set up at:",
+        "options": [
+          "Go-live only",
+          "The project kickoff, before design begins",
+          "The one-year anniversary",
+          "Never"
+        ],
+        "answer": 1,
+        "explain": "Establishing communication cadence and change control at kickoff sets expectations and captures scope changes formally, avoiding untracked drift."
+      },
+      {
+        "q": "A trend of three near-miss incidents on the same interlock class in one year should be treated as:",
+        "options": [
+          "Three unrelated individual errors",
+          "A system-level pattern needing a system-level action, not three isolated fixes",
+          "Bad luck",
+          "Ignored"
+        ],
+        "answer": 1,
+        "explain": "Repeated incidents in a category signal a design or procedural weakness; postmortems trended over time expose these patterns for higher-level intervention."
       }
     ],
     "resources": [
