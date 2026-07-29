@@ -19,10 +19,10 @@ REF_CATS = [
 def T(rows, head=None):
     h = "<table class='reftab'>"
     if head:
-        h += "<thead><tr>" + "".join("<th>%s</th>" % c for c in head) + "</tr></thead>"
+        h += "<thead><tr>" + "".join(f"<th>{c}</th>" for c in head) + "</tr></thead>"
     h += "<tbody>"
     for r in rows:
-        h += "<tr>" + "".join("<td>%s</td>" % c for c in r) + "</tr>"
+        h += "<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>"
     return h + "</tbody></table>"
 
 REFERENCE = [
