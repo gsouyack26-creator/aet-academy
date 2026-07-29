@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """AET Academy builder - assembles the full learning-platform SPA into AET_Academy.html.
 Run: python build_academy.py"""
 import json
@@ -6,11 +5,12 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_course import GLOSSARY
+from ladder_labs_data import LADDER_LABS
 from modules_data import MODULES
 from modules_data2 import MODULES_2
 from modules_data3 import MODULES_3
-from ladder_labs_data import LADDER_LABS
-from build_course import GLOSSARY
+
 try:
     from glossary2_data import GLOSSARY_EXTRA
     _seen = set(g['term'].lower() for g in GLOSSARY)
@@ -18,8 +18,9 @@ try:
 except Exception:
     pass
 import academy_data as A
+
 try:
-    from reference_data import REFERENCE, REF_CATS
+    from reference_data import REF_CATS, REFERENCE
 except Exception:
     REFERENCE, REF_CATS = [], []
 
@@ -155,7 +156,7 @@ SKELETON = """<!DOCTYPE html>
 <body>
 <div id="gate" style="display:none"></div>
 <div id="sb">
-  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.74</div></div>
+  <div id="brand"><h1>&#9889; AET Academy</h1><div class="v">Automation Engineering Technology &bull; v13.75</div></div>
   <div id="usercard" onclick="go('#profile')">
     <div class="nm"><span id="u-name">Set your name</span></div>
     <div class="rk" id="u-rank">Lv 1</div>

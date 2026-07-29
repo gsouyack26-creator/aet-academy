@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Additional glossary terms from the deep lectures. Merged into GLOSSARY at build.
 GLOSSARY_EXTRA = [
   {'term': 'Slip', 'def': "The small difference between an induction motor's synchronous speed and its actual rotor speed; without slip no torque is produced"},

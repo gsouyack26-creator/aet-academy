@@ -356,8 +356,7 @@ def build():
         f.write("## Modules\n\n")
         for m in ALL_MODULES:
             f.write(f"### Module {m['id']}: {m['title']}\n")
-            for o in m['objectives']:
-                f.write(f"- {o}\n")
+            f.writelines(f"- {o}\n" for o in m['objectives'])
             f.write(f"- **Lab:** {m['lab']['title']} ({m['lab']['tool']})\n")
             f.write(f"- **Quiz:** {len(m['quiz'])} questions\n\n")
         f.write("---\n*Open AET_Course.html for the full interactive experience.*\n")

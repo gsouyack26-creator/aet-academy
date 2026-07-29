@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """AET Academy Reference Library - practical quick-reference cheat sheets.
 Authored HTML bodies (trusted content) rendered raw. Categories drive filter chips."""
 

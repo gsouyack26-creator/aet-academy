@@ -2289,7 +2289,7 @@ MODULES_2 = [
         "explain": "FR2 (Use Control) governs authorization - what actions authenticated users and devices are permitted to perform. FR1 covers identity verification (authentication). FR3 addresses software and firmware integrity. FR5 restricts network paths between zones."
       },
       {
-        "q": "A PowerFlex 755 drive on EtherNet/IP reports fault code 33. What does this indicate and what is the correct first diagnostic step?",
+        "q": "A PowerFlex 755 drive on EtherNet/IP reports fault code 13 (F13). What does this indicate and what is the correct first diagnostic step?",
         "options": [
           "Overcurrent - check load and acceleration ramp settings",
           "Ground fault - megger motor leads phase-to-ground",
@@ -2297,7 +2297,7 @@ MODULES_2 = [
           "Encoder loss - check encoder cable and power supply"
         ],
         "answer": 1,
-        "explain": "Allen-Bradley fault 33 on PowerFlex drives indicates a ground fault. The correct first step is to megger the motor leads phase-to-ground at 500 V DC and accept readings above 100 megaohms. Always de-energize and LOTO before connecting a megger."
+        "explain": "Allen-Bradley fault F13 on PowerFlex 7-class and 750-series (755) drives indicates a ground fault - the drive detects output current to earth exceeding ~25% of drive rating. The correct first step is to megger the motor leads phase-to-ground at 500 V DC and accept readings above 100 megaohms. Always de-energize and LOTO before connecting a megger."
       },
       {
         "q": "EtherCAT frames use which EtherType value and why are they NOT routable by standard IP routers?",

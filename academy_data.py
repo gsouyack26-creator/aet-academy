@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """AET Academy data layer: tracks, ranks, achievements, flashcards, simulator registry."""
 
 # 5 learning tracks mapping all 19 modules (0-18)

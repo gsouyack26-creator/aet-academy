@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Second hands-on exercise per module (more real-world / applied "field challenge").
 # LABS2[module_id] = {"title":..,"tool":..,"steps":[..]}. build attaches m["lab2"].
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # DEEP lecture expansions. Keyed DEEP[module_id][heading_substring] = extra_html
 # build_academy.py appends this to any section whose heading contains the key.
 # Written as real teaching prose (the "why", an analogy, a worked example) to turn

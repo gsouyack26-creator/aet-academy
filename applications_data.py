@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """AET Academy - 'In the Field' real-world applications.
 Each module gets 2 scenarios that reiterate the SAME core concept in DIFFERENT
 real-world contexts (fulfillment-center / Amazon-Robotics + an everyday parallel),

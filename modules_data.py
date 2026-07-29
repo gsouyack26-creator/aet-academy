@@ -4139,12 +4139,12 @@ MODULES = [
         "q": "A 16-bit ADC with a 10 V reference is used to digitize a 4-20 mA loop with a 250 ohm burden. What is the resolution (LSB size) in milliamps?",
         "options": [
           "0.061 mA",
-          "0.00024 mA",
+          "0.00061 mA",
           "0.153 mA",
           "0.006 mA"
         ],
         "answer": 1,
-        "explain": "1 LSB voltage = 10 V / 65536 = 0.1526 mV. Current = 0.1526 mV / 250 ohm = 0.00061 mA. Closest answer is B (0.00024 mA is not exact but option B at 0.00024 mA - recalculate: 0.1526/250 = 0.000610 mA = 0.00061 mA; option B 0.00024 mA is closest to the right order - actually option B is the only sub-mA value close). The correct value is 0.00061 mA, demonstrating extremely fine resolution adequate for any process variable."
+        "explain": "1 LSB voltage = 10 V / 65536 = 0.1526 mV. Converting to current across the 250 ohm burden: 0.1526 mV / 250 ohm = 0.00061 mA. This extremely fine resolution (~0.6 microamp per count) is far finer than the 16 mA span needs, so ADC quantization is never the limiting factor for a 4-20 mA process variable."
       },
       {
         "q": "When using a piezoelectric accelerometer with a magnet mount versus a stud mount, what is the primary performance trade-off?",
