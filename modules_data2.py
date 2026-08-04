@@ -21,11 +21,11 @@ MODULES_2 = [
       },
       {
         "h": "Symbols & Circuits",
-        "body": "ISO 1219: squares=valve positions, arrows=flow, T=blocked, triangles=actuators (filled=hydraulic, empty=pneumatic).<br><b>Common circuits:</b> Extend/retract, speed control (meter-out), sequencing, regenerative (hydraulic fast-extend)."
+        "body": "<b>ISO 1219 fluid power symbols:</b><br>&nbsp;&nbsp;Valve positions = squares (one per position). Arrows inside show flow path direction. T-end = blocked port. Diagonal line = restricted/variable flow (adjustable orifice). Spring = spring return. Pilot = dashed line. Drain = dotted line.<br>&nbsp;&nbsp;Actuators: filled triangles = hydraulic, hollow triangles = pneumatic. Arrow direction = thrust (extend or retract).<br><b>Common pneumatic circuits:</b><br>&nbsp;&nbsp;<b>Extend/retract (5/2 DCV):</b> Solenoid A extends, solenoid B retracts double-acting cylinder. Spring-return 5/2: extend only, spring retracts.<br>&nbsp;&nbsp;<b>Meter-out speed control:</b> Flow control on cylinder exhaust port &mdash; smooth, consistent speed under varying loads. Meter-in causes jerky motion under load variation (avoid).<br>&nbsp;&nbsp;<b>Sequential:</b> Cylinder A limit valve provides pilot signal to trigger Cylinder B when A is fully extended &mdash; position-dependent sequencing without a PLC.<br><b>Common hydraulic circuit:</b><br>&nbsp;&nbsp;<b>Regenerative fast-extend:</b> Rod-side return connected to cap-side supply during extend: doubles extension speed at reduced force. Used for clamps: fast approach then reduced-speed force application."
       },
       {
         "h": "Troubleshooting",
-        "body": "<b>Pneumatic:</b> No motion=check supply/FRL/solenoid. Slow=flow restriction/leaks. Erratic=moisture/worn spool.<br><b>Hydraulic:</b> No motion=low fluid/pump fail/relief stuck. Slow=internal leak/high temp. Noisy pump=cavitation. Overheating=relief cracking/blocked cooler."
+        "body": "<b>Pneumatic troubleshooting (top-down):</b><br>&nbsp;&nbsp;<b>No motion:</b> Confirm FRL supply pressure (80&ndash;100 PSI typical). Check solenoid energized (coil LED, measure 24 VDC). Manually actuate valve &mdash; cylinder moves? Yes = electrical fault. No = valve stuck or cylinder seized.<br>&nbsp;&nbsp;<b>Slow motion:</b> Flow control too restrictive, kinked tubing, clogged silencer. Increase flow control on exhaust side incrementally.<br>&nbsp;&nbsp;<b>Erratic/jerky:</b> Moisture in air line (drain FRL), contaminated valve spool (replace cartridge), cylinder seal stiction.<br><b>Hydraulic troubleshooting:</b><br>&nbsp;&nbsp;<b>No motion / no pressure:</b> Pump inlet starved (low reservoir level, clogged suction filter), relief valve stuck open (pressure dumps to tank), pump coupling sheared. Check filter delta-P before condemning pump.<br>&nbsp;&nbsp;<b>Slow cylinder:</b> Worn pump (internal bypass), flow control too low, bypassing cylinder seals. Measure flow rate at cylinder port with a flow meter.<br>&nbsp;&nbsp;<b>Noisy pump (cavitation):</b> Low fluid level, restricted suction line, wrong oil viscosity for ambient temperature. Cavitation destroys pump rapidly &mdash; correct immediately.<br>&nbsp;&nbsp;<b>Overheating (&gt;60&deg;C oil):</b> Relief valve cracking (system demand exceeds pump output), fouled cooler, wrong viscosity. Lock out before replacing seals or fittings."
       },
       {
         "h": "Pneumatic Fundamentals: Compressibility, Pressure Units, and Shop Air",
@@ -245,7 +245,7 @@ MODULES_2 = [
           "1500 lbs"
         ],
         "answer": 0,
-        "explain": "A = pi(2^2) = 12.57in2. F = 1500 x 12.57 = 18,850 lbs."
+        "explain": "Hydraulic force: F = P &times; A. Bore radius = 4/2 = 2 in. A = &pi; &times; r&sup2; = &pi; &times; 4 = 12.57 in&sup2;. F = 1,500 PSI &times; 12.57 in&sup2; = 18,850 lbs (8,550 kg). On the rod side (retract), subtract rod area: if rod = 2 in diameter, rod A = &pi; &times; 1 = 3.14 in&sup2;, net area = 9.43 in&sup2;, retract force = 14,145 lbs. This force differential is why hydraulic clamps and presses extend faster with less force than they retract."
       },
       {
         "q": "Why meter-OUT preferred in pneumatics?",
@@ -256,7 +256,7 @@ MODULES_2 = [
           "More force"
         ],
         "answer": 1,
-        "explain": "Back-pressure on exhaust controls piston speed smoothly. Meter-in causes jerky motion."
+        "explain": "Meter-OUT (flow control on the exhaust port) throttles the air leaving the cylinder as the piston moves. This back-pressure on the exhaust side keeps the piston under load throughout the stroke, producing smooth, controllable motion. Meter-IN (flow control on the supply port) restricts incoming air; if back pressure fluctuates (load varies), the piston lurches or stalls because there is no consistent resistive force. Exception: with vertical loads or high-inertia applications where meter-in provides better deceleration control, engineering judgment applies. Most pneumatic cylinders default to meter-out per NFPA T3.21.3."
       },
       {
         "q": "5/2 valve means:",
@@ -267,7 +267,7 @@ MODULES_2 = [
           "Size 5 type 2"
         ],
         "answer": 2,
-        "explain": "5 ports (P,A,B,EA,EB) and 2 positions."
+        "explain": "5/2 valve notation: 5 ports and 2 positions. Ports: P (pressure supply), A (cylinder port 1), B (cylinder port 2), EA (exhaust for A side), EB (exhaust for B side). Position 1: P-&gt;A, B-&gt;EB (rod extends). Position 2: P-&gt;B, A-&gt;EA (rod retracts). The two stable positions give full bidirectional control of a double-acting cylinder. A 3/2 valve has 3 ports and 2 positions &mdash; it controls single-acting cylinders (spring return)."
       },
       {
         "q": "ACY1 shop air is maintained at approximately what gauge pressure?",
@@ -432,7 +432,7 @@ MODULES_2 = [
           "8 bar"
         ],
         "answer": 1,
-        "explain": "Valve gain K = (10 &minus; 0) / 10 = 1.0 bar/V. At 6 V: P = 6 &times; 1.0 = 6 bar."
+        "explain": "Proportional valve gain K = (P_max &minus; P_min) / (V_max &minus; V_min) = (10 &minus; 0) / (10 &minus; 0) = 1.0 bar/V. At command = 6 V: P = P_min + K &times; V = 0 + 1.0 &times; 6 = 6 bar. If min command were 2 V (common in 4&ndash;20 mA equivalent systems), K = 10 / 8 = 1.25 bar/V and you must offset: P = 1.25 &times; (V &minus; 2). Always verify the valve&rsquo;s command range from the data sheet before configuring the PLC analog output scaling."
       },
       {
         "q": "During a pneumatic cylinder rebuild, bore wear measures 0.08 mm oversize. The correct action is:",
@@ -928,15 +928,15 @@ MODULES_2 = [
       },
       {
         "h": "Screen Design (ISA-101)",
-        "body": "<b>Hierarchy:</b> L1 Overview - L2 Area - L3 Detail - L4 Diagnostic.<br><b>Principles:</b> Gray background, color for STATE only (green=run, red=fault, yellow=warn), minimal animation, 3-click max depth, 40x40px touch targets."
+        "body": "<b>ISA-101 HMI Philosophy  &mdash;  four-level hierarchy:</b><br>&nbsp;&nbsp;<b>L1 Overview:</b> Whole-plant or area key KPIs  &mdash;  throughput, overall fault count, uptime. One screen, decision-making at a glance.<br>&nbsp;&nbsp;<b>L2 Area:</b> Subsystem view  &mdash;  a conveyor line, a VFD zone, a safety zone. Shows equipment states and grouped alarms.<br>&nbsp;&nbsp;<b>L3 Detail:</b> Single device  &mdash;  one drive, one valve, one PID loop. Trend, setpoint, mode, manual override.<br>&nbsp;&nbsp;<b>L4 Diagnostic:</b> Calibration data, I/O forcing, maintenance notes.<br><b>Design principles (ISA-101):</b> Gray (neutral) background so color pops. Use <b>color only for STATE</b>  &mdash;  green = running/OK, red = faulted, yellow = warning, blue = out-of-service. Never use color decoratively. Limit animation to meaningful state changes (spinning pump = running). 3-click max to reach any detail. Touch targets minimum 40&times;40 px for gloved hands. Alarm count visible on every screen.<br><b>Common mistakes:</b> Dark backgrounds (hide faults), multicolor pipe-work (just decoration), animations on static objects (distracts operators), alarm floods with no priority structure (violates ISA-18.2)."
       },
       {
         "h": "Tags",
-        "body": "Tags = named data points linking HMI to PLC. Types: Analog (INT/REAL), Discrete (BOOL), String. HMI polls PLC via protocol (EtherNet/IP, OPC-UA, Modbus TCP)."
+        "body": "<b>Tags</b> are named data points that link HMI screen objects to real controller values. Each tag definition includes: Name (e.g., <i>Conveyor_01_Speed</i>), Data Type (BOOL, INT, DINT, REAL, STRING), Address/Path (e.g., PLC1::Program:MainProgram.Conv01Spd), and Access (read-only or read-write).<br><b>Tag types by data type:</b><br>&nbsp;&nbsp;<b>Discrete (BOOL)</b>  &mdash;  lamp ON/OFF, valve open/closed, fault active.<br>&nbsp;&nbsp;<b>Analog (INT/REAL)</b>  &mdash;  pressure in PSI, motor speed in RPM, temperature in &deg;F.<br>&nbsp;&nbsp;<b>String (CHAR array)</b>  &mdash;  status messages, recipe names, barcode reads.<br><b>Poll vs. subscribe:</b> OPC-UA and EtherNet/IP use subscriptions  &mdash;  the server sends updates only when the value changes (efficient, low latency). Legacy Modbus/TCP polls every scan interval regardless of change (higher bandwidth).<br><b>Scaling at the HMI:</b> Raw PLC counts (0&ndash;32,767 AB; 0&ndash;27,648 Siemens) are scaled to engineering units in the tag configuration so the operator sees '47.3 PSI' rather than raw integer 15,612.<br><b>Dead-band:</b> Suppress updates smaller than &plusmn;0.5% of span on noisy analog tags to reduce network traffic without losing meaningful resolution."
       },
       {
         "h": "Alarms (ISA-18.2)",
-        "body": "<b>States:</b> Normal - Unacknowledged - Acknowledged - RTN (clear).<br><b>Priorities:</b> 1=Critical, 2=High, 3=Medium, 4=Low.<br><b>Target:</b> &lt;=1 alarm per 10 min per operator (~6/hr) normal; &lt;=2 standing. <b>Shelving:</b> Temp suppress nuisance alarm (time-limited, audited)."
+        "body": "<b>ISA-18.2 alarm management &mdash; key concepts:</b><br><b>Alarm state machine:</b> Normal &rarr; Unacknowledged Active (condition exists, not yet seen) &rarr; Acknowledged Active (seen, condition persists) &rarr; RTN Unacknowledged (cleared but awaiting acknowledgment). NEVER auto-silence alarms without operator review.<br><b>Priority levels:</b> 1 = Critical (immediate response, risk to personnel or equipment), 2 = High (urgent), 3 = Medium (timely response needed), 4 = Low/Advisory. Target: &le;20% of alarms at Priority 1 &mdash; when everything is critical, nothing is critical.<br><b>Performance benchmarks:</b> &le;1 alarm/10 min per operator (6/hr) under normal conditions; &le;10/10 min during upsets. Above 10/min = alarm flood, an operator-overwhelm state linked to multiple major industrial accidents. The DuPont Texas City and Buncefield explosions both involved alarm floods that operators could not manage.<br><b>Bad-actor rationalization:</b> The top 10 most frequent alarms typically account for 80% of annunciations. Fix these first by adding dead-bands, time delays, or addressing root causes. Adding new alarms without first rationalization makes flooding worse.<br><b>Shelving:</b> Temporary suppression of a nuisance alarm for a defined time period (documented, audited). NOT the same as permanent suppression &mdash; shelved alarms return automatically and are reviewed at the next alarm rationalization cycle."
       },
       {
         "h": "HMI, SCADA, and DCS: Hierarchy and Distinctions",
@@ -1156,7 +1156,7 @@ MODULES_2 = [
           "White"
         ],
         "answer": 0,
-        "explain": "Gray reduces fatigue, makes status colors stand out."
+        "explain": "ISA-101 mandates gray (approximately 50% gray, RGB 128,128,128) as the standard HMI background. Rationale: (1) Gray is perceptually neutral &mdash; it does not compete with or desaturate status colors. (2) Operators staring at bright white backgrounds for hours develop eye fatigue and misread color indicators. (3) On a gray background, red (fault), yellow (warning), and green (running) are immediately and unambiguously distinguishable. Color should convey STATE only &mdash; never used decoratively."
       },
       {
         "q": "ISA-18.2 target alarm rate?",
@@ -1167,7 +1167,7 @@ MODULES_2 = [
           "Unlimited"
         ],
         "answer": 1,
-        "explain": "&lt;=1 alarm per 10 min per operator (~6/hr) normal; higher = alarm fatigue."
+        "explain": "ISA-18.2 benchmark: &le;1 alarm per 10 minutes per operator (&le;6/hr) under normal operating conditions. &le;10 alarms/10 min is the maximum manageable rate during upsets. Above 10/min = alarm flood, where operators cannot effectively respond and begin to ignore or silence indiscriminately. Sustained flooding of &gt;30/min has directly contributed to major industrial accidents. The solution is rationalization: eliminate nuisance alarms, add deadbands, fix root causes &mdash; not just raising the threshold."
       },
       {
         "q": "HMI tags vs PLC tags?",
@@ -1178,7 +1178,7 @@ MODULES_2 = [
           "PLC tags are motor-only"
         ],
         "answer": 2,
-        "explain": "HMI tags are linked copies that poll PLC data via protocol."
+        "explain": "HMI tags are named data objects in the HMI database linked to real controller data via a communication protocol (EtherNet/IP, OPC-UA, Modbus TCP). Each tag has a Name, Data Type (BOOL/INT/REAL/STRING), and Address/Path pointing to the PLC register or tag. The HMI polls or subscribes to updates. Scaling can be applied in the HMI tag configuration to convert raw PLC counts (e.g., 0&ndash;32,767) to engineering units (e.g., 0&ndash;100 PSI) so operators never see raw integers."
       },
       {
         "q": "According to ISA-95, at which hierarchy level does SCADA/HMI supervision reside?",
@@ -1835,19 +1835,19 @@ MODULES_2 = [
     "sections": [
       {
         "h": "Network Levels",
-        "body": "<b>Device:</b> Sensor/actuator to controller (IO-Link, AS-i, DeviceNet).<br><b>Control:</b> PLC-PLC, PLC-HMI, PLC-drives (EtherNet/IP, PROFINET, Modbus TCP, EtherCAT).<br><b>Enterprise:</b> Plant to business (standard TCP/IP, OPC-UA bridge)."
+        "body": "<b>Industrial network hierarchy (ISA-95 / Purdue model):</b><br><b>Level 0  &mdash;  Field:</b> Raw sensors and actuators  &mdash;  thermocouples, valves, encoders. Analog wiring (4&ndash;20 mA, 0&ndash;10 V) or simple point-to-point digital.<br><b>Level 1  &mdash;  Device (sensor bus):</b> Short-range digital fieldbus connecting sensors/actuators to marshalling or I/O blocks. Protocols: IO-Link (single-drop, 24 VDC, bidirectional), AS-i (2-wire bus, 31 slaves), DeviceNet (CAN-based, legacy).<br><b>Level 2  &mdash;  Control:</b> PLC-to-PLC, PLC-to-HMI, PLC-to-drives. Protocols: EtherNet/IP (AB, Rockwell), PROFINET (Siemens), Modbus TCP (open/legacy), EtherCAT (high-speed motion  &mdash;  &lt;100 &mu;s cycle), Profibus DP (legacy serial).<br><b>Level 3  &mdash;  Supervisory (MES/SCADA):</b> Plant operations  &mdash;  batch records, OEE, scheduling. Standard Ethernet/TCP/IP, OPC-UA bridge from Level 2 provides a secure, read/write interface to the control layer.<br><b>Level 4  &mdash;  Enterprise (ERP):</b> Business systems (SAP, Oracle). IT security policies apply. DMZ or one-way data diode between Level 3 and Level 4 to prevent IT-side malware from reaching control systems."
       },
       {
         "h": "Ethernet/IP",
-        "body": "CIP over standard Ethernet. <b>Implicit:</b> cyclic I/O (deterministic, RPI-based). <b>Explicit:</b> request/response (parameter reads). <b>Setup:</b> Static IPs, add to I/O tree, set RPI. <b>Topology:</b> Star (switches), DLR (ring for AB)."
+        "body": "<b>EtherNet/IP</b> runs the Common Industrial Protocol (CIP) over standard IEEE 802.3 Ethernet  &mdash;  no special hardware required, only managed switches and correct configuration.<br><b>Two messaging types:</b><br>&nbsp;&nbsp;<b>Implicit (I/O):</b> Cyclic, producer-consumer I/O data exchanged at a fixed Requested Packet Interval (RPI  &mdash;  typically 2&ndash;20 ms). Used for live I/O modules, drives, safety controllers. Deterministic because the scan rate is fixed.<br>&nbsp;&nbsp;<b>Explicit (MSG):</b> Request-response messages for parameter reads/writes, diagnostics, recipe downloads. On-demand, higher latency, not time-critical.<br><b>Setup steps:</b> Assign static IPs to all devices (or DHCP with reservations). Add device to the controller I/O tree in Studio 5000 with correct IP and RPI. Go online  &mdash;  check module status (green = communicating).<br><b>Topology:</b> Star (all devices to a managed switch  &mdash;  most common) or DLR (Device Level Ring  &mdash;  AB proprietary Ethernet ring for redundant connections, fault recovery &lt;3 ms). DLR requires a ring supervisor in the controller module.<br><b>Fault indicator:</b> Module status faulted + I4 error in controller diagnostics usually means RPI missed  &mdash;  check network utilization, duplicate IP, or cable fault."
       },
       {
         "h": "OPC-UA",
-        "body": "Vendor-neutral, platform-independent, secure. Server (PLC/gateway) - Client (HMI/SCADA/MES/cloud). Replaces OPC-DA (COM/DCOM Windows-only). The IIoT backbone. Encrypted, authenticated, cross-platform."
+        "body": "<b>OPC Unified Architecture</b> is the modern industrial data-exchange standard  &mdash;  open, platform-independent, secure, replacing OPC Classic (COM/DCOM, Windows-only, no encryption).<br><b>Architecture:</b> An OPC-UA <b>Server</b> (PLC, historian, gateway) exposes a <i>namespace</i> of Nodes. An OPC-UA <b>Client</b> (HMI, SCADA, MES, cloud analytics) browses the namespace, creates subscriptions, and receives change notifications.<br><b>Node types:</b> Variable (holds a data value + timestamp + quality), Object (groups variables by device or area), Method (callable remote function), View (pre-filtered namespace slice).<br><b>Security profiles:</b> None (lab/demo only), Sign (integrity check), Sign &amp; Encrypt (production). Mutual certificate authentication. Recommended profile: Basic256Sha256.<br><b>Sessions and subscriptions:</b> Client creates a Subscription with a PublishingInterval (e.g., 500 ms) and adds MonitoredItems. Server sends data-change notifications only  &mdash;  far lower bandwidth than polling every register.<br><b>IIoT role:</b> OPC-UA PubSub over MQTT (Sparkplug B) extends the same namespace model to cloud brokers without a persistent TCP connection  &mdash;  the bridge between shop-floor PLCs and AWS IoT / Azure IoT Hub."
       },
       {
         "h": "Troubleshooting",
-        "body": "<b>Tools:</b> Ping, ARP, Wireshark, switch LEDs.<br><b>Issues:</b> Duplicate IP, wrong subnet, bad cable (CRC errors), switch loop (broadcast storm), RPI too fast.<br><b>Best practices:</b> Separate control from enterprise (VLAN), managed switches, document IPs, label cables."
+        "body": "<b>OSI layer-by-layer network diagnostic approach:</b><br><b>Layer 1 (Physical):</b> Link LEDs lit on both ends? Swap patch cable first (fastest test). Test with cable tester for continuity and correct pair mapping. Clean fiber end-faces before re-seating SFPs.<br><b>Layer 2 (Data Link):</b> Switch port err-disabled = BPDU guard triggered (unauthorized switch caused loop). Check VLAN assignment matches other devices on the segment. View MAC address table to confirm device MAC is learned on the correct port.<br><b>Layer 3 (Network):</b> Ping device IP. No response: IP conflict, wrong subnet mask, or wrong IP. Run <i>arp -a</i> to check MAC resolution. Factory-default VFD IPs (often 192.168.1.1) frequently conflict on FC networks &mdash; always set static IPs before deployment.<br><b>Layer 7 (Protocol-specific):</b> EtherNet/IP: RPI missed, connection size mismatch, wrong module revision. PROFINET: GSDML not installed, device name mismatch, MRPD not configured. Modbus TCP: wrong unit ID, wrong register, wrong byte/word order (big-endian vs little-endian).<br><b>Tools:</b> ping, arp -a, Wireshark, RSLinx Classic, TIA Portal online diagnostics, PROFINET Inspector (Wireshark plugin)."
       },
       {
         "h": "OSI Model in Industrial Context",
@@ -2066,7 +2066,7 @@ MODULES_2 = [
           "Routing priority"
         ],
         "answer": 0,
-        "explain": "RPI = Requested Packet Interval (ms between cyclic exchanges)."
+        "explain": "RPI (Requested Packet Interval) is the time in milliseconds between cyclic implicit (I/O) EtherNet/IP messages. Typical values: 2&ndash;10 ms for safety I/O, 5&ndash;20 ms for motion feedback, 50&ndash;200 ms for general-purpose I/O. Setting RPI too low (e.g., 1 ms on a large I/O tree) overloads the network and causes missed packets. Setting it too high causes slow response to faults and setpoint changes. RPI is configured per connection in the controller I/O tree (Studio 5000)."
       },
       {
         "q": "OPC-UA replaced OPC-DA mainly because:",
@@ -2077,7 +2077,7 @@ MODULES_2 = [
           "Microsoft required it"
         ],
         "answer": 1,
-        "explain": "No COM/DCOM dependency; works on Linux/embedded; encrypted."
+        "explain": "OPC Classic (DA/HDA/AE) was built on Microsoft COM/DCOM, limiting it to Windows-only deployments with complex firewall/DCOM configuration and zero native security. OPC-UA eliminates all three problems: it runs on any OS (Linux, VxWorks, embedded RTOS), communicates over standard TCP sockets (no DCOM), and includes built-in TLS encryption and certificate authentication. OPC-UA also adds a unified information model (namespace), subscriptions, methods, and built-in redundancy &mdash; making it the mandatory interface for Industrie 4.0 and IIoT architectures."
       },
       {
         "q": "Can't ping new VFD. First step?",
@@ -2088,7 +2088,7 @@ MODULES_2 = [
           "Call vendor"
         ],
         "answer": 2,
-        "explain": "Check physical layer and IP config first."
+        "explain": "Ping failure on first connection is almost always an IP or subnet mismatch. Confirm: (1) device IP and subnet mask match the network segment (same subnet as PLC); (2) no duplicate IP exists  &mdash;  check the drive front panel or DIP switches; (3) cable is connected and link LEDs are lit on both ends. Only after confirming IP and physical layer should you suspect switch VLAN configuration or firewall rules. Factory-default IPs on drives are often 192.168.1.1."
       },
       {
         "q": "A Modbus RTU device communicates via RS-485. Which OSI layers does Modbus RTU explicitly define?",
@@ -2745,11 +2745,11 @@ MODULES_2 = [
     "sections": [
       {
         "h": "Robot Types",
-        "body": "<b>6-axis Articulated:</b> Most versatile (welding, palletizing, tending).<br><b>SCARA:</b> 4-axis, fast horizontal assembly.<br><b>Delta:</b> Very fast pick-and-place, light payload.<br><b>Cartesian/Gantry:</b> Linear axes, large CNC/palletizing.<br><b>Cobot:</b> Shared workspace, force-limited."
+        "body": "<b>6-axis Articulated:</b> Most versatile robot &mdash; six rotary joints mimic a human arm. Full 6-DOF workspace, any orientation in reach envelope. Used for arc/spot welding, palletizing, machine tending, deburring. Main vendors: FANUC, ABB, Yaskawa Motoman, KUKA.<br><b>SCARA (Selective Compliance Articulated Robot Arm):</b> 4-axis, rigid vertically but compliant in the horizontal plane. Extremely fast for planar pick-and-place (sub-second cycle times). Used for board assembly, small-part handling, screw driving, dispensing.<br><b>Delta / Parallel:</b> 3 arms from overhead gantry, very light end-of-arm tooling, extremely high speed (150+ picks/min). Used for food packaging, blister packs, bin-picking with vision guidance. Limited payload (&lt;10 kg typical).<br><b>Cartesian / Gantry:</b> 3 linear axes (X/Y/Z). Very large work envelopes possible (multi-meter spans). Used for CNC mills, large-area palletizing, cutting tables.<br><b>Collaborative (Cobot):</b> Force/torque-limited by design; can share workspace with humans when properly risk-assessed (ISO/TS 15066). Slower (0.5&ndash;2 m/s typical). Vendors: Universal Robots (UR), FANUC CRX, ABB YuMi.<br><b>AMR / AGV:</b> Mobile robots. AGV = fixed-path (tape, wire, magnet guided); AMR = free-navigation (LiDAR/SLAM). Amazon Robotics Drive Units (DUs) are a fleet-AMR system optimized for pod transport."
       },
       {
         "h": "Frames & Motion",
-        "body": "<b>World/Base/Tool(TCP)/User frames.</b><br><b>Joint:</b> Each axis shortest path (fastest, curved).<br><b>Linear:</b> TCP straight line (predictable).<br><b>Circular:</b> TCP traces arc (3 points)."
+        "body": "<b>Reference frames</b> define the coordinate system the robot uses to interpret positions and paths.<br>&nbsp;&nbsp;<b>World (Global):</b> Fixed to the cell floor/base. All other frames derived from it. Safe positions and home position defined in World.<br>&nbsp;&nbsp;<b>Base:</b> Origin at robot mounting flange center. Joint 1 rotates about Base Z-axis.<br>&nbsp;&nbsp;<b>Tool (TCP  &mdash;  Tool Center Point):</b> Origin at the gripper/tool tip. Must be calibrated (3-point or 6-point method) whenever the tool is changed or crashes. All Cartesian moves execute relative to the active TCP.<br>&nbsp;&nbsp;<b>User (Work Object):</b> Origin on a fixture, pallet, or conveyor. Teaching positions relative to the User frame lets you shift an entire program by re-defining the User frame when the fixture moves  &mdash;  no re-teaching individual points.<br><b>Motion types:</b><br>&nbsp;&nbsp;<b>Joint (MoveJ):</b> Each axis moves independently to reach target. Fastest; Cartesian path is curved and not predictable. Use for transit moves between tasks.<br>&nbsp;&nbsp;<b>Linear (MoveL):</b> TCP traces a straight line in Cartesian space. Predictable but can hit singularity near J5=0&deg;. Use for approach/depart, sealing, dispensing.<br>&nbsp;&nbsp;<b>Circular (MoveC):</b> TCP traces an arc through a via-point to an end-point. Used for weld seams, dispensing along curved edges, deburring."
       },
       {
         "h": "Programming",
@@ -2757,7 +2757,7 @@ MODULES_2 = [
       },
       {
         "h": "Safety",
-        "body": "<b>ISO 10218-1/-2:</b> Robot/system safety requirements.<br><b>ANSI/RIA R15.06:</b> US integrator standard; risk assessment required.<br><b>ISO/TS 15066:</b> Cobot force/pressure limits.<br><b>Safeguarding:</b> Fencing, light curtains, safety scanners, interlocked gates.<br><b>Teach mode:</b> 250mm/sec max speed."
+        "body": "<b>Key robot safety standards:</b><br>&nbsp;&nbsp;<b>ISO 10218-1:</b> Robot manufacturer requirements (safety functions, E-stop, speed monitoring built into the robot).<br>&nbsp;&nbsp;<b>ISO 10218-2 / ANSI/RIA R15.06:</b> System integrator requirements (cell layout, guarding, risk assessment, commissioning). Mandatory for any robot installation in the US.<br>&nbsp;&nbsp;<b>ISO/TS 15066:</b> Collaborative robot (cobot) requirements &mdash; maximum force and pressure limits for power-and-force-limited (PFL) operation (e.g., &lt;110 N contact force for most body regions).<br><b>Safeguarding hierarchy:</b> Fixed perimeter fencing (first choice for full-auto cells) &rarr; Interlocked access doors (safety relay with appropriate PLr) &rarr; Safety laser scanners (ESPE &mdash; area warning + stop fields) &rarr; Light curtains (access point protection).<br><b>Operating modes:</b><br>&nbsp;&nbsp;<b>Automatic:</b> Full program speed, all safeguards active, no personnel inside.<br>&nbsp;&nbsp;<b>T1 (Teach):</b> Maximum 250 mm/sec TCP; enabling device (3-position deadman) held in middle position; operator inside safeguarded space.<br>&nbsp;&nbsp;<b>T2:</b> Full program speed verification; no personnel inside; key-selected, supervisor present.<br><b>E-stop categories (IEC 60204-1):</b> Cat 0 = immediate power removal (uncontrolled coast); Cat 1 = controlled deceleration then power off (preferred for payload-carrying robots)."
       },
       {
         "h": "Robot Types and Mechanical Configurations",
@@ -2977,7 +2977,7 @@ MODULES_2 = [
           "Random"
         ],
         "answer": 0,
-        "explain": "Linear moves TCP in a straight line."
+        "explain": "Linear motion (MoveL in ABB/FANUC, L in Yaskawa) instructs the controller to interpolate joint angles so the TCP travels in a perfectly straight Cartesian line. This is critical when tool path must not deviate  &mdash;  sealing beads, dispensing, approach/depart from fixtures. The trade-off: inverse kinematics is solved continuously and a singularity (axis flip) can occur if the path passes near J5=0&deg;. Always jog through the path manually before running at program speed."
       },
       {
         "q": "Max TCP speed in teach mode (R15.06)?",
@@ -2988,7 +2988,7 @@ MODULES_2 = [
           "No limit"
         ],
         "answer": 2,
-        "explain": "250mm/sec max for human safety during programming."
+        "explain": "ISO 10218-1 and ANSI/RIA R15.06 limit robot speed in teach/manual mode to 250 mm/sec (T1 mode) whenever a person is inside the safeguarded space. This gives the programmer time to react to an unexpected move. T2 mode (up to program speed) is used for final path verification with no person inside. Exceeding the 250 mm/sec limit in T1 is a compliance violation and dramatically increases injury severity in a collision &mdash; the robot&rsquo;s kinetic energy scales with the square of velocity."
       },
       {
         "q": "Align with angled conveyor using which frame?",
@@ -2999,7 +2999,7 @@ MODULES_2 = [
           "User"
         ],
         "answer": 3,
-        "explain": "User frame aligns to a fixture/conveyor."
+        "explain": "The User (Work Object) frame is defined relative to the fixture or work surface. Programs taught in User frame apply the correct offset and rotation automatically. When the conveyor angle changes or a new pallet position is used, re-define the User frame  &mdash;  all taught positions update without re-teaching individual points. This is the professional approach for flexible cells: one program, multiple fixture positions, minimal re-teaching."
       },
       {
         "q": "A 6-axis articulated robot's wrist axes are typically joints J4, J5, and J6. What is the PRIMARY function of these wrist joints compared to J1-J3?",
@@ -3656,7 +3656,7 @@ MODULES_2 = [
     "sections": [
       {
         "h": "Feedback Control",
-        "body": "<b>Open loop:</b> No measurement feedback (hope it works).<br><b>Closed loop:</b> Measure PV, compare to SP, calculate error (E=SP-PV), output correction (CV). Continuously adjusts.<br><i>Example:</i> Level control: transmitter(PV) - PID controller - control valve(CV)."
+        "body": "<b>Open-loop control:</b> The output is set based on an expected input-output relationship, with NO measurement of the actual result. Example: a fixed-speed conveyor (no feedback on belt speed). Simple and cheap, but drifts when conditions change (load, supply voltage, temperature).<br><b>Closed-loop (feedback) control:</b> A sensor measures the Process Variable (PV). The controller compares PV to the Setpoint (SP) and computes Error (E = SP - PV). The Control Variable (CV) is adjusted to drive error toward zero &mdash; automatically correcting for disturbances and process variation.<br><b>Classic example &mdash; level control:</b> Level transmitter (PV) &rarr; PID controller &rarr; control valve (CV) position. Fluid flows in at a variable rate; the valve throttles outflow to hold tank level at SP regardless of inlet flow variations.<br><b>Cascade control:</b> Two loops nested. Outer (primary) loop sets SP for the inner (secondary) loop. Example: temperature outer loop sets steam-flow SP for a flow inner loop. The inner loop responds fast to flow disturbances; the outer loop corrects for slower temperature drift. Common in ACY1 HVAC and chiller systems.<br><b>Feedforward:</b> Measure a disturbance BEFORE it enters the process and pre-compensate the CV. Used with feedback (not instead of) for faster disturbance rejection."
       },
       {
         "h": "PID Terms",
@@ -3664,7 +3664,7 @@ MODULES_2 = [
       },
       {
         "h": "Tuning",
-        "body": "<b>Manual:</b> Set I=D=0. Increase Kp until oscillation (ultimate gain Ku, period Tu).<br>Set Kp=0.45*Ku, Ti=Tu/1.2 (Z-N PI formula).<br><b>Metrics:</b> Rise time, overshoot, settling time, steady-state error.<br><b>Anti-windup:</b> Limit integral when output saturated."
+        "body": "<b>PID tuning performance metrics:</b> Rise time (time to first reach SP), overshoot (% above SP), settling time (time within &plusmn;5% of SP), steady-state error (residual offset with P-only control).<br><b>Ziegler-Nichols closed-loop method:</b> 1) Set I = 0, D = 0 (P-only). 2) Increase Kp until the loop oscillates with constant amplitude &mdash; this is the Ultimate Gain (Ku); record the oscillation period (Tu). 3) Apply Z-N formulas: PI: Kp = 0.45&times;Ku, Ti = Tu/1.2. PID: Kp = 0.6&times;Ku, Ti = Tu/2, Td = Tu/8. This is an aggressive starting point &mdash; expect to detune Kp by 20&ndash;40% for more stability.<br><b>Lambda tuning (smoother, preferred in process):</b> Set the closed-loop time constant (&lambda;) to 2&times;the process dead time or greater. Gives a slower, more robust response with less overshoot &mdash; better for tank-level and temperature loops.<br><b>Anti-windup:</b> When the CV output saturates (hits 0% or 100%), the integral term keeps accumulating error (windup), causing large overshoot when the saturation clears. Anti-windup: clamp the integral when CV is saturated, or use back-calculation (I-term tracks CV output). Available as a parameter in most PLC PID blocks (e.g., Logix PIDE instruction .MaximumOutput / .MinimumOutput)."
       },
       {
         "h": "P&amp;ID (ISA-5.1)",
@@ -3886,7 +3886,7 @@ MODULES_2 = [
           "Noise"
         ],
         "answer": 0,
-        "explain": "I accumulates error to drive it to zero."
+        "explain": "The Integral (I) term continuously accumulates (integrates) error over time. As long as any error exists, the I term keeps growing, pushing the output until error reaches exactly zero. Proportional control alone leaves a steady-state offset because output = Kp&times;error  &mdash;  when error&rarr;0, output&rarr;0, so a slight error must persist to produce any drive signal. Integral adds the memory of past error to eliminate this residual. Excessive I gain causes windup and overshoot  &mdash;  use anti-windup clamping."
       },
       {
         "q": "P&amp;ID tag TT-304 means:",
@@ -3897,7 +3897,7 @@ MODULES_2 = [
           "Timer Trigger"
         ],
         "answer": 2,
-        "explain": "T=Temp, T=Transmitter, 304=loop number."
+        "explain": "ISA 5.1 instrument tag structure: first letter(s) = measured variable, final letter = device function. T = Temperature (variable), T = Transmitter (function)  &mdash;  so TT = Temperature Transmitter. Loop 304 is the unique process loop identifier from the P&amp;ID drawing. Other examples: PT-101 = Pressure Transmitter loop 101, FIC-205 = Flow Indicating Controller loop 205. The tag is the traceability link between field instrument, PLC I/O point, and instrument data sheet."
       },
       {
         "q": "Loop oscillating steadily - what to do?",
@@ -3908,7 +3908,7 @@ MODULES_2 = [
           "Decrease Kp"
         ],
         "answer": 3,
-        "explain": "Oscillation = too much gain. Reduce Kp to stabilize."
+        "explain": "Sustained oscillation at constant amplitude means the loop is marginally stable &mdash; the proportional gain Kp is at or just above the ultimate gain. To stabilize: reduce Kp by 25-50% first, then re-tune. If the process has dead time or high lag, also increase derivative time Td (D term). If the oscillation is at a very low frequency, excess integral (I) is the more likely cause &mdash; increase Ti (reduce Ki). Ziegler-Nichols tuning: at onset of oscillation, record Ku (ultimate gain) and Pu (period), then compute Kp = 0.6 Ku."
       },
       {
         "q": "In an open-loop conveyor speed control system, what happens when a sudden load increase causes the belt to slow below setpoint?",
@@ -4565,7 +4565,7 @@ MODULES_2 = [
     "sections": [
       {
         "h": "Risk Assessment",
-        "body": "<b>ISO 12100 method:</b> Identify hazards (mechanical/electrical/thermal) - Estimate risk: S1/S2 (severity) x F1/F2 (frequency) x P1/P2 (avoidance) - Determine PLr from risk graph - Implement safeguards (eliminate &gt; engineer &gt; admin)."
+        "body": "<b>ISO 12100  &mdash;  Risk Assessment and Reduction for Machinery:</b><br><b>Step 1  &mdash;  Define limits:</b> Intended use, foreseeable misuse, who performs maintenance (trained vs. untrained), life cycle stages (installation, normal operation, cleaning, fault-clearing).<br><b>Step 2  &mdash;  Hazard identification:</b> Mechanical (crush, shear, draw-in, entanglement), electrical (shock, arc flash), thermal (burns from hot surfaces), ergonomic (awkward reach, repetitive motion), noise/vibration, stored energy (spring, hydraulic, capacitor).<br><b>Step 3  &mdash;  Risk estimation</b> (ISO 13849-1 risk parameters):<br>&nbsp;&nbsp;S1 = slight/reversible injury &rarr; S2 = serious/irreversible injury or death<br>&nbsp;&nbsp;F1 = infrequent/rare exposure &rarr; F2 = frequent or continuous<br>&nbsp;&nbsp;P1 = possible to avoid (slow hazard, clear warning) &rarr; P2 = scarcely possible (fast hazard, no warning)<br>&nbsp;&nbsp;These combine on the risk graph to determine the required <b>Performance Level (PLr)</b> a through e (e = highest integrity).<br><b>Step 4  &mdash;  Risk reduction hierarchy</b> (always exhaust higher levels first):<br>&nbsp;1) Inherently safe design (eliminate the hazard  &mdash;  change geometry, material, speed).<br>&nbsp;2) Fixed/interlocked guards and safety devices (engineer it in  &mdash;  guard with ESPE, interlocked door).<br>&nbsp;3) Information / warning signs.<br>&nbsp;4) PPE and administrative controls (lowest effectiveness  &mdash;  last resort)."
       },
       {
         "h": "Safeguarding",
@@ -4573,11 +4573,11 @@ MODULES_2 = [
       },
       {
         "h": "ISO 13849-1",
-        "body": "<b>Performance Level:</b> a (lowest) to e (highest PFHd).<br><b>Categories:</b> B (basic), 1 (well-tried), 2 (self-test), 3 (single-fault tolerant), 4 (single-fault tolerant + high diagnostic).<br><b>Typical:</b> PL e/Cat 4 = highest risk (robot cells). PL c/Cat 2 = moderate risk."
+        "body": "<b>ISO 13849-1</b> is the primary machinery safety standard for designing, verifying, and validating safety functions using Performance Level (PL) methodology.<br><b>Performance Levels a&ndash;e</b> represent the PFHd (Probability of dangerous Failure per Hour). PLr (required PL) is determined from the risk graph: severity (S1/S2) &times; frequency (F1/F2) &times; avoidability (P1/P2) maps to PLr a&ndash;e.<br><b>Architecture Categories (structural redundancy + diagnostics):</b><br>&nbsp;&nbsp;Cat B: Single channel, basic components. PLa/b only. Use for low-risk advisory functions.<br>&nbsp;&nbsp;Cat 1: Well-tried components, single channel. PLb/c.<br>&nbsp;&nbsp;Cat 2: Single channel with self-test (DC &ge;60%). PLc/d. Common for light curtains and safety scanners with output monitoring.<br>&nbsp;&nbsp;Cat 3: Dual-channel, single-fault tolerant, DC medium (&ge;60%). PLd. Standard for industrial E-stops and interlocked gates &mdash; the most common category at ACY1.<br>&nbsp;&nbsp;Cat 4: Dual-channel, every dangerous fault detected (DC &ge;99%). PLe. Required for robot cells, high-speed presses, explosive atmosphere controls.<br><b>Verification:</b> Calculate achieved PL using SISTEMA (free, BAuA). Inputs: Category, MTTFd per channel, DCavg, CCF score (&ge;65 required for Cat 3/4)."
       },
       {
         "h": "LOTO & Arc Flash",
-        "body": "<b>OSHA 1910.147 LOTO:</b> Notify - Shutdown - Isolate - Lock/Tag - Verify zero energy.<br><b>Stored energy:</b> Pneumatic pressure, hydraulic accumulators, springs, capacitors (VFD DC bus!).<br><b>NFPA 70E:</b> Arc-flash boundaries, PPE categories (cal/cm2). De-energize whenever possible."
+        "body": "<b>OSHA 1910.147 LOTO &mdash; mandatory 6 steps:</b><br>1) <b>Notify</b> affected employees. 2) <b>Normal shutdown</b> (use the machine&rsquo;s normal stop procedure). 3) <b>Isolate all energy sources</b> &mdash; electrical disconnect (lockable), pneumatic shut-off valve, hydraulic isolation valve, gravity block. 4) <b>Apply personal lock and tag</b> to every isolation point &mdash; each authorized worker applies their OWN lock. 5) <b>Release stored energy:</b> Bleed pneumatic/hydraulic pressure to zero, discharge capacitors (VFD DC bus: wait 5&ndash;10 min, verify &lt;50 V DC), lower/block suspended loads, release spring-loaded mechanisms. 6) <b>Verify zero energy:</b> Attempt to start (failed start = isolation confirmed), measure with calibrated meter. Verification is NOT optional.<br><b>Arc flash (NFPA 70E):</b> An arc fault releases intense thermal energy. PPE categories: Cat 1 (4 cal/cm&sup2;), Cat 2 (8 cal/cm&sup2;), Cat 3 (25 cal/cm&sup2;), Cat 4 (40 cal/cm&sup2;). Required PPE is determined by an arc flash hazard analysis (NFPA 70E Table 130.7). At 480 V, incident energy can be lethal within 1&ndash;2 feet. ALWAYS de-energize before work if a de-energized state is achievable &mdash; this is the NFPA 70E hierarchy."
       },
       {
         "h": "Risk Assessment Fundamentals: ISO 12100",
@@ -4797,7 +4797,7 @@ MODULES_2 = [
           "PL d"
         ],
         "answer": 0,
-        "explain": "Highest risk path = PLr e."
+        "explain": "ISO 13849-1 risk graph: S2 (serious/irreversible injury) + F2 (frequent exposure) + P2 (scarcely possible to avoid) is the worst combination, mapping to PLr = e  &mdash;  the highest required Performance Level. PLe requires a Category 4 / SIL 3 safety function with very high diagnostic coverage, dual-channel architecture, and very high MTTFd. This threshold applies to guards and interlocks on high-speed presses, robots, and hazardous-energy systems."
       },
       {
         "q": "After lockout, you MUST:",
@@ -4808,7 +4808,7 @@ MODULES_2 = [
           "Wait 30 min"
         ],
         "answer": 2,
-        "explain": "Verification is mandatory - try start, check caps/pressure/springs."
+        "explain": "OSHA 1910.147 requires an energy-isolation VERIFICATION before performing any work: (1) Attempt to start the machine normally &mdash; confirms the control circuit is isolated. (2) Check for stored energy: test capacitors (measure voltage, must be &lt;50V), bleed hydraulic/pneumatic pressure to zero, release spring-loaded components. (3) Verify zero-energy state with a calibrated meter. Verification is NOT optional &mdash; skipping it is the most common cause of LOTO-related fatalities, since energy sources can re-accumulate from upstream leaks or gravity."
       },
       {
         "q": "ISO 13849 Category 3 means:",
@@ -4819,7 +4819,7 @@ MODULES_2 = [
           "Single fault does NOT cause loss of safety function"
         ],
         "answer": 3,
-        "explain": "Cat 3 = single-fault tolerant via redundancy + diagnostics."
+        "explain": "ISO 13849-1 Category 3: the safety function is performed by a redundant (dual-channel) architecture. A single fault does NOT cause loss of the safety function (fault-tolerant). Diagnostic coverage (DC) must be medium (&ge;60%) to detect faults before the next demand. Unlike Category 4 (which requires every fault to be detected before the next demand), Category 3 allows one undetected fault at a time while still maintaining safety &mdash; making it suitable for PLd. Most E-stop and gate-interlock circuits in manufacturing are Category 3."
       },
       {
         "q": "According to ISO 12100, which three risk-estimation parameters feed the risk graph to determine the required Performance Level?",
@@ -5480,7 +5480,7 @@ MODULES_2 = [
     "sections": [
       {
         "h": "Integration Mindset",
-        "body": "Real systems integrate ALL domains: Electrical + PLC + HMI + Network + Drives + Sensors + Fluid Power + Robotics + Safety.<br><b>Your job:</b> Understand interconnections. Troubleshoot ACROSS domain boundaries - the fault may be network, not PLC; mechanical, not electrical."
+        "body": "Real automation systems are deeply integrated &mdash; one symptom can have its root cause in any of six or more domains.<br><b>Systems thinking for troubleshooting:</b> Instead of jumping to the first obvious suspect, map the signal path: Power &rarr; Safety circuit &rarr; PLC I/O &rarr; Program logic &rarr; PLC output &rarr; Drive/contactor &rarr; Motor &rarr; Load. A &ldquo;sorter won&rsquo;t run&rdquo; fault could be: 480 V missing to the drive, E-stop in the safety loop, PLC I/O comm fault, HMI write handshake stuck, VFD parameter mismatch, encoder fault, or mechanical jam holding the motor stalled.<br><b>Cross-domain commissioning checklist:</b> 1) Verify power circuit before applying voltage. 2) Commission safety circuits before enabling drives. 3) Test I/O channels with forcing before writing logic. 4) Tune VFD to motor nameplate before first motion. 5) Commission HMI comms and alarms before production release.<br><b>Documentation discipline:</b> Every cross-domain interface (PLC tag to HMI, PLC output to VFD, safety relay to PLC input) must be in a single document &mdash; control narrative, I/O list, or interface sheet. Undocumented interfaces are always the hardest faults to find and the most common cause of extended downtime on new installations.<br><b>Your job:</b> Understand the interconnections and troubleshoot across domain boundaries. The fault is always where the manual says it is NOT."
       },
       {
         "h": "Commissioning",
@@ -5492,7 +5492,7 @@ MODULES_2 = [
       },
       {
         "h": "Personal Development Plan",
-        "body": "Rate yourself 1-5 on each of 10 domains. Identify bottom 3 = priority growth areas.<br><b>Action plan:</b> Domain - Current level - Target level - Resources (from this course) - Practice method - Validation (cert/project/peer review). Revisit quarterly."
+        "body": "Rate yourself 1&ndash;5 on each of 10 core AET domains: Electrical Fundamentals, PLC Programming, Sensors &amp; Instrumentation, VFDs/Drives, Fluid Power, Industrial Networks, Machine Safety, Robotics/Motion, Process Control/PID, Troubleshooting.<br><b>Building the PDP:</b><br>&nbsp;&nbsp;1) Identify your bottom 3 scores = priority growth areas.<br>&nbsp;&nbsp;2) Set a realistic target level (+1 or +2 steps in 90 days  &mdash;  not 1&rarr;5 in a month).<br>&nbsp;&nbsp;3) Map to a specific resource: this course module, a Rockwell TechConnect webinar, an ISA training course, a Siemens SITRAIN module, or a hands-on lab exercise.<br>&nbsp;&nbsp;4) Define a practice method: shadow a senior tech, build a test circuit, write ladder from scratch, document a real troubleshoot, complete a sim lab.<br>&nbsp;&nbsp;5) Validation: how will you prove improvement? (Cert exam pass, peer review of a project, documented WO, supervisor sign-off).<br><b>90-day review cycle:</b> Repeat the self-rating. Share the growth evidence in your portfolio. Update the plan. Quarterly cadence aligns with most performance review cycles and AM/RME skill-matrix assessments.<br><b>Long-term milestones:</b> ISA CCST Level I (2-year AET grad) &rarr; CCST Level II (4&ndash;5 yr experience) &rarr; CCST Level III (senior/specialist). Rockwell IAB, Siemens SITRAIN, FANUC CNC/Robot certifications as domain specializations."
       },
       {
         "h": "Systems Thinking: The Integrated Automation Stack",
@@ -5713,7 +5713,7 @@ MODULES_2 = [
           "Program PLC first"
         ],
         "answer": 0,
-        "explain": "Pre-power checks prevent catastrophic damage."
+        "explain": "Before first power-up: (1) Verify all wiring terminations against the schematic &mdash; reversed L1/L2/L3 destroys motors and drives. (2) Megger-test motor windings (at least 1 M&Omega; on 480 V). (3) Confirm VFD parameters loaded (base Hz, FLA, accel/decel). (4) Set all selector switches to MANUAL/OFF. (5) Apply power to the control section first, verify indicator lamps and HMI come up before enabling motor outputs. Missing any step risks burning out a newly installed drive or motor."
       },
       {
         "q": "HMI shows 'I/O Comm Loss' on gripper valve. First check:",
@@ -5724,7 +5724,7 @@ MODULES_2 = [
           "Reprogram robot"
         ],
         "answer": 1,
-        "explain": "Comm loss = network issue. Check physical, then link, then IP."
+        "explain": "I/O Comm Loss means the PLC scan lost communication with that I/O module &mdash; not a valve fault. Systematic check: (1) Physical: cable seated, link LED lit on switch port and module; (2) IP: no duplicate addresses, correct subnet; (3) RPI: was the update rate changed or network load increased? (4) Power: 24 VDC to the rack? (5) Module status LEDs: solid red = module fault, flashing = comm fault. This discipline prevents replacing functional valves when the real issue is a loose RJ-45 or a DHCP address collision."
       },
       {
         "q": "ISA CCST has how many levels?",
@@ -5735,7 +5735,7 @@ MODULES_2 = [
           "3"
         ],
         "answer": 3,
-        "explain": "ISA CCST: Level I (entry), II (experienced), III (expert)."
+        "explain": "ISA CCST (Certified Control Systems Technician) has three levels: Level I requires completing an accredited AET/controls program plus 5 years verified experience; Level II requires Level I plus additional documented experience in measurement, calibration, and loop tuning; Level III requires Level II plus evidence of advanced troubleshooting, mentoring, and project leadership. All three require passing a proctored written exam. CCST is the industry benchmark for field technician competency and is recognized by major plant operators."
       },
       {
         "q": "In the ISA-95 / Purdue Model, which layer is responsible for the WCS (Warehouse Control System) sort-decision logic?",

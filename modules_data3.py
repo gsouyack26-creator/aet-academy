@@ -21,7 +21,7 @@ MODULES_3 = [
       },
       {
         "h": "User-Defined Types (UDTs)",
-        "body": "<pre>TYPE Motor_Data:\n  Running  : BOOL;\n  Faulted  : BOOL;\n  Speed_Cmd: REAL;\n  Speed_Fbk: REAL;\n  Amps     : REAL;\n  RunHours : DINT;\n  FaultCode: INT;\nEND_TYPE;</pre>Create: <code>Motors : ARRAY[0..19] OF Motor_Data;</code> - 20 motors, identical structure. Cleaner than 140 tags."
+        "body": "<pre>TYPE Motor_Data:\n  Running  : BOOL;\n  Faulted  : BOOL;\n  Speed_Cmd: REAL;\n  Speed_Fbk: REAL;\n  Amps     : REAL;\n  RunHours : DINT;\n  FaultCode: INT;\nEND_TYPE;</pre>Create: <code>Motors : ARRAY[0..19] OF Motor_Data;</code> &mdash; 20 motors share the same structure, so Motor[3].Faulted reads like plain English. UDTs eliminate 100+ scattered tags, enforce consistent naming across the program, and let you add a field (e.g., Vibration_mm) once in the TYPE definition and have it appear on every instance automatically. <b>Cross-reference:</b> when an AOI accepts a <code>Motor_Data</code> parameter, the entire motor object passes in one tag &mdash; no individual wiring. <b>Best practice:</b> prefix UDT instances with the equipment ID (Conv_01_Motor, Conv_02_Motor) so the tag browser self-documents."
       },
       {
         "h": "Fault Handling",
@@ -225,7 +225,7 @@ MODULES_3 = [
           "Only work in ST"
         ],
         "answer": 1,
-        "explain": "AOIs = write once, test once, reuse everywhere with consistent behavior."
+        "explain": "AOIs (Add-On Instructions) follow a write-once, test-once philosophy: create the logic for a motor starter AOI, validate it on one machine, then reuse it on every motor in the plant. When a bug is found, fix the AOI definition and every instance updates automatically. AOIs also hide internal logic behind a clean interface tag, protecting IP and reducing trainee errors. Rockwell recommends AOIs for any logic block reused three or more times."
       },
       {
         "q": "FAULT state in a state machine should:",
@@ -247,7 +247,7 @@ MODULES_3 = [
           "Download needed"
         ],
         "answer": 0,
-        "explain": "Type 4 = I/O fault (module not responding, rack power loss, RPI timeout)."
+        "explain": "Major Fault Type 4 is an I/O fault: a module stops responding within its Requested Packet Interval (RPI), the rack loses power, or a module is pulled while the controller is in Run. The controller halts unless the connection is set to Optional in the I/O tree &mdash; Optional lets production continue with that module offline, useful for non-critical diagnostic I/O. Always log Type 4 events in the fault history buffer and investigate cable continuity, module seating, and backplane power before resuming."
       },
       {
         "q": "In ST, why feed a pushbutton through an R_TRIG before a CTU counter?",
@@ -1105,7 +1105,7 @@ MODULES_3 = [
           "Industrial cybersecurity for automation"
         ],
         "answer": 3,
-        "explain": "IEC 62443 = THE standard for OT/industrial automation cybersecurity."
+        "explain": "IEC 62443 is the international standard series for Industrial Automation and Control System (IACS) cybersecurity. It defines Security Levels (SL 1-4), segmentation via zones and conduits, requirements for system integrators and component suppliers, and patch/change management procedures. For an Amazon FC, the key principle is the Purdue Model demarcation: OT networks (PLCs, VFDs, conveyors) should be isolated from IT networks by a DMZ; no direct internet access to control-level devices. IEC 62443-2-1 covers the IACS security management system; 62443-3-3 covers system security requirements."
       },
       {
         "q": "Which of the nine Industry 4.0 pillars specifically addresses connecting physical sensors, actuators, and field devices over IP networks for real-time monitoring?",
@@ -1774,7 +1774,7 @@ MODULES_3 = [
       },
       {
         "h": "Oscilloscope Basics",
-        "body": "<b>When:</b> DMM shows RMS only - useless for PWM/encoder/comm signals.<br><b>VFD output:</b> See PWM pattern. Verify 3 phases present/symmetric.<br><b>Encoders:</b> Clean square waves, 90deg quadrature, Z pulse present.<br><b>Tools:</b> Fluke ScopeMeter (CAT III rated, battery, portable)."
+        "body": "<b>When to use a scope:</b> A DMM gives RMS voltage only &mdash; useless for diagnosing PWM, encoder quadrature, or serial comm signals that change faster than the meter can sample.<br><b>VFD output:</b> Connect scope probes to motor terminals (CAT III rated leads required). Verify three phases are present and symmetric. The PWM waveform will show high-frequency switching; use the scope's averaging or LPF mode to see the fundamental sine envelope.<br><b>Encoder signals:</b> Look for clean square waves with fast rise times (&lt;1&nbsp;&micro;s). Channel A and B should be 90&deg; out of phase (quadrature); Z (index) pulse fires once per revolution. Noisy or rounded edges indicate shielding or grounding problems.<br><b>Serial comms:</b> RS-485 differential pair should show clean &plusmn;5&nbsp;V transitions. Scope one wire to ground &mdash; if both wires rise together, common-mode noise is the culprit.<br><b>Tools:</b> Fluke ScopeMeter 190 series (CAT III 600&nbsp;V, battery-powered, portable) is the field standard. Set time/div to match the signal period: 50&nbsp;Hz power = 20&nbsp;ms/div; 1&nbsp;kHz encoder = 1&nbsp;ms/div."
       },
       {
         "h": "Systematic Troubleshooting Methodology: Symptom to Cause to Verified Repair",
@@ -2016,7 +2016,7 @@ MODULES_3 = [
           "Run at half speed"
         ],
         "answer": 0,
-        "explain": "Each test eliminates half the circuit. Logarithmically efficient for long signal chains."
+        "explain": "Half-split (binary search) troubleshooting reduces fault isolation steps logarithmically. A 32-rung signal chain has at most log₂(32) = 5 tests to find any fault. Procedure: test the midpoint of the suspect range. If the signal is good there, the fault is in the second half; if absent, it is in the first half. Repeat until isolated to one component. Compare with sequential (start-to-end) testing: worst case 32 tests for the same chain. Half-split is especially powerful for cable harnesses, multi-junction conduit runs, and PLC I/O chains where visual inspection is slow."
       },
       {
         "q": "During the half-split troubleshooting method applied to a 10-rung control circuit ladder, your first measurement should be at approximately which rung?",
@@ -2685,7 +2685,7 @@ MODULES_3 = [
       },
       {
         "h": "PM Program Design",
-        "body": "<b>Steps:</b> 1) Asset criticality (A/B/C). 2) Failure mode analysis. 3) Task selection (predict vs prevent). 4) Schedule (balance across shifts). 5) Execute + document in CMMS. 6) Improve (extend intervals if PM finds nothing; shorten if failures occur between)."
+        "body": "<b>PM program design uses a 6-step structured process:</b><br><b>1) Asset criticality ranking (A/B/C):</b> A = production-critical (single point of failure, no redundancy), B = significant impact but workaround exists, C = low impact. PMs on 'A' assets get highest priority and tightest intervals.<br><b>2) Failure Mode and Effects Analysis (FMEA):</b> For each asset, list failure modes (bearing wear, belt stretch, seal leak), estimate probability &times; severity &times; detectability &rarr; Risk Priority Number (RPN). High-RPN items get PM tasks.<br><b>3) Task selection:</b> Predict (vibration, thermography, oil analysis  &mdash;  catch degradation early) vs. Prevent (timed replacement, lubrication, calibration regardless of condition). Choose based on failure characteristic  &mdash;  gradual wear &rarr; predictive; sudden failure &rarr; preventive replacement before mean life.<br><b>4) Scheduling:</b> Balance tasks across shifts and days so no single shift is overloaded. Stagger major overhauls with production windows. Use CMMS work-order frequency (weekly, monthly, quarterly, annual) tied to runtime hours or calendar days.<br><b>5) Execute and document:</b> Technician records actual condition found, consumables used, and time. This data is the input to the next step.<br><b>6) Improve:</b> If PM consistently finds 'no issues' &rarr; extend interval (over-maintaining wastes labor). If failures occur between scheduled PMs &rarr; shorten interval or switch to predictive. Review RPN scores annually."
       },
       {
         "h": "The Maintenance Strategy Spectrum",
@@ -2913,7 +2913,7 @@ MODULES_3 = [
           "95.0%"
         ],
         "answer": 1,
-        "explain": "500/(500+5) = 500/505 = 99.0%."
+        "explain": "Availability A = MTBF / (MTBF + MTTR) = 500 / (500 + 5) = 500/505 = 0.990 = 99.0%. At 2,000 production hours/yr this means 20 hours of downtime per year. Reducing MTTR from 5 hr to 2.5 hr (faster repair via pre-staged spares, better diagnostics) raises availability to 99.5%, saving 10 production hours/yr. Improving MTBF (better PM, higher reliability parts) has the same effect but is a longer-term investment."
       },
       {
         "q": "Predictive maintenance is:",
@@ -2924,7 +2924,7 @@ MODULES_3 = [
           "Hire more techs"
         ],
         "answer": 2,
-        "explain": "PdM = condition-based. Intervene only when trending toward failure."
+        "explain": "Predictive Maintenance (PdM) monitors the actual condition of equipment using techniques like vibration analysis, thermography, oil analysis, or ultrasound, and schedules maintenance only when a parameter trends toward a failure threshold. This differs from time-based PM (replace every N hours regardless of condition) and from reactive maintenance (repair after failure). PdM advantage: maximum component life, minimum unplanned downtime. Typical threshold: replace a bearing when vibration RMS exceeds 3&times; baseline, or when the vibration spectrum shows a growing defect frequency at BPFO or BPFI."
       },
       {
         "q": "Which maintenance strategy should be applied to a non-critical spare indicator lamp that has a readily available replacement and no safety consequence upon failure?",
@@ -3836,7 +3836,7 @@ MODULES_3 = [
           "Control circuit first, then main power motors off, then jog each motor"
         ],
         "answer": 3,
-        "explain": "Staged power-up catches wiring errors before damage."
+        "explain": "Staged power-up sequence for a new control panel: (1) Verify all wiring against schematic with power OFF; (2) Apply control power (24 VDC/120 VAC) only &mdash; confirm indicator lamps, PLC comes up, HMI connects; (3) Check all I/O with manual forcing before enabling outputs; (4) Apply load power (480 VAC) to one circuit at a time; (5) Command each load individually, verify correct motor rotation and valve actuation; (6) Test all safety circuits (E-stops, overloads, guards) before running at speed. Skipping stages risks driving a motor backward, blowing fuses, or damaging an improperly loaded drive."
       },
       {
         "q": "A UL 508A-listed industrial control panel must include which of the following on its nameplate?",
@@ -4745,7 +4745,7 @@ MODULES_3 = [
           "The PROCESS (how you diagnosed/designed/built)"
         ],
         "answer": 3,
-        "explain": "Process &gt; product. Show HOW you think and solve problems."
+        "explain": "Hiring managers in automation want evidence of your diagnostic process, not just the outcome. A portfolio entry that says &ldquo;fixed the sorter&rdquo; is weak; one that documents your troubleshooting method &mdash; symptom, hypothesis, test, finding, root cause, fix, prevention &mdash; demonstrates technical depth and reliability. Include one-line project summaries, photos of panel work, ladder logic screenshots with annotation, and any measurable results (uptime improvement, cost saved). 3-5 well-documented entries beat 20 vague ones."
       },
       {
         "q": "Which of the following best describes the primary benefit of earning an NFPA 70E awareness certification for an RME controls technician?",
@@ -6168,7 +6168,7 @@ MODULES_3 = [
           "Sequential Function Chart (SFC)"
         ],
         "answer": 2,
-        "explain": "Instruction List (IL) is deprecated in Ed 3. The other four languages remain standard."
+        "explain": "IEC 61131-3 Edition 3 (2013) deprecated Instruction List (IL) because it resembles assembly language &mdash; hard to read, hard to maintain, and not portable across vendor platforms. The four remaining languages are: Ladder Diagram (LD), Function Block Diagram (FBD), Structured Text (ST), and Sequential Function Chart (SFC). Vendors that still support IL do so for legacy backward compatibility only. New programs should use ST for math-intensive logic and LD/FBD for process control, following your facility programming standard."
       },
       {
         "q": "A parallel (simultaneous) SFC divergence requires:",

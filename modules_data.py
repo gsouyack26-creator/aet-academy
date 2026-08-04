@@ -1,4 +1,4 @@
-"""AET Course module data — imported by build_course.py"""
+"""AET Course module data  &mdash;  imported by build_course.py"""
 
 MODULES = [
   {
@@ -235,7 +235,7 @@ MODULES = [
           "Applied Energy Transmission"
         ],
         "answer": 0,
-        "explain": "AET = Automation Engineering Technology."
+        "explain": "AET  &mdash;  Automation Engineering Technology  &mdash;  is the applied hands-on discipline and 2-year technical degree covering PLCs, HMI/SCADA, VFDs, instrumentation, pneumatics, robotics, and industrial networks. AET graduates install, commission, troubleshoot, and maintain the control systems running conveyors, robots, and process equipment. The credential is the entry point for automation technician roles in manufacturing, distribution (e.g., Amazon FC), and process industries."
       },
       {
         "q": "At which levels do AET technicians primarily work?",
@@ -246,7 +246,7 @@ MODULES = [
           "Level 5 (Cloud)"
         ],
         "answer": 2,
-        "explain": "AET techs work at Levels 0-2."
+        "explain": "AET technicians operate at ISA-95 Levels 0&ndash;2: Level 0 (field devices  &mdash;  sensors, actuators, motors), Level 1 (PLCs, safety controllers, drives), and Level 2 (HMI, SCADA, local control networks). They bridge the physical and digital layers  &mdash;  installing sensors, commissioning PLCs, and troubleshooting the control systems that automation engineers design. Levels 3&ndash;4 (MES, ERP) are the domain of IT/OT integration and business-system teams."
       },
       {
         "q": "Most common 2-year AET entry credential?",
@@ -257,7 +257,7 @@ MODULES = [
           "AAS (Associate of Applied Science)"
         ],
         "answer": 3,
-        "explain": "The AAS is the standard 2-year entry credential."
+        "explain": "The Associate of Applied Science (AAS) in AET is the standard 2-year entry credential recognized across manufacturing, distribution, and process industries. It covers electrical circuits, PLC programming, motor controls, instrumentation, pneumatics, and industrial safety. Graduates can sit for ISA CCST Level I with 5 years of verified work experience. One-year certificate programs cover a subset for technicians upskilling from adjacent trades."
       },
       {
         "q": "In the ISA-95 automation pyramid, which level houses PLCs?",
@@ -312,7 +312,7 @@ MODULES = [
           "ISA-95"
         ],
         "answer": 0,
-        "explain": "UL 508A is the recognized standard for industrial control panels."
+        "explain": "UL 508A (Standard for Industrial Control Panels) is the NRTL-recognized safety standard that governs construction, component selection, wiring methods, SCCR marking, and short-circuit protection of industrial control panels in North America. Panels built and marked to UL 508A satisfy NEC Article 409 and are accepted by inspectors without additional testing. Non-UL-listed panels may be rejected at installation or require field evaluation, adding cost and delay."
       },
       {
         "q": "You find a wiring drawing that doesn't match the panel. Best action?",
@@ -334,7 +334,7 @@ MODULES = [
           "ISO 45001"
         ],
         "answer": 2,
-        "explain": "ISO 13849-1 defines machinery safety Performance Levels and Categories."
+        "explain": "ISO 13849-1:2015 defines the methodology for designing and evaluating safety functions on machinery: the risk parameters (S, F, P) that determine required Performance Level (PLr a-e), the Category structure (B, 1, 2, 3, 4) that describes architectural redundancy and diagnostics, and the calculation of PL achieved from MTTFd, DCavg, and CCF. IEC 62061 covers the same ground using SIL (Safety Integrity Level) methodology favored in process industries."
       },
       {
         "q": "Which layer of the automation pyramid typically runs OSIsoft PI Historian?",
@@ -356,7 +356,7 @@ MODULES = [
           "Best vendor"
         ],
         "answer": 0,
-        "explain": "5-whys drills through symptoms to the root cause so the FIX prevents recurrence."
+        "explain": "5-Whys is a root-cause analysis (RCA) method: ask \"why\" iteratively until you reach the fundamental cause, not just the symptom. Example: Conveyor stopped &rarr; Why? Motor tripped. Why? Overload. Why? Jammed roller. Why? Bearing seized. Why? No lubrication on PM schedule. The fix targets the missed PM, not just the bearing. Without RCA, replacing the bearing allows the same failure to repeat. Combine with a fishbone (Ishikawa) diagram when multiple cause categories (people, process, equipment, environment) need sorting."
       },
       {
         "q": "A safety relay datasheet lists PFD_avg = 8 x 10^-3. Which SIL band does this fall into?",
@@ -554,7 +554,7 @@ MODULES = [
           "30 years"
         ],
         "answer": 2,
-        "explain": "Simple payback = investment / annual savings = 360,000 / 120,000 = 3 years."
+        "explain": "Simple Payback Period = Initial Investment / Annual Net Savings = $360,000 / $120,000 = 3.0 years. This is the basic profitability metric for automation projects: break-even at 3 years, then profit. More sophisticated analysis uses NPV (Net Present Value) or IRR (Internal Rate of Return) to account for the time value of money. A 3-year payback is attractive in manufacturing; &lt;2 years is considered excellent. Automation projects often underestimate ongoing maintenance costs &mdash; add 5&ndash;10% of equipment cost per year to the annual cost side."
       },
       {
         "q": "Total Cost of Ownership (TCO) for an automation asset includes all EXCEPT:",
@@ -741,7 +741,7 @@ MODULES = [
           "0.024 psi"
         ],
         "answer": 3,
-        "explain": "12 bits = 4096 counts; 100 psi / 4096 = about 0.024 psi per count."
+        "explain": "Resolution = full-scale span / number of counts. 12-bit ADC: 2^12 = 4,096 counts. On a 0-100 PSI transmitter: 100/4096 = 0.0244 PSI/count. A 16-bit module gives 65,536 counts: 100/65536 = 0.00153 PSI/count, 16&times; finer. Resolution determines the smallest change the PLC can detect. For a &plusmn;0.1 PSI requirement you need at least 1000 counts per PSI, so a 16-bit module on a 100 PSI range (65,536/100 = 655 counts/PSI) is marginal &mdash; use a 200 PSI-range transmitter for 327 counts/PSI."
       },
       {
         "q": "Which statement best distinguishes closed-loop from open-loop control?",
@@ -774,7 +774,7 @@ MODULES = [
           "about 90%"
         ],
         "answer": 2,
-        "explain": "OEE = 0.90 &times; 0.95 &times; 0.97 = 0.829, about 83%."
+        "explain": "OEE = Availability &times; Performance &times; Quality = 0.90 &times; 0.95 &times; 0.97 = 0.829 = 83.3%. Each factor multiplies independently: a 10% availability loss, 5% performance loss, and 3% quality loss together produce 17% OEE loss. World-class OEE is &ge;85%. At a fulfillment center, even 1% OEE improvement on a high-throughput sort line can recover thousands of packages per shift."
       },
       {
         "q": "By De Morgan's theorem, (A AND B)' is equivalent to:",
@@ -885,15 +885,15 @@ MODULES = [
       },
       {
         "h": "AC Fundamentals",
-        "body": "<b>RMS:</b> V_rms = V_peak / sqrt(2). 120V outlet = 170V peak.<br><b>Three-phase:</b> V_line = V_phase x sqrt(3). 480V/277V, 208V/120V.<br><b>Power factor:</b> PF = cos(theta). Motors = lagging PF &lt; 1."
+        "body": "<b>RMS (Root Mean Square):</b> V_rms = V_peak / sqrt2. A 120 V outlet peaks at 170 V; a 480 V system peaks at 679 V. Metered voltage is always RMS.<br><b>Three-phase math:</b> V_line = V_phase &times; sqrt3. 480 V line-to-line &divide; sqrt3 = 277 V line-to-neutral (used for 277 V lighting). 208 V &divide; sqrt3 = 120 V (common in offices). This relationship appears constantly when sizing transformers and contactors.<br><b>Power factor (PF):</b> PF = cos(&theta;) = Real Power (kW) / Apparent Power (kVA). Induction motors are inherently lagging (PF 0.80&ndash;0.92) because the stator magnetizing current lags voltage by 90&deg;. Capacitor banks or VFDs correct PF toward 1.0, reducing utility demand charges.<br><b>Why 3-phase?</b> Three balanced phases deliver constant power (no 120 Hz pulsations). A 480 V 3-phase motor gets 2.78&times; more power in the same wire gauge as single-phase, enabling compact high-power motor designs used throughout industrial MHE."
       },
       {
         "h": "Motor Control Circuits",
-        "body": "<b>Power circuit:</b> L1/L2/L3 - disconnect - fuses - contactor(M) - OL - motor.<br><b>Control circuit:</b> 120V control transformer - Stop(NC) - Start(NO) - M coil - M aux(seal-in).<br><b>3-wire control:</b> Start momentarily energizes M; M aux seals in. Stop breaks seal. OL NC contact protects."
+        "body": "<b>Power circuit (main):</b> L1/L2/L3 supply &rarr; disconnect (NEMA 12, lockable) &rarr; fuses or MCB &rarr; contactor main contacts (M) &rarr; overload relay (OL) &rarr; motor T1/T2/T3. Size contactor for motor FLA; fuses sized per NEC 430 (typically 175&ndash;250% FLA for Time-Delay).<br><b>Control circuit (120 VAC):</b> Derived from control transformer (typically 480 V:120 V, 50&ndash;200 VA). Circuit: Stop PB (NC) in series with Start PB (NO) in series with OL contact (NC) drives coil M. M auxiliary contact (NO) in parallel with Start PB seals in the circuit after Start is released.<br><b>3-wire vs 2-wire control:</b> 3-wire (Start + Stop + coil) = standard motor starter; machine stays off after power failure (must manually restart). 2-wire (maintained contact) = automatically re-starts after power restoration (only when process-safe, e.g., pump auto-restart).<br><b>Reading the rung:</b> L1 &rarr; Stop NC &rarr; [Start NO // M-aux NO] &rarr; OL NC &rarr; coil M &rarr; L2. Any break in series chain drops the coil. Tracing wire numbers from schematic to panel lets you test each element with a DMM."
       },
       {
         "h": "Reading Schematics",
-        "body": "Ladder diagrams: two vertical rails, horizontal rungs. Devices: M=starter, OL=overload, CR=relay, PB=pushbutton, LS=limit switch, SOL=solenoid, PL=pilot light."
+        "body": "<b>Ladder diagrams</b> use two vertical power rails  &mdash;  L1 (hot) left, L2/N right  &mdash;  with horizontal rungs. Power flows left-to-right when all series contacts are satisfied.<br><b>Standard symbols:</b> NO contact -+ +- (passes power when bit=1), NC contact -+/+- (passes when bit=0), output coil -( )-, timer/counter boxes, motor starter M, overload OL.<br><b>Device abbreviations:</b> PB=pushbutton, LS=limit switch, PES=photoeye, PS=pressure switch, TS=temp switch, SOL=solenoid, CR=control relay, M=motor starter/contactor, OL=overload relay.<br><b>Wire numbers:</b> Numbers change at every junction (contact or coil). Same number = same electrical node. Tracing a wire number from the schematic to the panel locates every physical termination.<br><b>Classic motor-start rung:</b> Start NO PB in series with Stop NC PB in series with OL NC contact drives coil M. A seal-in M contact is wired in parallel with Start PB  &mdash;  it latches the circuit closed after Start is released so the motor keeps running. Pressing Stop opens the NC contact, drops coil M, and the motor de-energizes."
       },
       {
         "h": "Electrical Safety &amp; Shock Hazards",
@@ -1120,7 +1120,7 @@ MODULES = [
           "120V"
         ],
         "answer": 0,
-        "explain": "V_phase = 480/sqrt(3) = 277V."
+        "explain": "In a wye (star) 3-phase system, V_phase = V_line / sqrt3 = 480 / 1.732 = 277 V line-to-neutral. This 277 V feeds single-phase 277 V lighting, control transformers, and receptacles directly from the 480 V system without an additional transformer. In delta systems there is no neutral so only 480 V line-to-line is available. Knowing this relationship prevents miswiring transformers and sizing errors on single-phase branch circuits."
       },
       {
         "q": "What seals in the motor coil after releasing Start?",
@@ -1131,7 +1131,7 @@ MODULES = [
           "Gravity"
         ],
         "answer": 1,
-        "explain": "M aux contact seals in the coil."
+        "explain": "The motor starter auxiliary (M) contact wired in parallel with the Start pushbutton is the seal-in (holding) contact. When Start is momentarily pressed, coil M energizes and closes the auxiliary M contact. Current flows through this contact even after Start is released, keeping coil M latched in. The only ways to break the circuit: press Stop (opens NC contact), overload trips (opens OL NC), or power fails  &mdash;  all safe-state events by design."
       },
       {
         "q": "What does NC overload contact do?",
@@ -1142,7 +1142,7 @@ MODULES = [
           "Adds braking"
         ],
         "answer": 2,
-        "explain": "OL NC opens on overload, breaking coil circuit."
+        "explain": "The normally-closed (NC) overload contact is wired in series with the motor coil circuit. During normal operation it is closed, allowing the coil to energize. When the overload relay detects sustained overcurrent (motor above FLA too long), it trips: the NC contact opens, dropping coil M and stopping the motor. The overload must be manually reset (or auto-reset after cooldown) before the motor can restart. This is the primary thermal protection for induction motors in motor-control circuits."
       },
       {
         "q": "Approximately what body current is the 'let-go threshold' (muscles clamp, you cannot release)?",
@@ -1527,7 +1527,7 @@ MODULES = [
           "25 A"
         ],
         "answer": 1,
-        "explain": "Continuous loads are limited to 80% of circuit rating: 20 A x 0.80 = 16 A continuous."
+        "explain": "NEC Article 210.19 and 210.20 require that the combined continuous and non-continuous load not exceed the branch circuit rating, and the continuous portion (on &gt; 3 hours) is derated to 80%. A 20 A breaker feeds a maximum of 16 A continuous load (20 &times; 0.80 = 16 A). This derating accounts for heat buildup in breakers and conductors during prolonged operation. Always check whether a load is continuous when sizing circuits for conveyor motors, lighting, or HVAC &mdash; they run for hours and frequently trip undersized breakers that look fine on paper."
       },
       {
         "q": "Per IEEE 1584, incident energy at a working point is reduced most directly by:",
@@ -1799,7 +1799,7 @@ MODULES = [
     "sections": [
       {
         "h": "What Is a PLC?",
-        "body": "A <b>Programmable Logic Controller</b> reads inputs, executes a user program, and controls outputs in real time. Components: CPU, Power Supply, I/O Modules, Comm ports. Replaces hardwired relay logic with software."
+        "body": "A <b>Programmable Logic Controller (PLC)</b> is an industrial computer built for hard real-time machine control in harsh environments (vibration, temperature, electrical noise).<br><b>Core components:</b> CPU (executes program, manages scan cycle), Power Supply (5 VDC backplane; 24 VDC field power from separate rail), Input Modules (read sensors, switches, encoders), Output Modules (drive solenoids, starters, variable-speed drives), Communication ports (EtherNet/IP, USB, serial, Profibus).<br><b>The scan cycle</b> (1&ndash;20 ms, repeated forever):<br>1) <b>Input scan</b>  &mdash;  copies all physical input states to Input Image Table in RAM.<br>2) <b>Program execution</b>  &mdash;  solves rungs/logic using the image (not live inputs).<br>3) <b>Output scan</b>  &mdash;  writes Output Image Table values to physical output modules.<br>4) <b>Housekeeping</b>  &mdash;  communications, diagnostics, watchdog reset.<br><b>Why deterministic matters:</b> A guaranteed scan time means every interlock, E-stop, and timer behaves predictably. If the CPU exceeds the watchdog timeout (typically 2&times; scan time), it faults and all outputs go to their safe de-energized state automatically."
       },
       {
         "h": "The Scan Cycle",
@@ -1807,15 +1807,15 @@ MODULES = [
       },
       {
         "h": "Addressing",
-        "body": "<b>Allen-Bradley Logix:</b> Tag-based names.<br><b>Siemens S7:</b> I0.0, Q0.0, M0.0, DB1.DBX0.0.<br><b>Legacy AB SLC:</b> I:1/0, O:0/0, B3:0/0.<br><b>Discrete:</b> 24VDC; NPN(sinking) vs PNP(sourcing).<br><b>Analog:</b> 4-20mA or 0-10V, 12-16 bit."
+        "body": "<b>Allen-Bradley Logix (tag-based):</b> Variables are named tags (e.g., Conv01_Speed, Inlet_Valve). Tags live in controller scope (global) or program scope (local). Arrays and UDTs organize related data. No fixed slot/bit addresses.<br><b>Siemens S7 (address-based):</b> I0.0 = Input byte 0, bit 0; Q0.0 = Output; M0.0 = Merker (memory) bit; DB1.DBX0.0 = Data Block 1 bit 0. TIA Portal adds symbolic names as an optional overlay.<br><b>Legacy AB SLC-500:</b> I:1/0 = Input rack 1 bit 0; O:0/0 = Output; B3:0/0 = Binary bit file; N7:0 = Integer file. Slot/bit based addressing, NOT tag based &mdash; mapping I/O addresses to functions requires the drawing set.<br><b>Wiring types:</b> NPN (sinking) sensors: output connects to 0V when active. PNP (sourcing): output connects to +24V. PLC input cards must match, or use universal cards.<br><b>Analog:</b> 4&ndash;20 mA (current loop, noise-immune, wire-break detectable) or 0&ndash;10 V (shorter runs, lower cost). Resolution: 12-bit (4,096 counts) to 16-bit (65,536 counts)."
       },
       {
         "h": "Basic Ladder Instructions",
-        "body": "<b>XIC</b> (Examine Closed) - TRUE when bit=1<br><b>XIO</b> (Examine Open) - TRUE when bit=0<br><b>OTE</b> (Output Energize) - ON when rung true<br><b>OTL/OTU</b> - Latch/Unlatch (retentive)<br><b>Branches</b> - parallel=OR, series=AND"
+        "body": "<b>Input instructions</b> (placed on left rail  &mdash;  act as contacts):<br>&nbsp;&nbsp;<b>XIC</b> (Examine If Closed)  &mdash;  passes power when the referenced bit = 1 (device is energized/closed).<br>&nbsp;&nbsp;<b>XIO</b> (Examine If Open)  &mdash;  passes power when the referenced bit = 0 (device is de-energized/open). Used for NC stops, overloads, safety contacts.<br><b>Output instructions</b> (placed on right rail  &mdash;  act as coils):<br>&nbsp;&nbsp;<b>OTE</b> (Output Energize)  &mdash;  bit set while rung is true; bit cleared when rung goes false (non-retentive).<br>&nbsp;&nbsp;<b>OTL</b> (Output Latch)  &mdash;  sets bit and holds it regardless of rung; use OTU to clear.<br>&nbsp;&nbsp;<b>OTU</b> (Output Unlatch)  &mdash;  clears the latched bit.<br><b>Logic topology:</b> Series contacts = AND logic (all must be true). Parallel branches = OR logic (any branch true powers output). Nesting branches creates compound AND/OR expressions.<br><b>Best practice:</b> Never use OTL/OTU on the same tag in the same program unless you control both rungs  &mdash;  an uncleared latch is a classic maintenance headache. Prefer OTE with a retentive memory bit when state needs to survive power loss."
       },
       {
         "h": "IEC 61131-3 Languages",
-        "body": "<b>LD</b> - Ladder (graphical, relay-style)<br><b>FBD</b> - Function Block (graphical blocks)<br><b>ST</b> - Structured Text (Pascal-like)<br><b>SFC</b> - Sequential Function Chart (state machine)<br>Most programs MIX: LD for discrete, ST for math, SFC for sequences."
+        "body": "<b>Five IEC 61131-3 standard languages:</b><br><b>LD (Ladder Diagram):</b> Graphical relay-symbol style. Best for discrete I/O logic, motor control circuits, interlocks. Most readable by maintenance technicians. Industry standard for safety PLC programs.<br><b>FBD (Function Block Diagram):</b> Graphical signal-flow blocks (left to right). Best for analog control, PID loops, signal processing. Matches P&amp;ID-style thinking.<br><b>ST (Structured Text):</b> Text-based, Pascal/C syntax. Best for math, loops, string handling, complex data algorithms. Most compact. Used for AOIs (Logix) and FBs (Siemens TIA Portal).<br><b>SFC (Sequential Function Chart):</b> State-machine flow (Steps and Transitions). Best for sequential processes: batch, machine cycles, startup/shutdown sequences.<br><b>IL (Instruction List):</b> Assembly-language style, officially deprecated in Edition 3 (2013). Avoid on new projects.<br><b>In practice:</b> Logix/Studio 5000 supports LD, FBD, ST, SFC. Most real projects mix LD (interlocks, safety) with ST (math, data processing) and SFC (sequences) in separate routines."
       },
       {
         "h": "PLC Hardware Architecture",
@@ -2030,7 +2030,7 @@ MODULES = [
           "Housekeeping"
         ],
         "answer": 1,
-        "explain": "Inputs read at start of each scan."
+        "explain": "The PLC reads all physical input modules exactly once per scan cycle  &mdash;  during the input scan phase  &mdash;  and copies states into the Input Image Table in RAM. The program then executes against this frozen snapshot, not live inputs. This prevents a changing input from affecting different rungs in the same scan, which would create race conditions. Consequence: a pulse shorter than one scan time (typically 1&ndash;20 ms) may be missed entirely."
       },
       {
         "q": "XIO is TRUE when bit is:",
@@ -2041,7 +2041,7 @@ MODULES = [
           "Pulsing"
         ],
         "answer": 2,
-        "explain": "XIO = TRUE when bit is 0 (OFF)."
+        "explain": "XIO (Examine If Open) passes power when the referenced bit = 0. A normally-closed stop button or overload contact is wired to keep the input bit HIGH (1) at rest; placing XIO on that tag means the rung passes when the device is CLOSED (intact). XIO is the standard instruction for NC emergency stops, overload contacts, and safety gate switches. The name 'Open' refers to the ladder symbol state, not the physical device state when active."
       },
       {
         "q": "Which IEC 61131-3 language is text-based like Pascal?",
@@ -2052,7 +2052,7 @@ MODULES = [
           "Structured Text"
         ],
         "answer": 3,
-        "explain": "Structured Text is the text-based language."
+        "explain": "Structured Text (ST) is the IEC 61131-3 language closest to Pascal or C  &mdash;  typed statements, IF/THEN/ELSE, CASE, FOR/WHILE loops, and function calls. It excels at analog math, scaling, PID tuning formulas, array processing, and string manipulation  &mdash;  tasks needing many rungs of ladder are expressed in a few lines of ST. ST is also the language for Add-On Instructions (AOIs) in Logix and Function Blocks in Siemens TIA Portal."
       },
       {
         "q": "Which PLC component reads/writes physical signals to sensors and actuators?",
@@ -2096,7 +2096,7 @@ MODULES = [
           "4096"
         ],
         "answer": 3,
-        "explain": "2^12 = 4096 counts. 16-bit = 65536."
+        "explain": "2<sup>1</sup><sup>2</sup> = 4,096 discrete levels (counts 0&ndash;4,095). Each count represents (20-4 mA) / 4,096 &asymp; 0.0039 mA on a 4&ndash;20 mA input, or 100 PSI / 4,096 &asymp; 0.024 PSI on a 0&ndash;100 PSI transmitter. A 16-bit module gives 65,536 levels (0.00024 mA resolution)  &mdash;  used for precise flow or weight measurements. Always use REAL (floating-point) math when the full resolution matters or integer truncation kills the benefit."
       },
       {
         "q": "Where should the shield of a shielded twisted-pair analog cable be grounded?",
@@ -2415,7 +2415,7 @@ MODULES = [
           "255"
         ],
         "answer": 3,
-        "explain": "FF hex = 1111 1111 binary = 255 decimal; each hex digit maps to exactly 4 bits."
+        "explain": "Hexadecimal 16#FF = 255 decimal = 1111&nbsp;1111 binary. Each hex digit represents exactly 4 bits (a nibble), so two hex digits cover one full 8-bit byte. Technicians use hex in PLC status words because it is compact: a 16-bit word is four hex digits instead of sixteen binary digits. Convert mentally: 16#A = 1010 = 10, 16#F = 1111 = 15."
       },
       {
         "q": "The decimal number 1234 read from a BCD thumbwheel is stored as:",
@@ -2547,7 +2547,7 @@ MODULES = [
           "0 (false)"
         ],
         "answer": 3,
-        "explain": "XIO passes power when its bit is 0 (open/false); XIC passes power when its bit is 1."
+        "explain": "XIO (Examine If Open) passes power-flow when the referenced bit is 0 (FALSE/de-energized). It represents a normally-closed contact in ladder logic: passes in the resting state, blocks when its coil is energized. XIC (Examine If Closed) is the mirror: passes when bit is 1. Technician trap: a physical NC limit switch wired to a PLC input will show bit = 1 when pressed (open mechanically but current still flows through NC contacts). Always label the tag with the physical state that causes TRUE to avoid wiring-logic confusion during troubleshooting."
       },
       {
         "q": "Why is double-coil programming (same OTE address on two rungs) dangerous?",
@@ -2713,15 +2713,15 @@ MODULES = [
       },
       {
         "h": "Counters",
-        "body": "<b>CTU:</b> Increments on false-to-true transition. DN when ACC&gt;=PRE.<br><b>CTD:</b> Decrements. DN when ACC&lt;=0.<br>Applications: batch counting, part counting, shift production tracking."
+        "body": "<b>CTU (Count Up):</b> Increments accumulated value (ACC) on every false-to-true rung transition. DN (done) bit sets when ACC &ge; PRE (preset). CU bit mirrors rung state. Counter does not automatically reset  &mdash;  requires a separate RES instruction or .RES bit.<br><b>CTD (Count Down):</b> Decrements ACC on rising edge. DN sets when ACC &le; 0. Used for depletion tracking (parts remaining in a bin, inventory countdown).<br><b>Counter data structure (Logix):</b> .PRE (preset target), .ACC (current count), .DN (done), .OV (overflow), .UN (underflow), .CU/.CD (count-up/down status bits).<br><b>Reset:</b> Drive a RES instruction referencing the counter tag on a separate rung. In Logix tag-based, writing 0 to .ACC or setting .RES achieves the same result.<br><b>Shift-production example:</b> Mount a diffuse photoeye on the conveyor. Wire its output to the CTU rung. Set PRE = shift target (e.g., 1500 units). When DN sets, trigger an alarm 'Production target met.' Reset at shift-start via a one-shot from the shift-change HMI button. Display .ACC on HMI as 'Cartons Completed.'"
       },
       {
         "h": "Comparison & Math",
-        "body": "<b>Compare:</b> EQU, NEQ, GRT, GEQ, LES, LEQ.<br><b>Math:</b> ADD, SUB, MUL, DIV, MOD, SQR.<br><b>Move:</b> MOV, COP, FLL.<br><i>Scaling example:</i> PSI = ((Raw - 6553) x 100) / 26214."
+        "body": "<b>Comparison instructions</b> sit on the left rail and act as gated contacts  &mdash;  rung passes only when the condition is true:<br>&nbsp;&nbsp;EQU (=), NEQ (&ne;), GRT (&gt;), GEQ (&ge;), LES (&lt;), LEQ (&le;)  &mdash;  compare Source A to Source B, output TRUE/FALSE.<br><b>Math instructions</b> are output boxes triggered when the rung is true:<br>&nbsp;&nbsp;ADD, SUB, MUL, DIV, MOD (remainder), SQR (sqrt), NEG (negate). Result stored in Destination tag.<br><b>Data move:</b> MOV copies a single value, COP copies an array block of N elements, FLL fills an array with a constant  &mdash;  use FLL to clear a buffer to 0 on startup.<br><b>Scaling integer raw to engineering units (worked example):</b><br>&nbsp;&nbsp;12-bit A/D, 0&ndash;100 PSI transmitter, 1&ndash;5 V input &rarr; raw range 6553&ndash;32767 (AB SLC 5/05).<br>&nbsp;&nbsp;PSI = ((Raw - 6553) &times; 100) / 26214 &rarr; at Raw=19660: PSI = (13107 &times; 100)/26214 = 50.0 PSI (ok)<br><b>Pitfall:</b> INT &divide; INT truncates (7&divide;2=3, not 3.5). Always MOV raw to a REAL tag first, then do floating-point division for accurate engineering-unit scaling."
       },
       {
         "h": "Program Organization",
-        "body": "<b>AB Logix:</b> MainTask/MainRoutine calls subroutines via JSR. Separate routines for Inputs, Sequence, Outputs, Alarms, HMI.<br><b>Tasks:</b> Continuous, Periodic (fixed interval), Event (triggered).<br><b>Siemens:</b> OB1, FCs, FBs with instance DBs, global DBs."
+        "body": "<b>AB Logix (Studio 5000) structure:</b> Controller Scope (global tags) &rarr; Tasks &rarr; Programs &rarr; Routines. Task types: Continuous (runs every scan), Periodic (fixed interval, e.g., 10 ms for motion), Event (triggered by HSC/IO/MSG event). The MainRoutine runs first; JSR (Jump to Subroutine) calls other routines for modular structure.<br><b>Recommended routine layout:</b> INP_ (scale inputs), SEQ_ (state machine logic), OUT_ (write output coils), ALM_ (alarms), HMI_ (faceplate data). Keep routines under 200 rungs each &mdash; a 2,000-rung MainRoutine is unmaintainable and makes fault isolation extremely slow.<br><b>Siemens S7/TIA Portal:</b> OB1 (cyclic execution), OB35 (100 ms timed interrupt), OB100 (startup). FCs = stateless functions (no memory). FBs = function blocks with Instance Data Blocks (retentive memory per call instance). Global DBs = shared data storage accessible from any POU. Symbolic programming in TIA Portal matches Logix tag-based approach."
       },
       {
         "h": "Timer Instructions in Depth",
@@ -2937,7 +2937,7 @@ MODULES = [
           "5000"
         ],
         "answer": 0,
-        "explain": "TON resets ACC to 0 when input goes FALSE."
+        "explain": "TON (Timer On-Delay) is non-retentive: ACC increments toward PRE while the rung is true, but resets immediately to 0 when the rung goes false before DN is reached. If PRE = 3,000 ms and the input is true for only 2,000 ms before dropping, ACC resets to 0. TON only times a continuous true condition  &mdash;  it cannot accumulate time across multiple cycles. Use RTO for cumulative timing across repeated start/stop events."
       },
       {
         "q": "Which timer retains ACC when input drops?",
@@ -2948,7 +2948,7 @@ MODULES = [
           "CTU"
         ],
         "answer": 1,
-        "explain": "RTO is retentive - keeps ACC, needs separate RES."
+        "explain": "RTO (Retentive Timer On-Delay) accumulates time while the rung is true but  &mdash;  unlike TON  &mdash;  does NOT reset when the rung goes false. It holds ACC until a separate RES instruction clears it. Use RTO when you need to total on-time across multiple start/stop cycles, for example measuring cumulative motor run-hours for a PM schedule. TON is non-retentive (resets on false rung) and is the right choice for simple timed delays."
       },
       {
         "q": "Scale raw 6553-32767 to 0-100:",
@@ -2959,7 +2959,7 @@ MODULES = [
           "EU = Raw - 6553"
         ],
         "answer": 2,
-        "explain": "Subtract offset, multiply by EU span, divide by raw span."
+        "explain": "Scaling formula: EU = ((Raw - Raw_Low) / (Raw_High - Raw_Low)) &times; (EU_High - EU_Low) + EU_Low. For raw 6553-32767 mapped to 0-100: EU = ((Raw - 6553) / 26214) &times; 100. At Raw=19660: EU = (13107/26214) &times; 100 = 50.0. This is the standard 1-5 V input span on an AB SLC 5/05 12-bit analog module. Always perform math in REAL (floating-point) to avoid integer truncation."
       },
       {
         "q": "What happens to a TON's .ACC when the input rung goes FALSE?",
@@ -3476,7 +3476,7 @@ MODULES = [
           "The full scan time only"
         ],
         "answer": 1,
-        "explain": "A TON enabled by the raw input yields a \"done\" qualified bit only after continuous truth for the preset, filtering bounce without slowing genuine transitions."
+        "explain": "A TON (Timer ON Delay) used as a contact debouncer requires the input to hold TRUE continuously for the full preset time before the DN bit sets, qualifying the signal. A single bounce (momentary false) resets the ACC to zero, so chattering contacts never produce a false done. Preset of 20&ndash;50 ms filters mechanical switch bounce without adding perceptible delay to genuine presses. Compare with a software filter register that averages &mdash; the TON method is deterministic and transparent in the ladder."
       },
       {
         "q": "In the first-order lag filter Filtered_new = Filtered_old + K &times; (Raw - Filtered_old), setting K to a very small value like 0.05 will:",
@@ -3624,11 +3624,11 @@ MODULES = [
       },
       {
         "h": "Encoders",
-        "body": "<b>Incremental:</b> A/B (quadrature for direction), Z (index). Effective counts = PPR x 4.<br><b>Absolute:</b> Unique position code, no homing needed. SSI, BiSS output.<br>Applications: conveyor tracking, motor speed (RPM = pulses/time x 60/PPR)."
+        "body": "<b>Incremental encoders</b> output two square waves (A and B) 90&deg; apart  &mdash;  called quadrature  &mdash;  plus an optional Z index pulse once per revolution.<br>&nbsp;&nbsp;<b>Direction:</b> If A leads B &rarr; forward. If B leads A &rarr; reverse. The counter IC detects both.<br>&nbsp;&nbsp;<b>x4 decoding:</b> Count all four edges (A-rise, A-fall, B-rise, B-fall) per cycle: 500 PPR encoder &rarr; 2,000 counts/rev effective resolution.<br>&nbsp;&nbsp;<b>Speed calculation:</b> RPM = (pulses counted in T seconds) &times; 60 / (PPR &times; T). At 1,000 RPM with 1,000 PPR: 1,000 &times; 1,000/60 = 16,667 pulses/sec  &mdash;  verify HSC input can handle this rate.<br><b>Absolute encoders</b> output a unique binary code for each shaft position  &mdash;  no homing needed after power-up. Single-turn (0&ndash;359.9&deg;) vs multi-turn (16,384 turns &times; 4096 positions/turn). Interfaces: SSI (synchronous serial), BiSS-C (open), EnDat, Profinet.<br><b>ACY1 conveyor use:</b> Incremental encoders on belt drive shafts feed High-Speed Counter (HSC) inputs. The PLC converts counts to belt speed and product position for gapping, jam detection, and sortation timing."
       },
       {
         "h": "Scaling & Calibration",
-        "body": "EU = ((Raw - Raw_Low) / (Raw_High - Raw_Low)) x (EU_High - EU_Low) + EU_Low<br><b>Calibration:</b> Apply known reference, verify mA output, adjust zero (4mA) and span (20mA)."
+        "body": "<b>Scaling formula:</b> EU = ((Raw - Raw_Low) / (Raw_High - Raw_Low)) &times; (EU_High - EU_Low) + EU_Low<br><b>Example 1  &mdash;  4&ndash;20 mA pressure transmitter, 0&ndash;150 PSI:</b> Reading 12 mA &rarr; EU = ((12-4)/(20-4)) &times; 150 = 0.5 &times; 150 = <b>75 PSI</b>.<br><b>Example 2  &mdash;  12-bit PLC input (0&ndash;4095 counts), RTD 0&ndash;500&deg;F:</b> Raw = 2048 &rarr; EU = (2048/4095) &times; 500 = <b>250&deg;F</b> (ok)<br><b>Two-point calibration procedure:</b><br>&nbsp;1) Apply 4 mA reference (HART calibrator or precision source). Adjust zero pot/trim until display reads 0 EU.<br>&nbsp;2) Apply 20 mA reference. Adjust span pot/trim until display reads full-scale EU.<br>&nbsp;3) Mid-scale check at 12 mA  &mdash;  verify within &plusmn;0.5% of span (&plusmn;0.75 PSI for a 150 PSI range).<br><b>NAMUR NE 43 wire-break detection:</b> A 4&ndash;20 mA loop reading below 3.6 mA or above 21 mA signals a fault  &mdash;  never normal process values. PLC scaling should map this range to a 'sensor fault' alarm, not a false 0 or over-range process value."
       },
       {
         "h": "Photoelectric Sensing Modes In Depth",
@@ -3847,7 +3847,7 @@ MODULES = [
           "Normal at 0%"
         ],
         "answer": 0,
-        "explain": "4mA = live zero. 0mA = broken loop."
+        "explain": "A 4&ndash;20 mA loop can never legitimately read 0 mA  &mdash;  the minimum live signal is 4 mA (sensor zero). A 0 mA reading means the loop is open: broken wire, unpowered transmitter, blown fuse, or failed output stage. This is the key diagnostic advantage of the 4&ndash;20 mA standard. NAMUR NE 43 formalizes this: readings below 3.6 mA or above 21 mA trigger a sensor-fault alarm in the PLC rather than displaying a false process value."
       },
       {
         "q": "PNP sensor switches which voltage when active?",
@@ -3858,7 +3858,7 @@ MODULES = [
           "+V (supply)"
         ],
         "answer": 3,
-        "explain": "PNP = sourcing = connects output to +V."
+        "explain": "PNP sensors are sourcing: when active, the output pin connects to +24 VDC, driving the load HIGH. NPN sensors are sinking: when active, the output connects to 0 V (GND), sinking current through the load. PLC input cards must be wired for the correct type  &mdash;  check the card configuration (sinking or sourcing). Mismatching NPN to a sourcing input card yields no signal. Universal input cards accept both types, eliminating the wiring mismatch hazard."
       },
       {
         "q": "500 PPR encoder with x4 decoding:",
@@ -3869,7 +3869,7 @@ MODULES = [
           "4000"
         ],
         "answer": 0,
-        "explain": "500 x 4 = 2000 counts/rev."
+        "explain": "Quadrature (x4) decoding counts all four edges of both A and B channels per electrical cycle: A-rise, A-fall, B-rise, B-fall. 500 PPR &times; 4 = 2,000 counts/rev, quadrupling position resolution and enabling reliable direction detection. At 1,000 RPM the pulse frequency = 2,000 &times; (1000/60) &asymp; 33,333 Hz  &mdash;  verify the high-speed counter (HSC) input can handle this rate before wiring."
       },
       {
         "q": "Which photoelectric mode uses a corner-cube reflector and requires a polarizing filter when detecting shiny packages on a sorter?",
@@ -4526,7 +4526,7 @@ MODULES = [
     "sections": [
       {
         "h": "AC Induction Motors",
-        "body": "Stator creates rotating field; rotor dragged by induction (always slower = slip).<br><b>Sync speed:</b> n = 120 x f / P. 60Hz 4-pole = 1800RPM sync, ~1750 actual.<br><b>Nameplate:</b> HP, FLA, RPM, Voltage, SF (1.15 typ), Insulation (F=155C), NEMA frame, Enclosure (TEFC/ODP)."
+        "body": "Induction motors have no brushes or electrical connections to the rotor &mdash; torque is produced entirely by electromagnetic induction. The stator creates a rotating magnetic field; the rotor follows it, always running slightly slower (slip provides the relative motion needed for induction).<br><b>Synchronous speed:</b> Ns = 120 &times; f / P. 60 Hz, 4-pole: 1800 RPM sync; nameplate FLA speed ~1750 RPM (3% slip at full load).<br><b>Nameplate data &mdash; always record before replacing:</b> HP/kW (output power), FLA (Full Load Amps &mdash; basis for overload setting), RPM (nameplate speed at FLA), Voltage/Phase, Service Factor (SF 1.15 = 15% thermal margin), Insulation Class (B=130&deg;C, F=155&deg;C, H=180&deg;C), NEMA Frame (physical dimensions), Enclosure (TEFC = Totally Enclosed Fan Cooled, ODP = Open Drip Proof).<br><b>NEMA design letter:</b> B most common (normal torque, low starting current, low slip, conveyors/pumps/fans), C (high starting torque, compressors), D (high slip, punch presses, elevators).<br><b>Three-phase advantage:</b> Constant power (no 60 Hz pulsation), self-starting, no run capacitor, higher power density. All ACY1 conveyor drive motors are 3-phase induction."
       },
       {
         "h": "VFD Principles",
@@ -4534,7 +4534,7 @@ MODULES = [
       },
       {
         "h": "Key Parameters",
-        "body": "Motor data (V, FLA, HP, RPM, Hz). Accel/Decel time. Current limit (150% 60s, 200% 3s). Control mode (V/Hz, Sensorless Vector, Closed-loop Vector). Braking (coast, DC injection, dynamic braking resistor, regen)."
+        "body": "<b>Collect from motor nameplate before programming the VFD:</b> Input voltage/phase (480 VAC 3&phi;), rated FLA (Full Load Amps  &mdash;  basis for current limit), HP/kW, base speed (RPM at rated Hz), service factor (SF 1.15 = 15% thermal margin).<br><b>Critical VFD parameters:</b><br>&nbsp;&nbsp;<b>Accel/Decel time:</b> Too short &rarr; OC fault on accel or OV fault on decel (regen spike). Starting point: 5&ndash;10 s for conveyors, 30&ndash;60 s for high-inertia centrifugal loads.<br>&nbsp;&nbsp;<b>Current limit:</b> Standard = 150% FLA for 60 s, 200% for 3 s. Set motor overload to 110% FLA for conveyor protection. Increasing current limit to clear nuisance trips without finding root cause masks motor damage.<br>&nbsp;&nbsp;<b>Control mode:</b> V/Hz (constant volts-per-hertz, simplest, poor low-speed torque) &rarr; Sensorless Vector (estimates flux, good low-speed torque, no encoder) &rarr; Closed-loop Vector (encoder feedback, full torque at 0 RPM  &mdash;  for hoists and servo-class applications).<br>&nbsp;&nbsp;<b>Braking:</b> Coast (DC bus bleeds naturally  &mdash;  slowest), DC injection (injects DC into stator  &mdash;  quick but heats motor), Dynamic braking resistor (DBR dissipates regen energy externally  &mdash;  most common for conveyors), Regenerative unit (returns energy to AC supply  &mdash;  highest efficiency for large loads)."
       },
       {
         "h": "Common Faults",
@@ -4766,7 +4766,7 @@ MODULES = [
           "2700 RPM"
         ],
         "answer": 0,
-        "explain": "120 x 45 / 4 = 1350 RPM."
+        "explain": "Synchronous speed Ns = 120&times;f/P. At 45 Hz, 4-pole: Ns = 120&times;45/4 = 1350 RPM. At 60 Hz the same motor gives 1800 RPM. VFDs exploit this linear frequency-speed relationship: reducing drive output frequency to 75% of rated (45/60) produces 75% of rated synchronous speed. Actual rotor speed lags sync speed by 2&ndash;4% slip under full load."
       },
       {
         "q": "OV fault most often caused by:",
@@ -4777,7 +4777,7 @@ MODULES = [
           "High ambient temp"
         ],
         "answer": 1,
-        "explain": "Fast decel pumps energy back to DC bus, spiking voltage."
+        "explain": "During rapid deceleration, the motor acts as a generator, pumping regenerative energy back into the VFD DC bus. The bus capacitors charge above the overvoltage (OV) trip threshold (typically 800 V on a 480 V drive). Fix: increase decel time, add a dynamic braking resistor (DBR) to dissipate the regen energy, or install a regen unit to return energy to the AC supply. Sudden load drops (e.g., conveyor jam clears) cause the same symptom."
       },
       {
         "q": "Why maintain constant V/Hz?",
@@ -4788,7 +4788,7 @@ MODULES = [
           "OSHA requirement"
         ],
         "answer": 2,
-        "explain": "Constant V/Hz = constant flux = rated torque at any speed."
+        "explain": "An induction motor develops torque through electromagnetic flux. Flux is proportional to V/Hz. If you reduce frequency (speed) without reducing voltage proportionally, the core saturates and motor overheats. If you reduce voltage more than frequency, flux drops and torque capability falls. A VFD maintains V/Hz constant from 0 to base frequency, delivering rated torque across the full speed range. Above base frequency, voltage is fixed (flux-weakening region) and torque decreases."
       },
       {
         "q": "A dual-voltage motor nameplate shows 230/460 V with two FLA values. Which FLA goes with 460 V?",
@@ -4832,7 +4832,7 @@ MODULES = [
           "~960 VDC"
         ],
         "answer": 2,
-        "explain": "The 6-diode rectifier charges the bus caps to the AC peak: 480 x 1.414 = ~679 VDC."
+        "explain": "A 6-pulse rectifier uses six diodes arranged in a three-phase bridge. Each diode conducts during the positive or negative peak of one phase, producing a rippled DC output that rides near the AC peak. Bus voltage = V_LL_rms &times; &radic;2 = 480 &times; 1.414 &asymp; 679 VDC. The large capacitor bank smooths the ripple. This DC bus is what the IGBT inverter section chops back into variable-frequency AC. Measuring DC bus voltage is the first diagnostic step when a VFD shows a UV (under-voltage) or OV fault."
       },
       {
         "q": "Before touching the internals of a VFD after power-off you must:",
