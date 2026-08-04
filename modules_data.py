@@ -268,7 +268,7 @@ MODULES = [
           "L3 (MES)"
         ],
         "answer": 0,
-        "explain": "L1 is the direct control layer: PLCs and DCS. L0 = sensors/actuators, L2 = SCADA/HMI, L3 = MES/historian."
+        "explain": "ISA-95 Purdue Model: L0 = physical process (sensors, actuators). L1 = basic control (PLCs, safety PLCs, drives, ms-cycle execution). L2 = supervisory (SCADA, HMI servers). L3 = MES, batch systems, historian. L4 = business planning (ERP, SAP). Network segmentation between L2/L3 is the primary IT/OT security demarcation. IEC 62443 zones and conduits are applied at these boundaries."
       },
       {
         "q": "Which NFPA code is specifically about electrical safety in the workplace (arc-flash, LOTO)?",
@@ -290,7 +290,7 @@ MODULES = [
           "All in parallel"
         ],
         "answer": 2,
-        "explain": "Test the middle first. Good result = fault is downstream. Bad = upstream. Turns O(n) into O(log n)."
+        "explain": "Half-split reduces a 16-stage chain to at most 4 tests (log2 16 = 4). Test midpoint: signal good = fault in upper half; absent = lower half. Repeat on the suspect half. Applies to any linear signal path: conveyor zones, safety circuit segments, fieldbus trunk taps. Logarithmically faster than sequential testing from one end -- 1024 stages needs only 10 tests vs. up to 1024 sequential tests."
       },
       {
         "q": "Which IEC standard defines the five PLC programming languages (LD, FBD, ST, SFC, IL)?",
@@ -301,7 +301,7 @@ MODULES = [
           "IEC 61131-3"
         ],
         "answer": 3,
-        "explain": "IEC 61131-3 standardizes the five PLC languages. IEC 61508 is functional safety, IEC 62443 is OT cybersecurity."
+        "explain": "IEC 61131-3 five languages: LD (Ladder Diagram), FBD (Function Block Diagram), ST (Structured Text), IL (Instruction List -- deprecated Ed.3), SFC (Sequential Function Chart). IEC 61508 defines SIL 1-4 for electronic safety systems; IEC 61511 applies it to the process industry. IEC 62443 covers OT/ICS security. All three appear in automation job postings and PSSR/commissioning specifications."
       },
       {
         "q": "Which standard governs Industrial Control Panels (SCCR, wire colors, spacing)?",
@@ -345,7 +345,7 @@ MODULES = [
           "L3"
         ],
         "answer": 3,
-        "explain": "Historians live at L3 (MES/historian). They pull data from L2 SCADA and expose it upward to L4 business systems."
+        "explain": "OSIsoft PI / AVEVA PI sits at Purdue L3: polls SCADA/DCS at L2, stores time-series data in a compressed historian database, and exposes it to L4 ERP/analytics. Compression uses exception-based reporting (store only when value changes beyond a deadband). OT security note: historian servers bridge L2 and L3 -- they are a common attack pivot point and must be hardened with strict inter-zone firewall rules."
       },
       {
         "q": "The 5-whys technique is used to find the...",
@@ -576,7 +576,7 @@ MODULES = [
           "UL"
         ],
         "answer": 0,
-        "explain": "The IEC publishes 61131-3 (PLC languages), 61508/61511 (functional safety), and 62443 (ICS cybersecurity)."
+        "explain": "IEC core automation standards: IEC 61131-3 = five PLC languages (LD, FBD, ST, IL-deprecated, SFC). IEC 61508/61511 = functional safety (SIL 1-4) for E/E/PE systems. IEC 62443 = OT/ICS cybersecurity zones and conduits (SL1-4). IEC 60204-1 = electrical safety of machinery. ISA standards (ISA-5.1, 18.2, 84, 95) complement and often align. Both IEC and ISA credentials appear in job postings and system specs."
       },
       {
         "q": "In a 4-20 mA loop scaled 4 mA = 0 PSI and 20 mA = 100 PSI, a reading of 12 mA equals:",
@@ -587,7 +587,7 @@ MODULES = [
           "100 PSI"
         ],
         "answer": 1,
-        "explain": "12 mA is the midpoint of the 4-20 mA span (16 mA range), so it maps to 50% of 0-100 PSI = 50 PSI."
+        "explain": "4-20 mA linear scaling: PV = Min + (mA - 4) / 16 x (Max - Min). At 12 mA: (12-4)/16 = 0.5 = 50% of 100 PSI = 50 PSI. Subtract the live-zero offset (4 mA) before dividing by the 16 mA span. PLC analog blocks do this automatically; knowing the formula lets you verify block configuration, catch wiring errors, and compute expected mA from a known PV during field calibration."
       },
       {
         "q": "Why is 4-20 mA called a 'live zero' signal?",
@@ -719,7 +719,7 @@ MODULES = [
           "about 100 W"
         ],
         "answer": 1,
-        "explain": "omega = 1500 &times; 2&pi;/60 = 157 rad/s; P = tau &times; omega = 20 &times; 157 = 3140 W (about 4.2 hp)."
+        "explain": "Mechanical power P = torque x angular velocity. omega = RPM x 2*pi / 60. At 1500 RPM: omega = 157 rad/s. P = 20 N&middot;m x 157 = 3,140 W &asymp; 4.2 hp (1 hp = 746 W). Shortcut: P(kW) = torque(N&middot;m) x RPM / 9549. Use this to verify motor sizing: peak torque demand x max speed must not exceed the motor's rated power curve."
       },
       {
         "q": "In ladder logic, two normally-open contacts wired in series implement which Boolean function?",
@@ -730,7 +730,7 @@ MODULES = [
           "XOR"
         ],
         "answer": 2,
-        "explain": "Series contacts must all be closed (true) for power to pass, which is a logical AND. Parallel contacts form an OR."
+        "explain": "Series contacts = logical AND: every contact must be TRUE for power-flow to pass. Parallel contacts = logical OR: power flows if any branch is TRUE. Nested branches create (A AND (B OR C)) structures. When troubleshooting online in Studio 5000, trace which contact is not highlighted (not passing power-flow) -- that un-energized contact or its upstream wiring/tag is the fault point."
       },
       {
         "q": "A 12-bit ADC spans 0-100 psi. What is the approximate resolution per count?",
@@ -785,7 +785,7 @@ MODULES = [
           "A AND B"
         ],
         "answer": 1,
-        "explain": "De Morgan: the complement of an AND equals the OR of the complements, (A AND B)' = A' OR B'."
+        "explain": "De Morgan's theorem: NOT(A AND B) = (NOT A) OR (NOT B); NOT(A OR B) = (NOT A) AND (NOT B). Practical use: a ladder rung with two NC contacts in series is equivalent to an NC OR gate on those bits. Applied when converting active-high to active-low logic, redrawing circuits, or simplifying alarm logic. NAND gates and NOR gates implement De Morgan directly -- a NAND is an AND followed by NOT."
       },
       {
         "q": "The Nyquist rule requires that to capture a signal changing 10 times per second you sample at least:",
@@ -796,7 +796,7 @@ MODULES = [
           "20 times per second"
         ],
         "answer": 3,
-        "explain": "Nyquist requires sampling at a minimum of twice the highest signal frequency, so 2 &times; 10 = 20 samples per second."
+        "explain": "Nyquist-Shannon: sample rate must be &ge; 2x the highest signal frequency to avoid aliasing. 10 transitions/second needs &ge; 20 samples/second. PLC analog inputs (1-10 ms scan) reliably resolve signals below 50-500 Hz. For fast vibration signals (100-10,000 Hz), use a dedicated HSC module or DSP-based analyzer. Aliased signals appear at wrong frequencies and cause phantom vibration readings on spectrum analyzers."
       },
       {
         "q": "On a closed-loop level system the output is wrong but the valve and pump test fine. What should you also suspect?",
@@ -1175,7 +1175,7 @@ MODULES = [
           "960 V"
         ],
         "answer": 1,
-        "explain": "V_peak = V_rms * sqrt(2) = 480 * 1.414 = ~679 V. This peak is what insulation must withstand."
+        "explain": "RMS is the power-equivalent DC value; the actual waveform peaks at V_peak = V_rms x sqrt(2). For 480 V RMS: peak = 679 V. Insulation, capacitors, and surge arrestors must be rated for peak voltage, not RMS. VFD DC bus caps charge to the AC peak (~679 VDC on a 480 V system). CAT III-600V test leads are designed for 600 V RMS circuits but must handle the higher transient peaks present in motor-circuit switching environments."
       },
       {
         "q": "On a 480 V wye system, what is the line-to-neutral voltage?",
@@ -1186,7 +1186,7 @@ MODULES = [
           "480 V"
         ],
         "answer": 2,
-        "explain": "V_line = V_phase * sqrt(3). 480 / 1.732 = ~277 V line-to-neutral - the voltage that feeds industrial lighting."
+        "explain": "The line-to-neutral voltage in a wye system is V_LN = V_LL / sqrt(3). For a 480 V system: 480 / 1.732 = 277 V line-to-neutral. This is the voltage each phase winding sees and the value used for single-phase 277 V industrial lighting circuits. Delta systems have no neutral; all loads connect line-to-line. For a delta 480 V system, there is no 277 V tap and single-phase loads must be rated 480 V."
       },
       {
         "q": "Motors are inductive loads. How does power factor typically behave at full load?",
@@ -1494,7 +1494,7 @@ MODULES = [
           "0.36 A"
         ],
         "answer": 2,
-        "explain": "Series Rt = 300 ohm; I = V/R = 24/300 = 0.08 A. The drops are 8 V and 16 V, summing to 24 V per KVL."
+        "explain": "Series total resistance Rt = 100 + 200 = 300 &ohm;. Current I = V/Rt = 24/300 = 0.08 A (80 mA). Kirchhoff's Voltage Law: sum of drops = source. Drop across R1 = 0.08 &times; 100 = 8 V; drop across R2 = 0.08 &times; 200 = 16 V; 8 + 16 = 24 V. Verification: if either component changed value, the current and both drops change proportionally. This is the basis for voltage-divider sensor scaling and analog input calibration."
       },
       {
         "q": "Kirchhoff's Current Law states that at any node:",
@@ -1505,7 +1505,7 @@ MODULES = [
           "Current in equals current out"
         ],
         "answer": 3,
-        "explain": "KCL: the current entering a node equals the current leaving it. KVL addresses voltage sums around a loop."
+        "explain": "KCL: sum of currents into any node = sum of currents out. In parallel circuits: total current = sum of branch currents. GFCI/ELCB protection works by KCL: &ge;5 mA imbalance between line and neutral current (current leaking to ground) trips the breaker. KVL: sum of voltage drops around any closed loop = 0. Every DMM measurement you make applies either KVL (measuring voltage drops) or KCL (measuring branch currents)."
       },
       {
         "q": "A 20 A, 120 V branch circuit requires a minimum copper conductor of:",
@@ -1549,7 +1549,7 @@ MODULES = [
           "1.2 cal/cm2 (onset of second-degree burn)"
         ],
         "answer": 3,
-        "explain": "The arc-flash boundary is where incident energy falls to 1.2 cal/cm2, the threshold for a second-degree skin burn."
+        "explain": "IEEE 1584 arc-flash boundary = distance where incident energy = 1.2 cal/cm^2 (onset of second-degree burn). PPE categories by calculated incident energy: Cat 1 (&lt;4 cal) = arc shirt + face shield; Cat 2 (&lt;8 cal) = 8-cal arc flash suit; Cat 3 (&lt;25 cal) = 25-cal suit; Cat 4 (&lt;40 cal) = 40-cal suit. Calculation inputs: available fault current, clearing time, and working distance from the arc source."
       },
       {
         "q": "Ordinary THHN in conduit used for VFD output leads commonly causes:",
@@ -1615,7 +1615,7 @@ MODULES = [
           "Reverse the polarity"
         ],
         "answer": 1,
-        "explain": "An open CT secondary under primary current develops dangerous high voltage; unused CT secondaries must be shorted."
+        "explain": "A CT secondary must remain a near-short circuit during operation. If opened while primary current flows, the CT acts as a step-up transformer with very high turns ratio, developing thousands of volts -- lethal and destructive. Safety rule: always short the CT secondary before disconnecting a current meter or relay. Use shorting-type terminal blocks (short TB) or a CT shorting switch. Never leave an unused CT secondary open-circuited during operation."
       },
       {
         "q": "A surge protective device's ground lead should be:",
@@ -1637,7 +1637,7 @@ MODULES = [
           "about 12.8 &Omega;"
         ],
         "answer": 3,
-        "explain": "Net reactance = 15 - 7 = 8 &Omega;; |Z| = sqrt(10&sup2; + 8&sup2;) = sqrt(164) = 12.8 &Omega;."
+        "explain": "Series RLC: X_net = X_L - X_C = 15 - 7 = 8 &Omega; net inductive. |Z| = sqrt(R^2 + X_net^2) = sqrt(100 + 64) = 12.8 &Omega;. Current I = V / 12.8. Phase angle = arctan(8/10) &asymp; 39 deg lagging. Power factor = cos(39) &asymp; 0.78 -- 22% of apparent power is reactive. Adding a correction capacitor shifts X_net toward zero, improving power factor and reducing reactive power billing charges on industrial utility accounts."
       },
       {
         "q": "Inductive reactance X_L as frequency increases will:",
@@ -1648,7 +1648,7 @@ MODULES = [
           "Become negative"
         ],
         "answer": 0,
-        "explain": "X_L = 2&pi;fL rises directly with frequency; capacitive reactance X_C = 1/(2&pi;fC) instead falls with frequency."
+        "explain": "X_L = 2*pi*f*L: inductive reactance rises with frequency -- a coil increasingly opposes high-frequency AC. X_C = 1/(2*pi*f*C): capacitive reactance falls with frequency -- capacitors block DC and pass high-frequency AC freely. VFD switching harmonics (1-20 kHz) see higher X_L in motor windings, creating voltage spikes that stress turn insulation. Line reactors deliberately exploit rising X_L to attenuate these harmonics."
       },
       {
         "q": "Why is a motor's inrush current high at the instant of starting?",
@@ -1703,7 +1703,7 @@ MODULES = [
           "900 rpm"
         ],
         "answer": 1,
-        "explain": "Synchronous speed = 120 &times; 60 / 4 = 1800 rpm; with slip the nameplate full-load speed is about 1750 rpm."
+        "explain": "Synchronous speed Ns = 120 &times; f / P where f = line frequency (Hz) and P = number of poles. For a 4-pole motor at 60 Hz: Ns = 120 &times; 60 / 4 = 1800 rpm. An induction motor always runs slightly below Ns due to slip (typically 2&ndash;4% at full load), so nameplate full-load speed is about 1750 rpm. Slip creates the relative motion between rotor and rotating stator field that induces rotor current and produces torque. At no load, slip approaches zero."
       },
       {
         "q": "General NEC conduit fill for three or more conductors is limited to about:",
@@ -1714,7 +1714,7 @@ MODULES = [
           "100%"
         ],
         "answer": 2,
-        "explain": "The 40% fill limit for three or more conductors allows heat dissipation and room to pull without damaging insulation."
+        "explain": "NEC Chapter 9 Table 1 fill limits: 1 conductor = 53%, 2 conductors = 31%, 3+ = 40% of conduit cross-section area. Sum each conductor's area (Table 5) and compare to 40% of conduit area (Table 4). Exceeding fill violates code, causes heat buildup (bundling derating per 310.15), and damages insulation during pulling. Design guideline: target 60-70% fill so 30-40% remains as spare capacity for future circuits."
       },
       {
         "q": "At resonance in a series RLC circuit, the impedance:",
@@ -1725,7 +1725,7 @@ MODULES = [
           "Drops to just the resistance R"
         ],
         "answer": 3,
-        "explain": "At resonance X_L = X_C, the reactances cancel, so impedance equals R alone and current is maximum."
+        "explain": "At series resonance f_r = 1/(2*pi*sqrt(LC)): X_L = X_C, reactances cancel, Z = R only, current is maximum (V/R) and in phase (PF = 1). Practical hazard: PFC capacitor banks can resonate with transformer leakage inductance at harmonic frequencies from VFDs, causing destructive voltage magnification. Always perform a harmonic resonance study when adding PFC capacitors near variable-speed drive systems."
       },
       {
         "q": "For three or more current-carrying conductors in a conduit, NEC generally limits the conductor fill to what percentage of the raceway's interior cross-sectional area?",
@@ -2074,7 +2074,7 @@ MODULES = [
           "Only for outputs, not inputs"
         ],
         "answer": 1,
-        "explain": "PNP = sourcing (switches +V), NPN = sinking (switches 0 V). Match the sensor to what the input module expects."
+        "explain": "PNP (sourcing): output switches between +VDC and open when active. Load connects between output and 0 V. NPN (sinking): output switches between 0 V and open. Load connects between +VDC and output. Match: PNP sensor to sinking input module; NPN sensor to sourcing module. Three-wire color code (IEC 60947-5-2): brown = +V, blue = 0 V, black = signal. Quick field test: meter the black wire to blue (0 V) with sensor triggered -- high = PNP, low = NPN."
       },
       {
         "q": "Why is 4-20 mA preferred over 0-10 V for long field runs?",
@@ -2250,7 +2250,7 @@ MODULES = [
           "0.35 V"
         ],
         "answer": 0,
-        "explain": "V_avg = D x V_supply = 0.35 x 24 = 8.4 V. A 65% duty cycle would produce 15.6 V (option B)."
+        "explain": "PWM average voltage = duty cycle x supply. At 35% on 24 VDC: V_avg = 0.35 x 24 = 8.4 V. The load's capacitance/inductance integrates the switching waveform to see this average. Key parameters: switching frequency (higher = smoother output, more switching loss and EMI), duty cycle resolution (8-bit = 256 steps = 0.4% resolution), dead-time (prevents IGBT shoot-through). All VFDs, servo drives, and proportional valve drivers use high-frequency PWM for this reason."
       },
       {
         "q": "Which isolation method provides the highest common-mode rejection ratio (CMRR) for a millivolt-level analog signal in a noisy motor-control panel?",
@@ -2437,7 +2437,7 @@ MODULES = [
           "Shift left"
         ],
         "answer": 1,
-        "explain": "XOR with 1 flips (toggles) a bit; AND masks/clears, OR sets, and shifts move bit positions."
+        "explain": "Bitwise operation summary: AND 0 = clear bit; AND 1 = preserve. OR 1 = set bit; OR 0 = preserve. XOR 1 = toggle/flip; XOR 0 = preserve. NOT = invert all bits. SHL/SHR shift left/right (equivalent to multiply/divide by 2). PLC use: isolate a fault code field from a VFD status word by AND-masking the relevant bits, then compare the extracted result to the fault code lookup table."
       },
       {
         "q": "An output is unexpectedly de-energized. The fastest software tool to find what controls it is:",
@@ -2503,7 +2503,7 @@ MODULES = [
           "A scan overrun fault by starving the continuous task"
         ],
         "answer": 3,
-        "explain": "High-priority tasks preempt the continuous task; overload starves it and triggers a scan-overrun/watchdog fault."
+        "explain": "In ControlLogix, periodic and event tasks run at higher priority than the continuous task. If total high-priority task CPU load exceeds available cycles, the continuous task is starved -- it never completes its scan, the watchdog expires, and a Major Fault occurs (Type 1, Code 22). Monitor CPU load in Controller Properties. Keep total task utilization &lt;80% to leave headroom for communications. Best practice: time-critical logic in periodic tasks, everything else in continuous task."
       },
       {
         "q": "A mechanical limit switch producing multiple false counts per actuation is best addressed by:",
@@ -2970,7 +2970,7 @@ MODULES = [
           "Resets to 0 immediately"
         ],
         "answer": 3,
-        "explain": "TON is non-retentive - rung false zeros .ACC. RTO is the retentive variant that requires an explicit RES."
+        "explain": "TON .ACC resets to zero immediately when the enabling rung goes FALSE -- before .DN even sets if interrupted mid-count. This non-retentive behavior means interrupted timers restart from zero on the next rising edge. RTO is the retained version: .ACC holds until an explicit RES clears it. Mental model: TON = delay this action; RTO = accumulate total on-time. Mixing them causes subtle bugs where accumulated runtime vanishes on a power cycle or emergency stop."
       },
       {
         "q": "A counter's .DN bit becomes TRUE at ACC&gt;=PRE. Does the counter STOP counting?",
@@ -3058,7 +3058,7 @@ MODULES = [
           "RTO timer accumulator"
         ],
         "answer": 3,
-        "explain": "RTO .ACC, CTU/CTD .ACC, and OTL latched bits are retentive. OTE follows rung logic each scan; XIC just examines a bit."
+        "explain": "Retentive (survive power cycle in non-volatile RAM): RTO .ACC, CTU/CTD .ACC, OTL latched bits, and explicitly retained data tags. Non-retentive: OTE coil (re-driven every scan), TON/TOF .ACC (resets on rung-false), OSR storage bits. Safety implication: an OTL latched alarm must be explicitly cleared with OTU after the fault is acknowledged. A TON-based alarm resets silently on power cycle, potentially masking an intermittent fault that needs root-cause investigation."
       },
       {
         "q": "An SCP instruction is used for:",
@@ -3399,7 +3399,7 @@ MODULES = [
           "Nothing"
         ],
         "answer": 2,
-        "explain": "Out-of-bounds array access faults or corrupts neighboring memory; the index must be validated against the array size."
+        "explain": "Array out-of-bounds in ControlLogix causes a Major Fault (Type 4, code 20) or silently accesses adjacent memory, corrupting other tags. Both outcomes are unacceptable in a production system. Guard pattern: IF (Idx &ge; 0) AND (Idx &le; ARRAY_MAX) THEN process ARRAY[Idx]. Define ARRAY_MAX as a named constant equal to the declared upper bound so guard logic updates automatically when the array is resized."
       },
       {
         "q": "A bit-shift register on a conveyor is used to:",
@@ -3421,7 +3421,7 @@ MODULES = [
           "Interlocks only apply at startup"
         ],
         "answer": 0,
-        "explain": "Permissives are ANDed start conditions; interlocks override the run command when something goes wrong during operation."
+        "explain": "Permissive = pre-start condition: all must be satisfied before start is accepted (lube pressure OK, guards closed, temperature in range). All permissives AND together -- any failure blocks the start. Interlock = runtime protective function: if a condition fails DURING operation, the interlock overrides and shuts down or blocks restart. Document both in a Cause and Effect (C&amp;E) matrix for SAT review: columns = initiating events, rows = actions, cells = P or I."
       },
       {
         "q": "Personnel-safety interlocks (E-stop, guard, light curtain) should be implemented in:",
@@ -3454,7 +3454,7 @@ MODULES = [
           "An equality comparison against the step register"
         ],
         "answer": 3,
-        "explain": "EQU StepNum N gates each step's rung so only the current step executes; transitions advance StepNum to the next step."
+        "explain": "Step-logic flat state machine: integer tag Step holds the active step number. Each action rung begins EQU Step N -- only the current step's rung gets power-flow. Transition rungs check completion conditions then MOV the next step value into Step. Debug advantage: force Step to any value in the data monitor to jump to any step during commissioning. Add Step=0 (home) and Step=99 (fault) states for robust error handling and controlled recovery."
       },
       {
         "q": "A totalizer stored in a 16-bit signed integer will roll over at:",
@@ -3935,7 +3935,7 @@ MODULES = [
           "75%"
         ],
         "answer": 0,
-        "explain": "Current = 3.5 V / 250 ohm = 14 mA. Span = 20 - 4 = 16 mA. Percent = (14 - 4) / 16 = 10 / 16 = 62.5%."
+        "explain": "250-ohm sense resistor converts 4-20 mA to 1-5 V: I = V/R = 3.5/250 = 14 mA. Percent of span = (14-4)/16 = 62.5%. The 1-5 V range maps to a PLC voltage-input analog module. Quick mental anchor: 12 mA = 50%, 8 mA = 25%, 16 mA = 75%. A reading below 3.6 mA (&lt;1 V across 250 ohm) triggers a wire-break alarm in the PLC analog module's diagnostic register."
       },
       {
         "q": "A 4-20 mA loop suddenly reads 0 mA at the PLC. What does this indicate?",
@@ -4034,7 +4034,7 @@ MODULES = [
           "500 mm"
         ],
         "answer": 1,
-        "explain": "S = K x (Ts + Tc) + C = 1600 x (0.220 + 0.030) + 0 = 1600 x 0.250 = 400 mm. Option B is correct."
+        "explain": "ISO 13855 safety distance: S = K x (T_s + T_c) + C. K = 1600 mm/s (hand approach speed), T_s = machine stopping time (220 ms), T_c = safety device response time (30 ms), C = penetration supplement (0 here). S = 1600 x 0.250 = 400 mm. The light curtain must be at least 400 mm from the nearest hazard. If machine stopping time increases (mechanical wear), the minimum safety distance increases proportionally."
       },
       {
         "q": "A vibration reading on a conveyor motor measures 5.2 mm/s RMS. Per ISO 10816-3 (Group 1, &gt;15 kW), which zone does this fall into?",
@@ -4056,7 +4056,7 @@ MODULES = [
           "16 mV"
         ],
         "answer": 1,
-        "explain": "Full-scale output = 10 V x 2 mV/V = 20 mV. At 200 kg (40% FS): V = 20 mV x 0.40 = 8 mV. Option B."
+        "explain": "Load cell: FS output = excitation x sensitivity = 10 V x 2 mV/V = 20 mV. At 200 kg (40% of 500 kg FS): output = 20 mV x 0.40 = 8 mV. This tiny differential signal requires an instrumentation amplifier (INA128, AD620) with high CMRR before the PLC analog input. Shield the load cell cable and ground only at the amplifier end to prevent ground-loop noise. Verify linearity by applying dead-weights at 0%, 50%, and 100% FS."
       },
       {
         "q": "When mounting a fiber-optic sensor amplifier, the bright-level reading is 8200 counts and the dark-level is 1400 counts. Where should the threshold be set for maximum noise margin?",
@@ -4364,7 +4364,7 @@ MODULES = [
           "Sits near the centreline of the flowing stream"
         ],
         "answer": 3,
-        "explain": "Locating the tip in the bulk flow reads representative fluid temperature; wall measurement lags and reads low."
+        "explain": "Thermowell insertion depth: place the sensor tip in turbulent core flow, not the slow boundary layer near the pipe wall. ASME PTC 19.3 recommends insertion of at least 1/3 to 2/3 of inner pipe diameter. A short thermowell reads wall temperature (several deg cooler than bulk), causing the control loop to run the process hotter than needed to reach setpoint. Thermowell also adds thermal lag (tau = minutes for thick stainless in liquid); account for this dead time when tuning temperature PID loops."
       },
       {
         "q": "Which voting architecture is standard for a highly critical safety trip where BOTH nuisance trips and missed demands must be minimised?",
@@ -4865,7 +4865,7 @@ MODULES = [
           "Lower the motor FLA parameter"
         ],
         "answer": 1,
-        "explain": "Fast decel/overhauling loads pump energy back into the DC bus. Slow the decel or dump the energy in a DB resistor."
+        "explain": "Regenerative braking: when a VFD decelerates faster than load inertia dissipates energy, the motor generates power into the DC bus. Bus rises above OV trip (&asymp;800 V on a 480 V drive). Fix 1: extend decel ramp. Fix 2: add a dynamic brake (DB) resistor + chopper -- absorbs regenerated energy as heat. DB sizing: E = 1/2 x J x omega^2 joules, power = E x cycles/min / 60. Fix 3: active-front-end (regenerative) drive returns energy to the grid."
       },
       {
         "q": "A drive shows a GF (ground fault). The smartest first step is to:",
@@ -4876,7 +4876,7 @@ MODULES = [
           "Lower the carrier frequency"
         ],
         "answer": 2,
-        "explain": "Ground faults usually come from damaged motor/cable insulation. Megger the motor and cable before condemning the drive."
+        "explain": "VFD GF fault = current to earth above threshold (~3-5% rated). Isolation test: (1) De-energize and LOTO. (2) Disconnect motor leads from drive output. (3) Megger each motor winding to ground at 500 VDC: minimum 1 M-ohm per NEMA MG1, healthy = &gt;100 M-ohm. (4) Megger cable separately. If both clean but GF persists when reconnected, suspect long-cable capacitive leakage -- add an output reactor to attenuate the high-frequency leakage current component."
       },
       {
         "q": "Why use shielded VFD cable with a 360-degree shield termination?",
@@ -5239,7 +5239,7 @@ MODULES = [
           "1800 rpm"
         ],
         "answer": 3,
-        "explain": "Ns = 120 x f / poles = 120 x 60 / 4 = 1800 rpm; the loaded rotor runs slightly slower (~1750 rpm) due to slip."
+        "explain": "Synchronous speed Ns = 120 x f / P. 4-pole at 60 Hz: Ns = 1800 RPM. Nameplate full-load speed &asymp;1750 RPM = 2.8% slip. Slip speed = 50 RPM. A VFD controls output frequency to control Ns directly: run at 30 Hz for &asymp;900 RPM. Motor slip is unavoidable in induction motors -- it induces rotor current and creates torque. Excessive slip at rated load indicates high rotor resistance (degraded rotor bars) or undersized motor."
       },
       {
         "q": "Slip in an induction motor is necessary because:",
@@ -5283,7 +5283,7 @@ MODULES = [
           "about 33%"
         ],
         "answer": 3,
-        "explain": "Wye connection places 58% of line voltage across each winding; both current and torque drop to about 33% of DOL values."
+        "explain": "Wye-delta starting: windings in star (wye) see V_line / sqrt(3) = 58% voltage. Torque and current scale as voltage^2: both drop to (1/sqrt(3))^2 = 1/3 of DOL values -- good for light loads. Delta re-connection transient can be severe if transition timing is wrong. Modern preference: use a VFD for smoother acceleration, lower inrush, adjustable ramp, and no contactor transition spike."
       },
       {
         "q": "After commissioning a VFD, the SINGLE most important operational discipline is to:",
@@ -5305,7 +5305,7 @@ MODULES = [
           "Linearly with speed"
         ],
         "answer": 1,
-        "explain": "Affinity laws: torque scales with speed squared and power with speed cubed on centrifugal (variable-torque) loads."
+        "explain": "Centrifugal affinity laws: Flow proportional to speed; Pressure proportional to speed^2; Power proportional to speed^3. Halving fan speed cuts power to 1/8 -- why VFDs on fans and pumps save 30-70% energy. Set VFD to Variable Torque mode for centrifugal loads (not Constant Torque). Torque at low speed is near-zero on centrifugal loads, so starting current is naturally low even without reduced-voltage starting."
       },
       {
         "q": "A VFD sitting on a shelf for 3+ years should have its DC-bus capacitors what before energising?",
@@ -5327,7 +5327,7 @@ MODULES = [
           "2"
         ],
         "answer": 3,
-        "explain": "Two binary bits give 2&sup2; = 4 combinations (00, 01, 10, 11), enough to select four presets."
+        "explain": "VFD multi-speed: n digital inputs give 2^n speed presets. 2 inputs = 4 presets (slow, medium, fast, jog). 3 inputs = 8 presets. Program preset frequencies in the VFD parameter table (Yaskawa P1-01 to P1-08, A-B P-11 to P-18). Each binary combination of input states selects one preset. Use this instead of a 4-20 mA analog signal when only discrete speed steps are needed -- simpler wiring and no analog calibration required."
       },
       {
         "q": "In MCSA, broken rotor bars produce sidebands around f_s at:",

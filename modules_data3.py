@@ -236,7 +236,7 @@ MODULES_3 = [
           "Delete program"
         ],
         "answer": 2,
-        "explain": "Fault = safe state (outputs off) + require both fault cleared AND operator acknowledge before restart."
+        "explain": "FAULT state in a state machine is the controlled safe state reached when an interlock or sequence error is detected. Requirements: (1) All controlled outputs must go to their safe state (typically off/de-energized). (2) The state machine must stay in FAULT until both the fault condition is cleared AND an operator manually acknowledges (explicit reset action). This dual requirement prevents automatic restart after a fault, which could injure workers who entered the machine during the fault stop. The acknowledge step is auditable and required by OSHA machine guarding standards."
       },
       {
         "q": "AB Major Fault Type 4 indicates:",
@@ -258,7 +258,7 @@ MODULES_3 = [
           "It is required syntax for all counters"
         ],
         "answer": 1,
-        "explain": "Without an edge trigger, a held button increments the counter every scan. R_TRIG gives one rising-edge pulse per press."
+        "explain": "In IEC 61131-3 ST or FBD: if a CTU counter's CU input reads a BOOL tag directly (without edge detection), a held-down button will increment the counter on every program scan (every 5-20 ms) -- hundreds of counts per second instead of one per press. R_TRIG (Rising edge trigger) function block converts a sustained HIGH signal into a one-scan pulse. Usage: R_TRIG_inst(CLK := PB_Start); IF R_TRIG_inst.Q THEN counter.CU := TRUE; END_IF. The equivalent in ladder is an OSR instruction before the CTU count input."
       },
       {
         "q": "A TON function-block instance in ST exposes which two outputs?",
@@ -302,7 +302,7 @@ MODULES_3 = [
           "Wrap around to Temps[0]"
         ],
         "answer": 1,
-        "explain": "Index 10 is outside 0..9. Always guard the index (IF i &gt;= 0 AND i &lt;= 9) before accessing the element."
+        "explain": "Accessing ARRAY[0..9] at index 10 is out of bounds. ControlLogix causes a Major Fault (Type 4, Code 20) or silently corrupts adjacent tags. Guard every array index: IF (idx &ge; 0) AND (idx &le; 9) THEN process ARRAY[idx]. Define a named constant MAX_IDX = 9 so guard logic updates automatically if the array is resized. For read-only arrays, an out-of-range index should log an error and return a safe default value rather than faulting the controller."
       },
       {
         "q": "For passing a large UDT into an AOI/function without a copy cost, which parameter type is best?",
@@ -753,7 +753,7 @@ MODULES_3 = [
           "Fails to compile"
         ],
         "answer": 0,
-        "explain": "Copy semantics on large UDTs waste scan time and memory; IN_OUT passes by reference for zero-copy access."
+        "explain": "In IEC 61131-3 and Studio 5000 AOIs, an IN parameter copies the entire UDT value into the AOI on each call. For a Motor_Data UDT with 10 fields, that is 10 REAL/BOOL copies per scan -- multiplied by hundreds of motor instances. An IN_OUT parameter passes a pointer (reference) to the caller's tag: zero copy, the AOI reads and writes the original tag in place. Use IN_OUT for large UDTs and ARRAY parameters. Use IN only for small values (BOOL, INT) where copy overhead is negligible and read-only semantics are intentional."
       },
       {
         "q": "Which type of task best captures a fast single-pulse input that might otherwise be missed between continuous scans?",
@@ -764,7 +764,7 @@ MODULES_3 = [
           "No task at all"
         ],
         "answer": 1,
-        "explain": "Event tasks fire on the specific stimulus, capturing narrow pulses that a slower continuous scan could miss."
+        "explain": "Event tasks in ControlLogix fire on a hardware interrupt (input module change-of-state, HSC rollover, motion event) rather than on a time period. The task starts within microseconds of the trigger, runs to completion, and returns to the scheduler. This is essential for capturing narrow pulses (cam signals, registration marks, product count pulses) that would be missed by a 10-20 ms continuous task scan. Configure only the minimum necessary logic in an event task -- the faster it completes, the less it delays the continuous task."
       },
       {
         "q": "AOI versioning (v1, v2) is important because:",
@@ -1083,7 +1083,7 @@ MODULES_3 = [
           "Enterprise ERP"
         ],
         "answer": 1,
-        "explain": "Time-critical control (ms response) must stay at edge. Cloud latency is unacceptable for real-time control."
+        "explain": "Edge computing keeps latency-critical decisions local (sub-millisecond to a few milliseconds response). Round-trip to a cloud server (internet) typically adds 50-200 ms of latency, plus jitter -- completely unacceptable for machine safety functions or servo control. The edge (PLC, edge controller, embedded PC) handles real-time control. The cloud handles non-real-time work: long-term analytics, digital twin synchronization, fleet management, and ML model training. The result is a latency pyramid: edge = ms, fog/on-premise = seconds, cloud = minutes to hours."
       },
       {
         "q": "MQTT uses what messaging pattern?",
@@ -1094,7 +1094,7 @@ MODULES_3 = [
           "Polling"
         ],
         "answer": 2,
-        "explain": "MQTT = pub/sub through a broker. Publishers send to topics, subscribers receive from topics. Decoupled and lightweight."
+        "explain": "MQTT (Message Queuing Telemetry Transport) is a pub/sub protocol designed for constrained devices and unreliable networks. Publishers send messages to named topics on a broker (e.g., plant/line1/motor/temperature). Subscribers register interest in topics and receive matching messages without knowing the publisher. The broker handles routing and queuing. QoS levels: 0 = fire-and-forget, 1 = at-least-once, 2 = exactly-once. MQTT is lightweight (2-byte fixed header), runs over TCP, and scales to millions of devices -- ideal for IIoT sensor data collection pipelines."
       },
       {
         "q": "IEC 62443 addresses:",
@@ -1994,7 +1994,7 @@ MODULES_3 = [
           "Measure voltage on same leads"
         ],
         "answer": 0,
-        "explain": "NEVER measure ohms on energized circuits. De-energize, lock out, verify dead, THEN measure."
+        "explain": "Measuring resistance on an energized circuit injects the ohmmeter's own test current into a live voltage -- the result is meaningless and potentially destructive. Energized measurement also risks arcing, meter damage, and electrocution. Procedure: (1) De-energize the circuit. (2) LOTO and verify zero energy with a calibrated meter. (3) Discharge capacitors. (4) Disconnect at least one end of the component under test (to avoid parallel resistance paths giving false low readings). Then measure resistance."
       },
       {
         "q": "Motor insulation 3 Megohms on 480V motor:",
@@ -2005,7 +2005,7 @@ MODULES_3 = [
           "Failed immediately"
         ],
         "answer": 2,
-        "explain": "Min = ~2M. 3M is above minimum but in caution zone (&lt;100M). Monitor trend; if declining, plan replacement."
+        "explain": "Motor insulation resistance per IEEE 43: minimum acceptable = 1 M&Omega; at 40&deg;C for motors &lt;1 kV. 3 M&Omega; is above minimum but in the caution zone (&lt;100 M&Omega; suggests moisture, contamination, or aging). Most important is the TREND: a stable 3 M&Omega; is less concerning than one that was 50 M&Omega; six months ago. Compare all three phase-to-ground readings -- a large imbalance between phases localizes the degradation. Best practice: log insulation resistance at every PM to build a trend chart over equipment life."
       },
       {
         "q": "Half-split troubleshooting:",
@@ -2511,7 +2511,7 @@ MODULES_3 = [
           "Low by 10-40% because averaging assumes a pure sine wave"
         ],
         "answer": 3,
-        "explain": "Distorted waveforms violate the sine assumption; a true-RMS meter samples the actual waveform and computes correct RMS."
+        "explain": "Average-responding AC meters are calibrated to read RMS for a pure sine wave (crest factor = 1.41). When measuring non-sinusoidal waveforms (VFD output, UPS, switching power supplies, motor drives), the waveform's crest factor differs and the average-responding meter reads 10-40% low. A true-RMS meter samples the actual waveform (using an analog multiplier or DSP) and computes correct RMS regardless of wave shape. Always use true-RMS meters for any measurement near variable-speed drives, inverters, or power electronics."
       },
       {
         "q": "A non-contact voltage tester should NEVER be used as the sole verification for:",
@@ -2533,7 +2533,7 @@ MODULES_3 = [
           "No useful data"
         ],
         "answer": 1,
-        "explain": "Long-record loggers show behavior over time; a single instantaneous reading captures none of the load's real profile."
+        "explain": "A portable data logger records voltage, current, power factor, harmonics, and temperature continuously for days or weeks. This time-series record reveals: intermittent overloads (peak current during shift-start), voltage sags (when large motors start), thermal cycling (heat buildup during production, cool-down at breaks), and power quality events (VFD harmonics, capacitor switching transients). A single DMM reading during normal operation captures only one instant -- it cannot see the peak demands or the slow-developing thermal trends that cause most aging failures."
       },
       {
         "q": "Before pulling out a meter on a chronic problem, the most efficient first step is:",
@@ -2902,7 +2902,7 @@ MODULES_3 = [
           "Cavitation"
         ],
         "answer": 0,
-        "explain": "1x RPM = shaft speed frequency = rotor imbalance. Most common vibration problem. Fix by balancing."
+        "explain": "1x RPM vibration (a peak on the spectrum at exactly the shaft rotation frequency) is the most common vibration signature and classically indicates mass imbalance -- a heavy spot on the rotor. Other 1x sources: misalignment (appears with 2x as well), bent shaft, loose fit. Fix imbalance by field balancing (trial-and-error weight placement) or sending the rotor to a dynamic balancing machine. Unbalance increases centrifugal force with speed squared -- small imbalance at 3000 RPM produces 4x the force as at 1500 RPM."
       },
       {
         "q": "MTBF=500hr, MTTR=5hr. Availability?",
@@ -3814,7 +3814,7 @@ MODULES_3 = [
           "Mix freely"
         ],
         "answer": 0,
-        "explain": "Separation prevents noise coupling. 480V next to 24VDC = false readings, erratic PLC, potential damage."
+        "explain": "Power and signal wiring separation prevents electromagnetic interference. 480 V AC power cables generate strong magnetic fields that induce noise voltages in adjacent low-level signal cables. Recommended separation: at least 150 mm (6 inches) between power wiring (208-480 V) and control/signal wiring (24 VDC, 4-20 mA, encoder, serial). In conduits, never run power and signal in the same conduit. Cross at 90 degrees where crossing is unavoidable. Use shielded cable for analog signals, with shield grounded at one end (source end) only."
       },
       {
         "q": "What is SCCR?",
@@ -3825,7 +3825,7 @@ MODULES_3 = [
           "System Control Circuit Resistance"
         ],
         "answer": 1,
-        "explain": "SCCR must be &gt;= available fault current at installation point. Required by UL 508A / NEC."
+        "explain": "Short Circuit Current Rating (SCCR) is the maximum fault current a panel assembly can safely interrupt or withstand without catastrophic failure (arc blast, fire, component destruction). SCCR must equal or exceed the Available Fault Current (AFC) at the panel's installation point. NEC 409.22 and UL 508A require SCCR to be marked on all industrial control panels. AFC is calculated from utility transformer kVA, impedance, and total source impedance. Under-rated SCCR means a bolted fault could violently destroy the panel."
       },
       {
         "q": "First power-up sequence:",
@@ -4723,7 +4723,7 @@ MODULES_3 = [
           "Replaces degree"
         ],
         "answer": 0,
-        "explain": "ISA CCST = THE benchmark for automation/controls technicians. Levels I-II-III. Recognized industry-wide."
+        "explain": "ISA CCST (Certified Control Systems Technician) is the industry benchmark credential for automation/controls technicians in the USA and increasingly globally. Three levels: Level I (basic fundamentals), Level II (intermediate, 5+ years experience), Level III (advanced, 10+ years). Exams cover process measurement, control loop theory, safety systems, troubleshooting, and maintenance. Preparation: CCST Study Guide + ISA5200 series courses. Employers list CCST as a preferred or required qualification in advanced maintenance and controls technician job postings."
       },
       {
         "q": "Interview question 'troubleshoot a motor that won't start' tests:",
@@ -4734,7 +4734,7 @@ MODULES_3 = [
           "Brand knowledge"
         ],
         "answer": 1,
-        "explain": "They want systematic METHOD: power -&gt; signal -&gt; load. Evaluating thought process + safety awareness."
+        "explain": "Walk-through questions test your diagnostic PROCESS, not your memory. Ideal answer structure: (1) Safety first -- LOTO before any physical check if needed. (2) Gather information: nameplate, fault history, recent changes. (3) Check the obvious: control power present, fuses OK, breaker not tripped. (4) Divide and conquer: is power reaching the motor? Is the motor mechanically free? (5) Meter the circuit: line voltage at contactor, voltage at motor terminals, current under load. (6) Document root cause and corrective action to prevent recurrence."
       },
       {
         "q": "Portfolio should emphasize:",
@@ -5240,7 +5240,7 @@ MODULES_3 = [
           "Listen, observe, and ride shifts before proposing changes"
         ],
         "answer": 3,
-        "explain": "Weeks 1-2 are for listening and observing. Proposing changes before you understand the plant destroys trust."
+        "explain": "In the first two weeks at a new maintenance role: listen more than you speak. Learn the equipment, the culture, the unwritten rules, and the history before proposing improvements. Ask questions to understand why things are done a certain way -- some 'inefficiencies' exist for good safety or operational reasons. Keep a private note of observations (not a public complaint list). Build relationships with operators and senior technicians first. After 30-60 days, you will have earned the credibility and context to make suggestions that stick."
       },
       {
         "q": "When bringing a problem to your boss, what should you include?",
@@ -5262,7 +5262,7 @@ MODULES_3 = [
           "Speak-Blame-Ignore"
         ],
         "answer": 1,
-        "explain": "SBI = Situation, Behaviour, Impact. Anchors feedback in specifics and shows why the behaviour mattered."
+        "explain": "SBI feedback model: Situation = the specific context when the behavior occurred (when, where). Behaviour = the specific observable action (not an interpretation or label). Impact = the specific effect the behavior had on the team, project, or outcome. Example: 'During the safety audit (Situation), you double-checked all LOTO tags before the inspector arrived (Behaviour), which gave the team confidence and we passed with zero findings (Impact).' Specific, observable, consequence-linked feedback is far more useful than generic praise or criticism."
       },
       {
         "q": "For a technician receiving critical feedback, the best immediate response is:",
@@ -5273,7 +5273,7 @@ MODULES_3 = [
           "Interrupt to correct their facts"
         ],
         "answer": 2,
-        "explain": "Suppress the defence instinct. Ask for detail, thank them, sit with it, then decide. Even bad feedback has ~10% signal."
+        "explain": "Receiving critical feedback well is a professional skill. Immediate defensive reaction is natural but counterproductive -- it stops the feedback and signals to colleagues that giving you honest input is not safe. Tactical approach: (1) Thank them for the feedback and ask one clarifying question ('Can you give me a specific example?'). (2) Sit with it for 24 hours before deciding whether it is valid. (3) Even feedback delivered poorly or unfairly usually contains 10-20% of signal worth extracting. (4) Follow up with what you did based on the feedback -- this builds a reputation for coachability, a high-value professional trait."
       },
       {
         "q": "Which is the biggest wealth-building lever for a young technician?",
@@ -5284,7 +5284,7 @@ MODULES_3 = [
           "Compounding: monthly index-fund investing over decades"
         ],
         "answer": 3,
-        "explain": "Compounding over decades: $500/month for 40 years at 7% real is roughly $1.2M. Time in market beats timing the market."
+        "explain": "Compound interest math: $500/month for 40 years at 7% real annual return &asymp; $1.2M. Starting at age 22 vs. 32 produces roughly double the retirement wealth because the first decade of contributions grows for twice as long. Low-cost index funds (expense ratio &lt;0.10%) preserve maximum return -- a 1% fee difference over 40 years costs roughly $250,000 in foregone growth. Consistently contributing through market downturns (dollar-cost averaging) outperforms market timing for most investors over a 20+ year horizon."
       },
       {
         "q": "Employer 401(k) match should be treated as:",
@@ -5295,7 +5295,7 @@ MODULES_3 = [
           "Only used if you are over 50"
         ],
         "answer": 0,
-        "explain": "An employer match is instant 100% return on the matched portion. Skipping it leaves guaranteed money on the table."
+        "explain": "A 401(k) employer match (e.g., 50% match up to 6% of salary) is an immediate 50% return on the matched portion -- no investment can guarantee that. On a $60,000 salary: contribute 6% ($3,600/yr) and the employer adds $1,800 = $5,400 total, a 50% gain before any market returns. Skipping the match forfeits this guaranteed return permanently. After maximizing the match, the next priority is paying off high-interest debt (&gt;6%), then Roth IRA (tax-free growth), then additional 401(k) up to the annual limit ($23,000 for 2024)."
       },
       {
         "q": "A key symptom of burnout distinct from ordinary tiredness is:",
@@ -5629,7 +5629,7 @@ MODULES_3 = [
           "&lt;&gt;"
         ],
         "answer": 1,
-        "explain": "ST uses := to assign and = to compare. &lt;&gt; means not-equal. Mixing up := and = is the classic ST beginner bug."
+        "explain": "IEC 61131-3 ST syntax: := is the assignment operator (Speed := 1200;). = is the comparison operator in IF conditions (IF Speed = 1200 THEN). &lt;&gt; means not-equal. Common beginner error: writing IF Speed := 1200 (assignment inside condition) -- strict ST compilers reject this; permissive ones silently always evaluate TRUE. Other operators: AND, OR, NOT, MOD, ABS, SQRT, **. FOR and WHILE loops are possible -- always set an exit condition or scan-overrun protection to prevent infinite loops."
       },
       {
         "q": "Which Ladder instruction is true when its bit is 0 (OFF)?",
@@ -5640,7 +5640,7 @@ MODULES_3 = [
           "OTL"
         ],
         "answer": 2,
-        "explain": "XIO (Examine If Open) is true when the bit is 0. XIC (Examine If Closed) is true when the bit is 1."
+        "explain": "XIO (Examine If Open) instruction passes power-flow when the referenced bit is 0 (FALSE). It models a normally-closed contact: conducts in the resting state, blocks when its associated coil is energized. XIC (Examine If Closed) passes when bit = 1. Key trap: physical NC switch wired to a PLC input shows bit = 1 in normal (closed/passing) state. An XIC on that bit conducts normally and drops when the switch opens (fault condition) -- this is the correct fail-safe pattern for E-stop and safety interlock circuits."
       },
       {
         "q": "For safety interlocks and permissives, which language is generally preferred?",
@@ -6505,7 +6505,7 @@ MODULES_3 = [
           "Both sides equally, in 1/4-turn increments, rechecking each cycle"
         ],
         "answer": 3,
-        "explain": "Adjust both sides equally in 1/4-turn increments only, running briefly and re-checking tracking after each cycle."
+        "explain": "Screw take-up adjustment for belt tracking: always adjust both sides equally -- unequal adjustment steers the belt. Maximum increment: 1/4 turn per side per adjustment cycle. After each adjustment, run the belt 3-5 minutes and observe tracking before making the next adjustment. A belt that continues to drift after equal take-up adjustment needs crown alignment, idler squaring, or frame check -- not more take-up. Over-tensioning with take-ups causes premature belt and bearing failure. Target: belt running centered with less than 25 mm drift."
       },
       {
         "q": "A sliding-shoe sorter diverts packages by:",
@@ -7780,7 +7780,7 @@ MODULES_3 = [
           "~50"
         ],
         "answer": 0,
-        "explain": "N * t_charge / (T + t_charge) = 500 * 1.5 / 5.5 ~= 136, plus 20% margin ~= 137. Undersizing causes queueing cascade."
+        "explain": "Fleet charger sizing: N x t_charge / (T + t_charge) = 500 x 1.5 / (4.0 + 1.5) = 500 x 1.5 / 5.5 = 136 simultaneous chargers needed. Add 20% safety margin: 136 x 1.20 = 163 chargers. Undersizing creates a queueing cascade: robots wait for chargers, reducing throughput, which extends run time, which requires even more charging time -- a feedback loop that collapses throughput. This formula assumes uniform distribution of run/charge cycles; real deployments add random demand peaks that the margin must absorb."
       },
       {
         "q": "Which is a required design element for a human-robot cooperation zone under ISO 10218 / ISO/TS 15066?",
@@ -7846,7 +7846,7 @@ MODULES_3 = [
           "Only allowed for canary"
         ],
         "answer": 2,
-        "explain": "Never deploy Friday afternoon; if it breaks, nobody is available to fix it. Also never during peak season (Q4)."
+        "explain": "Friday afternoon deployments are an industry-wide antipattern: if the new software causes production problems, the engineering team is gone for the weekend, leaving operators and minimal on-call staff to deal with the fallout. Similarly, deploying new software or firmware during peak production periods (Q4 for Amazon/e-commerce, harvest season for food plants) carries maximum business risk. Best practice: deploy during planned outages (scheduled maintenance windows), on Tuesday-Wednesday mornings, with the full team available for at least 4-8 hours of monitored operation."
       },
       {
         "q": "How does a fiducial-grid drive unit determine its exact position, correcting for wheel-odometry drift?",

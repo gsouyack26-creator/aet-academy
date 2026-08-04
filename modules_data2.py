@@ -300,7 +300,7 @@ MODULES_2 = [
           "126 lb"
         ],
         "answer": 1,
-        "explain": "Rod-side net area = pi/4*(2^2) - pi/4*(1^2) = 3.14 - 0.785 = 2.36 in^2. Force = 80 * 2.36 = 189 lb."
+        "explain": "Cylinder rod-side (retract) force: net area = bore area minus rod area = (pi/4)(2^2) - (pi/4)(1^2) = 3.14 - 0.79 = 2.36 in^2. Force = P x A = 80 x 2.36 = 189 lb. Extend force (full bore): F = 80 x 3.14 = 251 lb -- 33% more. Always calculate both stroke directions for clamping designs. For equal force in both directions, specify a through-rod (double-rod) cylinder."
       },
       {
         "q": "Which directional control valve notation is MOST common for controlling a double-acting pneumatic cylinder in ACY1 sorter divert gates?",
@@ -377,7 +377,7 @@ MODULES_2 = [
           "250 N"
         ],
         "answer": 0,
-        "explain": "Area = pi/4 * (0.05)^2 = 0.001963 m^2. Force = 0.001963 * 60,000 Pa = 117.8 N (~118 N or ~26 lb)."
+        "explain": "Vacuum cup holding force: F = A x delta_P. Area = (pi/4) x D^2 = (pi/4) x 0.05^2 = 0.001963 m^2. delta_P = 60 kPa = 60,000 Pa. F = 0.001963 x 60,000 = 117.8 N (~12 kg, 26 lb). Apply safety factor 2-4 for horizontal lifting; 4-8 for vertical (peel-off risk). Smaller cups require higher vacuum for the same force; larger cups work at lower vacuum but are sensitive to surface curvature and require flat, smooth target surfaces."
       },
       {
         "q": "During ACY1 pneumatic LOTO, after closing and locking the isolation valve, what is the NEXT required step before touching any fittings?",
@@ -762,7 +762,7 @@ MODULES_2 = [
           "about 7 SCFM"
         ],
         "answer": 3,
-        "explain": "20 &times; 0.42 &times; 0.7 &asymp; 5.88 SCFM, plus 20% leaks &asymp; 7.06 SCFM total demand."
+        "explain": "Total air demand = qty x consumption x duty cycle: 20 x 0.42 x 0.70 = 5.88 SCFM operating. Add 20% for leaks: 5.88 x 1.20 &asymp; 7.06 SCFM. Size compressor and supply lines to this total. Also calculate peak transient demand (all cylinders actuating simultaneously) to size the receiver tank: V_tank = (Q_peak - Q_comp) x t_pulse / delta_P. Most plants undersize receivers, causing pressure drops during shift start-up rushes."
       },
       {
         "q": "A valve with tandem center connects P to T in neutral, blocks A and B. This means in neutral:",
@@ -806,7 +806,7 @@ MODULES_2 = [
           "About 25 L/s"
         ],
         "answer": 3,
-        "explain": "A 3 mm hole at 7 bar leaks roughly 25 L/s (60 SCFM), costing about $1500/year at typical electricity prices."
+        "explain": "Compressed air is one of the most expensive plant utilities. A 3 mm orifice at 7 bar leaks &asymp;25 L/s = 60 SCFM. At ~$0.25/kCFM/yr: 60 SCFM x $0.25 = &asymp;$1,500/year per leak. A plant with 50 unrepaired leaks loses ~$75,000/year. Ultrasonic leak detectors (SDT, UE Systems) find leaks without shutdown by detecting the 40 kHz turbulent-flow signature of air escaping an orifice -- audible above ambient noise in even loud production environments."
       },
       {
         "q": "Reducing plant compressed-air pressure by 1 bar typically cuts compressor input energy by about:",
@@ -817,7 +817,7 @@ MODULES_2 = [
           "50%"
         ],
         "answer": 0,
-        "explain": "Rule of thumb: about 7% energy reduction per 1 bar of system pressure reduction, from lower compression work."
+        "explain": "Reducing compressed air system pressure saves approximately 7% energy per 1 bar reduction, from lower compression work and reduced leakage rate (leak flow scales with pressure). A system at 8 bar that only needs 6 bar wastes ~14% on over-compression. After mapping all tool and actuator pressure requirements, set system pressure 0.5 bar above the highest legitimate need. Install point-of-use pressure regulators for tools that need less than system pressure."
       },
       {
         "q": "An open-center directional valve is commonly used with:",
@@ -828,7 +828,7 @@ MODULES_2 = [
           "Vacuum ejectors only"
         ],
         "answer": 1,
-        "explain": "Open center dumps pump flow to tank in neutral, keeping pressure and heating low with a fixed-displacement pump."
+        "explain": "Open-center directional valve connects pump to tank in the neutral (de-energized) position, allowing a fixed-displacement gear pump to circulate fluid at near-zero pressure and heat when no actuator is moving. Closed-center valves trap pump flow in neutral, requiring a pressure-compensated variable pump or an unloading valve to avoid continuous high pressure and overheating. Open center is typical on smaller industrial hydraulic units with fixed-displacement pumps; closed center is standard on large servo-hydraulic systems."
       },
       {
         "q": "On a hydraulic schematic, the abbreviation \"BOM\" refers to:",
@@ -1486,7 +1486,7 @@ MODULES_2 = [
           "Time synchronization only"
         ],
         "answer": 2,
-        "explain": "Class 0 is the static (integrity) poll returning all current point values; Classes 1-3 carry prioritized event data."
+        "explain": "DNP3 data object classes: Class 0 = static integrity poll -- returns the current value of ALL configured points. Class 1 = high-priority events (critical alarms). Class 2 = medium-priority events. Class 3 = low-priority routine telemetry changes. A SCADA master polls Class 0 at startup for full data integrity, then polls Classes 1-2 cyclically for change-of-state events. DNP3 is standard in utility SCADA (substations, water/wastewater, oil and gas pipelines) and complies with IEC 62351 security extensions."
       },
       {
         "q": "In High-Performance HMI design, color on a normally-operating screen should be:",
@@ -1508,7 +1508,7 @@ MODULES_2 = [
           "A raw I/O force table"
         ],
         "answer": 0,
-        "explain": "Level 1 is the area/plant overview; detail increases through Levels 2-4 down to single-equipment diagnostics."
+        "explain": "ISA-101 HMI display hierarchy: Level 1 = plant area overview (all major equipment, key KPIs, highest-level alarms). Level 2 = unit/system view (one cell or loop group). Level 3 = equipment detail (one machine, drive, or control loop). Level 4 = diagnostic/maintenance view (I/O points, trend charts, alarm history). Operators work primarily at L1-L2; technicians and engineers at L2-L4. A single alarm at L1 should be clickable to drill to L3-L4 without leaving the HMI screen."
       },
       {
         "q": "An HMI monitors a PLC counter that increments every scan. If that counter stops changing for several seconds, the HMI should:",
@@ -1530,7 +1530,7 @@ MODULES_2 = [
           "Incorrect engineering units"
         ],
         "answer": 2,
-        "explain": "The echoed acknowledge confirms the PLC actually received the command, guarding against silently lost writes."
+        "explain": "HMI write handshake (request-acknowledge): HMI sets a Request bit and writes the new value. PLC detects the bit, validates the value, applies it, then sets an Acknowledge bit. HMI reads Acknowledge, clears Request, and displays the confirmed value. Without this pattern, an HMI write silently lost during a comms hiccup leaves the operator seeing the new value on-screen while the PLC still has the old value -- critical risk on setpoint changes for temperature, pressure, or safety-adjacent loops."
       },
       {
         "q": "Assigning tags to different poll rates by importance (controls fast, static data slow) is called using:",
@@ -1541,7 +1541,7 @@ MODULES_2 = [
           "Scan groups"
         ],
         "answer": 3,
-        "explain": "Scan groups let critical data update quickly while slow/static data polls infrequently, conserving link bandwidth."
+        "explain": "HMI tag scan groups: fast group (100-500 ms) for control interlocks, run status, analog PVs. Normal group (1-2 s) for setpoints and mode selectors. Slow group (5-10 s) for parameters and constants. This reduces OPC/EtherNet/IP message load significantly -- a 2000-tag system polled at 500 ms uniform rate uses 4000 reads/s; with grouping, maybe 800 reads/s. Tags that rarely change (recipe constants, alarm limits) belong in the slow group. Over-polling saturates PLC CPU communications buffers and degrades I/O update rates."
       },
       {
         "q": "An analog deadband on a SCADA point reduces traffic by:",
@@ -1695,7 +1695,7 @@ MODULES_2 = [
           "Colour is illegal"
         ],
         "answer": 1,
-        "explain": "ISA-101 mandates multiple visual channels; colour-blind-safe palettes and text labels ensure everyone can read state."
+        "explain": "ISA-101 Section 5.3.2 prohibits communicating state by color alone. ~8% of males have red-green color vision deficiency. Requirements: use text labels (RUNNING/STOPPED), shape differentiation, or pattern fill in addition to color. Use ISA-101 recommended color standards. Color-blindness-safe design uses blue/orange instead of green/red where possible, or adds text and shape indicators. Validate the HMI by viewing it through a color-blindness simulation filter (free online tools like Coblis) before deployment."
       },
       {
         "q": "HMI project files should ideally be stored in:",
@@ -1717,7 +1717,7 @@ MODULES_2 = [
           "Backup the current running project before installing the new one"
         ],
         "answer": 3,
-        "explain": "A backup enables rapid rollback if the new project misbehaves; skipping it turns a small defect into extended downtime."
+        "explain": "Online edit safety protocol: upload the running program to a timestamped file BEFORE making any change. Confirm the uploaded revision matches the running version. Test the edit in offline simulation first. Document the rollback procedure: backup file location, download sequence, production notification contacts. Without a backup, recovering the prior state after an unexpected fault requires manual reconstruction from printouts -- potentially hours of downtime and a safety review. Make backing up the running program a non-negotiable gate step."
       },
       {
         "q": "OPC-UA improves on OPC-DA primarily by:",
@@ -2385,7 +2385,7 @@ MODULES_2 = [
           "192.168.10.192"
         ],
         "answer": 1,
-        "explain": "/26 blocks are size 64: .0, .64, .128, .192. Address .70 falls in the .64 subnet (hosts .65-.126, broadcast .127)."
+        "explain": "/26 subnet = 64 addresses per block, 62 usable hosts. Blocks: .0, .64, .128, .192. Address .70 is in the .64-.127 block: network = .64, hosts = .65-.126, broadcast = .127. Mask 255.255.255.192. In OT design: assign /24 (254 hosts) or /26 (62 hosts) per production zone, isolate zones with managed switches and VLAN membership. Never use a /24 flat subnet for both IT and OT -- broadcast storms from IT devices introduce jitter on EtherNet/IP implicit (I/O) messaging."
       },
       {
         "q": "Two PLCs on the same physical switch cannot communicate; one is /24 and the other is /25 with mismatched assumptions. The most likely root cause is:",
@@ -2407,7 +2407,7 @@ MODULES_2 = [
           "GSDML"
         ],
         "answer": 3,
-        "explain": "GSDML (XML) describes PROFINET devices. EDS is for EtherNet/IP/DeviceNet; IODD is for IO-Link."
+        "explain": "Device description files by protocol: GSDML (XML) = PROFINET -- import into TIA Portal. EDS (ASCII) = EtherNet/IP and DeviceNet -- add to RSLogix/Studio 5000 catalog. IODD (XML) = IO-Link device configuration. Always match the firmware version of the device to the GSDML/EDS version; mismatched files cause cryptic import errors or missing parameters in the device configuration wizard."
       },
       {
         "q": "Which TSN amendment defines time-aware traffic shaping with scheduled gated queues?",
@@ -2451,7 +2451,7 @@ MODULES_2 = [
           "Contaminated or dirty connector end-faces"
         ],
         "answer": 3,
-        "explain": "Dirty/contaminated end-faces are the leading fiber fault; always inspect and clean before mating connectors."
+        "explain": "Fiber end-face contamination causes 85%+ of fiber faults. Even a fingerprint degrades signal by 1-3 dB and can cause intermittent dropouts. Procedure: (1) Inspect with a fiber scope (200x) or video inspection probe. (2) Clean with a one-click fiber cleaner (compliant with IEC 61300-3-35). (3) Inspect again to confirm clean. Never mate a dirty connector -- it contaminates the far end. In industrial environments, use dust caps on all disconnected connectors and route fiber in protective conduit away from high-vibration areas."
       },
       {
         "q": "10BASE-T1L (Single Pair Ethernet) is notable for supporting:",
@@ -2462,7 +2462,7 @@ MODULES_2 = [
           "40 Gbps backbone"
         ],
         "answer": 0,
-        "explain": "10BASE-T1L runs 10 Mbps over one twisted pair up to 1000 m, ideal for long field-instrument runs replacing 4-20 mA."
+        "explain": "10BASE-T1L (IEEE 802.3cg): 10 Mbps over a single twisted pair up to 1000 m -- long enough for most field instruments. Designed to replace 4-20 mA wiring with Ethernet all the way to the sensor, enabling digital diagnostics, configuration, and process values in one cable. Optionally provides power over the data pair (PoDL, up to 52 W). APL (Advanced Physical Layer) variant supports Zone 0/1 hazardous areas (intrinsically safe). Expect 10BASE-T1L field instruments in new greenfield process plant designs."
       },
       {
         "q": "A key benefit of Single Pair Ethernet for process field devices is:",
@@ -2583,7 +2583,7 @@ MODULES_2 = [
           "EtherType"
         ],
         "answer": 3,
-        "explain": "The 2-byte EtherType field after the source MAC (or after VLAN tag) identifies the payload protocol."
+        "explain": "EtherType is a 2-byte field in the Ethernet II frame, immediately after the source MAC (or after the 4-byte 802.1Q VLAN tag). Common values: 0x0800 = IPv4, 0x0806 = ARP, 0x86DD = IPv6, 0x8100 = 802.1Q VLAN tag. Wireshark uses EtherType to decode the payload. Knowing EtherType helps when filtering EtherNet/IP capture traffic: filter for IP protocol + TCP port 44818 (explicit) or UDP port 2222 (implicit I/O)."
       },
       {
         "q": "On a 1 Gbps link, how many terminations should an RS-485 network have?",
@@ -2671,7 +2671,7 @@ MODULES_2 = [
           "The EtherType field"
         ],
         "answer": 3,
-        "explain": "802.1Q inserts the tag before EtherType; it carries a 12-bit VLAN ID plus a 3-bit priority (PCP) for QoS."
+        "explain": "IEEE 802.1Q VLAN tag: 4 bytes between source MAC and EtherType. Contains: 16-bit TPID (0x8100 = VLAN-tagged), 3-bit PCP (priority 0-7 for CoS/QoS), 1-bit DEI, 12-bit VLAN ID (0-4095). For OT networks: assign EtherNet/IP I/O to a dedicated VLAN (e.g., VLAN 10) to isolate real-time control traffic from office IT. Configure managed switch access ports with correct VLAN membership. Control traffic on a dedicated VLAN reduces jitter from IT broadcast storms."
       },
       {
         "q": "Two Ethernet devices have valid IP addresses but different subnet masks, so each believes the other is on a remote network. What is the likely symptom?",
@@ -3516,7 +3516,7 @@ MODULES_2 = [
           "The gearbox needs lubrication"
         ],
         "answer": 1,
-        "explain": "Incremental encoders lose their reference at power off; homing to a switch or index mark re-establishes the zero point."
+        "explain": "Incremental encoders count relative to wherever they were at power-up -- position reference is lost on every power cycle. Homing is mandatory after every power-up: axis moves toward a home switch or encoder Z (index) pulse, which fires once per revolution. When the switch triggers, the controller zeros the position counter (or applies a defined home offset). Homing sequence: approach slowly (avoid overshoot), debounce the switch, verify repeatability within tolerance. Absolute encoders (Gray code, EnDat, BiSS-C) retain position across power cycles -- no homing required."
       },
       {
         "q": "A cable in an energy chain should NEVER bend below:",
@@ -3527,7 +3527,7 @@ MODULES_2 = [
           "The chain outer radius"
         ],
         "answer": 2,
-        "explain": "Bending below minimum radius stresses conductors and jacket; the chain's inner radius is chosen to enforce that limit."
+        "explain": "Cable carrier (energy chain, cable track) protects moving cables on robots, linear axes, and gantries. Key spec: minimum bend radius of the cable must not be violated -- manufacturers specify inner chain radius to match the cable minimum bend radius (typically 10-15x cable outer diameter). Violating it causes conductor fatigue fractures over thousands of cycles. Installation: cables must not be under tension in the chain -- leave 3% extra length as sag. Specify stranded fine-wire conductors (0.1 mm strands minimum) for flexible energy-chain cables."
       },
       {
         "q": "A direct-drive (torque motor) provides high performance mainly because it:",
@@ -3668,7 +3668,7 @@ MODULES_2 = [
       },
       {
         "h": "P&amp;ID (ISA-5.1)",
-        "body": "<b>Tag format:</b> 1st letter = measured variable (T=temp, P=pressure, F=flow, L=level). Following = function (I=indicator, C=controller, T=transmitter, V=valve).<br><i>Examples:</i> FIC-101 = Flow Indicating Controller. LT-205 = Level Transmitter.<br><b>Symbols:</b> Circle=field, circle+line=panel, square=DCS/PLC."
+        "body": "<b>ISA-5.1 Tag Format:</b> Tags read left-to-right: first letter = measured variable (F=flow, L=level, P=pressure, T=temperature, A=analysis, S=speed/vibration); subsequent letters = function (I=indicate, C=control, T=transmit, R=record, A=alarm, H=high, L=low, V=valve, Y=relay/converter).<br><i>Examples:</i> <b>FIC-101</b> = Flow Indicating Controller (measures, displays, and controls flow). <b>PSH-205</b> = Pressure Switch High (trips on overpressure). <b>TT-312</b> = Temperature Transmitter. <b>LCV-418</b> = Level Control Valve.<br><b>ISA-5.1 Instrument Symbols:</b> Circle = field-mounted. Circle with horizontal line = panel/local board. Square = DCS/PLC shared controller. Dashed line = software signal; solid line = pneumatic/hydraulic; dotted = electrical signal.<br><b>Loop Table:</b> Each loop (e.g., FIC-101) groups the transmitter (FT-101), controller (FIC-101), and final element (FCV-101). Reading a P&amp;ID means tracing from sensor &rarr; transmitter &rarr; controller &rarr; valve. Signal line types: dashed = pneumatic, solid with arrows = electrical/4&ndash;20 mA. Mastering P&amp;ID symbols is a prerequisite for commissioning any instrumented loop."
       },
       {
         "h": "Open-Loop vs. Closed-Loop Control",
@@ -5149,7 +5149,7 @@ MODULES_2 = [
           "The operator is trained"
         ],
         "answer": 0,
-        "explain": "For high-inertia machines with long run-down, guard locking prevents access until hazardous motion has actually ceased."
+        "explain": "Guard locking (power-to-unlock or spring-to-lock with power-to-release) prevents opening a guard while hazardous motion is ongoing. Required when run-down time is significant -- large flywheels or heavy conveyor belts may take 30-120 seconds to stop after power removal. Controlled by the safety relay/STO: lock releases only when speed monitoring confirms zero motion. IEC 60335-2-77 and ISO 14119 specify guard locking requirements. Manual escape release (emergency key) is only permitted for trapped-operator scenarios, and its use must be logged."
       },
       {
         "q": "In a trapped-key interlock system, a key held captive at an open guard door ensures that:",
@@ -6065,7 +6065,7 @@ MODULES_2 = [
           "Disable the safety system"
         ],
         "answer": 0,
-        "explain": "A verified backup of the running program provides a rollback path; editing without one risks an unrecoverable state."
+        "explain": "Before any online PLC edit: (1) Upload and save the running program -- confirm the upload timestamp matches the running revision. (2) Note current mode, active alarms, and interlocks. (3) Test the edit in offline simulation if possible. (4) Document the rollback procedure: backup file path, download steps, who to notify. An online edit that causes an unexpected major fault without a backup can mean hours of manual reconstruction from printouts. Never edit a running safety function online without a formal MOC (Management of Change) review."
       },
       {
         "q": "A line runs at Availability 90%, Performance 95%, Quality 99%. Its OEE is approximately:",
@@ -6098,7 +6098,7 @@ MODULES_2 = [
           "ISA Certified Control Systems Technician (CCST)"
         ],
         "answer": 3,
-        "explain": "ISA CCST (and CAP) are vendor-neutral; FANUC, Siemens, and Rockwell credentials are platform-specific."
+        "explain": "Vendor-neutral credentials: ISA CCST (Certified Control Systems Technician, Levels I-II-III) and ISA CAP (Certified Automation Professional) are recognized industry-wide regardless of equipment brand. They demonstrate systems-level competency, not vendor-specific button-pushing. Platform-specific: FANUC CERT, Siemens SITRAIN, Rockwell TechConnect -- valuable for facilities using those platforms but not portable. Best strategy: earn ISA CCST as the foundation, then add vendor credentials matching your site's installed base."
       },
       {
         "q": "For a controls interview, a strong response to 'a conveyor faults intermittently' demonstrates:",
